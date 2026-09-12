@@ -1,8 +1,8 @@
 set shell := ["bash", "-uc"]
 
 kubeconfig := "ansible/kubeconfig"
-actionlint_image := `grep -oE "rhysd/actionlint:[0-9.]+" .github/workflows/lint-actions.yml | head -1`
-zizmor_version := `grep -oE 'version: "[0-9.]+"' .github/workflows/lint-actions.yml | grep -oE "[0-9.]+" | head -1`
+actionlint_image := `grep -oE "rhysd/actionlint:[0-9.]+" .github/workflows/ci.yml | head -1`
+zizmor_version := `grep -oE 'version: "[0-9.]+"' .github/workflows/ci.yml | grep -oE "[0-9.]+" | head -1`
 helm_version := `grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE "[0-9.]+"`
 
 bootstrap:
@@ -23,8 +23,8 @@ status:
     kubectl --kubeconfig {{kubeconfig}} -n argocd get applications
 
 lint-actions:
-    test -n "{{actionlint_image}}" || (echo "could not extract the actionlint image from lint-actions.yml" >&2 && exit 1)
-    test -n "{{zizmor_version}}" || (echo "could not extract the zizmor version from lint-actions.yml" >&2 && exit 1)
+    test -n "{{actionlint_image}}" || (echo "could not extract the actionlint image from ci.yml" >&2 && exit 1)
+    test -n "{{zizmor_version}}" || (echo "could not extract the zizmor version from ci.yml" >&2 && exit 1)
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo --entrypoint sh {{actionlint_image}} \
         -c "actionlint -color .github/workflows/*.yml"
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo ghcr.io/zizmorcore/zizmor:{{zizmor_version}} \

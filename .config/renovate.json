@@ -83,14 +83,14 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^\\.docker/Dockerfile$"],
+      "fileMatch": ["^\\.tools/docker/Dockerfile$"],
       "matchStrings": ["@ast-grep/cli@(?<currentValue>[\\w.]+)"],
       "depNameTemplate": "@ast-grep/cli",
       "datasourceTemplate": "npm"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^\\.docker/Dockerfile$"],
+      "fileMatch": ["^\\.tools/docker/Dockerfile$"],
       "matchStrings": ["jscpd@(?<currentValue>[\\w.]+)"],
       "depNameTemplate": "jscpd",
       "datasourceTemplate": "npm"
