@@ -22,7 +22,7 @@ jobs:
           persist-credentials: false
 
       - name: Build tool image
-        run: docker build --target gitleaks -t hl-infra/gitleaks .docker
+        run: docker build --target gitleaks -t hl-infra/gitleaks .tools/docker
 
       - name: gitleaks
         run: >-
@@ -46,7 +46,7 @@ jobs:
           persist-credentials: false
 
       - name: Build tool image
-        run: docker build --target osv-scanner -t hl-infra/osv-scanner .docker
+        run: docker build --target osv-scanner -t hl-infra/osv-scanner .tools/docker
 
       - name: osv-scanner
         run: >-
@@ -62,7 +62,7 @@ jobs:
           persist-credentials: false
 
       - name: Build tool image
-        run: docker build --target trivy -t hl-infra/trivy .docker
+        run: docker build --target trivy -t hl-infra/trivy .tools/docker
 
       - name: trivy fs
         run: >-

@@ -18,12 +18,12 @@ jobs:
           persist-credentials: false
 
       - name: Build tool image
-        run: docker build --target ast-grep -t hl-infra/ast-grep .docker
+        run: docker build --target ast-grep -t hl-infra/ast-grep .tools/docker
 
       - name: ast-grep
         run: >-
           docker run --rm -v "$PWD":/repo -w /repo hl-infra/ast-grep
-          ast-grep scan --config .ast-grep/sgconfig.yml .
+          ast-grep scan --config .config/ast-grep/sgconfig.yml .
 
   jscpd:
     runs-on: ubuntu-24.04
@@ -34,7 +34,7 @@ jobs:
           persist-credentials: false
 
       - name: Build tool image
-        run: docker build --target jscpd -t hl-infra/jscpd .docker
+        run: docker build --target jscpd -t hl-infra/jscpd .tools/docker
 
       - name: jscpd
         run: docker run --rm -v "$PWD":/repo -w /repo hl-infra/jscpd jscpd --config .config/jscpd.json | tee jscpd-output.txt

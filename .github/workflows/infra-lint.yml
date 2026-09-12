@@ -34,8 +34,8 @@ jobs:
 
       - name: Build tool images
         run: |
-          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .docker
-          docker build --target kube-linter -t hl-infra/kube-linter .docker
+          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
+          docker build --target kube-linter -t hl-infra/kube-linter .tools/docker
 
       - name: Render charts
         run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
@@ -65,8 +65,8 @@ jobs:
 
       - name: Build tool images
         run: |
-          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .docker
-          docker build --target checkov -t hl-infra/checkov .docker
+          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
+          docker build --target checkov -t hl-infra/checkov .tools/docker
 
       - name: Render charts
         run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
@@ -97,8 +97,8 @@ jobs:
 
       - name: Build tool images
         run: |
-          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .docker
-          docker build --target trivy -t hl-infra/trivy .docker
+          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
+          docker build --target trivy -t hl-infra/trivy .tools/docker
 
       - name: Render charts
         run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh

@@ -31,11 +31,11 @@ lint-actions:
         --no-progress /repo/.github/workflows
 
 _build target:
-    docker build --target {{target}} -t hl-infra/{{target}} {{justfile_directory()}}/.docker
+    docker build --target {{target}} -t hl-infra/{{target}} {{justfile_directory()}}/.tools/docker
 
 _build-helm:
     test -n "{{helm_version}}" || (echo "could not extract helm_version from ansible/group_vars/all.example.yml" >&2 && exit 1)
-    docker build --target helm --build-arg HELM_VERSION={{helm_version}} -t hl-infra/helm {{justfile_directory()}}/.docker
+    docker build --target helm --build-arg HELM_VERSION={{helm_version}} -t hl-infra/helm {{justfile_directory()}}/.tools/docker
 
 security-gitleaks: (_build "gitleaks")
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/gitleaks \
@@ -52,7 +52,7 @@ security-trivy-fs: (_build "trivy")
 
 quality-ast-grep: (_build "ast-grep")
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/ast-grep \
-        ast-grep scan --config .ast-grep/sgconfig.yml .
+        ast-grep scan --config .config/ast-grep/sgconfig.yml .
 
 quality-jscpd: (_build "jscpd")
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/jscpd jscpd --config .config/jscpd.json
