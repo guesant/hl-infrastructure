@@ -14,3 +14,7 @@ A documentação completa está em [guesant.github.io/hl-infrastructure](https:/
 - [Arquitetura](https://guesant.github.io/hl-infrastructure/arquitetura/): as roles do Ansible, os charts Helm, o padrão de GitOps, a pipeline de CI e a lista de variáveis.
 - [Operacional](https://guesant.github.io/hl-infrastructure/operacional/): renderizar charts, rodar os quality gates e adicionar um satélite novo.
 - [Contribuindo](https://guesant.github.io/hl-infrastructure/contribuindo/): como esta documentação é organizada e escrita.
+
+## License
+
+Licensed under the GNU General Public License v3.0 or later (`GPL-3.0-or-later`). See [LICENSE](LICENSE).
