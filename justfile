@@ -4,6 +4,7 @@ kubeconfig := "ansible/kubeconfig"
 actionlint_image := `grep -oE "rhysd/actionlint:[0-9.]+" .github/workflows/ci.yml | head -1`
 zizmor_version := `grep -oE 'version: "[0-9.]+"' .github/workflows/ci.yml | grep -oE "[0-9.]+" | head -1`
 helm_version := `grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE "[0-9.]+"`
+crd_schema_location := 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
 
 bootstrap:
     ansible-galaxy collection install -r ansible/requirements.yml
@@ -68,6 +69,14 @@ infra-checkov: infra-render-charts (_build "checkov")
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/checkov \
         --directory rendered --directory argocd --framework kubernetes \
         --check CKV_K8S_16,CKV_K8S_18,CKV_K8S_19 --skip-path rendered/cilium.yaml --compact
+
+infra-kubeconform: infra-render-charts (_build "kubeconform")
+    mkdir -p {{justfile_directory()}}/.kubeconform-cache
+    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/kubeconform \
+        -strict -ignore-missing-schemas -summary -n 2 -cache .kubeconform-cache \
+        -schema-location default -schema-location '{{crd_schema_location}}' \
+        rendered argocd
+    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo --entrypoint bash hl-infra/helm .tools/check-images-pinned.sh
 
 infra-trivy-config: infra-render-charts (_build "trivy")
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/trivy \

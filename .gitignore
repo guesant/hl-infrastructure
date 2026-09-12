@@ -6,3 +6,4 @@ ansible/kubeconfig
 sealed-secrets-cert.pem
 rendered/
 site/
+.kubeconform-cache/

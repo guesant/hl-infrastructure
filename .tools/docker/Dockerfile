@@ -13,6 +13,8 @@ FROM stackrox/kube-linter:v0.8.3 AS kube-linter
 
 FROM bridgecrew/checkov:3.3.17 AS checkov
 
+FROM ghcr.io/yannh/kubeconform:v0.8.0 AS kubeconform
+
 FROM alpine/helm:${HELM_VERSION} AS helm
 
 FROM node:20-slim AS ast-grep

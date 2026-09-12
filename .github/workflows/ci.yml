@@ -197,6 +197,34 @@ jobs:
         with:
           sarif_file: results/results_sarif.sarif
 
+  kubeconform:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build tool images
+        run: |
+          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
+          docker build --target kubeconform -t hl-infra/kubeconform .tools/docker
+
+      - name: Render charts
+        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
+
+      - name: kubeconform
+        run: >-
+          mkdir -p .kubeconform-cache &&
+          docker run --rm -v "$PWD":/repo -w /repo hl-infra/kubeconform
+          -strict -ignore-missing-schemas -summary -n 2 -cache .kubeconform-cache
+          -schema-location default
+          -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
+          rendered argocd
+
+      - name: Every image has a tag or digest
+        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/check-images-pinned.sh
+
   trivy-config:
     runs-on: ubuntu-24.04
     steps:
@@ -231,6 +259,7 @@ jobs:
       - jscpd
       - kube-linter
       - checkov
+      - kubeconform
       - trivy-config
     steps:
       - name: Check all required jobs succeeded
