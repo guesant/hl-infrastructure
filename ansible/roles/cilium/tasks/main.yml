@@ -22,7 +22,7 @@
     fail_msg: >-
       abortando: firewalld esta ativo mas os CIDRs de pod/service
       (10.42.0.0/16, 10.43.0.0/16) ainda nao estao confiados na zona trusted;
-      rode a role os-prerequisites antes desta, senao o Cilium sobe sem
+      rode a role os_prerequisites antes desta, senao o Cilium sobe sem
       conseguir rotear trafego de pod
     success_msg: "firewalld ja confia os CIDRs de pod/service, ou nao esta ativo"
   when: cilium_firewalld_state.stdout == "running"
@@ -58,18 +58,18 @@
 - name: Check whether Helm is already installed
   ansible.builtin.stat:
     path: /usr/local/bin/helm
-  register: helm_binary
+  register: cilium_helm_binary
 
 - name: Download the Helm install script
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/helm/helm/{{ helm_version }}/scripts/get-helm-4
     dest: /tmp/get-helm-4.sh
     mode: "0755"
-  when: not helm_binary.stat.exists
+  when: not cilium_helm_binary.stat.exists
 
 - name: Run the Helm install script
   ansible.builtin.command: /tmp/get-helm-4.sh --version {{ helm_version }}
-  when: not helm_binary.stat.exists
+  when: not cilium_helm_binary.stat.exists
   changed_when: true
 
 - name: Check whether cilium-cli is already installed
@@ -79,8 +79,11 @@
 
 - name: Download cilium-cli
   ansible.builtin.get_url:
-    url: https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-{{ ansible_architecture | regex_replace('aarch64', 'arm64') | regex_replace('x86_64', 'amd64') }}.tar.gz
+    url: >-
+      https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-{{
+      ansible_architecture | regex_replace('aarch64', 'arm64') | regex_replace('x86_64', 'amd64') }}.tar.gz
     dest: /tmp/cilium-cli.tar.gz
+    mode: "0644"
   when: not cilium_cli_binary.stat.exists
 
 - name: Extract cilium-cli
@@ -93,9 +96,9 @@
 
 - name: Add the Cilium Helm repository
   ansible.builtin.command: helm repo add cilium https://helm.cilium.io/
-  register: helm_repo_add
-  changed_when: "'already exists' not in helm_repo_add.stderr"
-  failed_when: helm_repo_add.rc != 0 and 'already exists' not in helm_repo_add.stderr
+  register: cilium_helm_repo_add
+  changed_when: "'already exists' not in cilium_helm_repo_add.stderr"
+  failed_when: cilium_helm_repo_add.rc != 0 and 'already exists' not in cilium_helm_repo_add.stderr
 
 - name: Update the Helm repository index
   ansible.builtin.command: helm repo update cilium
@@ -120,7 +123,7 @@
   register: cilium_apply
   changed_when: "'unchanged' not in cilium_apply.stdout"
 
-- name: Restart Cilium to pick up a changed configuration
+- name: Restart Cilium to pick up a changed configuration # noqa: no-handler
   ansible.builtin.command: "{{ item }}"
   loop:
     - k3s kubectl -n kube-system rollout restart daemonset/cilium
@@ -134,8 +137,8 @@
 
 - name: Wait for the k3s node to report Ready
   ansible.builtin.command: k3s kubectl get nodes -o jsonpath="{.items[0].status.conditions[?(@.type=='Ready')].status}"
-  register: k3s_node_ready
-  until: k3s_node_ready.stdout == "True"
+  register: cilium_k3s_node_ready
+  until: cilium_k3s_node_ready.stdout == "True"
   retries: 30
   delay: 10
   changed_when: false

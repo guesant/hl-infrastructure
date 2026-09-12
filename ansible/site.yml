@@ -3,7 +3,7 @@
   hosts: pi
   become: true
   roles:
-    - os-prerequisites
+    - os_prerequisites
     - unattended_upgrades
     - sysctl_hardening
     - auditd
@@ -12,9 +12,9 @@
     - k3s
     - cilium
     - cnpg
-    - cert-manager
-    - cnpg-barman-plugin
+    - cert_manager
+    - cnpg_barman_plugin
     - argocd
-    - sealed-secrets
-    - argocd-image-updater
-    - bootstrap-app
+    - sealed_secrets
+    - argocd_image_updater
+    - bootstrap_app

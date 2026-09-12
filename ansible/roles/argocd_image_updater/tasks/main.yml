@@ -1,9 +1,9 @@
 ---
 - name: Add the Argo Helm repository
   ansible.builtin.command: helm repo add argo https://argoproj.github.io/argo-helm
-  register: image_updater_repo_add
-  changed_when: "'already exists' not in image_updater_repo_add.stderr"
-  failed_when: image_updater_repo_add.rc != 0 and 'already exists' not in image_updater_repo_add.stderr
+  register: argocd_image_updater_repo_add
+  changed_when: "'already exists' not in argocd_image_updater_repo_add.stderr"
+  failed_when: argocd_image_updater_repo_add.rc != 0 and 'already exists' not in argocd_image_updater_repo_add.stderr
 
 - name: Update the Argo Helm repository index
   ansible.builtin.command: helm repo update argo
@@ -19,8 +19,8 @@
     | k3s kubectl apply --server-side --force-conflicts -n argocd -f -
   args:
     executable: /bin/bash
-  register: image_updater_apply
-  changed_when: "'unchanged' not in image_updater_apply.stdout"
+  register: argocd_image_updater_apply
+  changed_when: "'unchanged' not in argocd_image_updater_apply.stdout"
 
 - name: Wait for Argo CD Image Updater to roll out
   ansible.builtin.command: k3s kubectl -n argocd rollout status deployment/argocd-image-updater-controller --timeout=180s

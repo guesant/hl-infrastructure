@@ -36,4 +36,3 @@
 - name: Validate sshd configuration syntax before reload
   ansible.builtin.command: sshd -t
   changed_when: false
-
