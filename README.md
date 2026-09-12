@@ -1,10 +1,12 @@
 # hl-infrastructure
 
-Bootstrap único via Ansible e estado contínuo via GitOps (ArgoCD) para o cluster k3s homelab. Migrado de `guesant/blog`'s `deploy/ansible/` em 2026-09-12; o histórico de decisões anterior a essa data está em `docs/pendencias-e-decisoes.md` do repositório `blog`.
+Bootstrap único via Ansible e estado contínuo via GitOps para o cluster k3s do homelab. Este repositório nasceu em 2026-09-12, migrado do blog (`guesant/blog`, pasta `deploy/ansible/`); o histórico de decisões anterior a essa data continua em `docs/pendencias-e-decisoes.md`, no repositório do blog.
 
-## Ansible (`ansible/`)
+## Ansible
 
-Provisiona o nó do zero: cgroups, hardening de SO (unattended-upgrades, sysctl, auditd, SSH, fail2ban), k3s (sem Traefik/ServiceLB, sem o CNI padrão), Cilium, o operador CloudNativePG, cert-manager, o plugin CNPG-I Barman Cloud, ArgoCD, o controlador de Sealed Secrets e o Argo CD Image Updater.
+A pasta `ansible/` provisiona o nó do zero: cgroups, hardening de sistema operacional (atualizações automáticas, sysctl, auditd, SSH, fail2ban), k3s sem Traefik nem ServiceLB e sem o CNI padrão, Cilium, o operador CloudNativePG, cert-manager, o plugin de backup Barman Cloud do CNPG, o próprio ArgoCD, o controlador de Sealed Secrets e o Argo CD Image Updater.
+
+Antes de rodar pela primeira vez, copie os dois arquivos de exemplo e preencha com os dados reais do host:
 
 ```bash
 cp ansible/inventory.example.ini ansible/inventory.ini
@@ -12,10 +14,14 @@ cp ansible/group_vars/all.example.yml ansible/group_vars/all.yml
 ansible-playbook -i ansible/inventory.ini ansible/site.yml
 ```
 
-## GitOps (`argocd/`)
+## GitOps
 
-App-of-apps recursivo. `argocd/root/` (aplicado uma única vez pela role `bootstrap-app`) contém dois `AppProject` (`infra`, cluster-wide, só para recursos definidos neste próprio repositório; `satellites`, restrito a recursos namespaced, com uma única exceção documentada para `StorageClass`) e a `Application` "root", que sincroniza `argocd/applications/` deste mesmo repositório.
+A pasta `argocd/` segue o padrão de app-of-apps recursivo. Dentro dela, `root/` é aplicada uma única vez pela role `bootstrap-app` e contém dois projetos do Argo: um para a infraestrutura definida diretamente neste repositório, com acesso amplo a recursos de cluster, e outro para satélites, restrito a recursos de namespace, com uma única exceção liberada explicitamente (o tipo StorageClass, já que o chart do Postgres declara uma). A partir daí, uma aplicação raiz sincroniza sozinha tudo que existir dentro de `argocd/applications/`.
 
-`argocd/applications/blog-satellite.yaml` é uma `Application` (projeto `satellites`) apontando para `deploy/gitops/applications/` do repositório `guesant/blog`, com `directory.recurse: true`. A partir daí, o Argo sincroniza sozinho tudo que esse diretório contém (hoje: as Applications `blog`, `postgres`, `cloudflared`, `network-policies` e o `ImageUpdater`), sem nenhum passo manual adicional: um commit em `deploy/gitops/applications/` no repositório `blog` já é suficiente, o Ansible deste repositório nunca precisa rodar de novo só por causa disso.
+Hoje só existe um satélite ali: uma aplicação apontando para a pasta de deploy do próprio blog, no repositório `guesant/blog`, com sincronização recursiva de diretório ligada. Isso significa que o Argo acompanha sozinho tudo que esse diretório contiver, sem exigir nenhum passo manual daqui. Um commit no repositório do blog já basta para propagar; o Ansible deste repositório nunca precisa rodar de novo só por causa disso.
 
-Novos satélites (outro repositório de aplicação) entram como um novo arquivo em `argocd/applications/`, seguindo o mesmo padrão do `blog-satellite.yaml`.
+Um satélite novo (outro repositório de aplicação) entra como mais um arquivo dentro de `argocd/applications/`, seguindo o mesmo formato do satélite do blog.
+
+## CI
+
+Dois workflows cuidam da própria manutenção do repositório: `renovate.yml` roda o Renovate self-hosted todo dia de manhã, isolado num environment restrito à branch main, e sabe re-baixar o manifesto oficial inteiro de cada componente vendorizado quando a versão sobe, não só trocar a tag da imagem; `lint-actions.yml` audita os próprios workflows com actionlint e zizmor sempre que algo muda em `.github/workflows/`. A receita `just lint-actions` roda os dois localmente, lendo a mesma versão pinada que o workflow usa, então nunca há duas versões divergentes pra lembrar de manter sincronizadas.

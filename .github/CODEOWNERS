@@ -1,0 +1,4 @@
+/.github/CODEOWNERS @guesant
+/.github/workflows/ @guesant
+/justfile @guesant
+/argocd/root/ @guesant
