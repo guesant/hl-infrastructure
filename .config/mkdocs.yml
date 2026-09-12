@@ -49,6 +49,8 @@ nav:
       - Variáveis: arquitetura/variaveis.md
   - Operacional:
       - operacional/index.md
+      - Preflight e dry-run do bootstrap: operacional/preflight-e-dry-run.md
+      - Rotacionar credenciais do k3s: operacional/rotacionar-credenciais.md
       - Renderizar os charts localmente: operacional/renderizar-charts-localmente.md
       - Rodar os quality gates localmente: operacional/rodar-quality-gates-localmente.md
       - Adicionar um satélite novo: operacional/adicionar-um-satelite.md

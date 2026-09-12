@@ -19,14 +19,22 @@ Edite `ansible/inventory.ini` com o IP real do Pi, o usuário SSH e o caminho da
 
 Nenhum dos dois arquivos reais é rastreado pelo git; só os `.example` ficam versionados. As versões de k3s, Helm e de cada chart não precisam de nada: elas vivem em `ansible/group_vars/all/versions.yml`, que é versionado e mantido pelo Renovate, e o Ansible mescla os dois arquivos sozinho.
 
+## Confira o acesso e veja o que vai mudar
+
+```bash
+just preflight -K
+just bootstrap-check -K
+```
+
+O `-K` pede a senha de `sudo` do usuário do inventário; omita se ele tem `sudo` sem senha. O preflight confirma que o Ansible fala com a máquina certa e o `bootstrap-check` mostra, sem aplicar nada, tudo o que a execução real faria; veja [preflight e dry-run](../operacional/preflight-e-dry-run.md).
+
 ## Rode o bootstrap
 
 ```bash
-ansible-galaxy collection install -r ansible/requirements.yml
-ansible-playbook -i ansible/inventory.ini ansible/site.yml
+just bootstrap -K
 ```
 
-O playbook aplica as roles em ordem: hardening de sistema operacional primeiro (cgroups, atualizações automáticas, sysctl, auditd, SSH, fail2ban), depois k3s, depois Cilium como CNI, depois CloudNativePG e o plugin de backup, cert-manager, ArgoCD, Sealed Secrets e o Argo CD Image Updater, e por fim a aplicação raiz do Argo. Cada role espera o componente anterior ficar pronto antes de seguir, então uma falha no meio do caminho não deixa o cluster pela metade de forma silenciosa.
+O playbook aplica as roles em ordem: hardening de sistema operacional primeiro (cgroups, firewall, atualizações automáticas, sysctl, auditd, SSH, fail2ban), depois k3s, depois Cilium como CNI, depois CloudNativePG e o plugin de backup, cert-manager, ArgoCD, Sealed Secrets e o Argo CD Image Updater, e por fim a aplicação raiz do Argo. Cada role espera o componente anterior ficar pronto antes de seguir, então uma falha no meio do caminho não deixa o cluster pela metade de forma silenciosa.
 
 ## Confirme que funcionou
 

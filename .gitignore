@@ -6,3 +6,4 @@ sealed-secrets-cert.pem
 rendered/
 site/
 .kubeconform-cache/
+jscpd-report/

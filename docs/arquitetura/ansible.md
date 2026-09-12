@@ -1,16 +1,24 @@
 # Ansible: as roles do bootstrap
 
-`ansible/site.yml` aplica quinze roles em sequência, numa única play contra o host `pi`. A ordem importa: cada role assume que a anterior já deixou o sistema num estado específico, e várias delas verificam essa suposição explicitamente antes de continuar (a role `cilium`, por exemplo, aborta se o arquivo de configuração declarativo do k3s ainda não desabilitou o kube-proxy embutido).
+`ansible/site.yml` aplica dezessete roles em sequência, numa única play contra o host `pi`. A ordem importa: cada role assume que a anterior já deixou o sistema num estado específico, e várias delas verificam essa suposição explicitamente antes de continuar (a role `cilium`, por exemplo, aborta se o arquivo de configuração declarativo do k3s ainda não desabilitou o kube-proxy embutido).
+
+## O que toda role faz antes de agir
+
+Cada role começa com um `assert` das variáveis de que depende: versão no formato esperado (`v1.36.4+k3s1`, `10.9.0`), chave SSH com prefixo válido e sem o placeholder do exemplo, segredo do webhook com tamanho mínimo, lista de CIDRs bem formada. O erro aparece na primeira task, com a mensagem dizendo qual variável e qual formato, em vez de no meio de um `helm template` com uma versão vazia.
+
+As roles que falam com o cluster embrulham suas tasks num bloco condicionado ao fato `k3s_cluster_gate`, definido pela role `k3s` através da role `check_mode_gate`. Numa execução real o fato é sempre verdadeiro. Sob `--check` num node sem k3s, ele é falso: a role avisa que o binário só seria instalado numa execução real e as roles seguintes pulam o bloco inteiro, para que o dry-run termine limpo e diga a verdade sobre o que pode ser previsto. A mesma role de gate protege o firewalld, e cada serviço systemd só é iniciado em modo de verificação se o pacote já estava instalado antes. O guia [preflight e dry-run](../operacional/preflight-e-dry-run.md) mostra como usar isso.
+
+Os sete charts são aplicados com `helm template | k3s kubectl apply --server-side --force-conflicts`, e sob `--check` o apply ganha `--dry-run=server`: o API server valida e compara cada recurso sem gravar, então o dry-run mostra o que mudaria com a mesma fidelidade da execução real. É por isso que as roles não precisam de `helm upgrade` nem de comparar values à mão: o server-side apply já responde `unchanged` quando não há nada a fazer.
 
 ## Hardening de sistema operacional
 
-As primeiras seis roles não instalam nada de Kubernetes; elas preparam o sistema operacional.
+As primeiras sete roles não instalam nada de Kubernetes; elas preparam o sistema operacional.
 
-`os_prerequisites` instala pacotes base, ajusta os parâmetros de cgroup que o k3s e o containerd exigem, e libera as portas e CIDRs necessários no firewalld, incluindo os CIDRs internos de pod e serviço que o Cilium vai usar depois. `unattended_upgrades` liga atualizações automáticas de segurança. `sysctl_hardening` aplica parâmetros de kernel recomendados, verificando primeiro se cada parâmetro existe no kernel do host antes de tentar defini-lo. `auditd` liga auditoria de chamadas de sistema. `ssh_hardening` autoriza a chave pública declarada em `ssh_root_authorized_key` e restringe `PermitRootLogin` a autenticação por chave. `fail2ban` bane automaticamente origens com tentativas repetidas de login SSH inválido.
+`os_prerequisites` instala pacotes base e ajusta os parâmetros de cgroup que o k3s e o containerd exigem, reiniciando o node quando a linha de comando do kernel muda. `firewall` instala e liga o firewalld, mantém SSH permitido na zona pública, confia os CIDRs internos de pod e serviço que o Cilium vai usar, libera a porta da API do k3s só para os CIDRs em `k3s_api_allowed_cidrs`, e se recusa a recarregar uma configuração permanente que não contenha SSH: um erro nas regras nunca tranca o operador para fora. `unattended_upgrades` liga atualizações automáticas de segurança. `sysctl_hardening` aplica parâmetros de kernel recomendados, verificando primeiro se cada parâmetro existe no kernel do host antes de tentar defini-lo, e configura o kernel para reiniciar dez segundos depois de um oops em vez de ficar travado. `auditd` liga auditoria de chamadas de sistema. `ssh_hardening` autoriza a chave pública declarada em `ssh_root_authorized_key` e restringe `PermitRootLogin` a autenticação por chave. `fail2ban` bane automaticamente origens com tentativas repetidas de login SSH inválido.
 
 ## Plataforma Kubernetes
 
-`k3s` instala o k3s pelo script oficial, com o backend de rede padrão e o kube-proxy embutido desabilitados via `/etc/rancher/k3s/config.yaml`, porque o Cilium assume essas duas responsabilidades a seguir. `cilium` verifica que o k3s já desabilitou o que precisa, então instala o Cilium via chart Helm oficial, com `policyEnforcementMode: always` e `policyAuditMode: true` (as políticas de rede são avaliadas e logadas, mas nada é bloqueado ainda) e o Hubble ligado para observabilidade.
+`k3s` baixa o binário da release oficial no GitHub para a arquitetura do node e o verifica contra o arquivo de checksum publicado na mesma release antes de qualquer outra coisa; só então roda o instalador oficial com `INSTALL_K3S_SKIP_DOWNLOAD`, para que o script configure o serviço mas nunca baixe um binário por conta própria. O k3s sobe com o backend de rede padrão e o kube-proxy embutido desabilitados via `/etc/rancher/k3s/config.yaml`, porque o Cilium assume essas duas responsabilidades a seguir, e com uma política de auditoria do API server que registra metadados de toda escrita, o corpo completo de mudanças em RBAC, `AppProject` e `exec` em pods, e nada de leitura de rotina. O mesmo padrão de checksum publicado vale para o Helm e o cilium-cli, que a role `cilium` instala: o hash não fica no repositório porque o Renovate não teria como atualizá-lo junto com a versão, mas a integridade do download é verificada contra o que o próprio projeto publica, por TLS, a cada instalação. `cilium` verifica que o k3s já desabilitou o que precisa, então instala o Cilium via chart Helm oficial, com `policyEnforcementMode: always` e `policyAuditMode: true` (as políticas de rede são avaliadas e logadas, mas nada é bloqueado ainda) e o Hubble ligado para observabilidade.
 
 `cnpg` instala o operador CloudNativePG, que passa a entender a CRD `Cluster` que qualquer aplicação no cluster pode usar para pedir um banco Postgres. `cert_manager` instala o cert-manager. `cnpg_barman_plugin` instala o plugin de backup Barman Cloud do CNPG a partir do chart oficial `plugin-barman-cloud`, o que permite a um satélite declarar `ObjectStore` e `ScheduledBackup` para o próprio banco.
 
@@ -18,8 +26,12 @@ As primeiras seis roles não instalam nada de Kubernetes; elas preparam o sistem
 
 ## A ponte para o GitOps
 
-`bootstrap_app` é a última role, e a única que aplica manualmente uma `Application` do Argo: a aplicação `root`, descrita em [GitOps: root e satélites](gitops-root-e-satelites.md). A partir do momento em que ela existe no cluster, tudo o que acontece depois é responsabilidade do Argo, não do Ansible.
+`bootstrap_app` aplica manualmente uma `Application` do Argo: a aplicação `root`, descrita em [GitOps: root e satélites](gitops-root-e-satelites.md), e os três `AppProject`. A URL do repositório que o root sincroniza vem de `bootstrap_app_repo_url`, cujo padrão é este repositório; um fork ou um ambiente de teste sobrescreve a variável em `secrets.yml` sem tocar nos manifestos. A partir do momento em que o root existe no cluster, tudo o que acontece depois é responsabilidade do Argo, não do Ansible.
+
+## Manutenção contínua
+
+`maintenance` é a última role e a única que deixa algo agendado no node: um teto de 500 MB e um mês para o journal, e um timer semanal (`hl-gc.timer`, domingo de madrugada) que apaga ReplicaSets com zero réplicas, remove imagens de contêiner sem uso com `crictl rmi --prune` e imprime o espaço em disco. É o que impede um node de um nó só de encher o disco com o rastro de meses de deploys.
 
 ## Continue por aqui
 
-Para ver por que sete dessas roles instalam via chart Helm em vez de manifesto vendorizado, veja [Helm e os charts](helm-e-charts.md).
+Para ver por que sete dessas roles instalam via chart Helm em vez de manifesto vendorizado, veja [Helm e os charts](helm-e-charts.md). Para as rotinas que ficam fora de `site.yml` de propósito, veja [rotacionar credenciais](../operacional/rotacionar-credenciais.md).

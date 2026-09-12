@@ -25,7 +25,8 @@ As variáveis do Ansible vivem em dois arquivos dentro de [ansible/group_vars/al
 
 | Variável | Controla | Consumida por |
 | --- | --- | --- |
-| `k3s_api_allowed_cidrs` | Lista de CIDRs autorizados a acessar a porta da API do k3s no firewall | role `os_prerequisites` |
+| `k3s_api_allowed_cidrs` | Lista de CIDRs autorizados a acessar a porta da API do k3s no firewall | role `firewall` |
+| `bootstrap_app_repo_url` | Opcional; URL do repositório que a `Application` root sincroniza, por padrão este repositório | role `bootstrap_app` |
 | `ssh_root_authorized_key` | Chave pública SSH autorizada para login como root | role `ssh_hardening` |
 | `argocd_github_webhook_secret` | Segredo compartilhado usado para validar o webhook do GitHub que acelera a sincronização do Argo | role `argocd` |
 
