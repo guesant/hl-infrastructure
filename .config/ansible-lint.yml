@@ -1,0 +1,20 @@
+profile: production
+
+exclude_paths:
+  - .config/
+  - .github/
+  - .tools/
+  - .claude/
+  - argocd/
+  - docs/
+  - rendered/
+  - site/
+  - .kubeconform-cache/
+  - ansible/group_vars/all/secrets.yml
+
+kinds:
+  - playbook: ansible/site.yml
+  - tasks: ansible/roles/*/tasks/*.yml
+  - handlers: ansible/roles/*/handlers/*.yml
+  - vars: ansible/group_vars/all/*.yml
+  - requirements: ansible/requirements.yml

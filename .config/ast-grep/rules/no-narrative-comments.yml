@@ -5,4 +5,4 @@ message: "narrative comment not allowed; only tool-directive comments and an IMP
 rule:
   kind: comment
   not:
-    regex: "^#!|^#\\s*(v?[0-9]+\\.[0-9]+(\\.[0-9]+)?$|IMPORTANT:|shellcheck|yamllint|biome-ignore|eslint-ignore|eslint-disable|nosemgrep|zizmor:\\s*ignore)"
+    regex: "^#!|^#\\s*(v?[0-9]+\\.[0-9]+(\\.[0-9]+)?$|IMPORTANT:|shellcheck|yamllint|biome-ignore|eslint-ignore|eslint-disable|nosemgrep|noqa|zizmor:\\s*ignore)"

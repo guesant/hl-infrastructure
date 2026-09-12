@@ -1,0 +1,26 @@
+version: "0.2"
+language: pt-BR,en
+import:
+  - /opt/cspell/node_modules/@cspell/dict-pt-br/cspell-ext.json
+dictionaryDefinitions:
+  - name: project
+    path: ./cspell-words.txt
+    addWords: true
+dictionaries:
+  - project
+  - softwareTerms
+  - networking-terms
+  - k8s
+files:
+  - README.md
+  - SECURITY.md
+  - SUPPORT.md
+  - CONTRIBUTING.md
+  - docs/**/*.md
+ignoreRegExpList:
+  - /```[\s\S]*?```/g
+  - /`[^`\n]*`/g
+  - /https?:\/\/\S+/g
+  - /\bsha-[0-9a-f]+\b/g
+  - /\[[^\]]*\]\([^)]*\)/g
+minWordLength: 4
