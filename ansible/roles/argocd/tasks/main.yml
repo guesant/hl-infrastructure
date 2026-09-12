@@ -5,14 +5,29 @@
   changed_when: argocd_namespace.rc == 0
   failed_when: argocd_namespace.rc != 0 and 'AlreadyExists' not in argocd_namespace.stderr
 
-- name: Copy the vendored ArgoCD install manifest
-  ansible.builtin.copy:
-    src: argocd-install.yaml
-    dest: /tmp/argocd-install.yaml
-    mode: "0644"
+- name: Add the Argo Helm repository
+  ansible.builtin.command: helm repo add argo https://argoproj.github.io/argo-helm
+  register: argocd_repo_add
+  changed_when: "'already exists' not in argocd_repo_add.stderr"
+  failed_when: argocd_repo_add.rc != 0 and 'already exists' not in argocd_repo_add.stderr
 
-- name: Apply ArgoCD
-  ansible.builtin.command: k3s kubectl apply --server-side --force-conflicts -n argocd -f /tmp/argocd-install.yaml
+- name: Update the Argo Helm repository index
+  ansible.builtin.command: helm repo update argo
+  changed_when: false
+
+- name: Render and apply the ArgoCD chart
+  ansible.builtin.shell: >
+    set -o pipefail &&
+    helm template argocd argo/argo-cd
+    --version {{ argocd_chart_version }}
+    --namespace argocd
+    --set controller.metrics.enabled=true
+    --set server.metrics.enabled=true
+    --set notifications.metrics.enabled=true
+    --include-crds
+    | k3s kubectl apply --server-side --force-conflicts -n argocd -f -
+  args:
+    executable: /bin/bash
   register: argocd_apply
   changed_when: "'unchanged' not in argocd_apply.stdout"
 

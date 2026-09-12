@@ -1,12 +1,37 @@
 ---
-- name: Copy the vendored CloudNativePG install manifest
-  ansible.builtin.copy:
-    src: cnpg-install.yaml
-    dest: /tmp/cnpg-install.yaml
+- name: Add the CloudNativePG Helm repository
+  ansible.builtin.command: helm repo add cnpg https://cloudnative-pg.github.io/charts
+  register: cnpg_repo_add
+  changed_when: "'already exists' not in cnpg_repo_add.stderr"
+  failed_when: cnpg_repo_add.rc != 0 and 'already exists' not in cnpg_repo_add.stderr
+
+- name: Update the CloudNativePG Helm repository index
+  ansible.builtin.command: helm repo update cnpg
+  changed_when: false
+
+- name: Create the cnpg-system namespace
+  ansible.builtin.command: k3s kubectl create namespace cnpg-system
+  register: cnpg_namespace
+  changed_when: cnpg_namespace.rc == 0
+  failed_when: cnpg_namespace.rc != 0 and 'AlreadyExists' not in cnpg_namespace.stderr
+
+- name: Render the declared CloudNativePG values
+  ansible.builtin.template:
+    src: values.yaml.j2
+    dest: /tmp/cnpg-values.yaml
     mode: "0644"
 
-- name: Apply the CloudNativePG operator
-  ansible.builtin.command: k3s kubectl apply --server-side --force-conflicts -f /tmp/cnpg-install.yaml
+- name: Render and apply the CloudNativePG chart from the declared values
+  ansible.builtin.shell: >
+    set -o pipefail &&
+    helm template cnpg cnpg/cloudnative-pg
+    --version {{ cnpg_chart_version }}
+    --namespace cnpg-system
+    --values /tmp/cnpg-values.yaml
+    --include-crds
+    | k3s kubectl apply --server-side --force-conflicts -f -
+  args:
+    executable: /bin/bash
   register: cnpg_apply
   changed_when: "'unchanged' not in cnpg_apply.stdout"
 

@@ -1,12 +1,24 @@
 ---
-- name: Copy the vendored Argo CD Image Updater install manifest
-  ansible.builtin.copy:
-    src: argocd-image-updater-install.yaml
-    dest: /tmp/argocd-image-updater-install.yaml
-    mode: "0644"
+- name: Add the Argo Helm repository
+  ansible.builtin.command: helm repo add argo https://argoproj.github.io/argo-helm
+  register: image_updater_repo_add
+  changed_when: "'already exists' not in image_updater_repo_add.stderr"
+  failed_when: image_updater_repo_add.rc != 0 and 'already exists' not in image_updater_repo_add.stderr
 
-- name: Apply Argo CD Image Updater
-  ansible.builtin.command: k3s kubectl apply --server-side --force-conflicts -n argocd -f /tmp/argocd-image-updater-install.yaml
+- name: Update the Argo Helm repository index
+  ansible.builtin.command: helm repo update argo
+  changed_when: false
+
+- name: Render and apply the Argo CD Image Updater chart
+  ansible.builtin.shell: >
+    set -o pipefail &&
+    helm template argocd-image-updater argo/argocd-image-updater
+    --version {{ argocd_image_updater_chart_version }}
+    --namespace argocd
+    --include-crds
+    | k3s kubectl apply --server-side --force-conflicts -n argocd -f -
+  args:
+    executable: /bin/bash
   register: image_updater_apply
   changed_when: "'unchanged' not in image_updater_apply.stdout"
 

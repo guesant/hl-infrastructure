@@ -10,6 +10,8 @@ Bootstrap único via Ansible e estado contínuo via GitOps para o cluster k3s do
 
 A pasta [ansible](https://github.com/guesant/hl-infrastructure/tree/main/ansible) provisiona o nó do zero: cgroups, hardening de sistema operacional (atualizações automáticas, sysctl, auditd, SSH, fail2ban), k3s sem Traefik nem ServiceLB e sem o CNI padrão, Cilium, o operador CloudNativePG, cert-manager, o plugin de backup Barman Cloud do CNPG, o próprio ArgoCD, o controlador de Sealed Secrets e o Argo CD Image Updater.
 
+Cilium, cert-manager, ArgoCD, o Argo CD Image Updater, o operador CloudNativePG e o controlador de Sealed Secrets são instalados a partir do chart Helm oficial de cada projeto (`helm template` renderizado e aplicado via `k3s kubectl apply --server-side`), no mesmo padrão. O único componente que continua vendorizado como um `manifest.yaml` estático é o plugin Barman Cloud do CNPG, porque esse projeto ainda não publica um chart Helm oficial.
+
 Antes de rodar pela primeira vez, copie os dois arquivos de exemplo e preencha com os dados reais do host:
 
 ```bash
