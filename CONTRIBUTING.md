@@ -5,15 +5,10 @@ Toda mudança entra por branch e pull request contra `main`, passa pelo job `gat
 Antes de abrir a PR, rode localmente o mesmo que a CI roda; nada precisa ser instalado além de Docker e `just`:
 
 ```bash
-just lint-actions
-just security-gitleaks
-just quality-ast-grep
-just infra-kube-linter
-just infra-kubeconform
-just docs-build
+just check
 ```
 
-A lista completa está em [rodar os quality gates localmente](https://guesant.github.io/hl-infrastructure/operacional/rodar-quality-gates-localmente/).
+As receitas individuais estão em [rodar os quality gates localmente](https://guesant.github.io/hl-infrastructure/operacional/rodar-quality-gates-localmente/).
 
 Commits seguem Conventional Commits (`tipo(escopo): título`), em inglês, no imperativo, só o título, sem corpo e sem trailer. Nenhum segredo entra no repositório: valores reais ficam em `ansible/group_vars/all/secrets.yml`, que é ignorado pelo git, e no cluster só como `SealedSecret`.
 
