@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Vulnerabilidade de segurança
+    url: https://github.com/guesant/hl-infrastructure/security/advisories/new
+    about: Nunca abra issue pública para vulnerabilidade; use o relato privado ou o e-mail em SECURITY.md.
+  - name: Documentação
+    url: https://guesant.github.io/hl-infrastructure/
+    about: Tutorial, arquitetura e rotina operacional do cluster.

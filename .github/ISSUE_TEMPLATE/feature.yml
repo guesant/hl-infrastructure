@@ -1,0 +1,22 @@
+name: Proposta
+description: Uma role, um gate, um recurso de plataforma ou uma página de documentação nova
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema
+      description: O que hoje falta ou incomoda, e em qual rotina isso aparece.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposta
+      description: O que mudaria, onde (Ansible, Argo, CI, docs) e qual o impacto em privilégio ou exposição de rede.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas

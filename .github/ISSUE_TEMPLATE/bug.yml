@@ -1,0 +1,25 @@
+name: Bug
+description: Algo no bootstrap, no GitOps ou na CI não se comporta como a documentação descreve
+labels: [bug]
+body:
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamento esperado
+      description: O que a documentação ou o código prometem.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportamento observado
+      description: O que aconteceu, com a saída relevante (sem segredos).
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Como reproduzir
+      description: Comando, role, arquivo ou workflow envolvido e a versão em group_vars.
+    validations:
+      required: true
