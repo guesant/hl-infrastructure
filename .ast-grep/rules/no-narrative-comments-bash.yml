@@ -1,0 +1,8 @@
+id: no-narrative-comments-bash
+language: bash
+severity: error
+message: "narrative comment not allowed; only tool-directive comments and an IMPORTANT: marker for a critical non-obvious invariant are permitted"
+rule:
+  kind: comment
+  not:
+    regex: "^#!|^#\\s*(IMPORTANT:|shellcheck|yamllint|biome-ignore|eslint-ignore|eslint-disable|nosemgrep|zizmor:\\s*ignore)"

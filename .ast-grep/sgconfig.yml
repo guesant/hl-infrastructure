@@ -1,2 +1,5 @@
 ruleDirs:
   - rules
+languageGlobs:
+  yaml:
+    - "**/*.j2"

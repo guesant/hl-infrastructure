@@ -51,7 +51,7 @@ security-trivy-fs: (_build "trivy")
 
 quality-ast-grep: (_build "ast-grep")
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/ast-grep \
-        ast-grep scan --config .ast-grep/sgconfig.yml ansible
+        ast-grep scan --config .ast-grep/sgconfig.yml .
 
 quality-jscpd: (_build "jscpd")
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/jscpd jscpd

@@ -2,11 +2,7 @@ name: quality
 
 on:
   push:
-    paths:
-      - ansible/**
   pull_request:
-    paths:
-      - ansible/**
   workflow_dispatch:
 
 permissions:
@@ -27,7 +23,7 @@ jobs:
       - name: ast-grep
         run: >-
           docker run --rm -v "$PWD":/repo -w /repo hl-infra/ast-grep
-          ast-grep scan --config .ast-grep/sgconfig.yml ansible
+          ast-grep scan --config .ast-grep/sgconfig.yml .
 
   jscpd:
     runs-on: ubuntu-24.04
