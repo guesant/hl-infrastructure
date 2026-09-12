@@ -1,6 +1,8 @@
 # A pipeline de CI
 
-O workflow [ci.yml](https://github.com/guesant/hl-infrastructure/blob/main/.github/workflows/ci.yml) roda em todo push e pull request, com dez jobs em paralelo e um décimo primeiro, `gate`, que depende de todos os outros via `needs:` e falha se qualquer um deles falhar. É esse único job, e não a lista inteira, que faz sentido marcar como check obrigatório na branch protection.
+Três workflows automatizam a manutenção deste repositório. O [renovate.yml](https://github.com/guesant/hl-infrastructure/blob/main/.github/workflows/renovate.yml) roda self-hosted todo dia de manhã, isolado num environment restrito à branch principal, e bumpa a versão de cada chart Helm diretamente em `ansible/group_vars/all.example.yml`. O [docs.yml](https://github.com/guesant/hl-infrastructure/blob/main/.github/workflows/docs.yml) constrói este site com MkDocs a cada push e publica no GitHub Pages quando o push é em main; em pull requests, ele só constrói com `--strict`, para pegar link quebrado ou página fora da navegação, sem publicar nada. O restante, cobertura de segurança, qualidade estrutural e lint de infraestrutura, vive no [ci.yml](https://github.com/guesant/hl-infrastructure/blob/main/.github/workflows/ci.yml), detalhado no resto desta página.
+
+O `ci` roda em todo push e pull request, com dez jobs em paralelo e um décimo primeiro, `gate`, que depende de todos os outros via `needs:` e falha se qualquer um deles falhar. É esse único job, e não a lista inteira, que faz sentido marcar como check obrigatório na branch protection.
 
 ## Os jobs
 
@@ -14,9 +16,7 @@ O workflow [ci.yml](https://github.com/guesant/hl-infrastructure/blob/main/.gith
 
 ## Por que um workflow só
 
-Antes desta consolidação, os mesmos dez jobs viviam espalhados em quatro arquivos de workflow diferentes. Isolar por arquivo fazia sentido enquanto cada grupo tinha um gatilho genuinamente diferente, mas o resultado prático era dez checks separados para configurar como obrigatórios na branch protection, e nenhum lugar único que respondesse à pergunta "este push está OK para mergear". Um workflow só, com um job `gate` no final, resolve isso sem abrir mão do isolamento por job: cada job continua com seu próprio `permissions:`, e o `gate` não precisa saber nada sobre o que cada ferramenta faz, só se algum `needs` falhou.
-
-O arquivo único concentra `contents: read` no topo, com escopos mais amplos como `security-events: write` declarados job a job, exatamente como antes; a diferença é o arquivo, não o isolamento de permissão.
+Dez checks separados exigiriam dez entradas na branch protection e nenhum lugar único que respondesse à pergunta "este push está OK para mergear". Um workflow só, com um job `gate` no final, resolve isso sem abrir mão de isolamento por job: cada job mantém seu próprio `permissions:` (`contents: read` no topo do arquivo, escopos mais amplos como `security-events: write` só onde o job precisa), e o `gate` não precisa saber nada sobre o que cada ferramenta faz, só se algum `needs` falhou. É esse único job que faz sentido marcar como obrigatório na branch protection, em vez da lista inteira.
 
 ## Rodando localmente
 
