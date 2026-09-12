@@ -1,10 +1,10 @@
 # hl-infrastructure
 
-[![licença](https://img.shields.io/github/license/guesant/hl-infrastructure?style=flat)](LICENSE)
-[![ci](https://img.shields.io/github/actions/workflow/status/guesant/hl-infrastructure/ci.yml?branch=main&label=ci&style=flat)](https://github.com/guesant/hl-infrastructure/actions/workflows/ci.yml)
-[![docs](https://img.shields.io/github/actions/workflow/status/guesant/hl-infrastructure/docs.yml?branch=main&label=docs&style=flat)](https://github.com/guesant/hl-infrastructure/actions/workflows/docs.yml)
-[![renovate](https://img.shields.io/github/actions/workflow/status/guesant/hl-infrastructure/renovate.yml?branch=main&label=renovate&style=flat)](https://github.com/guesant/hl-infrastructure/actions/workflows/renovate.yml)
-[![renovate dependency dashboard](https://img.shields.io/badge/renovate-dependency%20dashboard-1a1f6c?style=flat)](https://github.com/guesant/hl-infrastructure/issues/3)
+[![licença](https://img.shields.io/github/license/guesant/hl-infrastructure?style=flat-square&logo=gnu&logoColor=white)](LICENSE)
+[![ci](https://img.shields.io/github/actions/workflow/status/guesant/hl-infrastructure/ci.yml?branch=main&label=ci&style=flat-square&logo=githubactions&logoColor=white)](https://github.com/guesant/hl-infrastructure/actions/workflows/ci.yml)
+[![docs](https://img.shields.io/github/actions/workflow/status/guesant/hl-infrastructure/docs.yml?branch=main&label=docs&style=flat-square&logo=materialformkdocs&logoColor=white)](https://github.com/guesant/hl-infrastructure/actions/workflows/docs.yml)
+[![renovate](https://img.shields.io/github/actions/workflow/status/guesant/hl-infrastructure/renovate.yml?branch=main&label=renovate&style=flat-square&logo=renovate&logoColor=white)](https://github.com/guesant/hl-infrastructure/actions/workflows/renovate.yml)
+[![renovate dependency dashboard](https://img.shields.io/badge/renovate-dependency%20dashboard-1a1f6c?style=flat-square&logo=renovate&logoColor=white)](https://github.com/guesant/hl-infrastructure/issues/3)
 
 Bootstrap via Ansible e estado contínuo via GitOps para o cluster k3s do homelab.
 
