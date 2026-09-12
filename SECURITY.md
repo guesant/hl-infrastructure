@@ -1,5 +1,5 @@
-# Security
+# Segurança
 
-Please report security vulnerabilities privately to [gabrielrodantunes+security@gmail.com](mailto:gabrielrodantunes+security@gmail.com).
+Vulnerabilidade neste repositório ou na infraestrutura que ele descreve? Não abra issue nem pull request público. Reporte em privado para [gabrielrodantunes+security@gmail.com](mailto:gabrielrodantunes+security@gmail.com) ou pelo [relato privado de vulnerabilidade](https://github.com/guesant/hl-infrastructure/security/advisories/new) do GitHub. Retorno inicial em até sete dias.
 
-Do not disclose security issues in public issues or pull requests.
+O que está dentro e fora do perímetro está no [modelo de ameaças](https://guesant.github.io/hl-infrastructure/arquitetura/modelo-de-ameacas/).
