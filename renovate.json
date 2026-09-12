@@ -1,0 +1,59 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "timezone": "America/Sao_Paulo",
+  "kubernetes": {
+    "fileMatch": ["ansible/roles/.+/files/.+\\.ya?ml$"]
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "matchStrings": ["k3s_version:\\s*(?<currentValue>v[\\w.+-]+)"],
+      "depNameTemplate": "k3s-io/k3s",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "matchStrings": ["helm_version:\\s*(?<currentValue>v[\\w.-]+)"],
+      "depNameTemplate": "helm/helm",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "matchStrings": ["cilium_version:\\s*(?<currentValue>[\\w.-]+)"],
+      "depNameTemplate": "cilium/cilium",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.+)$"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "matchStrings": ["cilium_cli_version:\\s*(?<currentValue>v[\\w.-]+)"],
+      "depNameTemplate": "cilium/cilium-cli",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "matchStrings": ["argocd_version:\\s*(?<currentValue>v[\\w.-]+)"],
+      "depNameTemplate": "argoproj/argo-cd",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "matchStrings": ["argocd_image_updater_version:\\s*(?<currentValue>v[\\w.-]+)"],
+      "depNameTemplate": "argoproj-labs/argocd-image-updater",
+      "datasourceTemplate": "github-releases"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchFileNames": ["ansible/roles/**/files/*.yaml", "ansible/roles/**/files/*.yml"],
+      "groupName": "vendored install manifest images (tag-only bump, verify before merging past a patch release)"
+    }
+  ]
+}
