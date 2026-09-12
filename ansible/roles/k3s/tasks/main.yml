@@ -1,4 +1,10 @@
 ---
+- name: Assert the k3s variables are declared and well formed
+  ansible.builtin.assert:
+    that:
+      - k3s_version is match('^v[0-9]+\.[0-9]+\.[0-9]+\+k3s[0-9]+$')
+    fail_msg: "k3s_version must look like v1.36.4+k3s1, got {{ k3s_version | default('undefined') }}"
+
 - name: Create the k3s config directory
   ansible.builtin.file:
     path: /etc/rancher/k3s
@@ -10,6 +16,15 @@
     path: /usr/local/bin/k3s
   register: k3s_binary
 
+- name: Install the API server audit policy
+  ansible.builtin.copy:
+    src: audit-policy.yaml
+    dest: /etc/rancher/k3s/audit-policy.yaml
+    owner: root
+    group: root
+    mode: "0600"
+  register: k3s_audit_policy
+
 - name: Write the declarative k3s config
   ansible.builtin.template:
     src: config.yaml.j2
@@ -17,10 +32,33 @@
     mode: "0644"
   register: k3s_config
 
-- name: Reboot if the k3s config changed on an already-installed node
+- name: Reboot if the k3s config changed on an already-installed node # noqa: no-handler
   ansible.builtin.reboot:
     reboot_timeout: 300
-  when: k3s_config.changed and k3s_binary.stat.exists
+  when: (k3s_config.changed or k3s_audit_policy.changed) and k3s_binary.stat.exists
+
+- name: Select the k3s release asset for this architecture
+  ansible.builtin.set_fact:
+    k3s_asset: "{{ 'k3s-arm64' if ansible_architecture == 'aarch64' else 'k3s' }}"
+    k3s_checksum_asset: "{{ 'sha256sum-arm64.txt' if ansible_architecture == 'aarch64' else 'sha256sum-amd64.txt' }}"
+
+- name: Download the k3s binary and verify it against the published checksum
+  ansible.builtin.get_url:
+    url: "https://github.com/k3s-io/k3s/releases/download/{{ k3s_version | urlencode }}/{{ k3s_asset }}"
+    dest: "/tmp/{{ k3s_asset }}"
+    checksum: "sha256:https://github.com/k3s-io/k3s/releases/download/{{ k3s_version | urlencode }}/{{ k3s_checksum_asset }}"
+    mode: "0755"
+  when: not k3s_binary.stat.exists
+
+- name: Put the verified binary in place
+  ansible.builtin.copy:
+    src: "/tmp/{{ k3s_asset }}"
+    dest: /usr/local/bin/k3s
+    remote_src: true
+    owner: root
+    group: root
+    mode: "0755"
+  when: not k3s_binary.stat.exists
 
 - name: Download the k3s install script
   ansible.builtin.get_url:
@@ -29,12 +67,24 @@
     mode: "0755"
   when: not k3s_binary.stat.exists
 
-- name: Run the k3s install script
+- name: Run the k3s install script against the verified binary
   ansible.builtin.command: /tmp/k3s-install.sh
   environment:
     INSTALL_K3S_VERSION: "{{ k3s_version }}"
+    INSTALL_K3S_SKIP_DOWNLOAD: "true"
   when: not k3s_binary.stat.exists
   changed_when: true
+
+- name: Decide whether the cluster can be queried in this run
+  ansible.builtin.include_role:
+    name: check_mode_gate
+  vars:
+    check_mode_gate_fact: k3s_cluster_gate
+    check_mode_gate_ok: "{{ k3s_binary.stat.exists }}"
+    check_mode_gate_message: >-
+      --check on a node without k3s: the binary would only be installed by a real
+      run, so nothing that talks to the cluster can be checked yet; every task
+      that needs the API is skipped from here on
 
 - name: Wait for the k3s API server to answer
   ansible.builtin.command: k3s kubectl get --raw /healthz
@@ -43,12 +93,15 @@
   retries: 30
   delay: 10
   changed_when: false
+  check_mode: false
+  when: k3s_cluster_gate
 
 - name: Fetch the kubeconfig back to the control machine
   ansible.builtin.fetch:
     src: /etc/rancher/k3s/k3s.yaml
     dest: "{{ playbook_dir }}/kubeconfig"
     flat: true
+  when: k3s_cluster_gate
 
 - name: Point the fetched kubeconfig at the real host
   ansible.builtin.replace:
@@ -57,3 +110,4 @@
     replace: "https://{{ ansible_host }}:6443"
   delegate_to: localhost
   become: false
+  when: k3s_cluster_gate

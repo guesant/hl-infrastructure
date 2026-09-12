@@ -1,43 +1,58 @@
 ---
-- name: Add the Jetstack Helm repository
-  ansible.builtin.command: helm repo add jetstack https://charts.jetstack.io
-  register: cert_manager_repo_add
-  changed_when: "'already exists' not in cert_manager_repo_add.stderr"
-  failed_when: cert_manager_repo_add.rc != 0 and 'already exists' not in cert_manager_repo_add.stderr
+- name: Assert the cert-manager chart version is declared and well formed
+  ansible.builtin.assert:
+    that:
+      - cert_manager_chart_version is match('^v[0-9]+\.[0-9]+\.[0-9]+$')
+    fail_msg: "cert_manager_chart_version must look like v1.21.2, got {{ cert_manager_chart_version | default('undefined') }}"
 
-- name: Update the Jetstack Helm repository index
-  ansible.builtin.command: helm repo update jetstack
-  changed_when: false
+- name: Install cert-manager once the cluster exists
+  when: k3s_cluster_gate | default(true)
+  block:
+    - name: Add the Jetstack Helm repository
+      ansible.builtin.command: helm repo add jetstack https://charts.jetstack.io
+      register: cert_manager_repo_add
+      changed_when: "'already exists' not in cert_manager_repo_add.stderr"
+      failed_when: cert_manager_repo_add.rc != 0 and 'already exists' not in cert_manager_repo_add.stderr
+      check_mode: false
 
-- name: Create the cert-manager namespace
-  ansible.builtin.command: k3s kubectl create namespace cert-manager
-  register: cert_manager_namespace
-  changed_when: cert_manager_namespace.rc == 0
-  failed_when: cert_manager_namespace.rc != 0 and 'AlreadyExists' not in cert_manager_namespace.stderr
+    - name: Update the Jetstack Helm repository index
+      ansible.builtin.command: helm repo update jetstack
+      changed_when: false
+      check_mode: false
 
-- name: Render and apply the cert-manager chart
-  ansible.builtin.shell: >
-    set -o pipefail &&
-    helm template cert-manager jetstack/cert-manager
-    --version {{ cert_manager_chart_version }}
-    --namespace cert-manager
-    --set crds.enabled=true
-    --set startupapicheck.enabled=false
-    --include-crds
-    | k3s kubectl apply --server-side --force-conflicts -f -
-  args:
-    executable: /bin/bash
-  register: cert_manager_apply
-  changed_when: "'unchanged' not in cert_manager_apply.stdout"
+    - name: Create the cert-manager namespace
+      ansible.builtin.command: k3s kubectl create namespace cert-manager
+      register: cert_manager_namespace
+      changed_when: cert_manager_namespace.rc == 0
+      failed_when: cert_manager_namespace.rc != 0 and 'AlreadyExists' not in cert_manager_namespace.stderr
 
-- name: Wait for the cert-manager controller to roll out
-  ansible.builtin.command: k3s kubectl -n cert-manager rollout status deployment/cert-manager --timeout=180s
-  changed_when: false
+    - name: Render and apply the cert-manager chart
+      ansible.builtin.shell: >
+        set -o pipefail &&
+        helm template cert-manager jetstack/cert-manager
+        --version {{ cert_manager_chart_version }}
+        --namespace cert-manager
+        --set crds.enabled=true
+        --set startupapicheck.enabled=false
+        --include-crds
+        | k3s kubectl apply --server-side --force-conflicts {{ '--dry-run=server' if ansible_check_mode else '' }} -f -
+      args:
+        executable: /bin/bash
+      register: cert_manager_apply
+      changed_when: "'unchanged' not in cert_manager_apply.stdout"
+      check_mode: false
 
-- name: Wait for the cert-manager cainjector to roll out
-  ansible.builtin.command: k3s kubectl -n cert-manager rollout status deployment/cert-manager-cainjector --timeout=180s
-  changed_when: false
+    - name: Wait for the cert-manager controller to roll out
+      ansible.builtin.command: k3s kubectl -n cert-manager rollout status deployment/cert-manager --timeout=180s
+      changed_when: false
+      check_mode: false
 
-- name: Wait for the cert-manager webhook to roll out
-  ansible.builtin.command: k3s kubectl -n cert-manager rollout status deployment/cert-manager-webhook --timeout=180s
-  changed_when: false
+    - name: Wait for the cert-manager cainjector to roll out
+      ansible.builtin.command: k3s kubectl -n cert-manager rollout status deployment/cert-manager-cainjector --timeout=180s
+      changed_when: false
+      check_mode: false
+
+    - name: Wait for the cert-manager webhook to roll out
+      ansible.builtin.command: k3s kubectl -n cert-manager rollout status deployment/cert-manager-webhook --timeout=180s
+      changed_when: false
+      check_mode: false

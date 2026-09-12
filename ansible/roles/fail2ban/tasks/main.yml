@@ -6,6 +6,7 @@
       - ipset
     state: present
     update_cache: true
+  register: fail2ban_install
 
 - name: Configure the sshd jail with the firewalld-backed banaction
   ansible.builtin.template:
@@ -15,9 +16,11 @@
     group: root
     mode: "0644"
   notify: Restart fail2ban
+  when: not (ansible_check_mode and fail2ban_install.changed)
 
 - name: Ensure fail2ban is enabled and running
   ansible.builtin.systemd:
     name: fail2ban
     enabled: true
     state: started
+  when: not (ansible_check_mode and fail2ban_install.changed)

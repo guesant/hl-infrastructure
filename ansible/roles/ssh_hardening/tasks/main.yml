@@ -1,4 +1,14 @@
 ---
+- name: Assert the operator public key is declared and is not the placeholder
+  ansible.builtin.assert:
+    that:
+      - ssh_root_authorized_key is match('^(ssh-ed25519|ssh-rsa|ecdsa-sha2-nistp256) [A-Za-z0-9+/=]{40,}')
+      - "'changeme' not in ssh_root_authorized_key"
+    fail_msg: >-
+      ssh_root_authorized_key must be a real public key (ssh-ed25519 AAAA... comment),
+      not the placeholder from secrets.example.yml; password login is disabled by this role,
+      so a bad key here locks you out
+
 - name: Determine the ansible_user home directory
   ansible.builtin.set_fact:
     ssh_hardening_authorized_keys_path: "{{ '/root/.ssh/authorized_keys' if ansible_user == 'root' else '/home/' + ansible_user + '/.ssh/authorized_keys' }}"

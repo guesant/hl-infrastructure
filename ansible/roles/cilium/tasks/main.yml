@@ -1,144 +1,181 @@
 ---
-- name: Check whether firewalld is active
-  ansible.builtin.command: firewall-cmd --state
-  register: cilium_firewalld_state
-  changed_when: false
-  failed_when: false
-
-- name: Check whether the pod and service CIDRs are trusted in firewalld
-  ansible.builtin.command: "firewall-cmd --permanent --zone=trusted --query-source={{ item }}"
-  loop:
-    - 10.42.0.0/16
-    - 10.43.0.0/16
-  register: cilium_firewalld_trust_check
-  changed_when: false
-  failed_when: false
-  when: cilium_firewalld_state.stdout == "running"
-
-- name: Abort if firewalld is active but the pod/service CIDRs are not trusted yet
+- name: Assert the Cilium and Helm variables are declared and well formed
   ansible.builtin.assert:
     that:
-      - cilium_firewalld_trust_check.results | selectattr('rc', 'ne', 0) | list | length == 0
+      - cilium_version is match('^[0-9]+\.[0-9]+\.[0-9]+$')
+      - cilium_cli_version is match('^v[0-9]+\.[0-9]+\.[0-9]+$')
+      - helm_version is match('^v[0-9]+\.[0-9]+\.[0-9]+$')
     fail_msg: >-
-      abortando: firewalld esta ativo mas os CIDRs de pod/service
-      (10.42.0.0/16, 10.43.0.0/16) ainda nao estao confiados na zona trusted;
-      rode a role os_prerequisites antes desta, senao o Cilium sobe sem
-      conseguir rotear trafego de pod
-    success_msg: "firewalld ja confia os CIDRs de pod/service, ou nao esta ativo"
-  when: cilium_firewalld_state.stdout == "running"
+      cilium_version ({{ cilium_version | default('undefined') }}) must be like 1.20.1,
+      cilium_cli_version ({{ cilium_cli_version | default('undefined') }}) and
+      helm_version ({{ helm_version | default('undefined') }}) must be like v0.20.0
 
-- name: Check whether the k3s declarative config already exists
-  ansible.builtin.stat:
-    path: /etc/rancher/k3s/config.yaml
-  register: cilium_k3s_config_file
+- name: Install Cilium once the cluster exists
+  when: k3s_cluster_gate | default(true)
+  block:
+    - name: Check whether firewalld is active
+      ansible.builtin.command: firewall-cmd --state
+      register: cilium_firewalld_state
+      changed_when: false
+      failed_when: false
+      check_mode: false
 
-- name: Abort if the k3s role has not run yet
-  ansible.builtin.assert:
-    that:
-      - cilium_k3s_config_file.stat.exists
-    fail_msg: "abortando: /etc/rancher/k3s/config.yaml nao existe ainda; rode a role k3s antes desta"
-    success_msg: "k3s config encontrado, prosseguindo"
+    - name: Check whether the pod and service CIDRs are trusted in firewalld
+      ansible.builtin.command: "firewall-cmd --permanent --zone=trusted --query-source={{ item }}"
+      loop:
+        - 10.42.0.0/16
+        - 10.43.0.0/16
+      register: cilium_firewalld_trust_check
+      changed_when: false
+      failed_when: false
+      check_mode: false
+      when: cilium_firewalld_state.stdout == "running"
 
-- name: Read the k3s declarative config
-  ansible.builtin.slurp:
-    path: /etc/rancher/k3s/config.yaml
-  register: cilium_k3s_config
+    - name: Abort if firewalld is active but the pod/service CIDRs are not trusted yet
+      ansible.builtin.assert:
+        that:
+          - cilium_firewalld_trust_check.results | selectattr('rc', 'ne', 0) | list | length == 0
+        fail_msg: >-
+          abortando: firewalld esta ativo mas os CIDRs de pod/service
+          (10.42.0.0/16, 10.43.0.0/16) ainda nao estao confiados na zona trusted;
+          rode a role firewall antes desta, senao o Cilium sobe sem
+          conseguir rotear trafego de pod
+        success_msg: "firewalld ja confia os CIDRs de pod/service, ou nao esta ativo"
+      when: cilium_firewalld_state.stdout == "running"
 
-- name: Abort if k3s has not disabled its bundled kube-proxy and flannel backend yet
-  ansible.builtin.assert:
-    that:
-      - "'disable-kube-proxy: true' in (cilium_k3s_config.content | b64decode)"
-      - "'flannel-backend: \"none\"' in (cilium_k3s_config.content | b64decode)"
-    fail_msg: >-
-      abortando: /etc/rancher/k3s/config.yaml ainda nao desabilita o
-      kube-proxy/flannel embutidos do k3s; rode a role k3s antes desta, senao
-      o Cilium entra em conflito com o kube-proxy nativo
-    success_msg: "k3s ja esta configurado sem kube-proxy/flannel embutidos"
+    - name: Check whether the k3s declarative config already exists
+      ansible.builtin.stat:
+        path: /etc/rancher/k3s/config.yaml
+      register: cilium_k3s_config_file
 
-- name: Check whether Helm is already installed
-  ansible.builtin.stat:
-    path: /usr/local/bin/helm
-  register: cilium_helm_binary
+    - name: Abort if the k3s role has not run yet
+      ansible.builtin.assert:
+        that:
+          - cilium_k3s_config_file.stat.exists
+        fail_msg: "abortando: /etc/rancher/k3s/config.yaml nao existe ainda; rode a role k3s antes desta"
+        success_msg: "k3s config encontrado, prosseguindo"
 
-- name: Download the Helm install script
-  ansible.builtin.get_url:
-    url: https://raw.githubusercontent.com/helm/helm/{{ helm_version }}/scripts/get-helm-4
-    dest: /tmp/get-helm-4.sh
-    mode: "0755"
-  when: not cilium_helm_binary.stat.exists
+    - name: Read the k3s declarative config
+      ansible.builtin.slurp:
+        path: /etc/rancher/k3s/config.yaml
+      register: cilium_k3s_config
 
-- name: Run the Helm install script
-  ansible.builtin.command: /tmp/get-helm-4.sh --version {{ helm_version }}
-  when: not cilium_helm_binary.stat.exists
-  changed_when: true
+    - name: Abort if k3s has not disabled its bundled kube-proxy and flannel backend yet
+      ansible.builtin.assert:
+        that:
+          - "'disable-kube-proxy: true' in (cilium_k3s_config.content | b64decode)"
+          - "'flannel-backend: \"none\"' in (cilium_k3s_config.content | b64decode)"
+        fail_msg: >-
+          abortando: /etc/rancher/k3s/config.yaml ainda nao desabilita o
+          kube-proxy/flannel embutidos do k3s; rode a role k3s antes desta, senao
+          o Cilium entra em conflito com o kube-proxy nativo
+        success_msg: "k3s ja esta configurado sem kube-proxy/flannel embutidos"
 
-- name: Check whether cilium-cli is already installed
-  ansible.builtin.stat:
-    path: /usr/local/bin/cilium
-  register: cilium_cli_binary
+    - name: Check whether Helm is already installed
+      ansible.builtin.stat:
+        path: /usr/local/bin/helm
+      register: cilium_helm_binary
 
-- name: Download cilium-cli
-  ansible.builtin.get_url:
-    url: >-
-      https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-{{
-      ansible_architecture | regex_replace('aarch64', 'arm64') | regex_replace('x86_64', 'amd64') }}.tar.gz
-    dest: /tmp/cilium-cli.tar.gz
-    mode: "0644"
-  when: not cilium_cli_binary.stat.exists
+    - name: Select the Helm release asset for this architecture
+      ansible.builtin.set_fact:
+        cilium_helm_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
 
-- name: Extract cilium-cli
-  ansible.builtin.unarchive:
-    src: /tmp/cilium-cli.tar.gz
-    dest: /usr/local/bin
-    remote_src: true
-    mode: "0755"
-  when: not cilium_cli_binary.stat.exists
+    - name: Download the Helm tarball and verify it against the published checksum
+      ansible.builtin.get_url:
+        url: "https://get.helm.sh/helm-{{ helm_version }}-linux-{{ cilium_helm_arch }}.tar.gz"
+        dest: "/tmp/helm-{{ helm_version }}.tar.gz"
+        checksum: "sha256:https://get.helm.sh/helm-{{ helm_version }}-linux-{{ cilium_helm_arch }}.tar.gz.sha256sum"
+        mode: "0644"
+      when: not cilium_helm_binary.stat.exists
 
-- name: Add the Cilium Helm repository
-  ansible.builtin.command: helm repo add cilium https://helm.cilium.io/
-  register: cilium_helm_repo_add
-  changed_when: "'already exists' not in cilium_helm_repo_add.stderr"
-  failed_when: cilium_helm_repo_add.rc != 0 and 'already exists' not in cilium_helm_repo_add.stderr
+    - name: Extract the Helm binary
+      ansible.builtin.unarchive:
+        src: "/tmp/helm-{{ helm_version }}.tar.gz"
+        dest: /tmp
+        remote_src: true
+      when: not cilium_helm_binary.stat.exists
 
-- name: Update the Helm repository index
-  ansible.builtin.command: helm repo update cilium
-  changed_when: false
+    - name: Put the verified Helm binary in place
+      ansible.builtin.copy:
+        src: "/tmp/linux-{{ cilium_helm_arch }}/helm"
+        dest: /usr/local/bin/helm
+        remote_src: true
+        owner: root
+        group: root
+        mode: "0755"
+      when: not cilium_helm_binary.stat.exists
 
-- name: Render the declared Cilium values
-  ansible.builtin.template:
-    src: values.yaml.j2
-    dest: /tmp/cilium-values.yaml
-    mode: "0644"
+    - name: Check whether cilium-cli is already installed
+      ansible.builtin.stat:
+        path: /usr/local/bin/cilium
+      register: cilium_cli_binary
 
-- name: Render and apply the Cilium chart from the declared values
-  ansible.builtin.shell: >
-    set -o pipefail &&
-    helm template cilium cilium/cilium
-    --version {{ cilium_version }}
-    --namespace kube-system
-    --values /tmp/cilium-values.yaml
-    | k3s kubectl apply --server-side --force-conflicts -f -
-  args:
-    executable: /bin/bash
-  register: cilium_apply
-  changed_when: "'unchanged' not in cilium_apply.stdout"
+    - name: Download cilium-cli and verify it against the published checksum
+      ansible.builtin.get_url:
+        url: "https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-{{ cilium_helm_arch }}.tar.gz"
+        dest: /tmp/cilium-cli.tar.gz
+        checksum: "sha256:https://github.com/cilium/cilium-cli/releases/download/{{ cilium_cli_version }}/cilium-linux-{{ cilium_helm_arch }}.tar.gz.sha256sum"
+        mode: "0644"
+      when: not cilium_cli_binary.stat.exists
 
-- name: Restart Cilium to pick up a changed configuration # noqa: no-handler
-  ansible.builtin.command: "{{ item }}"
-  loop:
-    - k3s kubectl -n kube-system rollout restart daemonset/cilium
-    - k3s kubectl -n kube-system rollout restart deployment/cilium-operator
-  when: cilium_apply.changed
-  changed_when: true
+    - name: Extract cilium-cli
+      ansible.builtin.unarchive:
+        src: /tmp/cilium-cli.tar.gz
+        dest: /usr/local/bin
+        remote_src: true
+        mode: "0755"
+      when: not cilium_cli_binary.stat.exists
 
-- name: Wait for Cilium to report ready
-  ansible.builtin.command: cilium status --wait --kubeconfig /etc/rancher/k3s/k3s.yaml
-  changed_when: false
+    - name: Add the Cilium Helm repository
+      ansible.builtin.command: helm repo add cilium https://helm.cilium.io/
+      register: cilium_helm_repo_add
+      changed_when: "'already exists' not in cilium_helm_repo_add.stderr"
+      failed_when: cilium_helm_repo_add.rc != 0 and 'already exists' not in cilium_helm_repo_add.stderr
+      check_mode: false
 
-- name: Wait for the k3s node to report Ready
-  ansible.builtin.command: k3s kubectl get nodes -o jsonpath="{.items[0].status.conditions[?(@.type=='Ready')].status}"
-  register: cilium_k3s_node_ready
-  until: cilium_k3s_node_ready.stdout == "True"
-  retries: 30
-  delay: 10
-  changed_when: false
+    - name: Update the Helm repository index
+      ansible.builtin.command: helm repo update cilium
+      changed_when: false
+      check_mode: false
+
+    - name: Render the declared Cilium values
+      ansible.builtin.template:
+        src: values.yaml.j2
+        dest: /tmp/cilium-values.yaml
+        mode: "0644"
+
+    - name: Render and apply the Cilium chart from the declared values
+      ansible.builtin.shell: >
+        set -o pipefail &&
+        helm template cilium cilium/cilium
+        --version {{ cilium_version }}
+        --namespace kube-system
+        --values /tmp/cilium-values.yaml
+        | k3s kubectl apply --server-side --force-conflicts {{ '--dry-run=server' if ansible_check_mode else '' }} -f -
+      args:
+        executable: /bin/bash
+      register: cilium_apply
+      changed_when: "'unchanged' not in cilium_apply.stdout"
+      check_mode: false
+
+    - name: Restart Cilium to pick up a changed configuration # noqa: no-handler
+      ansible.builtin.command: "{{ item }}"
+      loop:
+        - k3s kubectl -n kube-system rollout restart daemonset/cilium
+        - k3s kubectl -n kube-system rollout restart deployment/cilium-operator
+      when: cilium_apply.changed
+      changed_when: true
+
+    - name: Wait for Cilium to report ready
+      ansible.builtin.command: cilium status --wait --kubeconfig /etc/rancher/k3s/k3s.yaml
+      changed_when: false
+      check_mode: false
+
+    - name: Wait for the k3s node to report Ready
+      ansible.builtin.command: k3s kubectl get nodes -o jsonpath="{.items[0].status.conditions[?(@.type=='Ready')].status}"
+      register: cilium_k3s_node_ready
+      until: cilium_k3s_node_ready.stdout == "True"
+      retries: 30
+      delay: 10
+      changed_when: false
+      check_mode: false

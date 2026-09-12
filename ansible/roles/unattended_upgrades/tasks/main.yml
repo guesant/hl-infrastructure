@@ -4,6 +4,7 @@
     name: unattended-upgrades
     state: present
     update_cache: true
+  register: unattended_upgrades_install
 
 - name: Configure unattended-upgrades to apply only security updates
   ansible.builtin.template:
@@ -26,3 +27,4 @@
     name: unattended-upgrades
     enabled: true
     state: started
+  when: not (ansible_check_mode and unattended_upgrades_install.changed)

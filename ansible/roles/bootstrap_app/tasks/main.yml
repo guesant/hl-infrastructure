@@ -1,11 +1,32 @@
 ---
-- name: Copy the ArgoCD root AppProjects and root Application
-  ansible.builtin.copy:
-    src: "{{ playbook_dir }}/../argocd/root/"
-    dest: /tmp/argocd-root/
-    mode: "0644"
+- name: Assert the repository URL the root Application will pull from is well formed
+  ansible.builtin.assert:
+    that:
+      - bootstrap_app_repo_url is match('^https://[^ ]+\.git$')
+    fail_msg: "bootstrap_app_repo_url must be an https git URL ending in .git, got {{ bootstrap_app_repo_url }}"
 
-- name: Apply the ArgoCD root AppProjects and root Application
-  ansible.builtin.command: k3s kubectl apply --server-side --force-conflicts -n argocd -f /tmp/argocd-root/
-  register: bootstrap_app_root_apply
-  changed_when: "'unchanged' not in bootstrap_app_root_apply.stdout"
+- name: Apply the ArgoCD root once the cluster exists
+  when: k3s_cluster_gate | default(true)
+  block:
+    - name: Copy the ArgoCD root AppProjects and root Application
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../argocd/root/"
+        dest: /tmp/argocd-root/
+        mode: "0644"
+
+    - name: Point the root Application and the infra project at the declared repository
+      ansible.builtin.replace:
+        path: "/tmp/argocd-root/{{ item }}"
+        regexp: "https://github\\.com/guesant/hl-infrastructure\\.git"
+        replace: "{{ bootstrap_app_repo_url }}"
+      loop:
+        - application.yaml
+        - project-infra.yaml
+
+    - name: Apply the ArgoCD root AppProjects and root Application
+      ansible.builtin.command: >-
+        k3s kubectl apply --server-side --force-conflicts
+        {{ '--dry-run=server' if ansible_check_mode else '' }} -n argocd -f /tmp/argocd-root/
+      register: bootstrap_app_root_apply
+      changed_when: "'unchanged' not in bootstrap_app_root_apply.stdout"
+      check_mode: false

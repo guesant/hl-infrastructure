@@ -1,0 +1,9 @@
+---
+- name: Explain what --check cannot predict yet
+  ansible.builtin.debug:
+    msg: "{{ check_mode_gate_message }}"
+  when: ansible_check_mode and not check_mode_gate_ok
+
+- name: Decide whether the dependent tasks run
+  ansible.builtin.set_fact:
+    "{{ check_mode_gate_fact }}": "{{ check_mode_gate_ok or not ansible_check_mode }}"

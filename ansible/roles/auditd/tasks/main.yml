@@ -4,6 +4,7 @@
     name: auditd
     state: present
     update_cache: true
+  register: auditd_install
 
 - name: Configure the hardening audit rules
   ansible.builtin.template:
@@ -13,9 +14,11 @@
     group: root
     mode: "0640"
   notify: Load audit rules
+  when: not (ansible_check_mode and auditd_install.changed)
 
 - name: Ensure auditd is enabled and running
   ansible.builtin.systemd:
     name: auditd
     enabled: true
     state: started
+  when: not (ansible_check_mode and auditd_install.changed)

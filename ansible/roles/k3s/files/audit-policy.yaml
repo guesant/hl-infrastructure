@@ -1,0 +1,34 @@
+apiVersion: audit.k8s.io/v1
+kind: Policy
+omitStages:
+  - RequestReceived
+rules:
+  - level: None
+    users: ["system:kube-proxy", "system:apiserver", "system:kube-controller-manager", "system:kube-scheduler"]
+    verbs: ["get", "list", "watch"]
+  - level: None
+    userGroups: ["system:nodes"]
+    verbs: ["get", "list", "watch"]
+  - level: None
+    nonResourceURLs: ["/healthz*", "/readyz*", "/livez*", "/metrics", "/version", "/openapi*"]
+  - level: None
+    resources:
+      - group: ""
+        resources: ["events"]
+  - level: Metadata
+    resources:
+      - group: ""
+        resources: ["secrets", "configmaps", "serviceaccounts/token"]
+      - group: bitnami.com
+        resources: ["sealedsecrets"]
+  - level: RequestResponse
+    resources:
+      - group: rbac.authorization.k8s.io
+      - group: ""
+        resources: ["pods/exec", "pods/attach", "pods/portforward", "serviceaccounts"]
+      - group: argoproj.io
+        resources: ["appprojects"]
+    verbs: ["create", "update", "patch", "delete"]
+  - level: Metadata
+    verbs: ["create", "update", "patch", "delete", "deletecollection"]
+  - level: None

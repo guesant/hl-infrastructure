@@ -17,7 +17,8 @@
 
 - name: Select the kernel cmdline file
   ansible.builtin.set_fact:
-    os_prerequisites_cmdline_file: "{{ (os_prerequisites_cmdline_candidates.results | selectattr('stat.exists') | map(attribute='item') | first) }}"
+    os_prerequisites_cmdline_file: >-
+      {{ os_prerequisites_cmdline_candidates.results | selectattr('stat.exists') | map(attribute='item') | first | default('') }}
 
 - name: Enable the memory cgroup controller for containerd
   ansible.builtin.replace:
@@ -25,39 +26,9 @@
     regexp: '^(?!.*cgroup_memory=1)(.*)$'
     replace: '\1 cgroup_memory=1 cgroup_enable=memory'
   register: os_prerequisites_cmdline_update
+  when: os_prerequisites_cmdline_file | length > 0
 
 - name: Reboot if the cgroup controller was just enabled # noqa: no-handler
   ansible.builtin.reboot:
     reboot_timeout: 300
-  when: os_prerequisites_cmdline_update.changed
-
-- name: Check whether firewalld is active
-  ansible.builtin.command: firewall-cmd --state
-  register: os_prerequisites_firewalld_state
-  changed_when: false
-  failed_when: false
-
-- name: Trust the pod and service CIDRs in firewalld
-  ansible.builtin.command: "firewall-cmd --permanent --zone=trusted --add-source={{ item }}"
-  loop:
-    - 10.42.0.0/16
-    - 10.43.0.0/16
-  register: os_prerequisites_firewalld_trust
-  changed_when: "'ALREADY_ENABLED' not in os_prerequisites_firewalld_trust.stderr"
-  when: os_prerequisites_firewalld_state.stdout == "running"
-
-- name: Allow external access to the k3s API port from the operator CIDRs
-  ansible.builtin.command: >-
-    firewall-cmd --permanent --zone=public --add-rich-rule='rule family="ipv4"
-    source address="{{ item }}" port protocol="tcp" port="6443" accept'
-  loop: "{{ k3s_api_allowed_cidrs }}"
-  register: os_prerequisites_firewalld_api_port
-  changed_when: "'ALREADY_ENABLED' not in os_prerequisites_firewalld_api_port.stderr"
-  when: os_prerequisites_firewalld_state.stdout == "running"
-
-- name: Reload firewalld if anything changed
-  ansible.builtin.command: firewall-cmd --reload
-  when: >
-    os_prerequisites_firewalld_state.stdout == "running" and
-    (os_prerequisites_firewalld_trust.changed or os_prerequisites_firewalld_api_port.changed)
-  changed_when: true
+  when: os_prerequisites_cmdline_update.changed | default(false)

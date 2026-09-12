@@ -1,31 +1,44 @@
 ---
-- name: Add the CloudNativePG Helm repository
-  ansible.builtin.command: helm repo add cnpg https://cloudnative-pg.github.io/charts
-  register: cnpg_barman_plugin_repo_add
-  changed_when: "'already exists' not in cnpg_barman_plugin_repo_add.stderr"
-  failed_when: cnpg_barman_plugin_repo_add.rc != 0 and 'already exists' not in cnpg_barman_plugin_repo_add.stderr
+- name: Assert the Barman Cloud plugin chart version is declared and well formed
+  ansible.builtin.assert:
+    that:
+      - cnpg_barman_plugin_chart_version is match('^[0-9]+\.[0-9]+\.[0-9]+$')
+    fail_msg: "cnpg_barman_plugin_chart_version must look like 0.8.0, got {{ cnpg_barman_plugin_chart_version | default('undefined') }}"
 
-- name: Update the CloudNativePG Helm repository index
-  ansible.builtin.command: helm repo update cnpg
-  changed_when: false
+- name: Install the Barman Cloud plugin once the cluster exists
+  when: k3s_cluster_gate | default(true)
+  block:
+    - name: Add the CloudNativePG Helm repository
+      ansible.builtin.command: helm repo add cnpg https://cloudnative-pg.github.io/charts
+      register: cnpg_barman_plugin_repo_add
+      changed_when: "'already exists' not in cnpg_barman_plugin_repo_add.stderr"
+      failed_when: cnpg_barman_plugin_repo_add.rc != 0 and 'already exists' not in cnpg_barman_plugin_repo_add.stderr
+      check_mode: false
 
-- name: Render and apply the CNPG Barman Cloud plugin chart
-  ansible.builtin.shell: >
-    set -o pipefail &&
-    helm template barman-cloud cnpg/plugin-barman-cloud
-    --version {{ cnpg_barman_plugin_chart_version }}
-    --namespace cnpg-system
-    --set fullnameOverride=barman-cloud
-    --include-crds
-    | k3s kubectl apply --server-side --force-conflicts -f -
-  args:
-    executable: /bin/bash
-  register: cnpg_barman_plugin_apply
-  changed_when: "'unchanged' not in cnpg_barman_plugin_apply.stdout"
-  until: cnpg_barman_plugin_apply.rc == 0
-  retries: 5
-  delay: 10
+    - name: Update the CloudNativePG Helm repository index
+      ansible.builtin.command: helm repo update cnpg
+      changed_when: false
+      check_mode: false
 
-- name: Wait for the CNPG Barman Cloud plugin to roll out
-  ansible.builtin.command: k3s kubectl -n cnpg-system rollout status deployment/barman-cloud --timeout=180s
-  changed_when: false
+    - name: Render and apply the CNPG Barman Cloud plugin chart
+      ansible.builtin.shell: >
+        set -o pipefail &&
+        helm template barman-cloud cnpg/plugin-barman-cloud
+        --version {{ cnpg_barman_plugin_chart_version }}
+        --namespace cnpg-system
+        --set fullnameOverride=barman-cloud
+        --include-crds
+        | k3s kubectl apply --server-side --force-conflicts {{ '--dry-run=server' if ansible_check_mode else '' }} -f -
+      args:
+        executable: /bin/bash
+      register: cnpg_barman_plugin_apply
+      changed_when: "'unchanged' not in cnpg_barman_plugin_apply.stdout"
+      until: cnpg_barman_plugin_apply.rc == 0
+      retries: 5
+      delay: 10
+      check_mode: false
+
+    - name: Wait for the CNPG Barman Cloud plugin to roll out
+      ansible.builtin.command: k3s kubectl -n cnpg-system rollout status deployment/barman-cloud --timeout=180s
+      changed_when: false
+      check_mode: false
