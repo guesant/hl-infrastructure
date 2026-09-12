@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-vars_file="$repo_root/ansible/group_vars/all.example.yml"
+vars_file="$repo_root/ansible/group_vars/all/versions.yml"
 out_dir="$repo_root/rendered"
 
 cert_manager_chart_version="$(grep -oE 'cert_manager_chart_version:\s*v[0-9.]+' "$vars_file" | grep -oE 'v[0-9.]+')"

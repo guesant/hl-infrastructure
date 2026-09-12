@@ -1,5 +1,5 @@
 # IMPORTANT: the real value always comes from --build-arg, derived from
-# ansible/group_vars/all.example.yml, so the CI render uses the same Helm
+# ansible/group_vars/all/versions.yml, so the CI render uses the same Helm
 # the Ansible roles install; this default only covers a manual build.
 ARG HELM_VERSION=4.2.4
 

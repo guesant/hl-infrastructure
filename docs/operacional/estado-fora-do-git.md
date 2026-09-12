@@ -4,7 +4,7 @@ Nem tudo que o cluster precisa está versionado, e o que não está precisa ser 
 
 | Item | Onde vive | Quem cria | Se perdido |
 | --- | --- | --- | --- |
-| `ansible/group_vars/all.yml` | máquina do operador, ignorado pelo git | o operador, a partir de `all.example.yml` | reescrever a partir do exemplo; o segredo do webhook do Argo e a chave SSH precisam ser regenerados |
+| `ansible/group_vars/all/secrets.yml` | máquina do operador, ignorado pelo git | o operador, a partir de `secrets.example.yml` | reescrever a partir do exemplo; o segredo do webhook do Argo e a chave SSH precisam ser regenerados. As versões não estão aqui: `versions.yml` é versionado |
 | `ansible/inventory.ini` | máquina do operador, ignorado pelo git | o operador, a partir de `inventory.example.ini` | reescrever; só contém o endereço do nó |
 | `ansible/kubeconfig` | máquina do operador, ignorado pelo git | a role `k3s` no bootstrap | rodar `just bootstrap` de novo, que o busca do nó |
 | `sealed-secrets-cert.pem` | máquina do operador, ignorado pelo git | `just fetch-cert` | rodar `just fetch-cert` de novo; é só a chave pública |

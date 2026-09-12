@@ -147,7 +147,7 @@ jobs:
 
       - name: Build tool images
         run: |
-          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
+          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
           docker build --target kube-linter -t hl-infra/kube-linter .tools/docker
 
       - name: Render charts
@@ -178,7 +178,7 @@ jobs:
 
       - name: Build tool images
         run: |
-          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
+          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
           docker build --target checkov -t hl-infra/checkov .tools/docker
 
       - name: Render charts
@@ -207,7 +207,7 @@ jobs:
 
       - name: Build tool images
         run: |
-          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
+          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
           docker build --target kubeconform -t hl-infra/kubeconform .tools/docker
 
       - name: Render charts
@@ -235,7 +235,7 @@ jobs:
 
       - name: Build tool images
         run: |
-          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
+          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
           docker build --target trivy -t hl-infra/trivy .tools/docker
 
       - name: Render charts

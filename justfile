@@ -3,7 +3,7 @@ set shell := ["bash", "-uc"]
 kubeconfig := "ansible/kubeconfig"
 actionlint_image := `grep -oE "rhysd/actionlint:[0-9.]+" .github/workflows/ci.yml | head -1`
 zizmor_version := `grep -oE 'version: "[0-9.]+"' .github/workflows/ci.yml | grep -oE "[0-9.]+" | head -1`
-helm_version := `grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE "[0-9.]+"`
+helm_version := `grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE "[0-9.]+"`
 crd_schema_location := 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
 
 bootstrap:
@@ -35,7 +35,7 @@ _build target:
     docker build --target {{target}} -t hl-infra/{{target}} {{justfile_directory()}}/.tools/docker
 
 _build-helm:
-    test -n "{{helm_version}}" || (echo "could not extract helm_version from ansible/group_vars/all.example.yml" >&2 && exit 1)
+    test -n "{{helm_version}}" || (echo "could not extract helm_version from ansible/group_vars/all/versions.yml" >&2 && exit 1)
     docker build --target helm --build-arg HELM_VERSION={{helm_version}} -t hl-infra/helm {{justfile_directory()}}/.tools/docker
 
 security-gitleaks: (_build "gitleaks")
