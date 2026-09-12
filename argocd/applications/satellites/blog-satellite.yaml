@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: blog-satellite
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
 spec:
   project: satellites
   source:
@@ -14,7 +16,20 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
+  revisionHistoryLimit: 3
   syncPolicy:
     automated:
       selfHeal: true
       prune: true
+      allowEmpty: false
+    syncOptions:
+      - ServerSideApply=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+      - PrunePropagationPolicy=foreground
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
