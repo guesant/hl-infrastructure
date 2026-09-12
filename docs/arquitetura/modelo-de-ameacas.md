@@ -50,6 +50,28 @@ Da Internet para os serviços, nada chega direto ao nó: o blog é exposto por u
 
 Dentro do cluster, o Sealed Secrets guarda a chave privada em `kube-system`. Qualquer workload que consiga ler `Secret` nesse namespace decifra tudo; o projeto `satellites` não pode criar `ClusterRole`, então um satélite não consegue se conceder essa leitura por GitOps. Um `Pod` privilegiado ou com montagem do host é barrado antes de chegar ao cluster pelos gates `kube-linter`, `checkov` e `trivy config` sobre os charts renderizados, mas esses gates só cobrem este repositório; a política de rede e de recursos de cada satélite é responsabilidade do satélite.
 
+## O caminho de um segredo
+
+A sequência abaixo é o único caminho pelo qual um valor sensível chega a um pod. Em nenhum ponto o texto claro passa pelo git nem pelo Argo.
+
+```mermaid
+sequenceDiagram
+    participant Op as Operador
+    participant SS as Sealed Secrets (cluster)
+    participant Git as Repositório do satélite
+    participant Argo as ArgoCD
+    participant Pod as Pod
+    Op->>SS: just fetch-cert (chave pública)
+    Op->>Op: just seal ns nome secret.yaml (cifra localmente)
+    Op->>Git: commit do SealedSecret
+    Argo->>Git: pull
+    Argo->>SS: apply do SealedSecret
+    SS->>SS: decifra com a chave privada
+    SS->>Pod: cria o Secret no namespace
+```
+
+O `argocd_github_webhook_secret` e a chave SSH seguem outro caminho, mais curto: ficam em `secrets.yml` na máquina do operador e o Ansible os entrega ao node por SSH, sem passar por nenhum repositório.
+
 ## O que fica fora do modelo
 
 Um atacante com acesso físico ao nó ou ao hipervisor. Uma vulnerabilidade zero-day no k3s, no Cilium ou no kernel antes do Renovate propor a versão corrigida e ela ser aplicada por um novo `bootstrap`. Um comprometimento da conta do GitHub do dono com MFA vencida. Esses cenários não têm mitigação declarada aqui e devem ser tratados como perda total do cluster, com reconstrução a partir do repositório e dos backups.
