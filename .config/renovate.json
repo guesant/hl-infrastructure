@@ -112,7 +112,7 @@
     {
       "customType": "regex",
       "managerFilePatterns": ["/^\\.tools/docker/Dockerfile$/"],
-      "matchStrings": ["(?<!\\S)cspell@(?<currentValue>[\\w.]+)"],
+      "matchStrings": ["\\scspell@(?<currentValue>[\\w.]+)"],
       "depNameTemplate": "cspell",
       "datasourceTemplate": "npm"
     },
