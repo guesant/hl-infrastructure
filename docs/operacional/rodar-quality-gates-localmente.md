@@ -28,6 +28,7 @@ Para os manifestos Kubernetes que os charts Helm efetivamente instalam:
 ```bash
 just infra-kube-linter
 just infra-checkov
+just infra-kubeconform
 just infra-trivy-config
 ```
 
@@ -35,4 +36,4 @@ Nenhum desses comandos precisa de nada instalado na sua máquina além de Docker
 
 ## Continue por aqui
 
-Para entender por que esses nove checks vivem todos dentro de um único workflow de CI, veja [A pipeline de CI](../arquitetura/ci.md) na arquitetura.
+Para entender por que esses onze checks vivem todos dentro de um único workflow de CI, veja [A pipeline de CI](../arquitetura/ci.md) na arquitetura.
