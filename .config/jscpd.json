@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/kucherenko/jscpd/master/packages/jscpd/schema.json",
-  "path": ["ansible/roles"],
+  "path": ["../ansible/roles"],
   "ignore": ["**/templates/**"],
   "format": ["yaml"],
   "minLines": 8,

@@ -7,14 +7,14 @@ on:
       - ansible/roles/**/templates/**
       - ansible/group_vars/all.example.yml
       - argocd/**
-      - hack/render-charts.sh
+      - .tools/render-charts.sh
   pull_request:
     paths:
       - ansible/roles/**/tasks/main.yml
       - ansible/roles/**/templates/**
       - ansible/group_vars/all.example.yml
       - argocd/**
-      - hack/render-charts.sh
+      - .tools/render-charts.sh
   workflow_dispatch:
 
 permissions:
@@ -38,12 +38,12 @@ jobs:
           docker build --target kube-linter -t hl-infra/kube-linter .docker
 
       - name: Render charts
-        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm hack/render-charts.sh
+        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
 
       - name: kube-linter
         run: >-
           docker run --rm -v "$PWD":/repo -w /repo hl-infra/kube-linter
-          lint --config .kube-linter.yaml --ignore-paths rendered/cilium.yaml
+          lint --config .config/kube-linter.yaml --ignore-paths rendered/cilium.yaml
           --format sarif --output kube-linter.sarif rendered argocd
 
       - name: Upload SARIF
@@ -69,7 +69,7 @@ jobs:
           docker build --target checkov -t hl-infra/checkov .docker
 
       - name: Render charts
-        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm hack/render-charts.sh
+        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
 
       - name: checkov
         run: >-
@@ -101,7 +101,7 @@ jobs:
           docker build --target trivy -t hl-infra/trivy .docker
 
       - name: Render charts
-        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm hack/render-charts.sh
+        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
 
       - name: trivy config
         run: >-

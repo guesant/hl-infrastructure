@@ -39,7 +39,8 @@ _build-helm:
 
 security-gitleaks: (_build "gitleaks")
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/gitleaks \
-        detect --source /repo --config /repo/.gitleaks.toml --redact -v
+        detect --source /repo --config /repo/.config/gitleaks.toml \
+        --gitleaks-ignore-path /repo/.config/gitleaksignore --redact -v
 
 security-osv-scanner: (_build "osv-scanner")
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/osv-scanner \
@@ -54,14 +55,14 @@ quality-ast-grep: (_build "ast-grep")
         ast-grep scan --config .ast-grep/sgconfig.yml .
 
 quality-jscpd: (_build "jscpd")
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/jscpd jscpd
+    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/jscpd jscpd --config .config/jscpd.json
 
 infra-render-charts: _build-helm
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo --entrypoint bash hl-infra/helm hack/render-charts.sh
+    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
 
 infra-kube-linter: infra-render-charts (_build "kube-linter")
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/kube-linter \
-        lint --config .kube-linter.yaml --ignore-paths rendered/cilium.yaml rendered argocd
+        lint --config .config/kube-linter.yaml --ignore-paths rendered/cilium.yaml rendered argocd
 
 infra-checkov: infra-render-charts (_build "checkov")
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/checkov \

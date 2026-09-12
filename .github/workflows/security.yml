@@ -27,7 +27,8 @@ jobs:
       - name: gitleaks
         run: >-
           docker run --rm -v "$PWD":/repo -w /repo hl-infra/gitleaks
-          detect --source /repo --config /repo/.gitleaks.toml --redact
+          detect --source /repo --config /repo/.config/gitleaks.toml
+          --gitleaks-ignore-path /repo/.config/gitleaksignore --redact
           --report-format sarif --report-path gitleaks.sarif -v
 
       - name: Upload SARIF

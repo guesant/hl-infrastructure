@@ -37,7 +37,7 @@ jobs:
         run: docker build --target jscpd -t hl-infra/jscpd .docker
 
       - name: jscpd
-        run: docker run --rm -v "$PWD":/repo -w /repo hl-infra/jscpd jscpd | tee jscpd-output.txt
+        run: docker run --rm -v "$PWD":/repo -w /repo hl-infra/jscpd jscpd --config .config/jscpd.json | tee jscpd-output.txt
 
       - name: Write duplication summary
         if: always()
