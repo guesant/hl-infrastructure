@@ -22,11 +22,11 @@ FROM alpine/helm:${HELM_VERSION} AS helm
 FROM alpine:3.22 AS shell
 RUN apk add --no-cache bash grep
 
-FROM python:3.12-slim AS yamllint
+FROM python:3.14-slim AS yamllint
 RUN pip install --no-cache-dir yamllint==1.38.0
 ENTRYPOINT ["yamllint"]
 
-FROM python:3.12-slim AS ansible-lint
+FROM python:3.14-slim AS ansible-lint
 RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/* \
     && pip install --no-cache-dir ansible-lint==26.8.0
 ENTRYPOINT ["ansible-lint"]
