@@ -1,0 +1,15 @@
+---
+- name: Copy the vendored Argo CD Image Updater install manifest
+  ansible.builtin.copy:
+    src: argocd-image-updater-install.yaml
+    dest: /tmp/argocd-image-updater-install.yaml
+    mode: "0644"
+
+- name: Apply Argo CD Image Updater
+  ansible.builtin.command: k3s kubectl apply --server-side --force-conflicts -n argocd -f /tmp/argocd-image-updater-install.yaml
+  register: image_updater_apply
+  changed_when: "'unchanged' not in image_updater_apply.stdout"
+
+- name: Wait for Argo CD Image Updater to roll out
+  ansible.builtin.command: k3s kubectl -n argocd rollout status deployment/argocd-image-updater-controller --timeout=180s
+  changed_when: false

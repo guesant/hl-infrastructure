@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: blog-satellite
+  namespace: argocd
+spec:
+  project: satellites
+  source:
+    repoURL: https://github.com/guesant/blog.git
+    targetRevision: main
+    path: deploy/gitops/applications
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true

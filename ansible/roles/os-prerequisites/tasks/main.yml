@@ -1,0 +1,62 @@
+---
+- name: Install base packages
+  ansible.builtin.apt:
+    name:
+      - curl
+      - ca-certificates
+    state: present
+    update_cache: true
+
+- name: Find the active kernel cmdline file
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop:
+    - /boot/firmware/cmdline.txt
+    - /boot/cmdline.txt
+  register: cmdline_candidates
+
+- name: Select the kernel cmdline file
+  ansible.builtin.set_fact:
+    k3s_cmdline_file: "{{ (cmdline_candidates.results | selectattr('stat.exists') | map(attribute='item') | first) }}"
+
+- name: Enable the memory cgroup controller for containerd
+  ansible.builtin.replace:
+    path: "{{ k3s_cmdline_file }}"
+    regexp: '^(?!.*cgroup_memory=1)(.*)$'
+    replace: '\1 cgroup_memory=1 cgroup_enable=memory'
+  register: cmdline_update
+
+- name: Reboot if the cgroup controller was just enabled
+  ansible.builtin.reboot:
+    reboot_timeout: 300
+  when: cmdline_update.changed
+
+- name: Check whether firewalld is active
+  ansible.builtin.command: firewall-cmd --state
+  register: firewalld_state
+  changed_when: false
+  failed_when: false
+
+- name: Trust the pod and service CIDRs in firewalld
+  ansible.builtin.command: "firewall-cmd --permanent --zone=trusted --add-source={{ item }}"
+  loop:
+    - 10.42.0.0/16
+    - 10.43.0.0/16
+  register: firewalld_trust
+  changed_when: "'ALREADY_ENABLED' not in firewalld_trust.stderr"
+  when: firewalld_state.stdout == "running"
+
+- name: Allow external access to the k3s API port from the operator CIDRs
+  ansible.builtin.command: >-
+    firewall-cmd --permanent --zone=public --add-rich-rule='rule family="ipv4"
+    source address="{{ item }}" port protocol="tcp" port="6443" accept'
+  loop: "{{ k3s_api_allowed_cidrs }}"
+  register: firewalld_api_port
+  changed_when: "'ALREADY_ENABLED' not in firewalld_api_port.stderr"
+  when: firewalld_state.stdout == "running"
+
+- name: Reload firewalld if anything changed
+  ansible.builtin.command: firewall-cmd --reload
+  when: >
+    firewalld_state.stdout == "running" and
+    (firewalld_trust.changed or firewalld_api_port.changed)

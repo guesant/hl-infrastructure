@@ -1,0 +1,44 @@
+---
+- name: Create the argocd namespace
+  ansible.builtin.command: k3s kubectl create namespace argocd
+  register: argocd_namespace
+  changed_when: argocd_namespace.rc == 0
+  failed_when: argocd_namespace.rc != 0 and 'AlreadyExists' not in argocd_namespace.stderr
+
+- name: Copy the vendored ArgoCD install manifest
+  ansible.builtin.copy:
+    src: argocd-install.yaml
+    dest: /tmp/argocd-install.yaml
+    mode: "0644"
+
+- name: Apply ArgoCD
+  ansible.builtin.command: k3s kubectl apply --server-side --force-conflicts -n argocd -f /tmp/argocd-install.yaml
+  register: argocd_apply
+  changed_when: "'unchanged' not in argocd_apply.stdout"
+
+- name: Wait for the ArgoCD server to roll out
+  ansible.builtin.command: k3s kubectl -n argocd rollout status deployment/argocd-server --timeout=180s
+  changed_when: false
+
+- name: Wait for the ArgoCD repo server to roll out
+  ansible.builtin.command: k3s kubectl -n argocd rollout status deployment/argocd-repo-server --timeout=180s
+  changed_when: false
+
+- name: Wait for the ArgoCD application controller to roll out
+  ansible.builtin.command: k3s kubectl -n argocd rollout status statefulset/argocd-application-controller --timeout=180s
+  changed_when: false
+
+- name: Check whether the GitHub webhook secret is already set
+  ansible.builtin.command: >-
+    k3s kubectl -n argocd get secret argocd-secret
+    -o jsonpath={.data.webhook\.github\.secret}
+  register: argocd_webhook_secret_check
+  changed_when: false
+  failed_when: false
+
+- name: Patch the GitHub webhook secret into argocd-secret
+  ansible.builtin.command: >-
+    k3s kubectl -n argocd patch secret argocd-secret --type merge
+    -p '{"stringData":{"webhook.github.secret":"{{ argocd_github_webhook_secret }}"}}'
+  when: argocd_webhook_secret_check.stdout | length == 0
+  changed_when: true

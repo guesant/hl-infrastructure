@@ -1,0 +1,23 @@
+---
+- name: Copy the vendored cert-manager install manifest
+  ansible.builtin.copy:
+    src: cert-manager-install.yaml
+    dest: /tmp/cert-manager-install.yaml
+    mode: "0644"
+
+- name: Apply cert-manager
+  ansible.builtin.command: k3s kubectl apply --server-side --force-conflicts -f /tmp/cert-manager-install.yaml
+  register: cert_manager_apply
+  changed_when: "'unchanged' not in cert_manager_apply.stdout"
+
+- name: Wait for the cert-manager controller to roll out
+  ansible.builtin.command: k3s kubectl -n cert-manager rollout status deployment/cert-manager --timeout=180s
+  changed_when: false
+
+- name: Wait for the cert-manager cainjector to roll out
+  ansible.builtin.command: k3s kubectl -n cert-manager rollout status deployment/cert-manager-cainjector --timeout=180s
+  changed_when: false
+
+- name: Wait for the cert-manager webhook to roll out
+  ansible.builtin.command: k3s kubectl -n cert-manager rollout status deployment/cert-manager-webhook --timeout=180s
+  changed_when: false

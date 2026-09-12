@@ -1,0 +1,15 @@
+---
+- name: Copy the vendored Sealed Secrets install manifest
+  ansible.builtin.copy:
+    src: sealed-secrets-install.yaml
+    dest: /tmp/sealed-secrets-install.yaml
+    mode: "0644"
+
+- name: Apply the Sealed Secrets controller
+  ansible.builtin.command: k3s kubectl apply --server-side --force-conflicts -f /tmp/sealed-secrets-install.yaml
+  register: sealed_secrets_apply
+  changed_when: "'unchanged' not in sealed_secrets_apply.stdout"
+
+- name: Wait for the Sealed Secrets controller to roll out
+  ansible.builtin.command: k3s kubectl -n kube-system rollout status deployment/sealed-secrets-controller --timeout=180s
+  changed_when: false

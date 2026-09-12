@@ -1,0 +1,20 @@
+---
+- name: Bootstrap the k3s cluster
+  hosts: pi
+  become: true
+  roles:
+    - os-prerequisites
+    - unattended_upgrades
+    - sysctl_hardening
+    - auditd
+    - ssh_hardening
+    - fail2ban
+    - k3s
+    - cilium
+    - cnpg
+    - cert-manager
+    - cnpg-barman-plugin
+    - argocd
+    - sealed-secrets
+    - argocd-image-updater
+    - bootstrap-app

@@ -1,0 +1,20 @@
+---
+- name: Copy the vendored CNPG Barman Cloud plugin install manifest
+  ansible.builtin.copy:
+    src: cnpg-barman-plugin-install.yaml
+    dest: /tmp/cnpg-barman-plugin-install.yaml
+    mode: "0644"
+
+- name: Apply the CNPG Barman Cloud plugin
+  ansible.builtin.command: >-
+    k3s kubectl apply --server-side --force-conflicts
+    -f /tmp/cnpg-barman-plugin-install.yaml
+  register: cnpg_barman_plugin_apply
+  changed_when: "'unchanged' not in cnpg_barman_plugin_apply.stdout"
+  until: cnpg_barman_plugin_apply.rc == 0
+  retries: 5
+  delay: 10
+
+- name: Wait for the CNPG Barman Cloud plugin to roll out
+  ansible.builtin.command: k3s kubectl -n cnpg-system rollout status deployment/barman-cloud --timeout=180s
+  changed_when: false

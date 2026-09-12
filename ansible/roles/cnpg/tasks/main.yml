@@ -1,0 +1,15 @@
+---
+- name: Copy the vendored CloudNativePG install manifest
+  ansible.builtin.copy:
+    src: cnpg-install.yaml
+    dest: /tmp/cnpg-install.yaml
+    mode: "0644"
+
+- name: Apply the CloudNativePG operator
+  ansible.builtin.command: k3s kubectl apply --server-side --force-conflicts -f /tmp/cnpg-install.yaml
+  register: cnpg_apply
+  changed_when: "'unchanged' not in cnpg_apply.stdout"
+
+- name: Wait for the CloudNativePG operator to roll out
+  ansible.builtin.command: k3s kubectl -n cnpg-system rollout status deployment/cnpg-controller-manager --timeout=180s
+  changed_when: false

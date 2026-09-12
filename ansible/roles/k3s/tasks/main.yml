@@ -1,0 +1,58 @@
+---
+- name: Create the k3s config directory
+  ansible.builtin.file:
+    path: /etc/rancher/k3s
+    state: directory
+    mode: "0755"
+
+- name: Check whether k3s is already installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/k3s
+  register: k3s_binary
+
+- name: Write the declarative k3s config
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: /etc/rancher/k3s/config.yaml
+    mode: "0644"
+  register: k3s_config
+
+- name: Reboot if the k3s config changed on an already-installed node
+  ansible.builtin.reboot:
+    reboot_timeout: 300
+  when: k3s_config.changed and k3s_binary.stat.exists
+
+- name: Download the k3s install script
+  ansible.builtin.get_url:
+    url: https://get.k3s.io
+    dest: /tmp/k3s-install.sh
+    mode: "0755"
+  when: not k3s_binary.stat.exists
+
+- name: Run the k3s install script
+  ansible.builtin.command: /tmp/k3s-install.sh
+  environment:
+    INSTALL_K3S_VERSION: "{{ k3s_version }}"
+  when: not k3s_binary.stat.exists
+
+- name: Wait for the k3s API server to answer
+  ansible.builtin.command: k3s kubectl get --raw /healthz
+  register: k3s_api_healthz
+  until: k3s_api_healthz.rc == 0
+  retries: 30
+  delay: 10
+  changed_when: false
+
+- name: Fetch the kubeconfig back to the control machine
+  ansible.builtin.fetch:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: "{{ playbook_dir }}/kubeconfig"
+    flat: true
+
+- name: Point the fetched kubeconfig at the real host
+  ansible.builtin.replace:
+    path: "{{ playbook_dir }}/kubeconfig"
+    regexp: "https://127\\.0\\.0\\.1:6443"
+    replace: "https://{{ ansible_host }}:6443"
+  delegate_to: localhost
+  become: false

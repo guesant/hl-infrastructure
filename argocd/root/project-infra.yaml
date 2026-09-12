@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: infra
+  namespace: argocd
+spec:
+  description: Cluster infrastructure managed directly from this repository
+  sourceRepos:
+    - https://github.com/guesant/hl-infrastructure.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: "*"
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+    - group: argoproj.io
+      kind: AppProject
+    - group: argoproj.io
+      kind: Application
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"

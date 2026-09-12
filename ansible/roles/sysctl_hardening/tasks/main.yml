@@ -1,0 +1,27 @@
+---
+- name: Determine which hardening sysctls exist on this kernel
+  ansible.builtin.stat:
+    path: "/proc/sys/{{ item.name | regex_replace('\\.', '/') }}"
+  loop:
+    - { name: kernel.yama.ptrace_scope, value: "1" }
+    - { name: fs.suid_dumpable, value: "0" }
+    - { name: fs.protected_hardlinks, value: "1" }
+    - { name: fs.protected_symlinks, value: "1" }
+    - { name: net.ipv4.conf.all.log_martians, value: "1" }
+    - { name: net.ipv4.conf.all.accept_redirects, value: "0" }
+    - { name: net.ipv4.conf.all.send_redirects, value: "0" }
+  register: sysctl_hardening_candidates
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Apply kernel and network hardening sysctls supported by this kernel
+  ansible.posix.sysctl:
+    name: "{{ item.item.name }}"
+    value: "{{ item.item.value }}"
+    sysctl_set: true
+    state: present
+    reload: true
+  loop: "{{ sysctl_hardening_candidates.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+  when: item.stat.exists
