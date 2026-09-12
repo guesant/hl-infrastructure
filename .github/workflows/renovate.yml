@@ -3,6 +3,11 @@ name: renovate
 on:
   schedule:
     - cron: "0 6 * * *"
+  push:
+    branches: [main]
+    paths:
+      - .config/renovate.json
+      - .github/workflows/renovate.yml
   workflow_dispatch:
 
 permissions:
