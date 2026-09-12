@@ -1,0 +1,70 @@
+---
+- name: Check access to the node and the assumptions the roles make
+  hosts: pi
+  gather_facts: true
+
+  tasks:
+    - name: Answer the Ansible ping
+      ansible.builtin.ping:
+
+    - name: Assert the shell Ansible uses is POSIX
+      ansible.builtin.assert:
+        that:
+          - "'fish' not in (ansible_facts['user_shell'] | default(''))"
+        fail_msg: >-
+          the login shell of {{ ansible_user }} is fish; Ansible builds commands
+          that fish does not understand, so switch the user to bash or set
+          ansible_shell_executable
+
+    - name: Assert the node runs a Debian-family distribution
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['os_family'] == 'Debian'
+        fail_msg: >-
+          the node reports {{ ansible_facts['distribution'] }}; every role uses apt
+          and Debian paths, so another family would fail halfway through
+
+    - name: Assert the architecture is one k3s publishes binaries for
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['architecture'] in ['aarch64', 'x86_64']
+        fail_msg: >-
+          architecture {{ ansible_facts['architecture'] }} is not aarch64 or x86_64;
+          the k3s, helm and cilium-cli downloads only cover those two
+
+    - name: Assert privilege escalation works
+      ansible.builtin.command: id -u
+      become: true
+      register: preflight_root_id
+      changed_when: false
+      failed_when: preflight_root_id.stdout | default('') != "0"
+      ignore_errors: true
+
+    - name: Explain how to pass the sudo password when escalation failed
+      ansible.builtin.assert:
+        that:
+          - not preflight_root_id.failed
+        fail_msg: >-
+          sudo on the node asked for a password that Ansible did not have; run the
+          recipes with --ask-become-pass (just bootstrap-check -K, just bootstrap -K)
+          or give {{ ansible_user }} passwordless sudo on the node
+
+    - name: Assert the memory cgroup controller is available to the kernel
+      ansible.builtin.stat:
+        path: /sys/fs/cgroup/cgroup.controllers
+      register: preflight_cgroup_controllers
+
+    - name: Read the available cgroup controllers
+      ansible.builtin.slurp:
+        path: /sys/fs/cgroup/cgroup.controllers
+      register: preflight_cgroup_controllers_content
+      when: preflight_cgroup_controllers.stat.exists
+
+    - name: Report what was found
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }}: {{ ansible_facts['distribution'] }}
+          {{ ansible_facts['distribution_version'] }}, kernel {{ ansible_facts['kernel'] }},
+          {{ ansible_facts['architecture'] }}, python {{ ansible_facts['python_version'] }},
+          {{ ansible_facts['memtotal_mb'] }} MB RAM,
+          cgroup controllers: {{ (preflight_cgroup_controllers_content.content | default('') | b64decode | trim) or 'cgroup v2 file not found' }}

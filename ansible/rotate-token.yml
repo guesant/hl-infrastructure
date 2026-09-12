@@ -1,0 +1,38 @@
+---
+- name: Rotate the k3s node join token
+  hosts: pi
+  become: true
+
+  tasks:
+    - name: Read the current token
+      ansible.builtin.slurp:
+        path: /var/lib/rancher/k3s/server/token
+      register: rotate_token_current
+      no_log: true
+
+    - name: Generate the new token
+      ansible.builtin.command: openssl rand -hex 32
+      register: rotate_token_new
+      changed_when: false
+      no_log: true
+
+    - name: Rotate the token
+      ansible.builtin.command: >-
+        k3s token rotate
+        --token {{ rotate_token_current.content | b64decode | trim }}
+        --new-token {{ rotate_token_new.stdout }}
+      changed_when: true
+      no_log: true
+
+    - name: Restart k3s so the new token takes effect
+      ansible.builtin.systemd:
+        name: k3s
+        state: restarted
+
+    - name: Wait for the k3s API server to answer
+      ansible.builtin.command: k3s kubectl get --raw /healthz
+      register: rotate_token_healthz
+      until: rotate_token_healthz.rc == 0
+      retries: 30
+      delay: 10
+      changed_when: false
