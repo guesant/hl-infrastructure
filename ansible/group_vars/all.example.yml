@@ -7,12 +7,7 @@ argocd_image_updater_version: v1.3.0
 
 argocd_github_webhook_secret: changeme-generate-a-real-secret
 
-# IMPORTANT: troque pelos CIDRs/IPs reais de onde o operador acessa o kubectl
-# externamente; deixar os valores de exemplo abaixo quebra o acesso remoto ao
-# cluster porque a porta 6443 só aceita conexões dessas origens.
 k3s_api_allowed_cidrs:
   - 203.0.113.0/24
 
-# IMPORTANT: chave publica autorizada para root via SSH (PermitRootLogin
-# prohibit-password); troque pela chave real do operador.
 ssh_root_authorized_key: ssh-ed25519 AAAA... changeme@example.invalid

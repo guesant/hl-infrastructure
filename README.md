@@ -1,5 +1,9 @@
 # hl-infrastructure
 
+[![renovate](https://github.com/guesant/hl-infrastructure/actions/workflows/renovate.yml/badge.svg)](https://github.com/guesant/hl-infrastructure/actions/workflows/renovate.yml)
+[![lint-actions](https://github.com/guesant/hl-infrastructure/actions/workflows/lint-actions.yml/badge.svg)](https://github.com/guesant/hl-infrastructure/actions/workflows/lint-actions.yml)
+[![renovate dependency dashboard](https://img.shields.io/badge/renovate-dependency%20dashboard-1a1f6c.svg)](https://github.com/guesant/hl-infrastructure/issues/3)
+
 Bootstrap único via Ansible e estado contínuo via GitOps para o cluster k3s do homelab. Este repositório nasceu em 2026-09-12, migrado do blog (`guesant/blog`, pasta `deploy/ansible/`); o histórico de decisões anterior a essa data continua em `docs/pendencias-e-decisoes.md`, no repositório do blog.
 
 ## Ansible
