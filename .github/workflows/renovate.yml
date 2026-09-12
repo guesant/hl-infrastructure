@@ -1,0 +1,27 @@
+name: renovate
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  renovate:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Self-hosted Renovate
+        uses: renovatebot/github-action@c314dda4a9a93b08239ec978f2043b9a433b9ac4
+        with:
+          configurationFile: renovate.json
+          token: "${{ secrets.RENOVATE_TOKEN }}"
+        env:
+          RENOVATE_PLATFORM: github
+          RENOVATE_REPOSITORIES: guesant/hl-infrastructure
+          RENOVATE_ALLOWED_COMMANDS: '["^curl -fsSL .* -o "]'
+        timeout-minutes: 30

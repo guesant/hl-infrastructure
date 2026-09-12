@@ -52,8 +52,70 @@
   ],
   "packageRules": [
     {
-      "matchFileNames": ["ansible/roles/**/files/*.yaml", "ansible/roles/**/files/*.yml"],
-      "groupName": "vendored install manifest images (tag-only bump, verify before merging past a patch release)"
+      "matchFileNames": ["ansible/roles/cert-manager/files/cert-manager-install.yaml"],
+      "groupName": "cert-manager",
+      "postUpgradeTasks": {
+        "commands": [
+          "curl -fsSL https://github.com/cert-manager/cert-manager/releases/download/{{{newVersion}}}/cert-manager.yaml -o ansible/roles/cert-manager/files/cert-manager-install.yaml"
+        ],
+        "fileFilters": ["ansible/roles/cert-manager/files/cert-manager-install.yaml"],
+        "executionMode": "update"
+      }
+    },
+    {
+      "matchFileNames": ["ansible/roles/sealed-secrets/files/sealed-secrets-install.yaml"],
+      "groupName": "sealed-secrets",
+      "postUpgradeTasks": {
+        "commands": [
+          "curl -fsSL https://github.com/bitnami-labs/sealed-secrets/releases/download/v{{{newVersion}}}/controller.yaml -o ansible/roles/sealed-secrets/files/sealed-secrets-install.yaml"
+        ],
+        "fileFilters": ["ansible/roles/sealed-secrets/files/sealed-secrets-install.yaml"],
+        "executionMode": "update"
+      }
+    },
+    {
+      "matchFileNames": ["ansible/roles/argocd/files/argocd-install.yaml"],
+      "groupName": "argocd",
+      "postUpgradeTasks": {
+        "commands": [
+          "curl -fsSL https://raw.githubusercontent.com/argoproj/argo-cd/{{{newVersion}}}/manifests/install.yaml -o ansible/roles/argocd/files/argocd-install.yaml"
+        ],
+        "fileFilters": ["ansible/roles/argocd/files/argocd-install.yaml"],
+        "executionMode": "update"
+      }
+    },
+    {
+      "matchFileNames": ["ansible/roles/argocd-image-updater/files/argocd-image-updater-install.yaml"],
+      "groupName": "argocd-image-updater",
+      "postUpgradeTasks": {
+        "commands": [
+          "curl -fsSL https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/{{{newVersion}}}/manifests/install.yaml -o ansible/roles/argocd-image-updater/files/argocd-image-updater-install.yaml"
+        ],
+        "fileFilters": ["ansible/roles/argocd-image-updater/files/argocd-image-updater-install.yaml"],
+        "executionMode": "update"
+      }
+    },
+    {
+      "matchFileNames": ["ansible/roles/cnpg-barman-plugin/files/cnpg-barman-plugin-install.yaml"],
+      "groupName": "cnpg-barman-plugin",
+      "postUpgradeTasks": {
+        "commands": [
+          "curl -fsSL https://github.com/cloudnative-pg/plugin-barman-cloud/releases/download/{{{newVersion}}}/manifest.yaml -o ansible/roles/cnpg-barman-plugin/files/cnpg-barman-plugin-install.yaml"
+        ],
+        "fileFilters": ["ansible/roles/cnpg-barman-plugin/files/cnpg-barman-plugin-install.yaml"],
+        "executionMode": "update"
+      }
+    },
+    {
+      "matchFileNames": ["ansible/roles/cnpg/files/cnpg-install.yaml"],
+      "groupName": "cnpg (baixa confianca na URL, confirmar antes de confiar no postUpgradeTask)",
+      "postUpgradeTasks": {
+        "commands": [
+          "curl -fsSL https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/main/releases/cnpg-{{{newVersion}}}.yaml -o ansible/roles/cnpg/files/cnpg-install.yaml"
+        ],
+        "fileFilters": ["ansible/roles/cnpg/files/cnpg-install.yaml"],
+        "executionMode": "update"
+      }
     }
   ]
 }
