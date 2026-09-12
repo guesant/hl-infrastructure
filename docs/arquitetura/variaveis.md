@@ -1,5 +1,7 @@
 # Variáveis
 
+<!-- source-of-trust paths="ansible/group_vars/all/versions.yml ansible/group_vars/all/secrets.example.yml" -->
+
 As variáveis do Ansible vivem em dois arquivos dentro de [ansible/group_vars/all/](https://github.com/guesant/hl-infrastructure/tree/main/ansible/group_vars/all), que o Ansible mescla como se fossem um só. A separação segue quem escreve cada um.
 
 `versions.yml` é versionado e é o arquivo real, sem cópia: toda versão de binário e de chart fica nele, o Renovate abre PR contra ele, e o Ansible, o `render-charts.sh` e a CI leem dele. Uma versão mergeada em `main` é a versão que o próximo `bootstrap` instala, sem passo manual entre os dois.

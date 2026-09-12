@@ -1,5 +1,7 @@
 # GitOps: root e satélites
 
+<!-- source-of-trust paths="argocd" -->
+
 O ArgoCD sincroniza este cluster a partir de um padrão de app-of-apps recursivo, com dois projetos (`AppProject`) que têm permissões bem diferentes.
 
 O projeto `infra` cobre a infraestrutura definida diretamente neste repositório e tem acesso amplo: pode criar `Namespace`, `AppProject` e `Application` em qualquer escopo de cluster. É nele que vive a aplicação `root`, aplicada uma única vez pela role `bootstrap_app`, apontando para a pasta [argocd/applications](https://github.com/guesant/hl-infrastructure/tree/main/argocd/applications) com sincronização recursiva de diretório ligada. Qualquer arquivo `Application` novo colocado ali é detectado e sincronizado pelo Argo sozinho, sem nenhum passo manual.
@@ -28,6 +30,10 @@ Todo `Application` deste repositório, o root incluído, carrega o mesmo bloco d
 `ServerSideApply=true` faz o Argo aplicar por server-side apply, o mesmo modo que as roles Ansible usam nos charts, o que evita o limite de tamanho da annotation `last-applied-configuration` em CRDs grandes e deixa o Argo dono só dos campos que ele declara. `FailOnSharedResource=true` falha a sincronização se dois `Application` tentarem gerenciar o mesmo recurso, em vez de deixar os dois brigarem indefinidamente por ele. `PruneLast=true` adia a remoção de recursos que saíram do git para depois que tudo o mais da sincronização está saudável, então uma migração que cria o novo antes de apagar o velho não fica sem o velho no meio do caminho. `PrunePropagationPolicy=foreground` faz a remoção esperar os dependentes sumirem (um `Deployment` só é dado como removido depois dos seus pods), o que torna o resultado de uma sincronização observável de verdade.
 
 O bloco `retry` com backoff (5 s, dobrando, até 3 min, cinco tentativas) cobre o caso comum de uma sincronização falhar só porque um webhook de admissão ou uma CRD ainda estava subindo; sem ele, a `Application` fica em erro até alguém clicar em sync. `allowEmpty: false` impede que um diretório vazio por engano (um `git mv` mal feito, uma branch errada) apague tudo o que a `Application` gerencia. `revisionHistoryLimit: 3` mantém só as três últimas revisões para rollback, o suficiente para desfazer uma sincronização ruim sem acumular histórico no estado do Argo.
+
+## Gate de deriva zero
+
+Nenhum `Application` novo entra com `automated` ligado de primeira. A regra é que ele nasce com sincronização manual, o operador roda `argocd app diff` (ou `kubectl diff` sobre a renderização) até o resultado ser vazio, e só então o `syncPolicy.automated` entra no manifesto. A razão é o `prune`: um `Application` automático com `prune: true` apaga do cluster tudo o que não está no git, e um diff não vazio na primeira sincronização significa que algo vivo no cluster não está no git, ou seja, seria apagado. A ordem de liberação segue o risco: primeiro os `Application` que só criam recursos novos, depois os que adotam recursos existentes, por último os que gerenciam dados (um `Cluster` do CNPG só sai do manual depois de `Prune=false` no próprio recurso, como o guia de satélite descreve).
 
 ## Por que dois projetos, e não um só
 

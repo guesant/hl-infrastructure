@@ -1,11 +1,14 @@
 actionlint
 ansible
+argocd
 auditd
 bumpa
 bumpar
-commitado
+checkov
 commitada
+commitado
 commitar
+commite
 firewalld
 gplv
 hipervisor
@@ -20,9 +23,9 @@ taggeada
 taggeado
 taggeando
 taggear
-vendorizado
 vendorizada
-vendorizados
 vendorizadas
+vendorizado
+vendorizados
 vendorizar
 zizmor

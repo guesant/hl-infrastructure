@@ -23,9 +23,50 @@ flowchart TB
     end
 ```
 
+## Contexto e contêineres
+
+O diagrama de contexto mostra quem interage com o sistema e por onde; o de contêineres abre o node e mostra o que roda dentro dele.
+
+```mermaid
+flowchart LR
+    operador["Operador\n(máquina com Ansible e kubectl)"]
+    visitante["Visitante\n(navegador)"]
+    github["GitHub\n(repositórios, Actions, GHCR)"]
+    cloudflare["Cloudflare\n(túnel e DNS)"]
+    node["Node k3s\n(Raspberry Pi)"]
+    operador -->|SSH e API 6443| node
+    operador -->|git push| github
+    node -->|pull de manifestos e imagens| github
+    node -->|túnel de saída| cloudflare
+    visitante -->|HTTPS| cloudflare
+```
+
+```mermaid
+flowchart TB
+    subgraph node["Node k3s"]
+        sshd["sshd + fail2ban"]
+        firewall["firewalld"]
+        k3s["k3s: API server, kubelet, containerd"]
+        cilium["Cilium (CNI, kube-proxy, Hubble)"]
+        argocd["ArgoCD + Image Updater"]
+        certmanager["cert-manager"]
+        cnpg["CloudNativePG + Barman Cloud"]
+        sealed["Sealed Secrets"]
+        blog["Satélite blog: app, Postgres, cloudflared"]
+    end
+    firewall --> sshd
+    firewall --> k3s
+    k3s --> cilium
+    argocd --> blog
+    cnpg --> blog
+    sealed --> blog
+    certmanager --> cnpg
+```
+
 - [Ansible: as roles do bootstrap](ansible.md) descreve a ordem e o papel de cada role.
 - [Helm e os charts](helm-e-charts.md) explica por que nenhum componente fica vendorizado como manifesto estático.
 - [GitOps: root e satélites](gitops-root-e-satelites.md) descreve o padrão de app-of-apps que o ArgoCD usa.
 - [A pipeline de CI](ci.md) descreve os jobs do workflow `ci` e por que eles vivem todos no mesmo arquivo.
 - [Modelo de ameaças](modelo-de-ameacas.md) lista o que se protege, por onde um atacante entraria e o que barra cada caminho.
+- [Mapa de controles](mapa-de-controles.md) inventaria cada garantia com a evidência que a prova.
 - [Variáveis](variaveis.md) lista toda variável de `ansible/group_vars/all/`, separando versões de segredos.

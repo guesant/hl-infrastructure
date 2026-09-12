@@ -1,5 +1,7 @@
 # Ansible: as roles do bootstrap
 
+<!-- source-of-trust paths="ansible/site.yml ansible/roles" -->
+
 `ansible/site.yml` aplica dezessete roles em sequência, numa única play contra o host `pi`. A ordem importa: cada role assume que a anterior já deixou o sistema num estado específico, e várias delas verificam essa suposição explicitamente antes de continuar (a role `cilium`, por exemplo, aborta se o arquivo de configuração declarativo do k3s ainda não desabilitou o kube-proxy embutido).
 
 ## O que toda role faz antes de agir

@@ -46,15 +46,19 @@ nav:
       - "GitOps: root e satélites": arquitetura/gitops-root-e-satelites.md
       - A pipeline de CI: arquitetura/ci.md
       - Modelo de ameaças: arquitetura/modelo-de-ameacas.md
+      - Mapa de controles: arquitetura/mapa-de-controles.md
       - Variáveis: arquitetura/variaveis.md
   - Operacional:
       - operacional/index.md
+      - Metodologia de mudança: operacional/metodologia-de-mudanca.md
+      - Checklist operacional: operacional/checklist.md
       - Preflight e dry-run do bootstrap: operacional/preflight-e-dry-run.md
       - Rotacionar credenciais do k3s: operacional/rotacionar-credenciais.md
       - Renderizar os charts localmente: operacional/renderizar-charts-localmente.md
       - Rodar os quality gates localmente: operacional/rodar-quality-gates-localmente.md
       - Adicionar um satélite novo: operacional/adicionar-um-satelite.md
       - Estado fora do git: operacional/estado-fora-do-git.md
+      - Restaurar o node do zero: operacional/restaurar-o-node.md
   - Contribuindo:
       - contribuindo/index.md
       - Convenções de escrita: contribuindo/convencoes-de-escrita.md
