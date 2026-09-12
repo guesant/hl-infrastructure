@@ -94,6 +94,30 @@ jobs:
       - name: No em dash, en dash or Unicode arrow
         run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/shell .tools/check-prose.sh
 
+  docs-consistency:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: shell
+          smoke: bash --version
+
+      - name: Pages reviewed after their sources changed
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo
+          -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0=/repo
+          --entrypoint bash hl-infra/shell .tools/check-doc-drift.sh
+
+      - name: Every role is documented
+        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/shell .tools/check-roles-documented.sh
+
   links:
     runs-on: ubuntu-24.04
     steps:
@@ -414,6 +438,7 @@ jobs:
       - yamllint
       - ansible-lint
       - prose
+      - docs-consistency
       - links
       - spelling
       - gitleaks

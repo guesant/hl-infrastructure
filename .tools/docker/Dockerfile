@@ -20,7 +20,7 @@ FROM lycheeverse/lychee:0.24.2 AS lychee
 FROM alpine/helm:${HELM_VERSION} AS helm
 
 FROM alpine:3.22 AS shell
-RUN apk add --no-cache bash grep
+RUN apk add --no-cache bash grep git
 
 FROM python:3.12-slim AS yamllint
 RUN pip install --no-cache-dir yamllint==1.38.0

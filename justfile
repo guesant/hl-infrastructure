@@ -84,6 +84,16 @@ lint-ansible: (_build "ansible-lint")
 lint-prose: (_build "shell")
     {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-prose.sh
 
+[doc("Fail when a page's sources changed after the page was last reviewed, or a role has no doc")]
+lint-docs: (_build "shell")
+    {{run}} -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0=/repo \
+        --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-doc-drift.sh
+    {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-roles-documented.sh
+
+[doc("Print a live resource as a clean manifest ready to commit: just freeze deployment blog -n blog")]
+freeze *args:
+    KUBECONFIG={{kubeconfig}} .tools/freeze-manifest.sh {{args}}
+
 [doc("Check every link in the Markdown files")]
 lint-links: (_build "lychee")
     {{run}} hl-infra/lychee:{{tools_hash}} --config .config/lychee.toml README.md SECURITY.md SUPPORT.md CONTRIBUTING.md 'docs/**/*.md'
@@ -154,4 +164,4 @@ docs-serve:
         sh -c "pip install --quiet -r docs/requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000 --config-file .config/mkdocs.yml"
 
 [doc("Every check the CI runs, in order")]
-check: lint-actions lint-yaml lint-ansible lint-prose lint-links lint-spelling security-gitleaks security-osv-scanner security-trivy-fs quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config docs-build
+check: lint-actions lint-yaml lint-ansible lint-prose lint-docs lint-links lint-spelling security-gitleaks security-osv-scanner security-trivy-fs quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config docs-build
