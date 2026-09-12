@@ -2,9 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "timezone": "America/Sao_Paulo",
-  "kubernetes": {
-    "fileMatch": ["ansible/roles/.+/files/.+\\.ya?ml$"]
-  },
   "customManagers": [
     {
       "customType": "regex",
@@ -74,19 +71,14 @@
       "depNameTemplate": "sealed-secrets",
       "datasourceTemplate": "helm",
       "registryUrlTemplate": "https://bitnami.github.io/sealed-secrets"
-    }
-  ],
-  "packageRules": [
+    },
     {
-      "matchFileNames": ["ansible/roles/cnpg-barman-plugin/files/cnpg-barman-plugin-install.yaml"],
-      "groupName": "cnpg-barman-plugin",
-      "postUpgradeTasks": {
-        "commands": [
-          "curl -fsSL https://github.com/cloudnative-pg/plugin-barman-cloud/releases/download/{{{newVersion}}}/manifest.yaml -o ansible/roles/cnpg-barman-plugin/files/cnpg-barman-plugin-install.yaml"
-        ],
-        "fileFilters": ["ansible/roles/cnpg-barman-plugin/files/cnpg-barman-plugin-install.yaml"],
-        "executionMode": "update"
-      }
+      "customType": "regex",
+      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "matchStrings": ["cnpg_barman_plugin_chart_version:\\s*(?<currentValue>[\\w.-]+)"],
+      "depNameTemplate": "plugin-barman-cloud",
+      "datasourceTemplate": "helm",
+      "registryUrlTemplate": "https://cloudnative-pg.github.io/charts"
     }
   ]
 }
