@@ -1,0 +1,41 @@
+name: Build a tool image
+description: Builds one target of .tools/docker/Dockerfile with the GitHub Actions cache and smoke-tests the binary
+
+inputs:
+  target:
+    description: Dockerfile stage to build
+    required: true
+  build-args:
+    description: Extra --build-arg values, one per line
+    required: false
+    default: ""
+  smoke:
+    description: Arguments passed to the image to print its version
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Set up buildx
+      uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+
+    - name: Build
+      shell: bash
+      env:
+        TARGET: ${{ inputs.target }}
+        BUILD_ARGS: ${{ inputs.build-args }}
+      run: |
+        args=()
+        while IFS= read -r line; do
+          [ -n "$line" ] && args+=(--build-arg "$line")
+        done <<<"$BUILD_ARGS"
+        docker buildx build --target "$TARGET" "${args[@]}" \
+          --cache-from "type=gha,scope=$TARGET" --cache-to "type=gha,mode=max,scope=$TARGET" \
+          --load -t "hl-infra/$TARGET" .tools/docker
+
+    - name: Smoke test
+      shell: bash
+      env:
+        TARGET: ${{ inputs.target }}
+        SMOKE: ${{ inputs.smoke }}
+      run: docker run --rm "hl-infra/$TARGET" $SMOKE

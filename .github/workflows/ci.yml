@@ -40,6 +40,96 @@ jobs:
         with:
           version: "1.30.1"
 
+  yamllint:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: yamllint
+          smoke: --version
+
+      - name: yamllint
+        run: docker run --rm -v "$PWD":/repo -w /repo hl-infra/yamllint -c .config/yamllint.yml .
+
+  ansible-lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: ansible-lint
+          smoke: --version
+
+      - name: ansible-lint
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo -e ANSIBLE_COLLECTIONS_PATH=/tmp/collections
+          --entrypoint sh hl-infra/ansible-lint
+          -c "ansible-galaxy collection install -r ansible/requirements.yml -p /tmp/collections >/dev/null && ansible-lint -c .config/ansible-lint.yml"
+
+  prose:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: shell
+          smoke: bash --version
+
+      - name: No em dash, en dash or Unicode arrow
+        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/shell .tools/check-prose.sh
+
+  links:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: lychee
+          smoke: --version
+
+      - name: lychee
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo hl-infra/lychee
+          --config .config/lychee.toml README.md SECURITY.md SUPPORT.md CONTRIBUTING.md 'docs/**/*.md'
+
+  spelling:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: cspell
+          smoke: --version
+
+      - name: cspell
+        run: docker run --rm -v "$PWD":/repo -w /repo hl-infra/cspell --config .config/cspell.yaml --no-progress
+
   gitleaks:
     runs-on: ubuntu-24.04
     permissions:
@@ -53,7 +143,10 @@ jobs:
           persist-credentials: false
 
       - name: Build tool image
-        run: docker build --target gitleaks -t hl-infra/gitleaks .tools/docker
+        uses: ./.github/actions/tool-image
+        with:
+          target: gitleaks
+          smoke: version
 
       - name: gitleaks
         run: >-
@@ -77,7 +170,10 @@ jobs:
           persist-credentials: false
 
       - name: Build tool image
-        run: docker build --target osv-scanner -t hl-infra/osv-scanner .tools/docker
+        uses: ./.github/actions/tool-image
+        with:
+          target: osv-scanner
+          smoke: --version
 
       - name: osv-scanner
         run: >-
@@ -93,7 +189,10 @@ jobs:
           persist-credentials: false
 
       - name: Build tool image
-        run: docker build --target trivy -t hl-infra/trivy .tools/docker
+        uses: ./.github/actions/tool-image
+        with:
+          target: trivy
+          smoke: --version
 
       - name: trivy fs
         run: >-
@@ -109,7 +208,10 @@ jobs:
           persist-credentials: false
 
       - name: Build tool image
-        run: docker build --target ast-grep -t hl-infra/ast-grep .tools/docker
+        uses: ./.github/actions/tool-image
+        with:
+          target: ast-grep
+          smoke: ast-grep --version
 
       - name: ast-grep
         run: >-
@@ -125,7 +227,10 @@ jobs:
           persist-credentials: false
 
       - name: Build tool image
-        run: docker build --target jscpd -t hl-infra/jscpd .tools/docker
+        uses: ./.github/actions/tool-image
+        with:
+          target: jscpd
+          smoke: jscpd --version
 
       - name: jscpd
         run: docker run --rm -v "$PWD":/repo -w /repo hl-infra/jscpd jscpd --config .config/jscpd.json | tee jscpd-output.txt
@@ -145,10 +250,22 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Build tool images
-        run: |
-          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
-          docker build --target kube-linter -t hl-infra/kube-linter .tools/docker
+      - name: Read helm_version
+        id: helm
+        run: echo "version=$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" >> "$GITHUB_OUTPUT"
+
+      - name: Build helm image
+        uses: ./.github/actions/tool-image
+        with:
+          target: helm
+          build-args: HELM_VERSION=${{ steps.helm.outputs.version }}
+          smoke: version
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: kube-linter
+          smoke: version
 
       - name: Render charts
         run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
@@ -176,10 +293,22 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Build tool images
-        run: |
-          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
-          docker build --target checkov -t hl-infra/checkov .tools/docker
+      - name: Read helm_version
+        id: helm
+        run: echo "version=$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" >> "$GITHUB_OUTPUT"
+
+      - name: Build helm image
+        uses: ./.github/actions/tool-image
+        with:
+          target: helm
+          build-args: HELM_VERSION=${{ steps.helm.outputs.version }}
+          smoke: version
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: checkov
+          smoke: --version
 
       - name: Render charts
         run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
@@ -205,10 +334,28 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Build tool images
-        run: |
-          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
-          docker build --target kubeconform -t hl-infra/kubeconform .tools/docker
+      - name: Read helm_version
+        id: helm
+        run: echo "version=$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" >> "$GITHUB_OUTPUT"
+
+      - name: Build helm image
+        uses: ./.github/actions/tool-image
+        with:
+          target: helm
+          build-args: HELM_VERSION=${{ steps.helm.outputs.version }}
+          smoke: version
+
+      - name: Build kubeconform image
+        uses: ./.github/actions/tool-image
+        with:
+          target: kubeconform
+          smoke: -v
+
+      - name: Build shell image
+        uses: ./.github/actions/tool-image
+        with:
+          target: shell
+          smoke: bash --version
 
       - name: Render charts
         run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
@@ -223,7 +370,7 @@ jobs:
           rendered argocd
 
       - name: Every image has a tag or digest
-        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/check-images-pinned.sh
+        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/shell .tools/check-images-pinned.sh
 
   trivy-config:
     runs-on: ubuntu-24.04
@@ -233,10 +380,22 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Build tool images
-        run: |
-          docker build --target helm --build-arg HELM_VERSION="$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" -t hl-infra/helm .tools/docker
-          docker build --target trivy -t hl-infra/trivy .tools/docker
+      - name: Read helm_version
+        id: helm
+        run: echo "version=$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" >> "$GITHUB_OUTPUT"
+
+      - name: Build helm image
+        uses: ./.github/actions/tool-image
+        with:
+          target: helm
+          build-args: HELM_VERSION=${{ steps.helm.outputs.version }}
+          smoke: version
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: trivy
+          smoke: --version
 
       - name: Render charts
         run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
@@ -244,7 +403,7 @@ jobs:
       - name: trivy config
         run: >-
           docker run --rm -v "$PWD":/repo -w /repo hl-infra/trivy
-          config --misconfig-scanners kubernetes --skip-dirs rendered/cilium.yaml .
+          config --misconfig-scanners kubernetes --skip-files rendered/cilium.yaml .
 
   gate:
     runs-on: ubuntu-24.04
@@ -252,6 +411,11 @@ jobs:
     needs:
       - actionlint
       - zizmor
+      - yamllint
+      - ansible-lint
+      - prose
+      - links
+      - spelling
       - gitleaks
       - osv-scanner
       - trivy-fs
@@ -262,9 +426,21 @@ jobs:
       - kubeconform
       - trivy-config
     steps:
-      - name: Check all required jobs succeeded
+      - name: Write summary
+        env:
+          NEEDS: ${{ toJSON(needs) }}
         run: |
-          if [ "${{ contains(needs.*.result, 'failure') }}" = "true" ]; then
-            echo "at least one required job failed" >&2
+          {
+            echo "| job | result |"
+            echo "| --- | --- |"
+            echo "$NEEDS" | jq -r 'to_entries[] | "| \(.key) | \(.value.result) |"'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Check all required jobs succeeded
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          if echo "$NEEDS" | jq -e '[.[].result] | any(. != "success")' >/dev/null; then
+            echo "at least one required job did not succeed" >&2
             exit 1
           fi
