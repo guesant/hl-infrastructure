@@ -6,21 +6,21 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "managerFilePatterns": ["/^ansible/group_vars/all\\.example\\.yml$/"],
       "matchStrings": ["k3s_version:\\s*(?<currentValue>v[\\w.+-]+)"],
       "depNameTemplate": "k3s-io/k3s",
       "datasourceTemplate": "github-releases"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "managerFilePatterns": ["/^ansible/group_vars/all\\.example\\.yml$/"],
       "matchStrings": ["helm_version:\\s*(?<currentValue>v[\\w.-]+)"],
       "depNameTemplate": "helm/helm",
       "datasourceTemplate": "github-releases"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "managerFilePatterns": ["/^ansible/group_vars/all\\.example\\.yml$/"],
       "matchStrings": ["cilium_version:\\s*(?<currentValue>[\\w.-]+)"],
       "depNameTemplate": "cilium/cilium",
       "datasourceTemplate": "github-releases",
@@ -28,14 +28,14 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "managerFilePatterns": ["/^ansible/group_vars/all\\.example\\.yml$/"],
       "matchStrings": ["cilium_cli_version:\\s*(?<currentValue>v[\\w.-]+)"],
       "depNameTemplate": "cilium/cilium-cli",
       "datasourceTemplate": "github-releases"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "managerFilePatterns": ["/^ansible/group_vars/all\\.example\\.yml$/"],
       "matchStrings": ["cert_manager_chart_version:\\s*(?<currentValue>v[\\w.-]+)"],
       "depNameTemplate": "cert-manager",
       "datasourceTemplate": "helm",
@@ -43,7 +43,7 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "managerFilePatterns": ["/^ansible/group_vars/all\\.example\\.yml$/"],
       "matchStrings": ["argocd_chart_version:\\s*(?<currentValue>[\\w.-]+)"],
       "depNameTemplate": "argo-cd",
       "datasourceTemplate": "helm",
@@ -51,7 +51,7 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "managerFilePatterns": ["/^ansible/group_vars/all\\.example\\.yml$/"],
       "matchStrings": ["argocd_image_updater_chart_version:\\s*(?<currentValue>[\\w.-]+)"],
       "depNameTemplate": "argocd-image-updater",
       "datasourceTemplate": "helm",
@@ -59,7 +59,7 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "managerFilePatterns": ["/^ansible/group_vars/all\\.example\\.yml$/"],
       "matchStrings": ["cnpg_chart_version:\\s*(?<currentValue>[\\w.-]+)"],
       "depNameTemplate": "cloudnative-pg",
       "datasourceTemplate": "helm",
@@ -67,7 +67,7 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "managerFilePatterns": ["/^ansible/group_vars/all\\.example\\.yml$/"],
       "matchStrings": ["sealed_secrets_chart_version:\\s*(?<currentValue>[\\w.-]+)"],
       "depNameTemplate": "sealed-secrets",
       "datasourceTemplate": "helm",
@@ -75,7 +75,7 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^ansible/group_vars/all\\.example\\.yml$"],
+      "managerFilePatterns": ["/^ansible/group_vars/all\\.example\\.yml$/"],
       "matchStrings": ["cnpg_barman_plugin_chart_version:\\s*(?<currentValue>[\\w.-]+)"],
       "depNameTemplate": "plugin-barman-cloud",
       "datasourceTemplate": "helm",
@@ -83,14 +83,14 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^\\.tools/docker/Dockerfile$"],
+      "managerFilePatterns": ["/^\\.tools/docker/Dockerfile$/"],
       "matchStrings": ["@ast-grep/cli@(?<currentValue>[\\w.]+)"],
       "depNameTemplate": "@ast-grep/cli",
       "datasourceTemplate": "npm"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^\\.tools/docker/Dockerfile$"],
+      "managerFilePatterns": ["/^\\.tools/docker/Dockerfile$/"],
       "matchStrings": ["jscpd@(?<currentValue>[\\w.]+)"],
       "depNameTemplate": "jscpd",
       "datasourceTemplate": "npm"

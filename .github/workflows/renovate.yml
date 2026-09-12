@@ -27,4 +27,5 @@ jobs:
           RENOVATE_PLATFORM: github
           RENOVATE_REPOSITORIES: guesant/hl-infrastructure
           RENOVATE_ALLOWED_COMMANDS: '["^curl -fsSL .* -o "]'
+          RENOVATE_ONBOARDING: "false"
         timeout-minutes: 30
