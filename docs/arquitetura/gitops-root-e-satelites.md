@@ -6,6 +6,8 @@ O projeto `infra` cobre a infraestrutura definida diretamente neste repositório
 
 O projeto `satellites` cobre repositórios de aplicação, como o do blog, e é deliberadamente restrito: só pode criar recursos de escopo de namespace, com uma única exceção liberada explicitamente para o tipo `StorageClass`. Uma `Application` satélite não consegue criar uma `ClusterRole` ou uma `CustomResourceDefinition`, mesmo que o operador do Argo quisesse; a permissão simplesmente não existe no projeto. Isso significa que um repositório de aplicação nunca pode, por engano ou por comprometimento, escalar para um recurso de cluster inteiro.
 
+Existe um terceiro projeto, `default`, que o próprio ArgoCD cria na instalação com permissão total; [argocd/root/project-default.yaml](https://github.com/guesant/hl-infrastructure/blob/main/argocd/root/project-default.yaml) o sobrescreve com listas vazias de repositórios, destinos e recursos permitidos. Sem isso, a restrição do projeto `satellites` seria contornável um nível abaixo: o satélite não pode criar recurso de cluster, mas um `Application` filho declarando `project: default` poderia. Com o `default` fechado, um filho que esqueça de declarar `project: satellites` simplesmente não sincroniza, e o erro aparece no próprio Argo.
+
 Cada satélite é, ele mesmo, outra `Application` com sincronização recursiva de diretório, apontando para uma pasta de GitOps dentro do outro repositório. Um commit nesse outro repositório propaga sozinho, sem que o Ansible ou este repositório precisem rodar de novo. O guia [adicionar um satélite novo](../operacional/adicionar-um-satelite.md) mostra o formato exato de um satélite.
 
 ## Como a pasta de applications é organizada
