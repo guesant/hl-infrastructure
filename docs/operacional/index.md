@@ -5,3 +5,4 @@ A rotina de quem já conhece o repositório: implantar mudanças, manter o clust
 - [Renderizar os charts localmente](renderizar-charts-localmente.md): gera os manifestos Kubernetes que os sete charts Helm instalam, sem tocar em nenhum cluster real.
 - [Rodar os quality gates localmente](rodar-quality-gates-localmente.md): executa o mesmo conjunto de checks que a CI roda, antes de abrir uma pull request.
 - [Adicionar um satélite novo](adicionar-um-satelite.md): registra uma nova aplicação no padrão de app-of-apps do ArgoCD.
+- [Estado fora do git](estado-fora-do-git.md): tudo o que o cluster precisa e não está versionado, onde vive e como se regenera.
