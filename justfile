@@ -84,8 +84,8 @@ infra-trivy-config: infra-render-charts (_build "trivy")
 
 docs-build:
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo python:3.12-slim \
-        sh -c "pip install --quiet -r docs/requirements.txt && mkdocs build --strict"
+        sh -c "pip install --quiet -r docs/requirements.txt && mkdocs build --strict --config-file .config/mkdocs.yml"
 
 docs-serve:
     docker run --rm -p 8000:8000 -v "{{justfile_directory()}}":/repo -w /repo python:3.12-slim \
-        sh -c "pip install --quiet -r docs/requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000"
+        sh -c "pip install --quiet -r docs/requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000 --config-file .config/mkdocs.yml"

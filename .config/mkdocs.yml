@@ -4,6 +4,8 @@ site_url: https://guesant.github.io/hl-infrastructure/
 repo_url: https://github.com/guesant/hl-infrastructure
 repo_name: guesant/hl-infrastructure
 edit_uri: edit/main/docs/
+docs_dir: ../docs
+site_dir: ../site
 
 exclude_docs: |
   requirements.txt
@@ -43,12 +45,14 @@ nav:
       - Helm e os charts: arquitetura/helm-e-charts.md
       - "GitOps: root e satélites": arquitetura/gitops-root-e-satelites.md
       - A pipeline de CI: arquitetura/ci.md
+      - Modelo de ameaças: arquitetura/modelo-de-ameacas.md
       - Variáveis: arquitetura/variaveis.md
   - Operacional:
       - operacional/index.md
       - Renderizar os charts localmente: operacional/renderizar-charts-localmente.md
       - Rodar os quality gates localmente: operacional/rodar-quality-gates-localmente.md
       - Adicionar um satélite novo: operacional/adicionar-um-satelite.md
+      - Estado fora do git: operacional/estado-fora-do-git.md
   - Contribuindo:
       - contribuindo/index.md
       - Convenções de escrita: contribuindo/convencoes-de-escrita.md
