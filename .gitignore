@@ -5,3 +5,4 @@ ansible/group_vars/all.yml
 ansible/kubeconfig
 sealed-secrets-cert.pem
 rendered/
+site/

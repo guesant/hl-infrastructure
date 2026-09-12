@@ -72,3 +72,11 @@ infra-checkov: infra-render-charts (_build "checkov")
 infra-trivy-config: infra-render-charts (_build "trivy")
     docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/trivy \
         config --misconfig-scanners kubernetes --skip-dirs rendered/cilium.yaml .
+
+docs-build:
+    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo python:3.12-slim \
+        sh -c "pip install --quiet -r requirements.txt && mkdocs build --strict"
+
+docs-serve:
+    docker run --rm -p 8000:8000 -v "{{justfile_directory()}}":/repo -w /repo python:3.12-slim \
+        sh -c "pip install --quiet -r requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000"

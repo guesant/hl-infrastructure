@@ -1,0 +1,66 @@
+site_name: hl-infrastructure
+site_description: Bootstrap via Ansible e estado contínuo via GitOps para o cluster k3s do homelab
+site_url: https://guesant.github.io/hl-infrastructure/
+repo_url: https://github.com/guesant/hl-infrastructure
+repo_name: guesant/hl-infrastructure
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: pt-BR
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Alternar para modo escuro
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Alternar para modo claro
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.instant
+    - search.suggest
+    - search.highlight
+    - content.action.edit
+    - content.code.copy
+
+nav:
+  - Visão geral: index.md
+  - Tutorial:
+      - tutorial/index.md
+      - Primeiro bootstrap: tutorial/primeiro-bootstrap.md
+  - Arquitetura:
+      - arquitetura/index.md
+      - "Ansible: as roles do bootstrap": arquitetura/ansible.md
+      - Helm e os charts: arquitetura/helm-e-charts.md
+      - "GitOps: root e satélites": arquitetura/gitops-root-e-satelites.md
+      - A pipeline de CI: arquitetura/ci.md
+      - Variáveis: arquitetura/variaveis.md
+  - Operacional:
+      - operacional/index.md
+      - Renderizar os charts localmente: operacional/renderizar-charts-localmente.md
+      - Rodar os quality gates localmente: operacional/rodar-quality-gates-localmente.md
+      - Adicionar um satélite novo: operacional/adicionar-um-satelite.md
+  - Contribuindo:
+      - contribuindo/index.md
+      - Convenções de escrita: contribuindo/convencoes-de-escrita.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight
+  - toc:
+      permalink: true
+
+plugins:
+  - search
