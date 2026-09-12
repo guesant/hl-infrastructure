@@ -4,88 +4,135 @@ kubeconfig := "ansible/kubeconfig"
 actionlint_image := `grep -oE "rhysd/actionlint:[0-9.]+" .github/workflows/ci.yml | head -1`
 zizmor_version := `grep -oE 'version: "[0-9.]+"' .github/workflows/ci.yml | grep -oE "[0-9.]+" | head -1`
 helm_version := `grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE "[0-9.]+"`
+tools_hash := `shasum -a 256 .tools/docker/Dockerfile | cut -c1-12`
+helm_image := "hl-infra/helm:" + tools_hash + "-" + helm_version
 crd_schema_location := 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
+run := "docker run --rm -v " + quote(justfile_directory()) + ":/repo -w /repo"
 
+[doc("List every recipe")]
+default:
+    @just --list
+
+[doc("Run the whole Ansible bootstrap against the inventory")]
+[confirm("This applies every role to the node in ansible/inventory.ini. Continue?")]
 bootstrap:
     ansible-galaxy collection install -r ansible/requirements.yml
     ansible-playbook -i ansible/inventory.ini ansible/site.yml
 
+[doc("Print the KUBECONFIG export for the fetched kubeconfig")]
 kubeconfig:
     echo "export KUBECONFIG={{justfile_directory()}}/{{kubeconfig}}"
 
+[doc("Fetch the Sealed Secrets public certificate from the cluster")]
 fetch-cert:
     kubeseal --kubeconfig {{kubeconfig}} --fetch-cert > sealed-secrets-cert.pem
 
+[doc("Seal a plain Secret manifest for the given namespace and name")]
 seal namespace name plain_file:
     kubeseal --cert sealed-secrets-cert.pem --namespace {{namespace}} --name {{name}} < {{plain_file}}
 
+[doc("Show nodes and ArgoCD applications")]
 status:
     kubectl --kubeconfig {{kubeconfig}} get nodes
     kubectl --kubeconfig {{kubeconfig}} -n argocd get applications
 
+[doc("actionlint and zizmor over the GitHub Actions workflows")]
 lint-actions:
     test -n "{{actionlint_image}}" || (echo "could not extract the actionlint image from ci.yml" >&2 && exit 1)
     test -n "{{zizmor_version}}" || (echo "could not extract the zizmor version from ci.yml" >&2 && exit 1)
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo --entrypoint sh {{actionlint_image}} \
-        -c "actionlint -color .github/workflows/*.yml"
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo ghcr.io/zizmorcore/zizmor:{{zizmor_version}} \
-        --no-progress /repo/.github/workflows
+    {{run}} --entrypoint sh {{actionlint_image}} -c "actionlint -color .github/workflows/*.yml"
+    {{run}} ghcr.io/zizmorcore/zizmor:{{zizmor_version}} --no-progress --config .github/zizmor.yml /repo/.github/workflows /repo/.github/actions
 
 _build target:
-    docker build --target {{target}} -t hl-infra/{{target}} {{justfile_directory()}}/.tools/docker
+    docker image inspect hl-infra/{{target}}:{{tools_hash}} >/dev/null 2>&1 || \
+        docker build --target {{target}} -t hl-infra/{{target}}:{{tools_hash}} {{justfile_directory()}}/.tools/docker
 
 _build-helm:
     test -n "{{helm_version}}" || (echo "could not extract helm_version from ansible/group_vars/all/versions.yml" >&2 && exit 1)
-    docker build --target helm --build-arg HELM_VERSION={{helm_version}} -t hl-infra/helm {{justfile_directory()}}/.tools/docker
+    docker image inspect {{helm_image}} >/dev/null 2>&1 || \
+        docker build --target helm --build-arg HELM_VERSION={{helm_version}} -t {{helm_image}} {{justfile_directory()}}/.tools/docker
 
+[doc("yamllint over every YAML in the repository")]
+lint-yaml: (_build "yamllint")
+    {{run}} hl-infra/yamllint:{{tools_hash}} -c .config/yamllint.yml .
+
+[doc("ansible-lint over the playbook and roles")]
+lint-ansible: (_build "ansible-lint")
+    {{run}} -e ANSIBLE_COLLECTIONS_PATH=/tmp/collections --entrypoint sh hl-infra/ansible-lint:{{tools_hash}} \
+        -c "ansible-galaxy collection install -r ansible/requirements.yml -p /tmp/collections >/dev/null && ansible-lint -c .config/ansible-lint.yml"
+
+[doc("Fail on em dash, en dash or Unicode arrow in the prose")]
+lint-prose: (_build "shell")
+    {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-prose.sh
+
+[doc("Check every link in the Markdown files")]
+lint-links: (_build "lychee")
+    {{run}} hl-infra/lychee:{{tools_hash}} --config .config/lychee.toml README.md SECURITY.md SUPPORT.md CONTRIBUTING.md 'docs/**/*.md'
+
+[doc("Spell-check the prose in Portuguese and English")]
+lint-spelling: (_build "cspell")
+    {{run}} hl-infra/cspell:{{tools_hash}} --config .config/cspell.yaml --no-progress
+
+[doc("gitleaks over the whole git history")]
 security-gitleaks: (_build "gitleaks")
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/gitleaks \
+    {{run}} hl-infra/gitleaks:{{tools_hash}} \
         detect --source /repo --config /repo/.config/gitleaks.toml \
         --gitleaks-ignore-path /repo/.config/gitleaksignore --redact -v
 
+[doc("osv-scanner over every dependency manifest")]
 security-osv-scanner: (_build "osv-scanner")
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/osv-scanner \
+    {{run}} hl-infra/osv-scanner:{{tools_hash}} \
         scan source --recursive --experimental-exclude rendered --allow-no-lockfiles /repo
 
+[doc("trivy filesystem scan for vulnerabilities and secrets")]
 security-trivy-fs: (_build "trivy")
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/trivy \
-        fs --scanners vuln,secret --skip-dirs rendered /repo
+    {{run}} hl-infra/trivy:{{tools_hash}} fs --scanners vuln,secret --skip-dirs rendered /repo
 
+[doc("ast-grep structural rules from .config/ast-grep")]
 quality-ast-grep: (_build "ast-grep")
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/ast-grep \
-        ast-grep scan --config .config/ast-grep/sgconfig.yml .
+    {{run}} hl-infra/ast-grep:{{tools_hash}} ast-grep scan --config .config/ast-grep/sgconfig.yml .
 
+[doc("jscpd duplication report, informational only")]
 quality-jscpd: (_build "jscpd")
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/jscpd jscpd --config .config/jscpd.json
+    {{run}} hl-infra/jscpd:{{tools_hash}} jscpd --config .config/jscpd.json
 
+[doc("Render the seven Helm charts into rendered/")]
 infra-render-charts: _build-helm
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
+    {{run}} --entrypoint bash {{helm_image}} .tools/render-charts.sh
 
+[doc("kube-linter over the rendered charts and argocd/")]
 infra-kube-linter: infra-render-charts (_build "kube-linter")
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/kube-linter \
+    {{run}} hl-infra/kube-linter:{{tools_hash}} \
         lint --config .config/kube-linter.yaml --ignore-paths rendered/cilium.yaml rendered argocd
 
+[doc("checkov over the rendered charts and argocd/")]
 infra-checkov: infra-render-charts (_build "checkov")
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/checkov \
+    {{run}} hl-infra/checkov:{{tools_hash}} \
         --directory rendered --directory argocd --framework kubernetes \
         --check CKV_K8S_16,CKV_K8S_18,CKV_K8S_19 --skip-path rendered/cilium.yaml --compact
 
-infra-kubeconform: infra-render-charts (_build "kubeconform")
+[doc("kubeconform schema validation plus the pinned-image check")]
+infra-kubeconform: infra-render-charts (_build "kubeconform") (_build "shell")
     mkdir -p {{justfile_directory()}}/.kubeconform-cache
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/kubeconform \
+    {{run}} hl-infra/kubeconform:{{tools_hash}} \
         -strict -ignore-missing-schemas -summary -n 2 -cache .kubeconform-cache \
         -schema-location default -schema-location '{{crd_schema_location}}' \
         rendered argocd
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo --entrypoint bash hl-infra/helm .tools/check-images-pinned.sh
+    {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-images-pinned.sh
 
+[doc("trivy misconfiguration scan over the rendered charts")]
 infra-trivy-config: infra-render-charts (_build "trivy")
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo hl-infra/trivy \
-        config --misconfig-scanners kubernetes --skip-dirs rendered/cilium.yaml .
+    {{run}} hl-infra/trivy:{{tools_hash}} config --misconfig-scanners kubernetes --skip-files rendered/cilium.yaml .
 
+[doc("Build the MkDocs site in strict mode")]
 docs-build:
-    docker run --rm -v "{{justfile_directory()}}":/repo -w /repo python:3.12-slim \
+    {{run}} python:3.12-slim \
         sh -c "pip install --quiet -r docs/requirements.txt && mkdocs build --strict --config-file .config/mkdocs.yml"
 
+[doc("Serve the MkDocs site on port 8000")]
 docs-serve:
-    docker run --rm -p 8000:8000 -v "{{justfile_directory()}}":/repo -w /repo python:3.12-slim \
+    {{run}} -p 8000:8000 python:3.12-slim \
         sh -c "pip install --quiet -r docs/requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000 --config-file .config/mkdocs.yml"
+
+[doc("Every check the CI runs, in order")]
+check: lint-actions lint-yaml lint-ansible lint-prose lint-links lint-spelling security-gitleaks security-osv-scanner security-trivy-fs quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config docs-build
