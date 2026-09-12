@@ -60,3 +60,4 @@
   when: >
     firewalld_state.stdout == "running" and
     (firewalld_trust.changed or firewalld_api_port.changed)
+  changed_when: true
