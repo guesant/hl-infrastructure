@@ -198,9 +198,6 @@ jobs:
 
   trivy-config:
     runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-      security-events: write
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -218,14 +215,7 @@ jobs:
       - name: trivy config
         run: >-
           docker run --rm -v "$PWD":/repo -w /repo hl-infra/trivy
-          config --misconfig-scanners kubernetes --skip-dirs rendered/cilium.yaml
-          --format sarif --output trivy-config.sarif .
-
-      - name: Upload SARIF
-        if: always()
-        uses: github/codeql-action/upload-sarif@faaca9a8f6edddba5725ffe5adefdab6669a2eca # v3.38.0
-        with:
-          sarif_file: trivy-config.sarif
+          config --misconfig-scanners kubernetes --skip-dirs rendered/cilium.yaml .
 
   gate:
     runs-on: ubuntu-24.04
