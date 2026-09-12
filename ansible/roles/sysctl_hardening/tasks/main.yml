@@ -10,6 +10,8 @@
     - { name: net.ipv4.conf.all.log_martians, value: "1" }
     - { name: net.ipv4.conf.all.accept_redirects, value: "0" }
     - { name: net.ipv4.conf.all.send_redirects, value: "0" }
+    - { name: kernel.panic_on_oops, value: "1" }
+    - { name: kernel.panic, value: "10" }
   register: sysctl_hardening_candidates
   loop_control:
     label: "{{ item.name }}"

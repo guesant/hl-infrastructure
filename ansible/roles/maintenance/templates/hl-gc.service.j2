@@ -1,0 +1,7 @@
+[Unit]
+Description=Weekly garbage collection of unused images, empty ReplicaSets and old journal
+After=k3s.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/hl-gc

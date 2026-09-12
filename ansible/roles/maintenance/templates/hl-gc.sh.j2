@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
+k3s kubectl get replicasets --all-namespaces -o json \
+  | jq -r '.items[] | select(.spec.replicas == 0 and .status.replicas == 0) | "\(.metadata.namespace) \(.metadata.name)"' \
+  | while read -r namespace name; do
+    k3s kubectl -n "$namespace" delete replicaset "$name" --ignore-not-found
+  done
+
+k3s crictl rmi --prune
+
+journalctl --vacuum-time=1month
+
+df -h / /var/lib/rancher 2>/dev/null | tail -n +2

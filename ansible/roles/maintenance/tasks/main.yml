@@ -1,0 +1,58 @@
+---
+- name: Install jq for the garbage collection script
+  ansible.builtin.apt:
+    name: jq
+    state: present
+    update_cache: true
+
+- name: Create the journald drop-in directory
+  ansible.builtin.file:
+    path: /etc/systemd/journald.conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Cap the journal size so logs never fill the disk
+  ansible.builtin.copy:
+    dest: /etc/systemd/journald.conf.d/50-cap.conf
+    content: |
+      [Journal]
+      SystemMaxUse=500M
+      MaxRetentionSec=1month
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart journald
+
+- name: Install the weekly garbage collection script
+  ansible.builtin.template:
+    src: hl-gc.sh.j2
+    dest: /usr/local/sbin/hl-gc
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Install the garbage collection service and timer
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - hl-gc.service
+    - hl-gc.timer
+  register: maintenance_units
+  notify: Reload systemd
+
+- name: Flush handlers so the timer sees the fresh units
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable the weekly garbage collection timer
+  ansible.builtin.systemd:
+    name: hl-gc.timer
+    enabled: true
+    state: started
+    daemon_reload: true
+  when: not (ansible_check_mode and maintenance_units.changed)
