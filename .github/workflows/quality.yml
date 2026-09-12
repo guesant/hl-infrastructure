@@ -1,0 +1,44 @@
+name: quality
+
+on:
+  push:
+    paths:
+      - ansible/**
+  pull_request:
+    paths:
+      - ansible/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ast-grep:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: ast-grep
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo node:20-slim
+          npx --yes -p @ast-grep/cli@0.45.3 -- ast-grep scan --config .ast-grep/sgconfig.yml ansible
+
+  jscpd:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: jscpd
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo node:20-slim
+          npx --yes -p jscpd@5.2.0 -- jscpd . | tee jscpd-output.txt
+
+      - name: Write duplication summary
+        if: always()
+        run: cat jscpd-output.txt >> "$GITHUB_STEP_SUMMARY"

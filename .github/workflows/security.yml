@@ -1,0 +1,60 @@
+name: security
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gitleaks:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: gitleaks
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo zricethezav/gitleaks:v8.30.1
+          detect --source /repo --config /repo/.gitleaks.toml --redact
+          --report-format sarif --report-path gitleaks.sarif -v
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@faaca9a8f6edddba5725ffe5adefdab6669a2eca # v3.38.0
+        with:
+          sarif_file: gitleaks.sarif
+
+  osv-scanner:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: osv-scanner
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo ghcr.io/google/osv-scanner:v2.5.1
+          scan source --recursive --experimental-exclude rendered --allow-no-lockfiles /repo
+
+  trivy-fs:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: trivy fs
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo aquasec/trivy:0.74.0
+          fs --scanners vuln,secret --skip-dirs rendered /repo

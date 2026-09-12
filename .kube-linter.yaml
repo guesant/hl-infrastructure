@@ -1,0 +1,10 @@
+checks:
+  doNotAutoAddDefaults: true
+  include:
+    - privileged-container
+    - host-network
+    - host-pid
+    - host-ipc
+    - sensitive-host-mounts
+    - unsafe-sysctls
+    - non-existent-service-account

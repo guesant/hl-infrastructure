@@ -1,0 +1,10 @@
+title = "gitleaks config for hl-infrastructure"
+
+[extend]
+useDefault = true
+
+[allowlist]
+regexes = [
+  '''changeme-generate-a-real-secret''',
+  '''changeme@example\.invalid''',
+]

@@ -2,6 +2,9 @@
 
 [![renovate](https://github.com/guesant/hl-infrastructure/actions/workflows/renovate.yml/badge.svg)](https://github.com/guesant/hl-infrastructure/actions/workflows/renovate.yml)
 [![lint-actions](https://github.com/guesant/hl-infrastructure/actions/workflows/lint-actions.yml/badge.svg)](https://github.com/guesant/hl-infrastructure/actions/workflows/lint-actions.yml)
+[![security](https://github.com/guesant/hl-infrastructure/actions/workflows/security.yml/badge.svg)](https://github.com/guesant/hl-infrastructure/actions/workflows/security.yml)
+[![quality](https://github.com/guesant/hl-infrastructure/actions/workflows/quality.yml/badge.svg)](https://github.com/guesant/hl-infrastructure/actions/workflows/quality.yml)
+[![infra-lint](https://github.com/guesant/hl-infrastructure/actions/workflows/infra-lint.yml/badge.svg)](https://github.com/guesant/hl-infrastructure/actions/workflows/infra-lint.yml)
 [![renovate dependency dashboard](https://img.shields.io/badge/renovate-dependency%20dashboard-1a1f6c.svg)](https://github.com/guesant/hl-infrastructure/issues/3)
 
 Bootstrap único via Ansible e estado contínuo via GitOps para o cluster k3s do homelab.
@@ -30,4 +33,8 @@ Um satélite novo entra como mais um arquivo dentro da subpasta applications, se
 
 ## CI
 
-Dois workflows cuidam da própria manutenção do repositório. O primeiro roda o Renovate self-hosted todo dia de manhã, isolado num environment restrito à branch principal, e sabe rebaixar o manifesto oficial inteiro de um componente vendorizado quando a versão sobe, não só trocar a tag da imagem. O segundo audita os próprios workflows com actionlint e zizmor sempre que algo muda neles. Uma receita do justfile roda os dois localmente, lendo a mesma versão pinada que o workflow usa, então nunca há duas versões divergentes para lembrar de manter sincronizadas.
+Cinco workflows cuidam da própria manutenção do repositório e da qualidade do que ele descreve. O Renovate roda self-hosted todo dia de manhã, isolado num environment restrito à branch principal, e bumpa a versão de cada chart Helm diretamente no arquivo de variáveis, nunca um manifesto vendorizado. O lint-actions audita os próprios workflows com actionlint e zizmor sempre que algo muda neles.
+
+Os outros três olham para o conteúdo real do repositório. O security roda Gitleaks contra todo o histórico do git, OSV-Scanner e Trivy em busca de dependências vulneráveis. O quality aplica um conjunto de regras estruturais próprias via ast-grep sobre as roles do Ansible, por exemplo exigindo que todo apply de um chart Helm use `--server-side --force-conflicts` e que toda task de comando declare `changed_when` explicitamente, além de reportar duplicação de código com jscpd sem falhar o build por isso. O infra-lint renderiza os sete charts Helm que as roles instalam e passa kube-linter, Checkov e Trivy sobre o resultado, com um conjunto restrito de checks (contêiner privilegiado, namespace de rede ou PID do host, montagem de diretório sensível do host) que efetivamente falha o build quando encontra algo; o Cilium fica de fora desses três porque uma CNI legitimamente precisa de privilégios que qualquer outro componente não deveria ter.
+
+Uma receita do justfile roda cada um desses checks localmente, lendo a mesma versão pinada que o respectivo workflow usa, então nunca há duas versões divergentes para lembrar de manter sincronizadas.

@@ -1,0 +1,12 @@
+id: command-task-requires-changed-when
+language: yaml
+severity: error
+message: "ansible.builtin.command/shell task without an explicit changed_when"
+rule:
+  all:
+    - kind: block_mapping
+    - any:
+        - regex: "ansible\\.builtin\\.command:"
+        - regex: "ansible\\.builtin\\.shell:"
+    - not:
+        regex: "changed_when:"

@@ -1,0 +1,11 @@
+id: helm-apply-must-be-server-side
+language: yaml
+severity: error
+message: "helm template | k3s kubectl apply must use --server-side --force-conflicts, matching every other chart-install role"
+rule:
+  all:
+    - kind: block_scalar
+    - regex: "helm template"
+    - regex: "k3s kubectl apply"
+    - not:
+        regex: "--server-side"

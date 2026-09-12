@@ -1,0 +1,110 @@
+name: infra-lint
+
+on:
+  push:
+    paths:
+      - ansible/roles/**/tasks/main.yml
+      - ansible/roles/**/templates/**
+      - ansible/group_vars/all.example.yml
+      - argocd/**
+      - hack/render-charts.sh
+  pull_request:
+    paths:
+      - ansible/roles/**/tasks/main.yml
+      - ansible/roles/**/templates/**
+      - ansible/group_vars/all.example.yml
+      - argocd/**
+      - hack/render-charts.sh
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  kube-linter:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Render charts
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash
+          alpine/helm:"$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE '[0-9.]+')"
+          hack/render-charts.sh
+
+      - name: kube-linter
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo stackrox/kube-linter:v0.8.3
+          lint --config .kube-linter.yaml --ignore-paths rendered/cilium.yaml
+          --format sarif --output kube-linter.sarif rendered argocd
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@faaca9a8f6edddba5725ffe5adefdab6669a2eca # v3.38.0
+        with:
+          sarif_file: kube-linter.sarif
+
+  checkov:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Render charts
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash
+          alpine/helm:"$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE '[0-9.]+')"
+          hack/render-charts.sh
+
+      - name: checkov
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo bridgecrew/checkov:3.3.17
+          --directory rendered --directory argocd --framework kubernetes
+          --check CKV_K8S_16,CKV_K8S_18,CKV_K8S_19 --skip-path rendered/cilium.yaml
+          --output sarif --output-file-path results --soft-fail
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@faaca9a8f6edddba5725ffe5adefdab6669a2eca # v3.38.0
+        with:
+          sarif_file: results/results_sarif.sarif
+
+  trivy-config:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Render charts
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash
+          alpine/helm:"$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all.example.yml | grep -oE '[0-9.]+')"
+          hack/render-charts.sh
+
+      - name: trivy config
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo aquasec/trivy:0.74.0
+          config --misconfig-scanners kubernetes --skip-dirs rendered/cilium.yaml
+          --format sarif --output trivy-config.sarif .
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@faaca9a8f6edddba5725ffe5adefdab6669a2eca # v3.38.0
+        with:
+          sarif_file: trivy-config.sarif

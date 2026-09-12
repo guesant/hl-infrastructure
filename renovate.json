@@ -80,6 +80,62 @@
       "depNameTemplate": "plugin-barman-cloud",
       "datasourceTemplate": "helm",
       "registryUrlTemplate": "https://cloudnative-pg.github.io/charts"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.github/workflows/security\\.yml$"],
+      "matchStrings": ["zricethezav/gitleaks:(?<currentValue>v[\\w.]+)"],
+      "depNameTemplate": "zricethezav/gitleaks",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.github/workflows/security\\.yml$"],
+      "matchStrings": ["ghcr\\.io/google/osv-scanner:(?<currentValue>v[\\w.]+)"],
+      "depNameTemplate": "ghcr.io/google/osv-scanner",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.github/workflows/(security|infra-lint)\\.yml$"],
+      "matchStrings": ["aquasec/trivy:(?<currentValue>[\\w.]+)"],
+      "depNameTemplate": "aquasec/trivy",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.github/workflows/infra-lint\\.yml$"],
+      "matchStrings": ["stackrox/kube-linter:(?<currentValue>v[\\w.]+)"],
+      "depNameTemplate": "stackrox/kube-linter",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.github/workflows/infra-lint\\.yml$"],
+      "matchStrings": ["bridgecrew/checkov:(?<currentValue>[\\w.]+)"],
+      "depNameTemplate": "bridgecrew/checkov",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.github/workflows/quality\\.yml$"],
+      "matchStrings": ["node:(?<currentValue>[\\w.-]+)-slim"],
+      "depNameTemplate": "node",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.github/workflows/quality\\.yml$"],
+      "matchStrings": ["@ast-grep/cli@(?<currentValue>[\\w.]+)"],
+      "depNameTemplate": "@ast-grep/cli",
+      "datasourceTemplate": "npm"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.github/workflows/quality\\.yml$"],
+      "matchStrings": ["jscpd@(?<currentValue>[\\w.]+)"],
+      "depNameTemplate": "jscpd",
+      "datasourceTemplate": "npm"
     }
   ]
 }
