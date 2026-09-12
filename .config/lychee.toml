@@ -10,4 +10,5 @@ exclude = [
   "github\\.com/guesant/hl-infrastructure/issues/new",
   "github\\.com/guesant/hl-infrastructure/edit/",
   "github\\.com/guesant/blog/compare/",
+  "^https://x\\.com/",
 ]
