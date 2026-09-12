@@ -4,6 +4,7 @@
   become: true
   roles:
     - os_prerequisites
+    - firewall
     - unattended_upgrades
     - sysctl_hardening
     - auditd
@@ -18,3 +19,4 @@
     - sealed_secrets
     - argocd_image_updater
     - bootstrap_app
+    - maintenance
