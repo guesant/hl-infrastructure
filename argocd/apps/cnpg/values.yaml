@@ -1,0 +1,2 @@
+cloudnative-pg:
+  fullnameOverride: cnpg-controller-manager
