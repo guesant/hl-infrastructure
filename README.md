@@ -68,7 +68,7 @@ A estrutura e várias decisões deste repositório vieram de olhar como outras p
 
 - [Vinetos/infrastructure](https://github.com/Vinetos/infrastructure), pela organização base e ambiente do GitOps e pela validação dos manifestos em CI.
 - [FerdinandWohlstein/infrastructure-live](https://github.com/FerdinandWohlstein/infrastructure-live), pelas asserts de pré-condição nas roles, pelos diagramas versionados e pelo mapa de controles com evidência.
-- [Gui, o Cloud with Gui](https://x.com/cloudwithgui), pela inspiração, pelo conteúdo sobre homelab, Kubernetes e GitOps que ele compartilha de graça e que motivou este projeto, e por ser quem ele é.
+- [Gui, o Cloud with Gui](https://github.com/gossilva) ([@cloudwithgui](https://x.com/cloudwithgui)), pela inspiração, pelo conteúdo sobre homelab, Kubernetes e GitOps que ele compartilha de graça e que motivou este projeto, e por ser quem ele é.
 - [Luiz Rosa](https://github.com/Felipalds) ([@felipalds](https://x.com/felipalds), [luizrosa.me](https://www.luizrosa.me)), pela inspiração, por tudo o que compartilha sobre Linux, Go e infraestrutura, e por ser quem ele é.
 - [guesant/template-documentacao-tecnica](https://github.com/guesant/template-documentacao-tecnica), pela estrutura e pelas convenções de escrita da documentação.
 
