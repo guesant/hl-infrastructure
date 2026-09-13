@@ -126,4 +126,4 @@ Três escolhas ali protegem os dados de um erro de GitOps. `Prune=false` no `Clu
 
 ## Continue por aqui
 
-Para entender a razão de existir dessa separação entre a aplicação raiz e os satélites, e o que cada opção de `syncPolicy` resolve, veja [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) na arquitetura.
+Para entender a razão de existir dessa separação entre a aplicação raiz e os satélites, e o que cada opção de `syncPolicy` resolve, veja [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) na arquitetura. Para duas armadilhas reais do Image Updater que travam a atualização de imagem em silêncio, veja [rollout de imagens](../arquitetura/rollout-de-imagens.md).
