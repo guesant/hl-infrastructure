@@ -15,14 +15,12 @@ Esta página não rastreia `versions.yml` para o gate de deriva de documentaçã
 | Variável | Controla | Consumida por |
 | --- | --- | --- |
 | `k3s_version` | Versão do k3s instalada pelo script oficial | role `k3s` |
-| `helm_version` | Versão do binário Helm usado tanto pelo Ansible quanto pela renderização local de charts | roles `cilium`, `argocd`, `argocd_image_updater`, `sealed_secrets`; `.tools/render-charts.sh` |
+| `helm_version` | Versão do binário Helm usado tanto pelo Ansible quanto pela renderização local de charts | roles `cilium`, `argocd`; `.tools/render-charts.sh` |
 | `cilium_version` | Versão do chart Helm do Cilium | role `cilium` |
 | `cilium_cli_version` | Versão do binário `cilium-cli`, usado só para inspeção (`cilium status`), nunca para instalar | role `cilium` |
 | `argocd_chart_version` | Versão do chart Helm do ArgoCD | role `argocd` |
-| `argocd_image_updater_chart_version` | Versão do chart Helm do Argo CD Image Updater | role `argocd_image_updater` |
-| `sealed_secrets_chart_version` | Versão do chart Helm do controlador Sealed Secrets | role `sealed_secrets` |
 
-O cert-manager, o operador CloudNativePG e o plugin Barman Cloud não têm entrada aqui: desde que passaram a ser `Application` do ArgoCD em vez de uma role, a versão de cada um vive na própria dependency do `Chart.yaml` local ([cert-manager](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/cert-manager/Chart.yaml), [cnpg](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/cnpg/Chart.yaml), [cnpg-barman-plugin](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/cnpg-barman-plugin/Chart.yaml)), e o Renovate atualiza cada uma pelo gerenciador nativo de chart Helm, sem precisar do regex customizado que os outros usam.
+O cert-manager, o operador CloudNativePG, o plugin Barman Cloud, o Sealed Secrets e o Argo CD Image Updater não têm entrada aqui: desde que passaram a ser `Application` do ArgoCD em vez de uma role, a versão de cada um vive na própria dependency do `Chart.yaml` local ([cert-manager](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/cert-manager/Chart.yaml), [cnpg](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/cnpg/Chart.yaml), [cnpg-barman-plugin](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/cnpg-barman-plugin/Chart.yaml), [sealed-secrets](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/sealed-secrets/Chart.yaml), [argocd-image-updater](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/argocd-image-updater/Chart.yaml)), e o Renovate atualiza cada uma pelo gerenciador nativo de chart Helm, sem precisar do regex customizado que os dois restantes usam.
 
 ## secrets.yml
 

@@ -15,7 +15,5 @@
     - k3s
     - cilium
     - argocd
-    - sealed_secrets
-    - argocd_image_updater
     - bootstrap_app
     - maintenance

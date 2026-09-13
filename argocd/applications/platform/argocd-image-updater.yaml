@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sealed-secrets
+  name: argocd-image-updater
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
@@ -10,16 +10,13 @@ spec:
   source:
     repoURL: https://github.com/guesant/hl-infrastructure.git
     targetRevision: main
-    path: argocd/apps/sealed-secrets
+    path: argocd/apps/argocd-image-updater
     helm:
-      releaseName: sealed-secrets-controller
+      releaseName: argocd-image-updater
   destination:
     server: https://kubernetes.default.svc
-    namespace: kube-system
+    namespace: argocd
   syncPolicy:
-    automated:
-      selfHeal: true
-      prune: true
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
