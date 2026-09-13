@@ -2,7 +2,6 @@ ansible/inventory.ini
 !ansible/inventory.example.ini
 ansible/group_vars/all/secrets.yml
 ansible/kubeconfig
-sealed-secrets-cert.pem
 rendered/
 site/
 .kubeconform-cache/
