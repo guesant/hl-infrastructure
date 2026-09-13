@@ -13,6 +13,7 @@
         src: "{{ playbook_dir }}/../argocd/root/"
         dest: /tmp/argocd-root/
         mode: "0644"
+      check_mode: false
 
     - name: Point the root Application and the infra project at the declared repository
       ansible.builtin.replace:
@@ -22,6 +23,7 @@
       loop:
         - application.yaml
         - project-infra.yaml
+      check_mode: false
 
     - name: Apply the ArgoCD root AppProjects and root Application
       ansible.builtin.command: >-
