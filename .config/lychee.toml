@@ -11,4 +11,7 @@ exclude = [
   "github\\.com/guesant/hl-infrastructure/edit/",
   "github\\.com/guesant/blog/compare/",
   "^https://x\\.com/",
+  "^https://www\\.npmjs\\.com/",
+  "^https://www\\.raspberrypi\\.com/",
+  "^https://www\\.fsf\\.org/",
 ]
