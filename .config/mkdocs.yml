@@ -38,6 +38,7 @@ nav:
   - Visão geral: index.md
   - Aprender:
       - aprender/index.md
+      - "DevOps, IaC e GitOps": aprender/devops-iac-gitops.md
       - Infraestrutura como código: aprender/iac-provisionamento.md
       - Ansible: aprender/ansible.md
       - SSH: aprender/ssh.md

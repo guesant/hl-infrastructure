@@ -3,6 +3,7 @@ DNAT
 Dockerfiles
 Exploitability
 Pulumi
+Rollouts
 actionlint
 ansible
 argocd
