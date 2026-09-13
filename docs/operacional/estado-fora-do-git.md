@@ -18,6 +18,16 @@ Nem tudo que o cluster precisa está versionado, e o que não está precisa ser 
 
 O critério para algo estar nesta lista é simples: se apagar o repositório e a máquina do operador não fosse suficiente para perder o item, ele não precisa estar aqui. Tudo o que está aqui precisa de uma cópia ou de um caminho de regeneração fora do git, e a coluna da direita é esse caminho.
 
+## Capturar uma mudança manual de volta para o git
+
+Se uma mudança acabou aplicada direto no cluster, fora do fluxo normal de GitOps (por exemplo, um `kubectl edit` de emergência), ela não deveria ficar assim: uma `Application` com sincronização automática reverte esse tipo de mudança na próxima reconciliação, e mesmo sem `selfHeal` ligado a mudança vive só na memória de quem a aplicou, sem sobreviver a uma reconstrução do node. `.tools/freeze-manifest.sh` existe para esse resgate: ele roda `kubectl get <kind> <nome> -o json`, remove os campos que só fazem sentido num objeto vivo (`resourceVersion`, `generation`, `managedFields`, `uid`, `.status`, entre outros) e produz um YAML limpo, pronto para commitar no lugar certo do repositório ou do satélite.
+
+```bash
+.tools/freeze-manifest.sh <kind> <nome> -n <namespace> > caminho/do/manifesto.yaml
+```
+
+Depois de commitado, o Argo passa a rastrear esse objeto como qualquer outro: a mudança que antes só existia no cluster agora tem uma origem no git, e uma reconstrução do node a partir do zero a recria sem depender de ninguém lembrar que ela existia.
+
 ## Continue por aqui
 
 O [modelo de ameaças](../arquitetura/modelo-de-ameacas.md) explica por que cada um desses itens é um ativo e o que os protege.
