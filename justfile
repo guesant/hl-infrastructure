@@ -4,6 +4,7 @@ kubeconfig := "ansible/kubeconfig"
 actionlint_image := `grep -oE "rhysd/actionlint:[0-9.]+" .github/workflows/ci.yml | head -1`
 zizmor_version := `grep -oE 'version: "[0-9.]+"' .github/workflows/ci.yml | grep -oE "[0-9.]+" | head -1`
 helm_version := `grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE "[0-9.]+"`
+opentofu_version := "1.12.6"
 tools_hash := `shasum -a 256 .tools/docker/Dockerfile | cut -c1-12`
 helm_image := "hl-infra/helm:" + tools_hash + "-" + helm_version
 crd_schema_location := 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
@@ -93,6 +94,10 @@ lint-docs: (_build "shell")
 [doc("Print a live resource as a clean manifest ready to commit: just freeze deployment blog -n blog")]
 freeze *args:
     KUBECONFIG={{kubeconfig}} .tools/freeze-manifest.sh {{args}}
+
+[doc("Run OpenTofu via Docker; no root module exists yet, this only wires the binary")]
+tofu *args:
+    {{run}} --entrypoint bash ghcr.io/opentofu/opentofu:{{opentofu_version}} .tools/tofu.sh {{args}}
 
 [doc("Check every link in the Markdown files; not part of check or CI because external hosts are flaky")]
 lint-links: (_build "lychee")
