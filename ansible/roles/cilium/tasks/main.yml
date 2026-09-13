@@ -78,7 +78,7 @@
 
     - name: Select the Helm release asset for this architecture
       ansible.builtin.set_fact:
-        cilium_helm_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+        cilium_helm_arch: "{{ 'arm64' if ansible_facts['architecture'] == 'aarch64' else 'amd64' }}"
 
     - name: Download the Helm tarball and verify it against the published checksum
       ansible.builtin.get_url:
@@ -143,6 +143,7 @@
         src: values.yaml.j2
         dest: /tmp/cilium-values.yaml
         mode: "0644"
+      check_mode: false
 
     - name: Render and apply the Cilium chart from the declared values
       ansible.builtin.shell: >

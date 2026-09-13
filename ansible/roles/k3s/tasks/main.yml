@@ -39,8 +39,8 @@
 
 - name: Select the k3s release asset for this architecture
   ansible.builtin.set_fact:
-    k3s_asset: "{{ 'k3s-arm64' if ansible_architecture == 'aarch64' else 'k3s' }}"
-    k3s_checksum_asset: "{{ 'sha256sum-arm64.txt' if ansible_architecture == 'aarch64' else 'sha256sum-amd64.txt' }}"
+    k3s_asset: "{{ 'k3s-arm64' if ansible_facts['architecture'] == 'aarch64' else 'k3s' }}"
+    k3s_checksum_asset: "{{ 'sha256sum-arm64.txt' if ansible_facts['architecture'] == 'aarch64' else 'sha256sum-amd64.txt' }}"
 
 - name: Download the k3s binary and verify it against the published checksum
   ansible.builtin.get_url:
