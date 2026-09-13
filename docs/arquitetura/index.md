@@ -1,6 +1,6 @@
 # Arquitetura
 
-Esta seção explica como o repositório inteiro se encaixa e como cada peça individual funciona, com o raciocínio por trás de cada decisão. Para aprender a operar o repositório na prática, comece pelo [tutorial](../tutorial/index.md); para uma tarefa pontual do dia a dia, veja o [operacional](../operacional/index.md).
+Esta seção explica como o repositório inteiro se encaixa e como cada peça individual funciona, com o raciocínio por trás de cada decisão. Para provisionar o cluster do zero na prática, comece pelo [primeiro bootstrap](../operacional/primeiro-bootstrap.md); para aprender o que é cada ferramenta antes de entender a decisão sobre ela, veja [Aprender](../aprender/index.md); para uma tarefa pontual do dia a dia, veja o [operacional](../operacional/index.md).
 
 ## Visão geral
 

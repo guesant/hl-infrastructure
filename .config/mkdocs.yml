@@ -36,9 +36,23 @@ theme:
 
 nav:
   - Visão geral: index.md
-  - Tutorial:
-      - tutorial/index.md
-      - Primeiro bootstrap: tutorial/primeiro-bootstrap.md
+  - Aprender:
+      - aprender/index.md
+      - Infraestrutura como código: aprender/iac-provisionamento.md
+      - Ansible: aprender/ansible.md
+      - SSH: aprender/ssh.md
+      - firewalld: aprender/firewalld.md
+      - k3s: aprender/k3s.md
+      - Rede interna do cluster: aprender/rede-interna-do-cluster.md
+      - TLS automático: aprender/tls-automatico.md
+      - "ArgoCD e GitOps": aprender/argocd.md
+      - Operators do Kubernetes: aprender/kubernetes-operators.md
+      - "CI/CD": aprender/ci-cd.md
+      - Scanning de vulnerabilidade: aprender/vulnerability-scanning.md
+      - Supply chain e SBOM: aprender/supply-chain-e-sbom.md
+      - Threat modeling: aprender/threat-modeling.md
+      - OWASP: aprender/owasp.md
+      - Zero trust: aprender/zero-trust.md
   - Arquitetura:
       - arquitetura/index.md
       - "Ansible: as roles do bootstrap": arquitetura/ansible.md
@@ -51,6 +65,7 @@ nav:
       - Variáveis: arquitetura/variaveis.md
   - Operacional:
       - operacional/index.md
+      - Primeiro bootstrap: operacional/primeiro-bootstrap.md
       - Metodologia de mudança: operacional/metodologia-de-mudanca.md
       - Checklist operacional: operacional/checklist.md
       - Preflight e dry-run do bootstrap: operacional/preflight-e-dry-run.md

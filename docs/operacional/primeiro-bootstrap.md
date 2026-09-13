@@ -1,6 +1,6 @@
 # Primeiro bootstrap
 
-Este tutorial parte de um Raspberry Pi limpo, com Raspberry Pi OS instalado e acessível por SSH, e termina com um cluster k3s rodando Cilium, cert-manager, CloudNativePG, o plugin de backup Barman Cloud, ArgoCD, o controlador de Sealed Secrets e o Argo CD Image Updater, todos instalados a partir do chart Helm oficial de cada projeto.
+Este runbook parte de um Raspberry Pi limpo, com Raspberry Pi OS instalado e acessível por SSH, e termina com um cluster k3s rodando Cilium, cert-manager, CloudNativePG, o plugin de backup Barman Cloud, ArgoCD, o controlador de Sealed Secrets e o Argo CD Image Updater, todos instalados a partir do chart Helm oficial de cada projeto.
 
 ## Antes de começar
 
@@ -26,7 +26,7 @@ just preflight -K
 just bootstrap-check -K
 ```
 
-O `-K` pede a senha de `sudo` do usuário do inventário; omita se ele tem `sudo` sem senha. O preflight confirma que o Ansible fala com a máquina certa e o `bootstrap-check` mostra, sem aplicar nada, tudo o que a execução real faria; veja [preflight e dry-run](../operacional/preflight-e-dry-run.md).
+O `-K` pede a senha de `sudo` do usuário do inventário; omita se ele tem `sudo` sem senha. O preflight confirma que o Ansible fala com a máquina certa e o `bootstrap-check` mostra, sem aplicar nada, tudo o que a execução real faria; veja [preflight e dry-run](preflight-e-dry-run.md).
 
 ## Rode o bootstrap
 
@@ -50,4 +50,4 @@ O comando `just kubeconfig` imprime a variável `KUBECONFIG` que aponta para o a
 
 ## Continue por aqui
 
-Se você quer expor um serviço através deste cluster, veja o guia operacional de [adicionar um satélite novo](../operacional/adicionar-um-satelite.md). Se quer entender por que o repositório instala tudo via Helm em vez de manifestos vendorizados, veja [Helm e os charts](../arquitetura/helm-e-charts.md) na arquitetura.
+Se você quer expor um serviço através deste cluster, veja o guia operacional de [adicionar um satélite novo](adicionar-um-satelite.md). Se quer entender por que o repositório instala tudo via Helm em vez de manifestos vendorizados, veja [Helm e os charts](../arquitetura/helm-e-charts.md) na arquitetura. Se você quer entender os conceitos por trás de cada ferramenta que este bootstrap instala (Ansible, k3s, Cilium, TLS automático, ArgoCD, o padrão de operator), veja a seção [Aprender](../aprender/index.md).

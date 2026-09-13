@@ -28,4 +28,4 @@ Num node que já tem o cluster, o dry-run é completo: cada chart é renderizado
 
 ## Continue por aqui
 
-Depois de um dry-run limpo, [primeiro bootstrap](../tutorial/primeiro-bootstrap.md) descreve a execução real, e [Ansible: as roles do bootstrap](../arquitetura/ansible.md) explica o que cada role verifica antes de agir.
+Depois de um dry-run limpo, [primeiro bootstrap](primeiro-bootstrap.md) descreve a execução real, e [Ansible: as roles do bootstrap](../arquitetura/ansible.md) explica o que cada role verifica antes de agir.
