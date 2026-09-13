@@ -9,6 +9,7 @@ commitada
 commitado
 commitar
 commite
+datacenters
 firewalld
 gitleaks
 gplv
