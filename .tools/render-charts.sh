@@ -28,7 +28,7 @@ helm repo add sealed-secrets https://bitnami.github.io/sealed-secrets >/dev/null
 helm repo add cilium https://helm.cilium.io/ >/dev/null
 helm repo update >/dev/null
 
-helm template "$repo_root/argocd/apps/cert-manager" \
+helm template cert-manager "$repo_root/argocd/apps/cert-manager" \
   --namespace cert-manager \
   --include-crds >"$out_dir/cert-manager.yaml"
 

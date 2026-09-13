@@ -12,6 +12,7 @@ spec:
     targetRevision: main
     path: argocd/apps/cert-manager
     helm:
+      releaseName: cert-manager
       valueFiles:
         - values.yaml
   destination:
