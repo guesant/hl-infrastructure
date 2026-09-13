@@ -2,7 +2,7 @@
 
 <!-- source-of-trust paths="ansible/site.yml ansible/roles" -->
 
-`ansible/site.yml` aplica dezoito roles em sequência, numa única play contra o host `pi`. A ordem importa: cada role assume que a anterior já deixou o sistema num estado específico, e várias delas verificam essa suposição explicitamente antes de continuar (a role `cilium`, por exemplo, aborta se o arquivo de configuração declarativo do k3s ainda não desabilitou o kube-proxy embutido).
+`ansible/site.yml` aplica dezesseis roles em sequência, numa única play contra o host `pi`. A ordem importa: cada role assume que a anterior já deixou o sistema num estado específico, e várias delas verificam essa suposição explicitamente antes de continuar (a role `cilium`, por exemplo, aborta se o arquivo de configuração declarativo do k3s ainda não desabilitou o kube-proxy embutido).
 
 ## O que toda role faz antes de agir
 
@@ -10,11 +10,11 @@ Cada role começa com um `assert` das variáveis de que depende: versão no form
 
 As roles que falam com o cluster embrulham suas tasks num bloco condicionado ao fato `k3s_cluster_gate`, definido pela role `k3s` através da role `check_mode_gate`. Numa execução real o fato é sempre verdadeiro. Sob `--check` num node sem k3s, ele é falso: a role avisa que o binário só seria instalado numa execução real e as roles seguintes pulam o bloco inteiro, para que o dry-run termine limpo e diga a verdade sobre o que pode ser previsto. A mesma role de gate protege o firewalld, e cada serviço systemd só é iniciado em modo de verificação se o pacote já estava instalado antes. O guia [preflight e dry-run](../operacional/preflight-e-dry-run.md) mostra como usar isso.
 
-Os seis charts são aplicados com `helm template | k3s kubectl apply --server-side --force-conflicts`, e sob `--check` o apply ganha `--dry-run=server`: o API server valida e compara cada recurso sem gravar, então o dry-run mostra o que mudaria com a mesma fidelidade da execução real. É por isso que as roles não precisam de `helm upgrade` nem de comparar values à mão: o server-side apply já responde `unchanged` quando não há nada a fazer.
+Os quatro charts são aplicados com `helm template | k3s kubectl apply --server-side --force-conflicts`, e sob `--check` o apply ganha `--dry-run=server`: o API server valida e compara cada recurso sem gravar, então o dry-run mostra o que mudaria com a mesma fidelidade da execução real. É por isso que as roles não precisam de `helm upgrade` nem de comparar values à mão: o server-side apply já responde `unchanged` quando não há nada a fazer.
 
 O `spec.selector` de um `Deployment`, `StatefulSet`, `DaemonSet` ou `Job` é imutável no Kubernetes, e alguns charts upstream mudaram esse selector entre versões (normalmente para incluir `app.kubernetes.io/instance`), o que faz o apply falhar contra um objeto instalado antes dessa mudança, mesmo com `--force-conflicts`. As roles `argocd`, `sealed_secrets` e `argocd_image_updater` tratam isso: quando o apply falha, a role `recreate_immutable_conflicts` lê o erro do `kubectl` (que aparece em pelo menos três formatos de texto diferentes), identifica só os objetos travados, apaga cada um e reaplica o chart. É seguro porque o que é apagado é sempre o objeto de controle recriável pelo próprio chart, nunca dado; e é restrito ao objeto certo porque a extração lê o erro relatado pela API, não deleta nada às cegas.
 
-Nas roles (`cilium`, `cnpg` e `bootstrap_app`) que primeiro copiam ou renderizam um arquivo para depois consumi-lo (num `helm template --values` ou num `kubectl apply -f`), a task que escreve esse arquivo carrega `check_mode: false`: sem isso, sob `--check` num node que ainda não tem o arquivo, ela não escreveria nada (correto para o próprio arquivo, que não é um recurso do cluster) e a task seguinte quebraria tentando ler um arquivo inexistente. O limite de segurança do dry-run é sempre o `--dry-run=server` do apply, nunca a ausência de um arquivo temporário em `/tmp`.
+Nas roles (`cilium` e `bootstrap_app`) que primeiro copiam ou renderizam um arquivo para depois consumi-lo (num `helm template --values` ou num `kubectl apply -f`), a task que escreve esse arquivo carrega `check_mode: false`: sem isso, sob `--check` num node que ainda não tem o arquivo, ela não escreveria nada (correto para o próprio arquivo, que não é um recurso do cluster) e a task seguinte quebraria tentando ler um arquivo inexistente. O limite de segurança do dry-run é sempre o `--dry-run=server` do apply, nunca a ausência de um arquivo temporário em `/tmp`.
 
 ## Hardening de sistema operacional
 
@@ -26,13 +26,11 @@ As primeiras nove roles não instalam nada de Kubernetes; elas preparam o sistem
 
 `k3s` baixa o binário da release oficial no GitHub para a arquitetura do node e o verifica contra o arquivo de checksum publicado na mesma release antes de qualquer outra coisa; só então roda o instalador oficial com `INSTALL_K3S_SKIP_DOWNLOAD`, para que o script configure o serviço mas nunca baixe um binário por conta própria. O k3s sobe com o backend de rede padrão e o kube-proxy embutido desabilitados via `/etc/rancher/k3s/config.yaml`, porque o Cilium assume essas duas responsabilidades a seguir, e com uma política de auditoria do API server que registra metadados de toda escrita, o corpo completo de mudanças em RBAC, `AppProject` e `exec` em pods, e nada de leitura de rotina. O mesmo padrão de checksum publicado vale para o Helm e o cilium-cli, que a role `cilium` instala: o hash não fica no repositório porque o Renovate não teria como atualizá-lo junto com a versão, mas a integridade do download é verificada contra o que o próprio projeto publica, por TLS, a cada instalação. `cilium` verifica que o k3s já desabilitou o que precisa, então instala o Cilium via chart Helm oficial, com `policyEnforcementMode: always` e `policyAuditMode: true` (as políticas de rede são avaliadas e logadas, mas nada é bloqueado ainda) e o Hubble ligado para observabilidade.
 
-`cnpg` instala o operador CloudNativePG, que passa a entender a CRD `Cluster` que qualquer aplicação no cluster pode usar para pedir um banco Postgres. `cnpg_barman_plugin` instala o plugin de backup Barman Cloud do CNPG a partir do chart oficial `plugin-barman-cloud`, o que permite a um satélite declarar `ObjectStore` e `ScheduledBackup` para o próprio banco.
-
 `argocd` instala o ArgoCD e registra o segredo compartilhado do webhook do GitHub. `sealed_secrets` instala o controlador que decripta os `SealedSecret` aplicados pelo Argo, sem que o texto plano do segredo jamais passe pela cadeia de sincronização do Argo. `argocd_image_updater` instala o componente que detecta e aplica sozinho novas tags de imagem publicadas.
 
 ## A ponte para o GitOps
 
-`bootstrap_app` aplica manualmente uma `Application` do Argo: a aplicação `root`, descrita em [GitOps: root e satélites](gitops-root-e-satelites.md), e os três `AppProject`. A URL do repositório que o root sincroniza vem de `bootstrap_app_repo_url`, cujo padrão é este repositório; um fork ou um ambiente de teste sobrescreve a variável em `secrets.yml` sem tocar nos manifestos. A partir do momento em que o root existe no cluster, tudo o que acontece depois é responsabilidade do Argo, não do Ansible: é assim que o cert-manager, por exemplo, chega ao cluster hoje, como uma `Application` de plataforma sincronizada pelo root, sem role própria em `site.yml`.
+`bootstrap_app` aplica manualmente uma `Application` do Argo: a aplicação `root`, descrita em [GitOps: root e satélites](gitops-root-e-satelites.md), e os três `AppProject`. A URL do repositório que o root sincroniza vem de `bootstrap_app_repo_url`, cujo padrão é este repositório; um fork ou um ambiente de teste sobrescreve a variável em `secrets.yml` sem tocar nos manifestos. A partir do momento em que o root existe no cluster, tudo o que acontece depois é responsabilidade do Argo, não do Ansible: é assim que o cert-manager, o CNPG e o plugin Barman Cloud, por exemplo, chegam ao cluster hoje, como `Application` de plataforma sincronizadas pelo root, sem role própria em `site.yml`.
 
 ## Manutenção contínua
 
@@ -40,4 +38,4 @@ As primeiras nove roles não instalam nada de Kubernetes; elas preparam o sistem
 
 ## Continue por aqui
 
-Para ver por que seis dessas roles instalam via chart Helm em vez de manifesto vendorizado, veja [Helm e os charts](helm-e-charts.md). Para as rotinas que ficam fora de `site.yml` de propósito, veja [rotacionar credenciais](../operacional/rotacionar-credenciais.md).
+Para ver por que quatro dessas roles instalam via chart Helm em vez de manifesto vendorizado, veja [Helm e os charts](helm-e-charts.md). Para as rotinas que ficam fora de `site.yml` de propósito, veja [rotacionar credenciais](../operacional/rotacionar-credenciais.md).

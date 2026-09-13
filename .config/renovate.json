@@ -66,26 +66,10 @@
     {
       "customType": "regex",
       "managerFilePatterns": ["/^ansible/group_vars/all/versions\\.yml$/"],
-      "matchStrings": ["cnpg_chart_version:\\s*(?<currentValue>[\\w.-]+)"],
-      "depNameTemplate": "cloudnative-pg",
-      "datasourceTemplate": "helm",
-      "registryUrlTemplate": "https://cloudnative-pg.github.io/charts"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/^ansible/group_vars/all/versions\\.yml$/"],
       "matchStrings": ["sealed_secrets_chart_version:\\s*(?<currentValue>[\\w.-]+)"],
       "depNameTemplate": "sealed-secrets",
       "datasourceTemplate": "helm",
       "registryUrlTemplate": "https://bitnami.github.io/sealed-secrets"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/^ansible/group_vars/all/versions\\.yml$/"],
-      "matchStrings": ["cnpg_barman_plugin_chart_version:\\s*(?<currentValue>[\\w.-]+)"],
-      "depNameTemplate": "plugin-barman-cloud",
-      "datasourceTemplate": "helm",
-      "registryUrlTemplate": "https://cloudnative-pg.github.io/charts"
     },
     {
       "customType": "regex",

@@ -24,7 +24,7 @@ Dentro de `argocd/applications`, cada subpasta corresponde a uma camada, e a cam
 
 | Pasta | Onda | O que vive ali |
 | --- | --- | --- |
-| `platform/` | `0` | Componentes de plataforma que o cluster inteiro depende, hoje começando pelo cert-manager; cada um vem de um mini chart wrapper em [argocd/apps](https://github.com/guesant/hl-infrastructure/tree/main/argocd/apps), não de um chart upstream apontado direto, para manter `sourceRepos` do projeto `infra` restrito a este único repositório |
+| `platform/` | `0` a `1` | Componentes de plataforma de que o cluster inteiro depende: cert-manager, CNPG e o plugin Barman Cloud (este último na onda `1`, depois do operador que ele estende); cada um vem de um mini chart wrapper em [argocd/apps](https://github.com/guesant/hl-infrastructure/tree/main/argocd/apps), não de um chart upstream apontado direto, para manter `sourceRepos` do projeto `infra` restrito a este único repositório |
 | `satellites/<nome>/` | `0` a `3` | As `Application` de um satélite consolidado neste repositório, no projeto `satellites`; hoje só `satellites/blog/`, com onda própria por peça (rede antes de banco, banco antes do app, app antes do túnel) |
 
 A distância entre as ondas é deliberada: sobra espaço para inserir uma camada intermediária no futuro sem renumerar o que já existe.

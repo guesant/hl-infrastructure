@@ -7,12 +7,10 @@ out_dir="$repo_root/rendered"
 
 argocd_chart_version="$(grep -oE 'argocd_chart_version:\s*[0-9.]+' "$vars_file" | grep -oE '[0-9.]+')"
 argocd_image_updater_chart_version="$(grep -oE 'argocd_image_updater_chart_version:\s*[0-9.]+' "$vars_file" | grep -oE '[0-9.]+')"
-cnpg_chart_version="$(grep -oE 'cnpg_chart_version:\s*[0-9.]+' "$vars_file" | grep -oE '[0-9.]+')"
-cnpg_barman_plugin_chart_version="$(grep -oE 'cnpg_barman_plugin_chart_version:\s*[0-9.]+' "$vars_file" | grep -oE '[0-9.]+')"
 sealed_secrets_chart_version="$(grep -oE 'sealed_secrets_chart_version:\s*[0-9.]+' "$vars_file" | grep -oE '[0-9.]+')"
 cilium_version="$(grep -oE 'cilium_version:\s*[0-9.]+' "$vars_file" | grep -oE '[0-9.]+')"
 
-for name in argocd_chart_version argocd_image_updater_chart_version cnpg_chart_version cnpg_barman_plugin_chart_version sealed_secrets_chart_version cilium_version; do
+for name in argocd_chart_version argocd_image_updater_chart_version sealed_secrets_chart_version cilium_version; do
   test -n "${!name}" || {
     echo "could not extract $name from $vars_file" >&2
     exit 1
@@ -23,7 +21,6 @@ rm -rf "$out_dir"
 mkdir -p "$out_dir"
 
 helm repo add argo https://argoproj.github.io/argo-helm >/dev/null
-helm repo add cnpg https://cloudnative-pg.github.io/charts >/dev/null
 helm repo add sealed-secrets https://bitnami.github.io/sealed-secrets >/dev/null
 helm repo add cilium https://helm.cilium.io/ >/dev/null
 helm repo update >/dev/null
@@ -45,16 +42,12 @@ helm template argocd-image-updater argo/argocd-image-updater \
   --namespace argocd \
   --include-crds >"$out_dir/argocd-image-updater.yaml"
 
-helm template cnpg cnpg/cloudnative-pg \
-  --version "$cnpg_chart_version" \
+helm template cnpg "$repo_root/argocd/apps/cnpg" \
   --namespace cnpg-system \
-  --set fullnameOverride=cnpg-controller-manager \
   --include-crds >"$out_dir/cnpg.yaml"
 
-helm template barman-cloud cnpg/plugin-barman-cloud \
-  --version "$cnpg_barman_plugin_chart_version" \
+helm template barman-cloud "$repo_root/argocd/apps/cnpg-barman-plugin" \
   --namespace cnpg-system \
-  --set fullnameOverride=barman-cloud \
   --include-crds >"$out_dir/cnpg-barman-plugin.yaml"
 
 helm template sealed-secrets-controller sealed-secrets/sealed-secrets \

@@ -14,8 +14,6 @@
     - fail2ban
     - k3s
     - cilium
-    - cnpg
-    - cnpg_barman_plugin
     - argocd
     - sealed_secrets
     - argocd_image_updater
