@@ -43,7 +43,7 @@ FROM node:24-slim AS jscpd
 RUN npm install --global jscpd@5.2.0
 
 FROM node:24-slim AS markdownlint
-RUN npm install --global markdownlint-cli2@0.19.0
+RUN npm install --global markdownlint-cli2@0.23.2
 
 FROM node:24-slim AS cspell
 RUN mkdir -p /opt/cspell && npm install --prefix /opt/cspell cspell@10.3.0 @cspell/dict-pt-br@2.4.2
