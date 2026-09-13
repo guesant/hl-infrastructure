@@ -16,6 +16,7 @@ checkov
 commitada
 commitadas
 commitado
+commitados
 commitar
 commite
 commitá
