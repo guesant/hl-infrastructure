@@ -2,7 +2,7 @@
 
 <!-- source-of-trust paths="ansible/site.yml ansible/roles" -->
 
-`ansible/site.yml` aplica quatorze roles em sequência, numa única play contra o host `pi`. A ordem importa: cada role assume que a anterior já deixou o sistema num estado específico, e várias delas verificam essa suposição explicitamente antes de continuar (a role `cilium`, por exemplo, aborta se o arquivo de configuração declarativo do k3s ainda não desabilitou o kube-proxy embutido).
+`ansible/site.yml` aplica quinze roles em sequência, numa única play contra o host `pi`. A ordem importa: cada role assume que a anterior já deixou o sistema num estado específico, e várias delas verificam essa suposição explicitamente antes de continuar (a role `cilium`, por exemplo, aborta se o arquivo de configuração declarativo do k3s ainda não desabilitou o kube-proxy embutido).
 
 ## O que toda role faz antes de agir
 
@@ -30,7 +30,9 @@ As primeiras nove roles não instalam nada de Kubernetes; elas preparam o sistem
 
 ## A ponte para o GitOps
 
-`bootstrap_app` aplica manualmente uma `Application` do Argo: a aplicação `root`, descrita em [GitOps: root e satélites](gitops-root-e-satelites.md), e os três `AppProject`. A URL do repositório que o root sincroniza vem de `bootstrap_app_repo_url`, cujo padrão é este repositório; um fork ou um ambiente de teste sobrescreve a variável em `secrets.yml` sem tocar nos manifestos. A partir do momento em que o root existe no cluster, tudo o que acontece depois é responsabilidade do Argo, não do Ansible: é assim que o cert-manager, o CNPG, o plugin Barman Cloud, o Sealed Secrets e o Argo CD Image Updater chegam ao cluster hoje, como `Application` de plataforma sincronizadas pelo root, sem role própria em `site.yml`. Só o Cilium e o próprio ArgoCD continuam instalados pelo Ansible, permanentemente: são pré-requisitos de bootstrap que precisam existir antes de qualquer coisa GitOps poder funcionar, e não podem se autogerenciar antes de existir.
+`bootstrap_app` aplica manualmente uma `Application` do Argo: a aplicação `root`, descrita em [GitOps: root e satélites](gitops-root-e-satelites.md), e os três `AppProject`. A URL do repositório que o root sincroniza vem de `bootstrap_app_repo_url`, cujo padrão é este repositório; um fork ou um ambiente de teste sobrescreve a variável em `secrets.yml` sem tocar nos manifestos. A partir do momento em que o root existe no cluster, tudo o que acontece depois é responsabilidade do Argo, não do Ansible: é assim que o cert-manager, o CNPG, o plugin Barman Cloud, o sops-secrets-operator e o Argo CD Image Updater chegam ao cluster hoje, como `Application` de plataforma sincronizadas pelo root, sem role própria em `site.yml`. Só o Cilium e o próprio ArgoCD continuam instalados pelo Ansible, permanentemente: são pré-requisitos de bootstrap que precisam existir antes de qualquer coisa GitOps poder funcionar, e não podem se autogerenciar antes de existir.
+
+`sops_age_key` entrega ao cluster a metade privada da chave age que o sops-secrets-operator usa para decifrar todo `SopsSecret`: cria o namespace `sops` e, se o `Secret` `sops-age-key-file` ainda não existir, cria-o a partir de `sops_age_key_private_key` em `secrets.yml`. É a mesma classe de exceção do segredo do webhook do Argo, pelo mesmo motivo: a chave que decifra o primeiro segredo não pode ela mesma estar cifrada, então ela precisa chegar ao cluster por um caminho que não passa nem pelo git nem pelo Argo.
 
 ## Manutenção contínua
 

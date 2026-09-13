@@ -4,7 +4,7 @@ Este repositório descreve, e em parte controla, um cluster k3s de um nó só qu
 
 ## O que se protege
 
-Os ativos, em ordem de gravidade se perdidos ou comprometidos: os dados dos serviços (o Postgres do blog e seus backups), a chave privada do Sealed Secrets (quem a tem decifra todo segredo commitado em qualquer satélite), a credencial de administrador do cluster (o kubeconfig e a chave SSH de root do nó), a capacidade de publicar em `main` deste repositório e dos satélites (porque o Argo aplica o que está lá sem intervenção humana), e a disponibilidade dos serviços públicos.
+Os ativos, em ordem de gravidade se perdidos ou comprometidos: os dados dos serviços (o Postgres do blog e seus backups), a chave privada age do sops-secrets-operator (quem a tem decifra todo `SopsSecret` commitado em qualquer satélite), a credencial de administrador do cluster (o kubeconfig e a chave SSH de root do nó), a capacidade de publicar em `main` deste repositório e dos satélites (porque o Argo aplica o que está lá sem intervenção humana), e a disponibilidade dos serviços públicos.
 
 ## Fronteiras de confiança
 
@@ -24,7 +24,7 @@ flowchart LR
     ssh["sshd"]
     api["API do k3s"]
     argo["ArgoCD"]
-    ss["Sealed Secrets: chave privada"]
+    ss["sops-secrets-operator: chave privada age"]
     apps["workloads"]
   end
   internet["Internet"]
@@ -50,7 +50,7 @@ Das Actions para o GitHub, o `ci` e o `docs` rodam com `contents: read` e sem cr
 
 Da Internet para os serviços, nada chega direto ao nó: o blog é exposto por um túnel Cloudflare saindo de dentro do cluster, e o firewall do nó não abre porta de serviço. O que fica exposto é a porta 22 e a 6443, ambas restritas como descrito acima. Isso não é só preferência: uma regra de firewalld filtra a chain `INPUT`, que só vê tráfego destinado ao próprio host. Uma `Service` do tipo `LoadBalancer` ou `NodePort` chega por um DNAT que muda o destino do pacote antes dele ser avaliado, então esse tráfego passa pela chain `FORWARD`, não pela `INPUT`, e uma regra de firewalld sobre a porta nunca é sequer consultada. É por isso que a role `k3s` desliga o Traefik e o ServiceLB embutidos: expor algo assim tornaria qualquer regra de firewall sobre aquela porta uma proteção falsa. A porta 6443 escapa desse problema porque o próprio processo do k3s escuta direto na interface do host, sem passar por uma `Service`, então a chain `INPUT` realmente vê e filtra esse tráfego.
 
-Dentro do cluster, o Sealed Secrets guarda a chave privada em `kube-system`; a chave pública correspondente é `sealed-secrets-cert.pem`, commitada neste repositório, porque cifrar com ela não permite decifrar nada. Qualquer workload que consiga ler `Secret` nesse namespace decifra tudo; o projeto `satellites` não pode criar `ClusterRole`, então um satélite não consegue se conceder essa leitura por GitOps. Um `Pod` privilegiado ou com montagem do host é barrado antes de chegar ao cluster pelos gates `kube-linter`, `checkov` e `trivy config` sobre os charts renderizados, mas esses gates só cobrem os sete charts Helm deste repositório; a política de rede e de recursos de um satélite de terceiro é responsabilidade do satélite. A do blog está fora dessa exceção: como suas `NetworkPolicy`, `ResourceQuota` e `LimitRange` também vivem neste repositório agora, elas ficam sujeitas às mesmas convenções de revisão daqui, ainda que não passem pelos mesmos gates de chart Helm, por não serem chart.
+Dentro do cluster, o sops-secrets-operator guarda a chave privada age no `Secret` `sops-age-key-file`, no namespace `sops`; o destinatário público correspondente vive em `.sops.yaml`, commitado neste repositório, porque cifrar com ele não permite decifrar nada. Qualquer workload que consiga ler `Secret` nesse namespace decifra tudo; o projeto `satellites` não pode criar `ClusterRole`, então um satélite não consegue se conceder essa leitura por GitOps. Um `Pod` privilegiado ou com montagem do host é barrado antes de chegar ao cluster pelos gates `kube-linter`, `checkov` e `trivy config` sobre os charts renderizados, mas esses gates só cobrem os sete charts Helm deste repositório; a política de rede e de recursos de um satélite de terceiro é responsabilidade do satélite. A do blog está fora dessa exceção: como suas `NetworkPolicy`, `ResourceQuota` e `LimitRange` também vivem neste repositório agora, elas ficam sujeitas às mesmas convenções de revisão daqui, ainda que não passem pelos mesmos gates de chart Helm, por não serem chart.
 
 ## O caminho de um segredo
 
@@ -59,20 +59,20 @@ A sequência abaixo é o único caminho pelo qual um valor sensível chega a um 
 ```mermaid
 sequenceDiagram
     participant Op as Operador
-    participant SS as Sealed Secrets (cluster)
     participant Git as Repositório do satélite
     participant Argo as ArgoCD
+    participant SSO as sops-secrets-operator (cluster)
     participant Pod as Pod
-    SS->>Git: sealed-secrets-cert.pem (chave pública, commitada)
-    Op->>Op: just seal ns nome secret.yaml (cifra localmente com a chave do repo)
-    Op->>Git: commit do SealedSecret
+    Op->>Git: .sops.yaml (destinatário público age, commitado)
+    Op->>Op: just sops-encrypt arquivo.yaml (cifra localmente com o destinatário do repo)
+    Op->>Git: commit do SopsSecret
     Argo->>Git: pull
-    Argo->>SS: apply do SealedSecret
-    SS->>SS: decifra com a chave privada
-    SS->>Pod: cria o Secret no namespace
+    Argo->>SSO: apply do SopsSecret
+    SSO->>SSO: decifra com a chave privada age
+    SSO->>Pod: cria o Secret no namespace
 ```
 
-O `argocd_github_webhook_secret` e a chave SSH seguem outro caminho, mais curto: ficam em `secrets.yml` na máquina do operador e o Ansible os entrega ao node por SSH, sem passar por nenhum repositório.
+O `argocd_github_webhook_secret`, a chave SSH e a chave privada age seguem outro caminho, mais curto: ficam em `secrets.yml` na máquina do operador e o Ansible os entrega ao node por SSH, sem passar por nenhum repositório.
 
 ## O que fica fora do modelo
 

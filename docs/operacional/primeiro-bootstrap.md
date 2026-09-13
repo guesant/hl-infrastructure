@@ -1,6 +1,6 @@
 # Primeiro bootstrap
 
-Este runbook parte de um Raspberry Pi limpo, com Raspberry Pi OS instalado e acessível por SSH, e termina com um cluster k3s rodando Cilium, cert-manager, CloudNativePG, o plugin de backup Barman Cloud, ArgoCD, o controlador de Sealed Secrets e o Argo CD Image Updater, todos instalados a partir do chart Helm oficial de cada projeto.
+Este runbook parte de um Raspberry Pi limpo, com Raspberry Pi OS instalado e acessível por SSH, e termina com um cluster k3s rodando Cilium, cert-manager, CloudNativePG, o plugin de backup Barman Cloud, ArgoCD, o sops-secrets-operator e o Argo CD Image Updater, todos instalados a partir do chart Helm oficial de cada projeto.
 
 ## Antes de começar
 
@@ -34,7 +34,7 @@ O `-K` pede a senha de `sudo` do usuário do inventário; omita se ele tem `sudo
 just bootstrap -K
 ```
 
-O playbook aplica as roles em ordem: hardening de sistema operacional primeiro (cgroups, firewall, atualizações automáticas, sysctl, auditd, SSH, fail2ban), depois k3s, depois Cilium como CNI, depois CloudNativePG e o plugin de backup, cert-manager, ArgoCD, Sealed Secrets e o Argo CD Image Updater, e por fim a aplicação raiz do Argo. Cada role espera o componente anterior ficar pronto antes de seguir, então uma falha no meio do caminho não deixa o cluster pela metade de forma silenciosa.
+O playbook aplica as roles em ordem: hardening de sistema operacional primeiro (cgroups, firewall, atualizações automáticas, sysctl, umask, AppArmor, auditd, SSH, fail2ban), depois k3s, depois Cilium como CNI, depois ArgoCD, depois a aplicação raiz do Argo e a chave age do sops-secrets-operator. Cada role espera o componente anterior ficar pronto antes de seguir, então uma falha no meio do caminho não deixa o cluster pela metade de forma silenciosa. CloudNativePG, o plugin de backup, cert-manager, o sops-secrets-operator e o Argo CD Image Updater não têm role própria: a partir do momento em que a aplicação raiz existe, é o Argo quem os traz, como `Application` de plataforma.
 
 ## Confirme que funcionou
 

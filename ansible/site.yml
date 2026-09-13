@@ -16,4 +16,5 @@
     - cilium
     - argocd
     - bootstrap_app
+    - sops_age_key
     - maintenance

@@ -43,14 +43,6 @@ rotate-token *args:
 kubeconfig:
     echo "export KUBECONFIG={{justfile_directory()}}/{{kubeconfig}}"
 
-[doc("Fetch the Sealed Secrets public certificate from the cluster")]
-fetch-cert:
-    kubeseal --kubeconfig {{kubeconfig}} --fetch-cert > sealed-secrets-cert.pem
-
-[doc("Seal a plain Secret manifest for the given namespace and name")]
-seal namespace name plain_file:
-    kubeseal --cert sealed-secrets-cert.pem --namespace {{namespace}} --name {{name}} < {{plain_file}}
-
 [doc("Show nodes and ArgoCD applications")]
 status:
     kubectl --kubeconfig {{kubeconfig}} get nodes
@@ -102,6 +94,11 @@ lint-docs: (_build "shell")
     {{run}} -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0=/repo \
         --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-doc-drift.sh
     {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-roles-documented.sh
+
+[doc("Encrypt a *-sopssecret.yaml manifest in place with SOPS/age, per .sops.yaml")]
+sops-encrypt file: (_build "sops")
+    {{run}} hl-infra/sops:{{tools_hash}} encrypt {{file}} > {{file}}.tmp
+    mv {{file}}.tmp {{file}}
 
 [doc("Print a live resource as a clean manifest ready to commit: just freeze deployment blog -n blog")]
 freeze *args:

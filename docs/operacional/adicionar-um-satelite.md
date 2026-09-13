@@ -122,7 +122,7 @@ spec:
   databaseReclaimPolicy: retain
 ```
 
-Três escolhas ali protegem os dados de um erro de GitOps. `Prune=false` no `Cluster` faz o Argo se recusar a apagá-lo, mesmo que o arquivo suma do repositório; o volume só vai embora por uma remoção manual e deliberada. `databaseReclaimPolicy: retain` faz o mesmo para o `Database`: remover o objeto do git tira o banco da gestão do operador, mas não roda `DROP DATABASE`. E `managed.roles` com `passwordSecret` deixa a senha num `Secret` que o satélite entrega selado (`SealedSecret`), em vez de deixar o operador gerar uma que ninguém versiona.
+Três escolhas ali protegem os dados de um erro de GitOps. `Prune=false` no `Cluster` faz o Argo se recusar a apagá-lo, mesmo que o arquivo suma do repositório; o volume só vai embora por uma remoção manual e deliberada. `databaseReclaimPolicy: retain` faz o mesmo para o `Database`: remover o objeto do git tira o banco da gestão do operador, mas não roda `DROP DATABASE`. E `managed.roles` com `passwordSecret` deixa a senha num `Secret` que o satélite entrega cifrado com SOPS (`SopsSecret`), em vez de deixar o operador gerar uma que ninguém versiona.
 
 ## Continue por aqui
 

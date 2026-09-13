@@ -22,6 +22,8 @@ FROM koalaman/shellcheck:v0.11.0 AS shellcheck
 FROM hadolint/hadolint:v2.15.1 AS hadolint
 ENTRYPOINT ["hadolint"]
 
+FROM ghcr.io/getsops/sops:v3.13.3-alpine AS sops
+
 FROM alpine/helm:${HELM_VERSION} AS helm
 
 FROM alpine:3.24 AS shell

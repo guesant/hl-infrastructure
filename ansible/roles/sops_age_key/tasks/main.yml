@@ -1,0 +1,34 @@
+---
+- name: Assert the age private key is configured
+  ansible.builtin.assert:
+    that:
+      - sops_age_key_private_key is defined
+      - sops_age_key_private_key is match('^AGE-SECRET-KEY-1[A-Z0-9]+$')
+      - "'CHANGEME' not in sops_age_key_private_key"
+    fail_msg: >-
+      sops_age_key_private_key is missing or still the placeholder from secrets.example.yml;
+      generate one with age-keygen and put the private key in secrets.yml
+
+- name: Deliver the sops-secrets-operator decryption key once the cluster exists
+  when: k3s_cluster_gate | default(true)
+  block:
+    - name: Create the sops namespace
+      ansible.builtin.command: k3s kubectl create namespace sops
+      register: sops_age_key_namespace
+      changed_when: sops_age_key_namespace.rc == 0
+      failed_when: sops_age_key_namespace.rc != 0 and 'AlreadyExists' not in sops_age_key_namespace.stderr
+
+    - name: Check whether the age key secret already exists
+      ansible.builtin.command: k3s kubectl -n sops get secret sops-age-key-file
+      register: sops_age_key_check
+      changed_when: false
+      failed_when: false
+      check_mode: false
+
+    - name: Create the age key secret for the operator to decrypt with
+      ansible.builtin.command: >-
+        k3s kubectl -n sops create secret generic sops-age-key-file
+        --from-literal=keys.txt={{ sops_age_key_private_key | quote }}
+      when: sops_age_key_check.rc != 0
+      changed_when: true
+      no_log: true

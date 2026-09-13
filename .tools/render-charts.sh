@@ -46,9 +46,10 @@ helm template barman-cloud "$repo_root/argocd/apps/cnpg-barman-plugin" \
   --namespace cnpg-system \
   --include-crds >"$out_dir/cnpg-barman-plugin.yaml"
 
-helm template sealed-secrets-controller "$repo_root/argocd/apps/sealed-secrets" \
-  --namespace kube-system \
-  --include-crds >"$out_dir/sealed-secrets.yaml"
+helm template sops-secrets-operator "$repo_root/argocd/apps/sops-secrets-operator" \
+  --namespace sops \
+  --values "$repo_root/argocd/apps/sops-secrets-operator/values.yaml" \
+  --include-crds >"$out_dir/sops-secrets-operator.yaml"
 
 sed 's/{{ ansible_host }}/10.0.0.1/' "$repo_root/ansible/roles/cilium/templates/values.yaml.j2" >"$out_dir/.cilium-values.yaml"
 helm template cilium cilium/cilium \

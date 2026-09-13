@@ -1,6 +1,6 @@
 apiVersion: v2
 name: blog
-description: Blog application Deployment, Service, ConfigMap and SealedSecret
+description: Blog application Deployment, Service, ConfigMap and SopsSecret
 version: 0.1.0
 dependencies:
   - name: application

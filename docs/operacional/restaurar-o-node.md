@@ -14,22 +14,18 @@ just bootstrap -K
 
 Ao fim, `ansible/kubeconfig` aponta para o cluster novo e `kubectl -n argocd get applications` mostra o `root` sincronizando os satélites.
 
-## 2. Selar os segredos de novo
+## 2. Confirmar a chave age
 
-O controlador de Sealed Secrets gerou uma chave privada nova na subida, então a chave pública commitada neste repositório (`sealed-secrets-cert.pem`) ficou desatualizada. Busque a nova e commite:
+A chave age do sops-secrets-operator não nasce em nenhum controller durante a subida: ela vem de `sops_age_key_private_key` em `secrets.yml`, entregue ao cluster pela role `sops_age_key` no mesmo `just bootstrap` do passo 1. Se a máquina do operador sobreviveu, a chave entregue é a mesma de sempre, e todo `SopsSecret` já commitado continua decifrável sem nenhuma ação extra.
 
-```bash
-just fetch-cert
-git add sealed-secrets-cert.pem
-```
-
-Todo `SealedSecret` commitado em qualquer satélite foi cifrado para a chave antiga e não abre mais; o Argo vai marcá-los como falha de sincronização. Para cada satélite, sele de novo com o certificado atualizado:
+Se a máquina do operador não sobreviveu e a chave privada não tinha cópia num gerenciador de senhas, ela está perdida de verdade: gere um par novo, atualize o destinatário em `.sops.yaml`, e recifre cada `SopsSecret` de cada satélite:
 
 ```bash
-just seal <namespace> <nome> <arquivo-com-o-secret-em-texto-claro>
+age-keygen -o nova-chave-privada.txt
+just sops-encrypt <caminho-do-sopssecret-em-texto-claro>
 ```
 
-O valor original de cada segredo só existe onde o satélite o gerou (o token do túnel no painel da Cloudflare, as chaves do bucket no provedor). Commite os `SealedSecret` novos nos satélites; o Argo aplica no próximo ciclo.
+O valor original de cada segredo só existe onde o satélite o gerou (o token do túnel no painel da Cloudflare, as chaves do bucket no provedor). Commite os `SopsSecret` recifrados nos satélites; o Argo aplica no próximo ciclo.
 
 ## 3. Restaurar o Postgres
 

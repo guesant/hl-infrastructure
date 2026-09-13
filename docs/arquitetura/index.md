@@ -13,13 +13,14 @@ O segundo é manter o estado do cluster ao longo do tempo: quais aplicações ro
 ```mermaid
 flowchart TB
     subgraph bootstrap["Bootstrap (Ansible, uma vez)"]
-        A["os-prerequisites, hardening,\nk3s, Cilium"] --> B["CloudNativePG,\ncert-manager, Barman Cloud"]
-        B --> C["ArgoCD, Sealed Secrets,\nArgo CD Image Updater"]
-        C --> D["bootstrap-app:\naplica a Application root"]
+        A["os-prerequisites, hardening,\nk3s, Cilium"] --> B["ArgoCD"]
+        B --> C["bootstrap-app:\naplica a Application root"]
+        C --> D["sops_age_key:\nentrega a chave privada"]
     end
     subgraph gitops["GitOps (ArgoCD, contínuo)"]
-        D --> E["root sincroniza\nargocd/applications"]
-        E --> F["satélites de outros\nrepositórios"]
+        C --> E["root sincroniza\nargocd/applications"]
+        E --> F["cert-manager, CNPG, Barman Cloud,\nsops-secrets-operator, Image Updater"]
+        E --> G["satélites de outros\nrepositórios"]
     end
 ```
 
@@ -51,7 +52,7 @@ flowchart TB
         argocd["ArgoCD + Image Updater"]
         certmanager["cert-manager"]
         cnpg["CloudNativePG + Barman Cloud"]
-        sealed["Sealed Secrets"]
+        sops["sops-secrets-operator"]
         blog["Satélite blog: app, Postgres, cloudflared"]
     end
     firewall --> sshd
@@ -59,7 +60,7 @@ flowchart TB
     k3s --> cilium
     argocd --> blog
     cnpg --> blog
-    sealed --> blog
+    sops --> blog
     certmanager --> cnpg
 ```
 

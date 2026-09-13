@@ -4,7 +4,7 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 
 | Componente | Tema | Controle | Evidência |
 | --- | --- | --- | --- |
-| Repositório | Segredos | Nenhum segredo no git; valores reais só em `secrets.yml` (ignorado) e em `SealedSecret` | `.gitignore`, job `gitleaks` sobre todo o histórico, `trivy-fs` |
+| Repositório | Segredos | Nenhum segredo no git; valores reais só em `secrets.yml` (ignorado) e em `SopsSecret` | `.gitignore`, job `gitleaks` sobre todo o histórico, `trivy-fs` |
 | Repositório | Integridade de dependências | Toda action, imagem, chart e binário pinado por versão ou SHA | `.github/workflows/*.yml` (SHA em todo `uses`), `.tools/docker/Dockerfile`, `versions.yml`, check `check-images-pinned.sh` |
 | Repositório | Atualização | Renovate abre PR para toda dependência, com sete dias de carência | `.config/renovate.json`, dependency dashboard |
 | CI | Privilégio | `contents: read` por padrão; escrita só no `renovate`, isolado num environment | `permissions:` em cada workflow, `zizmor` a cada push |
