@@ -5,7 +5,6 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 vars_file="$repo_root/ansible/group_vars/all/versions.yml"
 out_dir="$repo_root/rendered"
 
-cert_manager_chart_version="$(grep -oE 'cert_manager_chart_version:\s*v[0-9.]+' "$vars_file" | grep -oE 'v[0-9.]+')"
 argocd_chart_version="$(grep -oE 'argocd_chart_version:\s*[0-9.]+' "$vars_file" | grep -oE '[0-9.]+')"
 argocd_image_updater_chart_version="$(grep -oE 'argocd_image_updater_chart_version:\s*[0-9.]+' "$vars_file" | grep -oE '[0-9.]+')"
 cnpg_chart_version="$(grep -oE 'cnpg_chart_version:\s*[0-9.]+' "$vars_file" | grep -oE '[0-9.]+')"
@@ -13,7 +12,7 @@ cnpg_barman_plugin_chart_version="$(grep -oE 'cnpg_barman_plugin_chart_version:\
 sealed_secrets_chart_version="$(grep -oE 'sealed_secrets_chart_version:\s*[0-9.]+' "$vars_file" | grep -oE '[0-9.]+')"
 cilium_version="$(grep -oE 'cilium_version:\s*[0-9.]+' "$vars_file" | grep -oE '[0-9.]+')"
 
-for name in cert_manager_chart_version argocd_chart_version argocd_image_updater_chart_version cnpg_chart_version cnpg_barman_plugin_chart_version sealed_secrets_chart_version cilium_version; do
+for name in argocd_chart_version argocd_image_updater_chart_version cnpg_chart_version cnpg_barman_plugin_chart_version sealed_secrets_chart_version cilium_version; do
   test -n "${!name}" || {
     echo "could not extract $name from $vars_file" >&2
     exit 1
@@ -23,18 +22,14 @@ done
 rm -rf "$out_dir"
 mkdir -p "$out_dir"
 
-helm repo add jetstack https://charts.jetstack.io >/dev/null
 helm repo add argo https://argoproj.github.io/argo-helm >/dev/null
 helm repo add cnpg https://cloudnative-pg.github.io/charts >/dev/null
 helm repo add sealed-secrets https://bitnami.github.io/sealed-secrets >/dev/null
 helm repo add cilium https://helm.cilium.io/ >/dev/null
 helm repo update >/dev/null
 
-helm template cert-manager jetstack/cert-manager \
-  --version "$cert_manager_chart_version" \
+helm template "$repo_root/argocd/apps/cert-manager" \
   --namespace cert-manager \
-  --set crds.enabled=true \
-  --set startupapicheck.enabled=false \
   --include-crds >"$out_dir/cert-manager.yaml"
 
 helm template argocd argo/argo-cd \

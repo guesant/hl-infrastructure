@@ -137,12 +137,12 @@ infra-render-charts: _build-helm
 [doc("kube-linter over the rendered charts and argocd/")]
 infra-kube-linter: infra-render-charts (_build "kube-linter")
     {{run}} hl-infra/kube-linter:{{tools_hash}} \
-        lint --config .config/kube-linter.yaml --ignore-paths rendered/cilium.yaml rendered argocd
+        lint --config .config/kube-linter.yaml --ignore-paths rendered/cilium.yaml rendered argocd/root argocd/applications
 
 [doc("checkov over the rendered charts and argocd/")]
 infra-checkov: infra-render-charts (_build "checkov")
     {{run}} hl-infra/checkov:{{tools_hash}} \
-        --directory rendered --directory argocd --framework kubernetes \
+        --directory rendered --directory argocd/root --directory argocd/applications --framework kubernetes \
         --check CKV_K8S_16,CKV_K8S_18,CKV_K8S_19 --skip-path rendered/cilium.yaml --compact
 
 [doc("kubeconform schema validation plus the pinned-image check")]
@@ -151,7 +151,7 @@ infra-kubeconform: infra-render-charts (_build "kubeconform") (_build "shell")
     {{run}} hl-infra/kubeconform:{{tools_hash}} \
         -strict -ignore-missing-schemas -summary -n 2 -cache .kubeconform-cache \
         -schema-location default -schema-location '{{crd_schema_location}}' \
-        rendered argocd
+        rendered argocd/root argocd/applications
     {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-images-pinned.sh
 
 [doc("trivy misconfiguration scan over the rendered charts")]

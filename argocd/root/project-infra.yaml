@@ -17,6 +17,16 @@ spec:
       kind: AppProject
     - group: argoproj.io
       kind: Application
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRoleBinding
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
   namespaceResourceWhitelist:
     - group: "*"
       kind: "*"

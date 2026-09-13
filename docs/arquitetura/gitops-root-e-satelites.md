@@ -4,7 +4,7 @@
 
 O ArgoCD sincroniza este cluster a partir de um padrão de app-of-apps recursivo, com dois projetos (`AppProject`) que têm permissões bem diferentes.
 
-O projeto `infra` cobre a infraestrutura definida diretamente neste repositório e tem acesso amplo: pode criar `Namespace`, `AppProject` e `Application` em qualquer escopo de cluster. É nele que vive a aplicação `root`, aplicada uma única vez pela role `bootstrap_app`, apontando para a pasta [argocd/applications](https://github.com/guesant/hl-infrastructure/tree/main/argocd/applications) com sincronização recursiva de diretório ligada. Qualquer arquivo `Application` novo colocado ali é detectado e sincronizado pelo Argo sozinho, sem nenhum passo manual.
+O projeto `infra` cobre a infraestrutura definida diretamente neste repositório e tem acesso amplo em escopo de cluster: `Namespace`, `AppProject`, `Application`, e os tipos de recurso que um operator de plataforma precisa para se instalar (`CustomResourceDefinition`, `ClusterRole`, `ClusterRoleBinding`, `MutatingWebhookConfiguration`, `ValidatingWebhookConfiguration`). É nele que vive a aplicação `root`, aplicada uma única vez pela role `bootstrap_app`, apontando para a pasta [argocd/applications](https://github.com/guesant/hl-infrastructure/tree/main/argocd/applications) com sincronização recursiva de diretório ligada. Qualquer arquivo `Application` novo colocado ali é detectado e sincronizado pelo Argo sozinho, sem nenhum passo manual.
 
 O projeto `satellites` cobre repositórios de aplicação, como o do blog, e é deliberadamente restrito: só pode criar recursos de escopo de namespace, com uma única exceção liberada explicitamente para o tipo `StorageClass`. Uma `Application` satélite não consegue criar uma `ClusterRole` ou uma `CustomResourceDefinition`, mesmo que o operador do Argo quisesse; a permissão simplesmente não existe no projeto. Isso significa que um repositório de aplicação nunca pode, por engano ou por comprometimento, escalar para um recurso de cluster inteiro.
 
@@ -18,7 +18,7 @@ Dentro de `argocd/applications`, cada subpasta corresponde a uma camada, e a cam
 
 | Pasta | Onda | O que vive ali |
 | --- | --- | --- |
-| `platform/` | `0` | Recursos de plataforma que os satélites consomem: backup de banco, notificações, políticas |
+| `platform/` | `0` | Componentes de plataforma que o cluster inteiro depende, hoje começando pelo cert-manager; cada um vem de um mini chart wrapper em [argocd/apps](https://github.com/guesant/hl-infrastructure/tree/main/argocd/apps), não de um chart upstream apontado direto, para manter `sourceRepos` do projeto `infra` restrito a este único repositório |
 | `satellites/` | `10` | Uma `Application` por repositório de aplicação, no projeto `satellites` |
 
 A distância entre as ondas é deliberada: sobra espaço para inserir uma camada intermediária no futuro sem renumerar o que já existe.
