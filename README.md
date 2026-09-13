@@ -64,6 +64,10 @@ E, antes de todos, a quem lutou com o próprio sangue pela liberdade, pela digni
 
 Nada aqui foi feito sozinho. Se este repositório for útil a alguém, o mérito é distribuído entre todas essas pessoas, quase todas anônimas para quem lê esta página, e o que resta de erro é só de quem o mantém.
 
+### Às bibliotecas
+
+Às bibliotecas, físicas e digitais, e a quem cataloga, conserva e digitaliza o que outros descartariam. Nenhum protocolo, nenhuma ferramenta e nenhuma decisão de arquitetura deste repositório existiria fora de um contexto histórico maior, e é bom não esquecer isso. Entre tantas, à Biblioteca Nacional do Brasil, pela [Biblioteca Nacional Digital](https://bndigital.bn.gov.br/), pelo [acervo digital](https://bndigital.bn.gov.br/acervodigital/) e pela [hemeroteca digital](https://memoria.bn.gov.br/hdb/periodico.aspx), por preservarem a história de forma aberta a quem quiser consultar.
+
 ### Inspirações diretas
 
 A estrutura e várias decisões deste repositório vieram de olhar como outras pessoas resolveram o mesmo problema:
