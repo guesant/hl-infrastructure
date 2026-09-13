@@ -1,0 +1,37 @@
+---
+# IMPORTANT: kubectl prints this conflict several different ways; match the whole stderr blob, not individual lines.
+- name: Extract the objects a chart upgrade cannot apply in place
+  ansible.builtin.set_fact:
+    recreate_immutable_conflicts_targets: >-
+      {{ (recreate_immutable_conflicts_apply.stderr | default('')
+          | regex_findall('(Deployment|StatefulSet|DaemonSet|Job)(?:\.[a-zA-Z0-9.]*)? \"([^\"]+)\"')
+          | map('join', ' ')
+          | unique
+          | list)
+         if (recreate_immutable_conflicts_apply.stderr | default('')) is search('field is immutable|Forbidden: updates to statefulset spec')
+         else [] }}
+
+- name: Abort if the apply failed for a reason this role does not know how to recover from
+  ansible.builtin.assert:
+    that:
+      - recreate_immutable_conflicts_targets | length > 0
+    fail_msg: >-
+      the chart apply failed and no known immutable-field conflict was found in its stderr;
+      this is not something recreate_immutable_conflicts can fix automatically:
+      {{ recreate_immutable_conflicts_apply.stderr }}
+
+- name: Delete the objects blocking the apply, so the retry recreates them
+  ansible.builtin.command: >-
+    k3s kubectl -n {{ recreate_immutable_conflicts_namespace }} delete
+    {{ item.split(' ')[0] | lower }} {{ item.split(' ')[1] }}
+  loop: "{{ recreate_immutable_conflicts_targets }}"
+  loop_control:
+    label: "{{ item }}"
+  changed_when: true
+
+- name: Retry the apply now that the conflicting objects are gone
+  ansible.builtin.shell: "{{ recreate_immutable_conflicts_apply.cmd }}"
+  args:
+    executable: /bin/bash
+  register: recreate_immutable_conflicts_retry
+  changed_when: "'unchanged' not in recreate_immutable_conflicts_retry.stdout"

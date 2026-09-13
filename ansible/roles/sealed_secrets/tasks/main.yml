@@ -32,7 +32,22 @@
         executable: /bin/bash
       register: sealed_secrets_apply
       changed_when: "'unchanged' not in sealed_secrets_apply.stdout"
+      failed_when: false
       check_mode: false
+
+    - name: Recover from immutable-field conflicts and retry, if needed
+      ansible.builtin.include_role:
+        name: recreate_immutable_conflicts
+      vars:
+        recreate_immutable_conflicts_apply: "{{ sealed_secrets_apply }}"
+        recreate_immutable_conflicts_namespace: kube-system
+      when: sealed_secrets_apply.rc != 0 and not ansible_check_mode
+
+    - name: Abort if the chart still failed to apply
+      ansible.builtin.assert:
+        that:
+          - sealed_secrets_apply.rc == 0 or ansible_check_mode or (recreate_immutable_conflicts_retry.rc | default(1)) == 0
+        fail_msg: "the Sealed Secrets chart failed to apply: {{ sealed_secrets_apply.stderr }}"
 
     - name: Wait for the Sealed Secrets controller to roll out
       ansible.builtin.command: k3s kubectl -n kube-system rollout status deployment/sealed-secrets-controller --timeout=180s
