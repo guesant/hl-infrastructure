@@ -15,15 +15,16 @@ Esta página não rastreia `versions.yml` para o gate de deriva de documentaçã
 | Variável | Controla | Consumida por |
 | --- | --- | --- |
 | `k3s_version` | Versão do k3s instalada pelo script oficial | role `k3s` |
-| `helm_version` | Versão do binário Helm usado tanto pelo Ansible quanto pela renderização local de charts | roles `cilium`, `cert_manager`, `argocd`, `argocd_image_updater`, `cnpg`, `cnpg_barman_plugin`, `sealed_secrets`; `.tools/render-charts.sh` |
+| `helm_version` | Versão do binário Helm usado tanto pelo Ansible quanto pela renderização local de charts | roles `cilium`, `argocd`, `argocd_image_updater`, `cnpg`, `cnpg_barman_plugin`, `sealed_secrets`; `.tools/render-charts.sh` |
 | `cilium_version` | Versão do chart Helm do Cilium | role `cilium` |
 | `cilium_cli_version` | Versão do binário `cilium-cli`, usado só para inspeção (`cilium status`), nunca para instalar | role `cilium` |
-| `cert_manager_chart_version` | Versão do chart Helm do cert-manager | role `cert_manager` |
 | `argocd_chart_version` | Versão do chart Helm do ArgoCD | role `argocd` |
 | `argocd_image_updater_chart_version` | Versão do chart Helm do Argo CD Image Updater | role `argocd_image_updater` |
 | `cnpg_chart_version` | Versão do chart Helm do operador CloudNativePG | role `cnpg` |
 | `cnpg_barman_plugin_chart_version` | Versão do chart Helm do plugin Barman Cloud | role `cnpg_barman_plugin` |
 | `sealed_secrets_chart_version` | Versão do chart Helm do controlador Sealed Secrets | role `sealed_secrets` |
+
+O cert-manager não tem entrada aqui: desde que passou a ser uma `Application` do ArgoCD em vez de uma role, sua versão vive na própria dependency de [argocd/apps/cert-manager/Chart.yaml](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/cert-manager/Chart.yaml), e o Renovate a atualiza pelo gerenciador nativo de chart Helm, sem precisar do regex customizado que os outros usam.
 
 ## secrets.yml
 

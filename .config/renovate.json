@@ -50,14 +50,6 @@
     {
       "customType": "regex",
       "managerFilePatterns": ["/^ansible/group_vars/all/versions\\.yml$/"],
-      "matchStrings": ["cert_manager_chart_version:\\s*(?<currentValue>v[\\w.-]+)"],
-      "depNameTemplate": "cert-manager",
-      "datasourceTemplate": "helm",
-      "registryUrlTemplate": "https://charts.jetstack.io"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/^ansible/group_vars/all/versions\\.yml$/"],
       "matchStrings": ["argocd_chart_version:\\s*(?<currentValue>[\\w.-]+)"],
       "depNameTemplate": "argo-cd",
       "datasourceTemplate": "helm",
