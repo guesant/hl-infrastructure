@@ -13,6 +13,7 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | Manifestos | Privilégio de contêiner | Sem privilegiado, sem namespace do host, sem montagem sensível, fora a CNI | `.config/kube-linter.yaml`, `checkov` com `CKV_K8S_16,18,19`, `trivy config` |
 | Ansible | Correção | Perfil `production` do ansible-lint, `changed_when` explícito, `assert` de variáveis em toda role | job `ansible-lint`, primeira task de cada role |
 | Ansible | Integridade de binários | k3s, Helm e cilium-cli verificados contra o checksum publicado pelo projeto | roles `k3s` e `cilium`, campo `checksum` de cada `get_url` |
+| Ansible | Resiliência de upgrade | Um chart que muda `selector` entre versões não trava o bootstrap; o objeto conflitante é recriado, nunca aplicado às cegas | role `recreate_immutable_conflicts` |
 | Node | Acesso | SSH só por chave, root só com chave, fail2ban | roles `ssh_hardening` e `fail2ban` |
 | Node | Rede | Firewall ligado, API do k3s só dos CIDRs do operador, SSH nunca removido da zona | role `firewall`, `assert` antes do reload |
 | Node | Kernel | sysctls de hardening, reboot automático após oops | role `sysctl_hardening` |
@@ -22,7 +23,7 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | ArgoCD | Segregação | Satélites só criam recurso de namespace; `default` esvaziado | `argocd/root/project-*.yaml` |
 | ArgoCD | Comportamento de sync | Server-side apply, prune por último, retry com backoff | `syncPolicy` em todo `Application` |
 | Imagens | Proveniência | Só tags imutáveis `sha-<commit>` são promovidas | `ImageUpdater` de cada satélite com `allowTags` |
-| Dados | Recuperação | Backup contínuo do Postgres em object storage, restauração documentada | `ObjectStore` e `ScheduledBackup` do satélite, [restaurar o node](../operacional/restaurar-o-node.md) |
+| Dados | Recuperação | Backup contínuo do Postgres em object storage, restauração documentada; depende de cada satélite selar as próprias credenciais do bucket | `ObjectStore` e `ScheduledBackup` do satélite, [restaurar o node](../operacional/restaurar-o-node.md), [checklist operacional](../operacional/checklist.md) |
 | Documentação | Fidelidade | Página cuja fonte mudou sem revisão falha a CI | `.tools/check-doc-drift.sh`, marcadores `source-of-trust` |
 
 ## O que este mapa não cobre
