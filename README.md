@@ -24,7 +24,7 @@ Este repositório não faz jus ao trabalho que o sustenta. Cada linha dele se ap
 
 ### Às ideias e a quem as defendeu
 
-Ao [movimento do software livre e de código aberto](https://www.gnu.org/philosophy/free-sw.html) e à [Free Software Foundation](https://www.fsf.org/), pela ideia de que um programa deve poder ser estudado, modificado e compartilhado, e pela GPL que este projeto adota. A quem inventou o Unix e a filosofia de ferramentas pequenas que se combinam, a quem escreveu os RFCs que fazem uma máquina qualquer falar com outra, a quem provou os teoremas por trás de cada handshake TLS e de cada chave ed25519 deste repositório, e a quem, muito antes de existir computador, insistiu que conhecimento é para ser compartilhado. A quem lutou, e ainda luta, pela liberdade de expressão, de associação e de aprender, sem a qual nada disto poderia ser publicado.
+Ao [movimento do software livre e de código aberto](https://www.gnu.org/philosophy/free-sw.html) e à [Free Software Foundation](https://www.fsf.org/), pela ideia de que um programa deve poder ser estudado, modificado e compartilhado, e pela GPL que este projeto adota. A quem inventou o Unix e a filosofia de ferramentas pequenas que se combinam, a quem escreveu os RFCs que fazem uma máquina qualquer falar com outra, a quem provou os teoremas por trás de cada handshake TLS e de cada chave ed25519 deste repositório, e a quem, muito antes de existir computador, insistiu que conhecimento é para ser compartilhado. A quem lutou, e ainda luta, pela liberdade de expressão, de associação e de aprender, sem a qual nada disto poderia ser publicado. Ao [NIST](https://www.nist.gov/), pelos padrões de criptografia e pelas recomendações de segurança que este repositório segue sem precisar reinventá-las, e a todas as pessoas, em CERTs, em equipes de resposta a incidentes, em programas de divulgação responsável e em projetos anônimos, que fazem da internet e do mundo um lugar melhor e mais seguro, quase sempre sem que ninguém saiba que foram elas.
 
 ### A quem mantém o que este projeto usa
 
@@ -55,6 +55,7 @@ A estrutura e várias decisões deste repositório vieram de olhar como outras p
 - [Vinetos/infrastructure](https://github.com/Vinetos/infrastructure), pela organização base e ambiente do GitOps e pela validação dos manifestos em CI.
 - [FerdinandWohlstein/infrastructure-live](https://github.com/FerdinandWohlstein/infrastructure-live), pelas asserts de pré-condição nas roles, pelos diagramas versionados e pelo mapa de controles com evidência.
 - [Gui, o Cloud with Gui](https://x.com/cloudwithgui), pelo conteúdo sobre homelab, Kubernetes e GitOps que motivou este projeto.
+- [Felipe](https://x.com/felipalds), pelas conversas, pelo incentivo e pelo olhar crítico que fizeram este repositório ficar melhor.
 - [guesant/template-documentacao-tecnica](https://github.com/guesant/template-documentacao-tecnica), pela estrutura e pelas convenções de escrita da documentação.
 
 ## Ferramentas utilizadas
