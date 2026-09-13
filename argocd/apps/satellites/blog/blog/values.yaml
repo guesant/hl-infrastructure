@@ -1,0 +1,88 @@
+application:
+  applicationName: app
+  deployment:
+    replicas: 1
+    reloadOnChange: false
+    image:
+      repository: ghcr.io/guesant/blog
+      tag: sha-0000000000000000000000000000000000000000
+    command:
+      - /bin/sh
+      - -c
+      - |
+        export PORTFOLIO_DB_CONNECTION="Host=$(cat /secrets/db/host);Database=$(cat /secrets/db/dbname);Username=$(cat /secrets/db/user);Password=$(cat /secrets/db/password)"
+        exec /app/entrypoint.prod.sh
+    ports:
+      - containerPort: 8080
+    envFrom:
+      config:
+        type: configmap
+        nameSuffix: config
+      secret:
+        type: secret
+        nameSuffix: secret
+    volumes:
+      db-credentials:
+        secret:
+          secretName: postgres-app
+      public-assets:
+        emptyDir: {}
+      resume-cache:
+        emptyDir: {}
+    volumeMounts:
+      db-credentials:
+        mountPath: /secrets/db
+        readOnly: true
+      public-assets:
+        mountPath: /data/public
+      resume-cache:
+        mountPath: /data/resume-cache
+    livenessProbe:
+      enabled: true
+      httpGet:
+        path: /health
+        port: 8080
+    readinessProbe:
+      enabled: true
+      httpGet:
+        path: /health
+        port: 8080
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1654
+    containerSecurityContext:
+      readOnlyRootFilesystem: false
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      seccompProfile:
+        type: RuntimeDefault
+  service:
+    ports:
+      - port: 80
+        name: http
+        protocol: TCP
+        targetPort: 8080
+  configMap:
+    enabled: true
+    files:
+      config:
+        PUBLIC_SITE_BASE_URL: https://blog.example.invalid
+        TECTONIC_BUNDLE: https://data1.fullyjustified.net/tlextras-2022.0r0.tar
+        PORTFOLIO_ADMIN_GOOGLE_CLIENT_ID: ""
+        PORTFOLIO_ADMIN_GOOGLE_EMAIL: ""
+  sealedSecret:
+    enabled: true
+    files:
+      secret:
+        encryptedData:
+          PORTFOLIO_ADMIN_GOOGLE_CLIENT_SECRET: AgC1ICSMebYFyb7yWlsFKjd/UZ+qcIhQBWvjX2+IY0eAN7Kn5vpW5WCGlyi3iAYOX7L0gjdnb4RHspfYOljzaNMmX0Z0Kwcs5UMxea37QzKvHS2Ehspw+BmHh0oRjSIlHYqS7Bvg6ASUiKKGH2K0oDrqZsiP6XjxSvLlpkG0fwo3cGSKX28qoN8arFkaBFlL0YZAY9E+b53VooljpJBSXcpawbhzxhU+GnD7KCdhrpZnX6msodqUnIU/ri2hAuG/Y4myTqlR0aoUC5pZLsmoPtFXeM/bI1mQHDN53vjnEmqmgWYZZ7nams8HaTLfnWTejcLg+r+J4uOxuVUAZJhPgqoBh7KHvUv/oB16JzWTXQhn6iN+db46HK1565UOhyrDeKUEkGierC6fhBIGgBTX9suZFp8Ow5s+tiqZHfNwZwd8jV+/eM3xyEpLAk8auw+GAPsf+2OXxxeQnKg8ZjWIF/aOkjNRUMjnP0QNaaX4fyC6dMmXgHRoBrww1yekFX+0KcoAub7ptOSkhIjKVNT4pO6k8BQ38+mWRn3Evml3vuQABQ1YUV+0NSVQY6cThJkWihiu+rHOkr+NMlNHSHHCeWfGl1cdQ6GC0ljzYWjD0hIElTpog39LbShfEG6RlT63iRAI1XrXkIxiBw0e0jytU+ndK/Q3MWCPWkRj7xrkB0wgMYTR62FzZpCaB1nAT0x7A5A= # yamllint disable-line rule:line-length

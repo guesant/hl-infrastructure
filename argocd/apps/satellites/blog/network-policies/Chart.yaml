@@ -1,0 +1,4 @@
+apiVersion: v2
+name: network-policies
+description: NetworkPolicy default-deny plus ResourceQuota/LimitRange guardrails for the blog namespace
+version: 0.1.0

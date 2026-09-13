@@ -151,6 +151,7 @@ infra-kubeconform: infra-render-charts (_build "kubeconform") (_build "shell")
     {{run}} hl-infra/kubeconform:{{tools_hash}} \
         -strict -ignore-missing-schemas -summary -n 2 -cache .kubeconform-cache \
         -schema-location default -schema-location '{{crd_schema_location}}' \
+        -skip ImageUpdater \
         rendered argocd/root argocd/applications
     {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-images-pinned.sh
 

@@ -1,0 +1,4 @@
+apiVersion: v2
+name: postgres
+description: CloudNativePG Cluster for the blog database
+version: 0.1.0

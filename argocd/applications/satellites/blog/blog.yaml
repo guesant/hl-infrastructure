@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: blog
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: satellites
+  source:
+    repoURL: https://github.com/guesant/hl-infrastructure.git
+    targetRevision: main
+    path: argocd/apps/satellites/blog/blog
+    helm:
+      releaseName: blog
+      parameters:
+        - name: application.deployment.image.tag
+          value: sha-bf56a5992fe6cd70c58164ce3291685ad9197e83
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: blog
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+      - PrunePropagationPolicy=foreground
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
