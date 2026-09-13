@@ -17,7 +17,7 @@ FROM ghcr.io/yannh/kubeconform:v0.8.0 AS kubeconform
 
 FROM lycheeverse/lychee:0.24.2 AS lychee
 
-FROM koalaman/shellcheck:v0.10.0 AS shellcheck
+FROM koalaman/shellcheck:v0.11.0 AS shellcheck
 
 FROM hadolint/hadolint:v2.15.1 AS hadolint
 ENTRYPOINT ["hadolint"]
