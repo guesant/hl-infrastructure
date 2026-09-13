@@ -104,6 +104,10 @@ sops-encrypt file: (_build "sops")
 age-keygen: (_build "age")
     {{run}} hl-infra/age:{{tools_hash}} age-keygen
 
+[doc("Fetch the node's age public key from the cluster, ready to paste into .sops.yaml")]
+sops-recipients: (_build "age")
+    .tools/sops-recipients.sh
+
 [doc("Print a live resource as a clean manifest ready to commit: just freeze deployment blog -n blog")]
 freeze *args:
     KUBECONFIG={{kubeconfig}} .tools/freeze-manifest.sh {{args}}

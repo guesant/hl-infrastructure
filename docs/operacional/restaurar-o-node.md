@@ -16,7 +16,7 @@ Ao fim, `ansible/kubeconfig` aponta para o cluster novo e `kubectl -n argocd get
 
 ## 2. Confirmar a chave age
 
-Um node novo não herda a chave age do node antigo: a role `sops_age_key` só gera uma chave quando o `Secret` `sops-age-key-file` ainda não existe, e num node recém-instalado ele nunca existe. O `bootstrap` do passo 1 gera uma chave nova, diferente da anterior, e imprime a metade pública no output (`ansible.builtin.debug`, procure por "Add this recipient to .sops.yaml").
+Um node novo não herda a chave age do node antigo: a role `sops_age_key` só gera uma chave quando o `Secret` `sops-age-key-file` ainda não existe, e num node recém-instalado ele nunca existe. O `bootstrap` do passo 1 gera uma chave nova, diferente da anterior. Rode `just sops-recipients` para buscar a metade pública direto do cluster e atualizar `.sops.yaml`.
 
 É exatamente para este cenário que existe a segunda chave, a de backup, gerada com `just age-keygen` e guardada só no gerenciador de senhas do operador: como `.sops.yaml` já lista os dois destinatários, todo `SopsSecret` commitado continua decifrável pela chave de backup, mesmo com a chave do node tendo mudado. Nada precisa ser recifrado.
 
