@@ -1,12 +1,18 @@
+ASVS
 DNAT
+Dockerfiles
+Exploitability
+Pulumi
 actionlint
 ansible
 argocd
 auditd
+automatizável
 bumpa
 bumpar
 checkov
 commitada
+commitadas
 commitado
 commitar
 commite
@@ -23,6 +29,7 @@ mergeada
 mergeado
 mergear
 mergeia
+nftables
 taggeada
 taggeado
 taggeando
