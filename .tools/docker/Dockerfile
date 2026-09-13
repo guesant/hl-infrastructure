@@ -19,7 +19,7 @@ FROM lycheeverse/lychee:0.24.2 AS lychee
 
 FROM alpine/helm:${HELM_VERSION} AS helm
 
-FROM alpine:3.22 AS shell
+FROM alpine:3.24 AS shell
 RUN apk add --no-cache bash grep git
 
 FROM python:3.14-slim AS yamllint
