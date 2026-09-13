@@ -13,12 +13,12 @@ for role_dir in ansible/roles/*/; do
   fi
 done
 
-for role in $(sed -nE 's/^    - ([a-z_]+)$/\1/p' ansible/site.yml); do
+while IFS= read -r role; do
   [ -d "ansible/roles/$role" ] || {
     echo "site.yml lists role $role, which does not exist" >&2
     status=1
   }
-done
+done < <(sed -nE 's/^    - ([a-z_]+)$/\1/p' ansible/site.yml)
 
 if [ "$status" -eq 0 ]; then
   echo "every role is described in docs/arquitetura/ansible.md"
