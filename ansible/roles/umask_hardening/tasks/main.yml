@@ -1,0 +1,7 @@
+---
+- name: Declare UMASK 027 for interactive login shells
+  ansible.builtin.lineinfile:
+    path: /etc/login.defs
+    regexp: "^#?UMASK\\s"
+    line: "UMASK           027"
+    insertafter: EOF

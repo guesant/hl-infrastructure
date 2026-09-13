@@ -1,0 +1,43 @@
+---
+- name: Ensure apparmor is installed
+  ansible.builtin.apt:
+    name: apparmor
+    state: present
+
+- name: Find the active kernel cmdline file
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop:
+    - /boot/firmware/cmdline.txt
+    - /boot/cmdline.txt
+  register: apparmor_hardening_cmdline_candidates
+
+- name: Select the kernel cmdline file
+  ansible.builtin.set_fact:
+    apparmor_hardening_cmdline_file: >-
+      {{ apparmor_hardening_cmdline_candidates.results | selectattr('stat.exists') | map(attribute='item') | first | default('') }}
+
+- name: Enable AppArmor on the kernel command line
+  ansible.builtin.replace:
+    path: "{{ apparmor_hardening_cmdline_file }}"
+    regexp: '^(?!.*apparmor=1)(.*)$'
+    replace: '\1 apparmor=1 security=apparmor'
+  register: apparmor_hardening_cmdline_update
+  when: apparmor_hardening_cmdline_file | length > 0
+
+- name: Reboot if AppArmor was just enabled on the command line # noqa: no-handler
+  ansible.builtin.reboot:
+    reboot_timeout: 300
+  when: apparmor_hardening_cmdline_update.changed | default(false)
+
+- name: Read the AppArmor state reported by the kernel
+  ansible.builtin.slurp:
+    src: /sys/module/apparmor/parameters/enabled
+  register: apparmor_hardening_enabled_raw
+
+- name: Fail if AppArmor is not active in this kernel
+  ansible.builtin.assert:
+    that:
+      - (apparmor_hardening_enabled_raw.content | b64decode | trim) == "Y"
+    fail_msg: AppArmor is not active in this kernel even after enabling it on the command line and rebooting
+  when: not ansible_check_mode
