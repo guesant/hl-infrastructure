@@ -31,6 +31,8 @@ O cert-manager, o operador CloudNativePG, o plugin Barman Cloud, o sops-secrets-
 | `ssh_root_authorized_key` | Chave pública SSH autorizada para login como root | role `ssh_hardening` |
 | `argocd_github_webhook_secret` | Segredo compartilhado usado para validar o webhook do GitHub que acelera a sincronização do Argo | role `argocd` |
 
+A role `sops_age_key` não consome nenhuma variável daqui: ela gera o próprio par de chaves com `age-keygen` direto no node, na primeira execução, em vez de receber um valor pronto de `secrets.yml`. Veja [Ansible: as roles do bootstrap](ansible.md) para o porquê.
+
 ## Continue por aqui
 
 Para ver como cada versão de chart é mantida em dia automaticamente, veja [Helm e os charts](helm-e-charts.md). Para a lista de tudo o que, como `secrets.yml`, vive fora do git, veja [estado fora do git](../operacional/estado-fora-do-git.md).

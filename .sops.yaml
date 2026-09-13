@@ -1,4 +1,4 @@
 creation_rules:
   - path_regex: .*-sopssecret\.yaml$
     encrypted_suffix: Templates
-    age: age18ph2wen5k7llsmd6v9s0su296qwry2mze0rmluyhk5ysn0vpaeyq25dkkn
+    age: REPLACE_WITH_NODE_PUBLIC_KEY,REPLACE_WITH_BACKUP_PUBLIC_KEY

@@ -24,6 +24,9 @@ ENTRYPOINT ["hadolint"]
 
 FROM ghcr.io/getsops/sops:v3.13.3-alpine AS sops
 
+FROM alpine:3.24 AS age
+RUN apk add --no-cache age
+
 FROM alpine/helm:${HELM_VERSION} AS helm
 
 FROM alpine:3.24 AS shell

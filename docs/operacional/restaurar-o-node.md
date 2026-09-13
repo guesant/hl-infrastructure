@@ -16,12 +16,14 @@ Ao fim, `ansible/kubeconfig` aponta para o cluster novo e `kubectl -n argocd get
 
 ## 2. Confirmar a chave age
 
-A chave age do sops-secrets-operator não nasce em nenhum controller durante a subida: ela vem de `sops_age_key_private_key` em `secrets.yml`, entregue ao cluster pela role `sops_age_key` no mesmo `just bootstrap` do passo 1. Se a máquina do operador sobreviveu, a chave entregue é a mesma de sempre, e todo `SopsSecret` já commitado continua decifrável sem nenhuma ação extra.
+Um node novo não herda a chave age do node antigo: a role `sops_age_key` só gera uma chave quando o `Secret` `sops-age-key-file` ainda não existe, e num node recém-instalado ele nunca existe. O `bootstrap` do passo 1 gera uma chave nova, diferente da anterior, e imprime a metade pública no output (`ansible.builtin.debug`, procure por "Add this recipient to .sops.yaml").
 
-Se a máquina do operador não sobreviveu e a chave privada não tinha cópia num gerenciador de senhas, ela está perdida de verdade: gere um par novo, atualize o destinatário em `.sops.yaml`, e recifre cada `SopsSecret` de cada satélite:
+É exatamente para este cenário que existe a segunda chave, a de backup, gerada com `just age-keygen` e guardada só no gerenciador de senhas do operador: como `.sops.yaml` já lista os dois destinatários, todo `SopsSecret` commitado continua decifrável pela chave de backup, mesmo com a chave do node tendo mudado. Nada precisa ser recifrado.
+
+Se a chave de backup também se perdeu junto com a máquina do operador, não há como recuperar o que já estava cifrado: gere um par novo, adicione o destinatário em `.sops.yaml` no lugar do antigo, e recifre cada `SopsSecret` de cada satélite a partir do valor original:
 
 ```bash
-age-keygen -o nova-chave-privada.txt
+just age-keygen
 just sops-encrypt <caminho-do-sopssecret-em-texto-claro>
 ```
 

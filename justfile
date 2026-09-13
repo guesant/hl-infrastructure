@@ -100,6 +100,10 @@ sops-encrypt file: (_build "sops")
     {{run}} hl-infra/sops:{{tools_hash}} encrypt {{file}} > {{file}}.tmp
     mv {{file}}.tmp {{file}}
 
+[doc("Generate a new age keypair locally; the private half never leaves your terminal")]
+age-keygen: (_build "age")
+    {{run}} hl-infra/age:{{tools_hash}} age-keygen
+
 [doc("Print a live resource as a clean manifest ready to commit: just freeze deployment blog -n blog")]
 freeze *args:
     KUBECONFIG={{kubeconfig}} .tools/freeze-manifest.sh {{args}}

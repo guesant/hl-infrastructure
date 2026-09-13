@@ -4,13 +4,14 @@ Nem tudo que o cluster precisa está versionado, e o que não está precisa ser 
 
 | Item | Onde vive | Quem cria | Se perdido |
 | --- | --- | --- | --- |
-| `ansible/group_vars/all/secrets.yml` | máquina do operador, ignorado pelo git | o operador, a partir de `secrets.example.yml` | reescrever a partir do exemplo; o segredo do webhook do Argo, a chave SSH e a chave privada age precisam ser regenerados. As versões não estão aqui: `versions.yml` é versionado |
+| `ansible/group_vars/all/secrets.yml` | máquina do operador, ignorado pelo git | o operador, a partir de `secrets.example.yml` | reescrever a partir do exemplo; o segredo do webhook do Argo e a chave SSH precisam ser regenerados. As versões não estão aqui: `versions.yml` é versionado |
 | `ansible/inventory.ini` | máquina do operador, ignorado pelo git | o operador, a partir de `inventory.example.ini` | reescrever; só contém o endereço do nó |
 | `ansible/kubeconfig` | máquina do operador, ignorado pelo git | a role `k3s` no bootstrap | rodar `just bootstrap` de novo, que o busca do nó |
-| chave privada age do sops-secrets-operator | `Secret` `sops-age-key-file` no namespace `sops` | a role `sops_age_key`, a partir de `sops_age_key_private_key` em `secrets.yml` | gerar um par novo com `age-keygen`, atualizar `.sops.yaml` com a chave pública nova, e recifrar todo `SopsSecret` existente para o destinatário novo |
+| chave privada age do node | `Secret` `sops-age-key-file` no namespace `sops` | a role `sops_age_key`, com `age-keygen` direto no node, na primeira execução | perdida junto com o node; a chave de backup abaixo é o que evita perder acesso a todo `SopsSecret` junto com ela. Recuperar a pública de um node vivo exige `age-keygen -y` no arquivo dentro do `Secret`, já que ela só é impressa uma vez, no primeiro `bootstrap` |
+| chave privada age de backup | gerenciador de senhas do operador, fora de qualquer máquina deste fluxo | o operador, com `just age-keygen` | nada muda: ela é redundância pura, a chave do node continua decifrando sozinha. Só importa se as duas se perderem juntas |
 | chave SSH de root do nó | `/root/.ssh/authorized_keys` no nó | a role `ssh_hardening`, a partir de `ssh_root_authorized_key` | acesso ao nó só pelo console do hipervisor |
 | token do Renovate | environment `renovate` do repositório no GitHub | o operador, como PAT com escopo de escrita no repositório | o workflow `renovate` falha até um token novo ser cadastrado |
-| segredos dos satélites | `SopsSecret` no repositório de cada satélite | cada satélite, com `just sops-encrypt` | dependem da chave privada acima; o valor original só existe onde o satélite o gerou |
+| segredos dos satélites | `SopsSecret` no repositório de cada satélite | cada satélite, com `just sops-encrypt` | dependem de uma das duas chaves privadas acima; o valor original só existe onde o satélite o gerou |
 | dados do Postgres do blog | volume no nó, com backup em object storage pelo barman-cloud | o CloudNativePG | restaurar do último backup pelo próprio operador CNPG |
 | o sistema operacional do nó | instalado pelo hipervisor ou pela imagem cloud | fora deste repositório | reinstalar e rodar `just bootstrap`; as roles de SO assumem Debian |
 

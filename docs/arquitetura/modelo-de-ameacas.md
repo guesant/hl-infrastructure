@@ -50,7 +50,7 @@ Das Actions para o GitHub, o `ci` e o `docs` rodam com `contents: read` e sem cr
 
 Da Internet para os serviços, nada chega direto ao nó: o blog é exposto por um túnel Cloudflare saindo de dentro do cluster, e o firewall do nó não abre porta de serviço. O que fica exposto é a porta 22 e a 6443, ambas restritas como descrito acima. Isso não é só preferência: uma regra de firewalld filtra a chain `INPUT`, que só vê tráfego destinado ao próprio host. Uma `Service` do tipo `LoadBalancer` ou `NodePort` chega por um DNAT que muda o destino do pacote antes dele ser avaliado, então esse tráfego passa pela chain `FORWARD`, não pela `INPUT`, e uma regra de firewalld sobre a porta nunca é sequer consultada. É por isso que a role `k3s` desliga o Traefik e o ServiceLB embutidos: expor algo assim tornaria qualquer regra de firewall sobre aquela porta uma proteção falsa. A porta 6443 escapa desse problema porque o próprio processo do k3s escuta direto na interface do host, sem passar por uma `Service`, então a chain `INPUT` realmente vê e filtra esse tráfego.
 
-Dentro do cluster, o sops-secrets-operator guarda a chave privada age no `Secret` `sops-age-key-file`, no namespace `sops`; o destinatário público correspondente vive em `.sops.yaml`, commitado neste repositório, porque cifrar com ele não permite decifrar nada. Qualquer workload que consiga ler `Secret` nesse namespace decifra tudo; o projeto `satellites` não pode criar `ClusterRole`, então um satélite não consegue se conceder essa leitura por GitOps. Um `Pod` privilegiado ou com montagem do host é barrado antes de chegar ao cluster pelos gates `kube-linter`, `checkov` e `trivy config` sobre os charts renderizados, mas esses gates só cobrem os sete charts Helm deste repositório; a política de rede e de recursos de um satélite de terceiro é responsabilidade do satélite. A do blog está fora dessa exceção: como suas `NetworkPolicy`, `ResourceQuota` e `LimitRange` também vivem neste repositório agora, elas ficam sujeitas às mesmas convenções de revisão daqui, ainda que não passem pelos mesmos gates de chart Helm, por não serem chart.
+Dentro do cluster, o sops-secrets-operator guarda a chave privada age no `Secret` `sops-age-key-file`, no namespace `sops`; os destinatários públicos correspondentes vivem em `.sops.yaml`, commitados neste repositório, porque cifrar com eles não permite decifrar nada. Qualquer workload que consiga ler `Secret` nesse namespace decifra tudo; o projeto `satellites` não pode criar `ClusterRole`, então um satélite não consegue se conceder essa leitura por GitOps. Um `Pod` privilegiado ou com montagem do host é barrado antes de chegar ao cluster pelos gates `kube-linter`, `checkov` e `trivy config` sobre os charts renderizados, mas esses gates só cobrem os sete charts Helm deste repositório; a política de rede e de recursos de um satélite de terceiro é responsabilidade do satélite. A do blog está fora dessa exceção: como suas `NetworkPolicy`, `ResourceQuota` e `LimitRange` também vivem neste repositório agora, elas ficam sujeitas às mesmas convenções de revisão daqui, ainda que não passem pelos mesmos gates de chart Helm, por não serem chart.
 
 ## O caminho de um segredo
 
@@ -63,8 +63,8 @@ sequenceDiagram
     participant Argo as ArgoCD
     participant SSO as sops-secrets-operator (cluster)
     participant Pod as Pod
-    Op->>Git: .sops.yaml (destinatário público age, commitado)
-    Op->>Op: just sops-encrypt arquivo.yaml (cifra localmente com o destinatário do repo)
+    Op->>Git: .sops.yaml (destinatários públicos age, commitados)
+    Op->>Op: just sops-encrypt arquivo.yaml (cifra localmente com os destinatários do repo)
     Op->>Git: commit do SopsSecret
     Argo->>Git: pull
     Argo->>SSO: apply do SopsSecret
@@ -72,7 +72,7 @@ sequenceDiagram
     SSO->>Pod: cria o Secret no namespace
 ```
 
-O `argocd_github_webhook_secret`, a chave SSH e a chave privada age seguem outro caminho, mais curto: ficam em `secrets.yml` na máquina do operador e o Ansible os entrega ao node por SSH, sem passar por nenhum repositório.
+O `argocd_github_webhook_secret` e a chave SSH seguem outro caminho, mais curto: ficam em `secrets.yml` na máquina do operador e o Ansible os entrega ao node por SSH, sem passar por nenhum repositório. A chave privada age nem isso: ela nasce dentro do próprio node, na primeira execução da role `sops_age_key`, e nunca existe em texto claro fora dele. `.sops.yaml` aceita mais de um destinatário na mesma lista, e qualquer chave privada correspondente decifra sozinha; por isso existe uma segunda chave, gerada localmente pelo operador com `just age-keygen` e guardada só num gerenciador de senhas, sem nunca passar por este repositório ou pelo Ansible. Ela não decifra nada no dia a dia, é redundância pura: existe só para o cenário em que o node inteiro se perde e leva a chave dele junto.
 
 ## O que fica fora do modelo
 
