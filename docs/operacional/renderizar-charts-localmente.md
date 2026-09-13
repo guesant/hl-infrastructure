@@ -1,6 +1,6 @@
 # Renderizar os charts localmente
 
-Nenhum dos seis componentes instalados via Helm neste repositório (cert-manager, ArgoCD, Argo CD Image Updater, CloudNativePG, Sealed Secrets e o plugin Barman Cloud) fica vendorizado como manifesto estático; as roles do Ansible rodam `helm template` direto contra o repositório oficial de cada projeto. Isso significa que, para ver os manifestos Kubernetes que uma role realmente vai aplicar, é preciso renderizar o chart primeiro.
+Nenhum dos sete componentes instalados via Helm neste repositório (Cilium, cert-manager, ArgoCD, Argo CD Image Updater, CloudNativePG, o plugin Barman Cloud e Sealed Secrets) fica vendorizado como manifesto estático; as roles do Ansible rodam `helm template` direto contra o repositório oficial de cada projeto. Isso significa que, para ver os manifestos Kubernetes que uma role realmente vai aplicar, é preciso renderizar o chart primeiro.
 
 Rode:
 
