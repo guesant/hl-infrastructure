@@ -81,6 +81,18 @@ lint-ansible: (_build "ansible-lint")
     {{run}} -e ANSIBLE_COLLECTIONS_PATH=/tmp/collections --entrypoint sh hl-infra/ansible-lint:{{tools_hash}} \
         -c "ansible-galaxy collection install -r ansible/requirements.yml -p /tmp/collections >/dev/null && ansible-lint -c .config/ansible-lint.yml"
 
+[doc("ShellCheck over every shell script in .tools/")]
+lint-shellcheck: (_build "shellcheck")
+    {{run}} hl-infra/shellcheck:{{tools_hash}} .tools/*.sh
+
+[doc("Hadolint over the tool Dockerfile")]
+lint-hadolint: (_build "hadolint")
+    {{run}} hl-infra/hadolint:{{tools_hash}} --ignore DL3008 --ignore DL3018 .tools/docker/Dockerfile
+
+[doc("markdownlint-cli2 over every Markdown file")]
+lint-markdown: (_build "markdownlint")
+    {{run}} hl-infra/markdownlint:{{tools_hash}} markdownlint-cli2 --config .config/.markdownlint-cli2.jsonc README.md SECURITY.md SUPPORT.md CONTRIBUTING.md 'docs/**/*.md'
+
 [doc("Fail on em dash, en dash or Unicode arrow in the prose")]
 lint-prose: (_build "shell")
     {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-prose.sh
@@ -134,6 +146,10 @@ quality-jscpd: (_build "jscpd")
 infra-render-charts: _build-helm
     {{run}} --entrypoint bash {{helm_image}} .tools/render-charts.sh
 
+[doc("helm lint over every local wrapper chart in argocd/apps")]
+infra-helm-lint: _build-helm
+    {{run}} --entrypoint bash {{helm_image}} .tools/lint-charts.sh
+
 [doc("kube-linter over the rendered charts and argocd/")]
 infra-kube-linter: infra-render-charts (_build "kube-linter")
     {{run}} hl-infra/kube-linter:{{tools_hash}} \
@@ -170,4 +186,4 @@ docs-serve:
         sh -c "pip install --quiet -r docs/requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000 --config-file .config/mkdocs.yml"
 
 [doc("Every check the CI runs, in order")]
-check: lint-actions lint-yaml lint-ansible lint-prose lint-docs lint-spelling security-gitleaks security-osv-scanner security-trivy-fs quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config docs-build
+check: lint-actions lint-yaml lint-ansible lint-shellcheck lint-hadolint lint-markdown lint-prose lint-docs lint-spelling security-gitleaks security-osv-scanner security-trivy-fs quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-helm-lint docs-build

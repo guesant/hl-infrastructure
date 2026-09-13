@@ -6,7 +6,7 @@ O Argo CD só reage quando o manifesto renderizado muda de texto; ele não sabe,
 
 O Image Updater roda como um controller comum, com seu próprio ciclo de reconciliação (por padrão, a cada dois minutos); sem um webhook do registry configurado, é esse polling que dita o atraso entre a imagem ficar pronta e o cluster perceber. Isso já é esperado. O problema real é quando o controller simplesmente para de considerar uma imagem, sem nenhum evento de erro visível em `kubectl get events` nem em `Application.status`, só uma linha no log do pod:
 
-```
+```text
 level=info msg="Image '...' seems not to be live in this application, skipping" application=...
 ```
 

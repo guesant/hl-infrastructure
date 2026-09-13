@@ -77,6 +77,84 @@ jobs:
           --entrypoint sh hl-infra/ansible-lint
           -c "ansible-galaxy collection install -r ansible/requirements.yml -p /tmp/collections >/dev/null && ansible-lint -c .config/ansible-lint.yml"
 
+  shellcheck:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: shellcheck
+          smoke: --version
+
+      - name: shellcheck
+        run: docker run --rm -v "$PWD":/repo -w /repo hl-infra/shellcheck .tools/*.sh
+
+  hadolint:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: hadolint
+          smoke: --version
+
+      - name: hadolint
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo hl-infra/hadolint
+          --ignore DL3008 --ignore DL3018 .tools/docker/Dockerfile
+
+  markdownlint:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: markdownlint
+          smoke: markdownlint-cli2 --version
+
+      - name: markdownlint-cli2
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo hl-infra/markdownlint
+          markdownlint-cli2 --config .config/.markdownlint-cli2.jsonc
+          README.md SECURITY.md SUPPORT.md CONTRIBUTING.md 'docs/**/*.md'
+
+  helm-lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Read helm_version
+        id: helm
+        run: echo "version=$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" >> "$GITHUB_OUTPUT"
+
+      - name: Build helm image
+        uses: ./.github/actions/tool-image
+        with:
+          target: helm
+          build-args: HELM_VERSION=${{ steps.helm.outputs.version }}
+          smoke: version
+
+      - name: helm lint
+        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/lint-charts.sh
+
   prose:
     runs-on: ubuntu-24.04
     steps:
@@ -419,6 +497,10 @@ jobs:
       - zizmor
       - yamllint
       - ansible-lint
+      - shellcheck
+      - hadolint
+      - markdownlint
+      - helm-lint
       - prose
       - docs-consistency
       - spelling

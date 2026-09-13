@@ -86,6 +86,13 @@
     {
       "customType": "regex",
       "managerFilePatterns": ["/^\\.tools/docker/Dockerfile$/"],
+      "matchStrings": ["markdownlint-cli2@(?<currentValue>[\\w.]+)"],
+      "depNameTemplate": "markdownlint-cli2",
+      "datasourceTemplate": "npm"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.tools/docker/Dockerfile$/"],
       "matchStrings": ["yamllint==(?<currentValue>[\\w.]+)"],
       "depNameTemplate": "yamllint",
       "datasourceTemplate": "pypi"

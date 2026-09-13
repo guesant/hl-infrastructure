@@ -17,6 +17,11 @@ FROM ghcr.io/yannh/kubeconform:v0.8.0 AS kubeconform
 
 FROM lycheeverse/lychee:0.24.2 AS lychee
 
+FROM koalaman/shellcheck:v0.10.0 AS shellcheck
+
+FROM hadolint/hadolint:v2.15.1 AS hadolint
+ENTRYPOINT ["hadolint"]
+
 FROM alpine/helm:${HELM_VERSION} AS helm
 
 FROM alpine:3.24 AS shell
@@ -36,6 +41,9 @@ RUN npm install --global @ast-grep/cli@0.45.3
 
 FROM node:24-slim AS jscpd
 RUN npm install --global jscpd@5.2.0
+
+FROM node:24-slim AS markdownlint
+RUN npm install --global markdownlint-cli2@0.19.0
 
 FROM node:24-slim AS cspell
 RUN mkdir -p /opt/cspell && npm install --prefix /opt/cspell cspell@10.3.0 @cspell/dict-pt-br@2.4.2
