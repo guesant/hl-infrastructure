@@ -10,6 +10,7 @@ commitado
 commitar
 commite
 firewalld
+gitleaks
 gplv
 hipervisor
 hl-infrastructure
