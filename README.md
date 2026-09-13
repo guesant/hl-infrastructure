@@ -58,6 +58,8 @@ A quem sobe num palco em qualquer cidade do mundo para contar o que aprendeu, na
 
 A quem não desistiu, apesar de tudo. E, com o mesmo respeito, a quem desistiu: quem saiu da área, ou nunca conseguiu entrar, porque lhe negaram dignidade por causa de orientação sexual, religião, etnia, nacionalidade ou sexo; quem foi tratado como se não pertencesse; quem carregou traumas que ninguém viu e não teve com quem dividir. O que essas pessoas teriam construído não existe, e a área é mais pobre por isso. Que este repositório, na sua pequenez, seja um lugar onde isso não se repete.
 
+E, antes de todos, a quem lutou com o próprio sangue pela liberdade, pela dignidade, pelo respeito, pela igualdade, pela fraternidade e pela justiça: quem enfrentou ditaduras, escravidão, colonização e perseguição, quem organizou greves e marchas, quem foi preso, torturado ou morto por dizer o que não podia ser dito. Um repositório público, escrito por quem quis, sobre o que quis, publicado para quem quiser ler, só existe porque essas pessoas pagaram por isso antes. Nenhum agradecimento é suficiente; o mínimo é não esquecer.
+
 À família, pelo tempo que este projeto tomou e pela paciência com cada "só mais um commit". Aos amigos que ouviram falar de Kubernetes sem pedir. Aos animais que ficaram deitados ao lado da mesa enquanto isto era escrito, sem entender nada e sem precisar entender.
 
 Nada aqui foi feito sozinho. Se este repositório for útil a alguém, o mérito é distribuído entre todas essas pessoas, quase todas anônimas para quem lê esta página, e o que resta de erro é só de quem o mantém.
