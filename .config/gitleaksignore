@@ -1,1 +1,2 @@
 a611212f18a0797d8704ac33ba97aa79bcf91366:ansible/roles/cnpg-barman-plugin/files/cnpg-barman-plugin-install.yaml:kubernetes-secret-yaml:965
+b459c42a2ed77680ca7e043b52262dbe44835427:argocd/apps/satellites/blog/blog/values.yaml:generic-api-key:88
