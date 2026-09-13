@@ -12,9 +12,9 @@ Existe um terceiro projeto, `default`, que o próprio ArgoCD cria na instalaçã
 
 Originalmente, cada satélite era ele mesmo outra `Application` de sincronização recursiva de diretório, apontando para uma pasta de GitOps dentro do repositório da própria aplicação; um satélite novo, de terceiros, ainda segue esse formato, descrito no guia [adicionar um satélite novo](../operacional/adicionar-um-satelite.md). O único satélite que existe hoje, o blog, não segue mais esse formato: veja a seção sobre a consolidação abaixo.
 
-## Por que o blog deixou de ser um satélite de verdade
+## Por que o blog não é um satélite de verdade
 
-Até certo ponto, o blog era um satélite como qualquer outro: uma `Application` (`blog-satellite`) neste repositório apontava, com sincronização recursiva, para `deploy/gitops/applications` no repositório `guesant/blog`, que por sua vez declarava suas próprias cinco peças (o app em si, o túnel Cloudflare, as políticas de rede do namespace, o `Cluster` do banco, e a configuração do Image Updater). Isso foi revertido: hoje as cinco vivem direto em `argocd/applications/satellites/blog/` e `argocd/apps/satellites/blog/` neste repositório, sob o projeto `satellites` (o teto de permissão não mudou), e o repositório do blog não declara mais nenhum objeto do Argo.
+O blog só parece um satélite comum à primeira vista. As cinco peças que ele precisa no cluster (o app em si, o túnel Cloudflare, as políticas de rede do namespace, o `Cluster` do banco, e a configuração do Image Updater) vivem direto em `argocd/applications/satellites/blog/` e `argocd/apps/satellites/blog/`, dentro deste repositório, sob o projeto `satellites` (o mesmo teto de permissão de qualquer satélite). O repositório `guesant/blog` não declara nenhum objeto do Argo.
 
 A razão não é técnica, é organizacional: como o mesmo operador administra os dois repositórios, separar "o que é infraestrutura" de "o que é aplicação" em dois repositórios diferentes não reduz risco algum, só multiplica onde uma mudança de deploy precisa ser feita. O padrão de satélite continua existindo e documentado para o cenário em que ele resolve um problema real, um futuro colaborador ou uma automação com acesso de escrita só ao repositório da aplicação, não a este.
 
