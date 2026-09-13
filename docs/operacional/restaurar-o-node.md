@@ -16,10 +16,16 @@ Ao fim, `ansible/kubeconfig` aponta para o cluster novo e `kubectl -n argocd get
 
 ## 2. Selar os segredos de novo
 
-O controlador de Sealed Secrets gerou uma chave privada nova na subida. Todo `SealedSecret` commitado em qualquer satélite foi cifrado para a chave antiga e não abre mais; o Argo vai marcá-los como falha de sincronização. Para cada satélite:
+O controlador de Sealed Secrets gerou uma chave privada nova na subida, então a chave pública commitada neste repositório (`sealed-secrets-cert.pem`) ficou desatualizada. Busque a nova e commite:
 
 ```bash
 just fetch-cert
+git add sealed-secrets-cert.pem
+```
+
+Todo `SealedSecret` commitado em qualquer satélite foi cifrado para a chave antiga e não abre mais; o Argo vai marcá-los como falha de sincronização. Para cada satélite, sele de novo com o certificado atualizado:
+
+```bash
 just seal <namespace> <nome> <arquivo-com-o-secret-em-texto-claro>
 ```
 

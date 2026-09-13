@@ -7,13 +7,14 @@ Nem tudo que o cluster precisa está versionado, e o que não está precisa ser 
 | `ansible/group_vars/all/secrets.yml` | máquina do operador, ignorado pelo git | o operador, a partir de `secrets.example.yml` | reescrever a partir do exemplo; o segredo do webhook do Argo e a chave SSH precisam ser regenerados. As versões não estão aqui: `versions.yml` é versionado |
 | `ansible/inventory.ini` | máquina do operador, ignorado pelo git | o operador, a partir de `inventory.example.ini` | reescrever; só contém o endereço do nó |
 | `ansible/kubeconfig` | máquina do operador, ignorado pelo git | a role `k3s` no bootstrap | rodar `just bootstrap` de novo, que o busca do nó |
-| `sealed-secrets-cert.pem` | máquina do operador, ignorado pelo git | `just fetch-cert` | rodar `just fetch-cert` de novo; é só a chave pública |
-| chave privada do Sealed Secrets | `Secret` em `kube-system` no cluster | o controller, na primeira subida | todo `SealedSecret` de todo satélite precisa ser selado de novo com a chave nova |
+| chave privada do Sealed Secrets | `Secret` em `kube-system` no cluster | o controller, na primeira subida | todo `SealedSecret` de todo satélite precisa ser selado de novo com a chave nova, e `sealed-secrets-cert.pem` precisa ser buscado e commitado de novo com `just fetch-cert` |
 | chave SSH de root do nó | `/root/.ssh/authorized_keys` no nó | a role `ssh_hardening`, a partir de `ssh_root_authorized_key` | acesso ao nó só pelo console do hipervisor |
 | token do Renovate | environment `renovate` do repositório no GitHub | o operador, como PAT com escopo de escrita no repositório | o workflow `renovate` falha até um token novo ser cadastrado |
 | segredos dos satélites | `SealedSecret` no repositório de cada satélite | cada satélite, com `just seal` | dependem da chave privada acima; o valor original só existe onde o satélite o gerou |
 | dados do Postgres do blog | volume no nó, com backup em object storage pelo barman-cloud | o CloudNativePG | restaurar do último backup pelo próprio operador CNPG |
 | o sistema operacional do nó | instalado pelo hipervisor ou pela imagem cloud | fora deste repositório | reinstalar e rodar `just bootstrap`; as roles de SO assumem Debian |
+
+`sealed-secrets-cert.pem`, a chave pública do Sealed Secrets, não entra nesta lista de propósito: ela é commitada no repositório. Um `SealedSecret` só pode ser cifrado com a chave pública, nunca decifrado com ela, então commitá-la não expõe nenhum segredo; é o que permite selar um segredo novo sem precisar de acesso ao cluster, só com `just seal`.
 
 O critério para algo estar nesta lista é simples: se apagar o repositório e a máquina do operador não fosse suficiente para perder o item, ele não precisa estar aqui. Tudo o que está aqui precisa de uma cópia ou de um caminho de regeneração fora do git, e a coluna da direita é esse caminho.
 

@@ -48,7 +48,7 @@ Das Actions para o GitHub, o `ci` e o `docs` rodam com `contents: read` e sem cr
 
 Da Internet para os serviços, nada chega direto ao nó: o blog é exposto por um túnel Cloudflare saindo de dentro do cluster, e o firewall do nó não abre porta de serviço. O que fica exposto é a porta 22 e a 6443, ambas restritas como descrito acima.
 
-Dentro do cluster, o Sealed Secrets guarda a chave privada em `kube-system`. Qualquer workload que consiga ler `Secret` nesse namespace decifra tudo; o projeto `satellites` não pode criar `ClusterRole`, então um satélite não consegue se conceder essa leitura por GitOps. Um `Pod` privilegiado ou com montagem do host é barrado antes de chegar ao cluster pelos gates `kube-linter`, `checkov` e `trivy config` sobre os charts renderizados, mas esses gates só cobrem este repositório; a política de rede e de recursos de cada satélite é responsabilidade do satélite.
+Dentro do cluster, o Sealed Secrets guarda a chave privada em `kube-system`; a chave pública correspondente é `sealed-secrets-cert.pem`, commitada neste repositório, porque cifrar com ela não permite decifrar nada. Qualquer workload que consiga ler `Secret` nesse namespace decifra tudo; o projeto `satellites` não pode criar `ClusterRole`, então um satélite não consegue se conceder essa leitura por GitOps. Um `Pod` privilegiado ou com montagem do host é barrado antes de chegar ao cluster pelos gates `kube-linter`, `checkov` e `trivy config` sobre os charts renderizados, mas esses gates só cobrem este repositório; a política de rede e de recursos de cada satélite é responsabilidade do satélite.
 
 ## O caminho de um segredo
 
@@ -61,8 +61,8 @@ sequenceDiagram
     participant Git as Repositório do satélite
     participant Argo as ArgoCD
     participant Pod as Pod
-    Op->>SS: just fetch-cert (chave pública)
-    Op->>Op: just seal ns nome secret.yaml (cifra localmente)
+    SS->>Git: sealed-secrets-cert.pem (chave pública, commitada)
+    Op->>Op: just seal ns nome secret.yaml (cifra localmente com a chave do repo)
     Op->>Git: commit do SealedSecret
     Argo->>Git: pull
     Argo->>SS: apply do SealedSecret
