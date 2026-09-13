@@ -16,8 +16,13 @@ just lint-yaml
 just lint-ansible
 just lint-prose
 just lint-docs
-just lint-links
 just lint-spelling
+```
+
+A verificação de links fica fora do `check` e da CI, porque depende de sites externos que falham por conta própria; rode-a à mão quando mexer bastante na documentação:
+
+```bash
+just lint-links
 ```
 
 Para segredos, dependências vulneráveis e vulnerabilidades de sistema de arquivos:
@@ -48,4 +53,4 @@ Nenhum desses comandos precisa de nada instalado na sua máquina além de Docker
 
 ## Continue por aqui
 
-Para entender por que esses dezessete checks vivem todos dentro de um único workflow de CI, veja [A pipeline de CI](../arquitetura/ci.md) na arquitetura.
+Para entender por que esses dezesseis checks vivem todos dentro de um único workflow de CI, veja [A pipeline de CI](../arquitetura/ci.md) na arquitetura.

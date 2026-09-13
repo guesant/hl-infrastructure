@@ -118,25 +118,6 @@ jobs:
       - name: Every role is documented
         run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/shell .tools/check-roles-documented.sh
 
-  links:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Build tool image
-        uses: ./.github/actions/tool-image
-        with:
-          target: lychee
-          smoke: --version
-
-      - name: lychee
-        run: >-
-          docker run --rm -v "$PWD":/repo -w /repo hl-infra/lychee
-          --config .config/lychee.toml README.md SECURITY.md SUPPORT.md CONTRIBUTING.md 'docs/**/*.md'
-
   spelling:
     runs-on: ubuntu-24.04
     steps:
@@ -439,7 +420,6 @@ jobs:
       - ansible-lint
       - prose
       - docs-consistency
-      - links
       - spelling
       - gitleaks
       - osv-scanner

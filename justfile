@@ -94,7 +94,7 @@ lint-docs: (_build "shell")
 freeze *args:
     KUBECONFIG={{kubeconfig}} .tools/freeze-manifest.sh {{args}}
 
-[doc("Check every link in the Markdown files")]
+[doc("Check every link in the Markdown files; not part of check or CI because external hosts are flaky")]
 lint-links: (_build "lychee")
     {{run}} hl-infra/lychee:{{tools_hash}} --config .config/lychee.toml README.md SECURITY.md SUPPORT.md CONTRIBUTING.md 'docs/**/*.md'
 
@@ -164,4 +164,4 @@ docs-serve:
         sh -c "pip install --quiet -r docs/requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000 --config-file .config/mkdocs.yml"
 
 [doc("Every check the CI runs, in order")]
-check: lint-actions lint-yaml lint-ansible lint-prose lint-docs lint-links lint-spelling security-gitleaks security-osv-scanner security-trivy-fs quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config docs-build
+check: lint-actions lint-yaml lint-ansible lint-prose lint-docs lint-spelling security-gitleaks security-osv-scanner security-trivy-fs quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config docs-build
