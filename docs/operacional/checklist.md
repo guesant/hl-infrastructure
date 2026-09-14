@@ -10,8 +10,8 @@ Lista curta para marcar a cada bootstrap, upgrade de versão ou mudança de rede
 | SSH continua acessível por uma sessão nova | `ssh` novo depois de qualquer mudança em `firewall` ou `ssh_hardening` | 2026-09-13 |
 | API do k3s só responde dos CIDRs permitidos | `firewall-cmd --list-rich-rules` mostra só `k3s_api_allowed_cidrs` na 6443 | pendente |
 | Node `Ready` e Cilium saudável | `kubectl get nodes` e `cilium status` sem erro | 2026-09-13 |
-| Todo `Application` `Synced` e `Healthy` | `kubectl -n argocd get applications` | pendente, `cloudflared` e `postgres` do blog em `Degraded` por segredo ausente |
-| Backup do Postgres recente | `lastSuccessfulBackup` do `Cluster` nas últimas 24 h | pendente, `ContinuousArchiving` falhando por segredo ausente |
+| Nenhum placeholder pendente | `just placeholders` termina com `nothing pending`, antes do push que leva segredo ou configuração nova ao cluster | pendente |
+| Todo `Application` `Synced` e `Healthy` | `kubectl -n argocd get applications` | pendente, `cloudflared` do blog em `Degraded` até existir o token real do túnel |
 | Timer de manutenção armado | `systemctl list-timers hl-gc.timer` mostra a próxima execução | 2026-09-13 |
 | Kubeconfig local atualizado | `kubectl get nodes` com `ansible/kubeconfig` depois de rotação de certificados | pendente |
 

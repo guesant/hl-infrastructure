@@ -166,6 +166,10 @@ tofu-apply module: _require-host-sops
 tofu-state-passphrase *args: _require-host-sops
     SOPS_AGE_KEY_FILE={{sops_identity}} .tools/tofu-state-passphrase.sh {{args}}
 
+[doc("List every placeholder still waiting for a real value, including inside encrypted files (key names only), and check the blog hostname matches")]
+placeholders: _require-host-sops
+    SOPS_AGE_KEY_FILE={{sops_identity}} .tools/check-placeholders.sh
+
 [doc("Fetch the blog tunnel token from the Cloudflare API into its SopsSecret; OpenTofu never sees it")]
 cloudflare-tunnel-token: _require-host-sops _build-ops
     SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} OPS_IMAGE={{ops_image}} \

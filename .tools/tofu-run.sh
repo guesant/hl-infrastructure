@@ -50,12 +50,27 @@ if [ -z "${TF_VAR_state_passphrase:-}" ]; then
   exit 1
 fi
 
-env_args=()
+names=()
 for secrets in "$state_secrets" "$module_secrets"; do
   [ -f "$secrets" ] || continue
   while IFS= read -r name; do
-    env_args+=(-e "$name")
+    names+=("$name")
   done < <(grep -oE '^[A-Za-z_][A-Za-z0-9_]*=' "$secrets" | grep -v '^sops_' | tr -d '=')
 done
+
+placeholders=()
+env_args=()
+for name in "${names[@]}"; do
+  if [[ "${!name:-}" == REPLACE_WITH_* ]]; then
+    placeholders+=("$name")
+  fi
+  env_args+=(-e "$name")
+done
+
+if [ "${#placeholders[@]}" -gt 0 ]; then
+  echo "refusing to run: these secrets still hold a placeholder: ${placeholders[*]}" >&2
+  echo "fill them with just sops-edit (or just tofu-state-passphrase), and run just placeholders for the full list" >&2
+  exit 1
+fi
 
 exec docker run --rm -i -v "$repo_root":/repo -w /repo "${env_args[@]}" "$TOFU_IMAGE" -chdir="$module_dir" "$@"

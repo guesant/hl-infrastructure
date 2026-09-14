@@ -7,23 +7,29 @@ cd "$repo_root"
 secret_file="argocd/apps/satellites/blog/cloudflared/templates/tunnel-token.sops-secret.yaml"
 token_path='["spec"]["secretTemplates"][0]["stringData"]["token"]'
 
-for name in CLOUDFLARE_API_TOKEN TF_VAR_state_passphrase TOFU_IMAGE OPS_IMAGE SOPS_AGE_KEY_FILE; do
+for name in CLOUDFLARE_API_TOKEN TF_VAR_cloudflare_account_id TF_VAR_state_passphrase TOFU_IMAGE OPS_IMAGE SOPS_AGE_KEY_FILE; do
   if [ -z "${!name:-}" ]; then
     echo "$name is not set; run this through: just cloudflare-tunnel-token" >&2
     exit 2
   fi
 done
 
-tofu_output() {
-  docker run --rm -v "$repo_root":/repo -w /repo -e TF_VAR_state_passphrase \
-    "$TOFU_IMAGE" -chdir=tofu/cloudflare output -raw "$1"
-}
+for name in CLOUDFLARE_API_TOKEN TF_VAR_cloudflare_account_id TF_VAR_state_passphrase; do
+  if [[ "${!name}" == REPLACE_WITH_* ]]; then
+    echo "$name still holds a placeholder; run just placeholders for the full list" >&2
+    exit 1
+  fi
+done
 
-account_id="$(tofu_output cloudflare_account_id)"
-tunnel_id="$(tofu_output tunnel_id)"
+export ACCOUNT_ID="${TF_VAR_cloudflare_account_id:?}"
+TUNNEL_ID="$(
+  docker run --rm -v "$repo_root":/repo -w /repo -e TF_VAR_state_passphrase \
+    "$TOFU_IMAGE" -chdir=tofu/cloudflare output -raw tunnel_id
+)"
+export TUNNEL_ID
 
 token="$(
-  docker run --rm -e CLOUDFLARE_API_TOKEN -e ACCOUNT_ID="$account_id" -e TUNNEL_ID="$tunnel_id" \
+  docker run --rm -e CLOUDFLARE_API_TOKEN -e ACCOUNT_ID -e TUNNEL_ID \
     --entrypoint bash "$OPS_IMAGE" -c \
     'curl -fsS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/cfd_tunnel/$TUNNEL_ID/token" | jq -er .result'
 )"

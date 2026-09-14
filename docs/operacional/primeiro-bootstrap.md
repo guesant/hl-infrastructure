@@ -76,16 +76,17 @@ just tofu-state-passphrase
 just sops-edit tofu/cloudflare/cloudflare.sops.env
 ```
 
-O primeiro gera uma passphrase aleatória com `openssl rand -base64 48` e a grava cifrada em `tofu/state.sops.env`, sem imprimi-la em lugar nenhum; ela cifra o state de todo módulo OpenTofu, não só o da Cloudflare. No segundo, coloque o API token. Em `tofu/cloudflare/terraform.tfvars`, que não é secreto, coloque o ID da conta, o ID da zona e o hostname real do blog. Então:
+O primeiro gera uma passphrase aleatória com `openssl rand -base64 48` e a grava cifrada em `tofu/state.sops.env`, sem imprimi-la em lugar nenhum; ela cifra o state de todo módulo OpenTofu, não só o da Cloudflare. No segundo, coloque o API token, o ID da conta e o ID da zona; os dois IDs não são credencial, mas ficam cifrados para este repositório público não apontar para a sua conta. O hostname real do blog vai em texto claro em dois lugares, que precisam bater: `blog_hostname` em `tofu/cloudflare/terraform.tfvars` e `PUBLIC_SITE_BASE_URL` no `values.yaml` do blog. Então:
 
 ```bash
 just tofu cloudflare init
 just tofu cloudflare plan
 just tofu-apply cloudflare
 just cloudflare-tunnel-token
+just placeholders
 ```
 
-O `plan` precisa mostrar exatamente três recursos novos: o túnel, a configuração de ingress e o registro DNS. `cloudflare-tunnel-token` busca o token do túnel recém-criado e o grava cifrado no `SopsSecret` do cloudflared. Commite os dois arquivos `.sops.env`, `terraform.tfstate` (cifrado), `.terraform.lock.hcl`, `terraform.tfvars` e o `SopsSecret` juntos e faça push; o Argo sobe o cloudflared com o token novo. Veja [OpenTofu: a camada da Cloudflare](../arquitetura/opentofu.md) para o porquê de cada peça.
+O `plan` precisa mostrar exatamente três recursos novos: o túnel, a configuração de ingress e o registro DNS. Se algum valor de exemplo sobrou, ele nem chega a rodar: o `just tofu` recusa segredo que ainda começa com `REPLACE_WITH_`, e as validações das variáveis recusam ID fora do formato e hostname terminado em `.invalid`. `cloudflare-tunnel-token` busca o token do túnel recém-criado e o grava cifrado no `SopsSecret` do cloudflared. `placeholders` decifra em memória todo arquivo SOPS e só pode terminar dizendo que não há nada pendente; ele mostra os nomes das chaves que ainda têm valor de exemplo, nunca os valores, e confere que o hostname bate nos dois lugares. Commite os dois arquivos `.sops.env`, `terraform.tfstate` (cifrado), `.terraform.lock.hcl`, `terraform.tfvars` e o `SopsSecret` juntos e faça push; o Argo sobe o cloudflared com o token novo. Veja [OpenTofu: a camada da Cloudflare](../arquitetura/opentofu.md) para o porquê de cada peça.
 
 ## Continue por aqui
 

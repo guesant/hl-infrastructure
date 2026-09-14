@@ -25,6 +25,7 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | Imagens | Proveniência | Só tags imutáveis `sha-<commit>` são promovidas | `ImageUpdater` de cada satélite com `allowTags` |
 | Cloudflare | Privilégio | O API token do OpenTofu só edita túnel e DNS, nunca cria outros tokens | permissões do token no dashboard, [primeiro bootstrap](../operacional/primeiro-bootstrap.md) |
 | Cloudflare | Segredos no state | State do OpenTofu cifrado, recusado em texto claro; o token do túnel nunca passa pelo OpenTofu | `tofu/cloudflare/encryption.tf` com `enforced = true`, `.tools/cloudflare-tunnel-token.sh`, job `tofu` |
+| Configuração | Valores de exemplo | Nenhum `REPLACE_WITH_` ou `.invalid` chega a um `apply` ou a um deploy sem ser notado, nem dentro de arquivo cifrado | validações em `tofu/cloudflare/variables.tf`, recusa em `.tools/tofu-run.sh`, `just placeholders` antes do push |
 | Dados | Recuperação | Nenhum hoje: o backup contínuo do Postgres foi desligado de propósito, e a perda do volume do node é perda total dos dados | [estado fora do git](../operacional/estado-fora-do-git.md), [restaurar o node](../operacional/restaurar-o-node.md) |
 | Documentação | Fidelidade | Página cuja fonte mudou sem revisão falha a CI | `.tools/check-doc-drift.sh`, marcadores `source-of-trust` |
 
