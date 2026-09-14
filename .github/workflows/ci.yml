@@ -284,6 +284,30 @@ jobs:
           docker run --rm -v "$PWD":/repo -w /repo hl-infra/trivy
           fs --scanners vuln,secret --skip-dirs rendered /repo
 
+  sopssecrets:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Read k3s_version
+        id: k3s
+        run: echo "version=$(grep -oE 'k3s_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE 'v[0-9.]+')" >> "$GITHUB_OUTPUT"
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: ops
+          build-args: KUBECTL_VERSION=${{ steps.k3s.outputs.version }}
+          smoke: --entrypoint sops --version
+
+      - name: Every SopsSecret is encrypted
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/ops
+          .tools/check-sopssecrets-encrypted.sh
+
   ast-grep:
     runs-on: ubuntu-24.04
     steps:
@@ -509,6 +533,7 @@ jobs:
       - gitleaks
       - osv-scanner
       - trivy-fs
+      - sopssecrets
       - ast-grep
       - jscpd
       - kube-linter
