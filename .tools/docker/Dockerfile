@@ -3,6 +3,12 @@
 # the Ansible roles install; this default only covers a manual build.
 ARG HELM_VERSION=4.3.0
 
+# IMPORTANT: kubectl's minor version must stay within one of k3s_version in
+# ansible/group_vars/all/versions.yml, or the ops image can silently apply
+# manifests the node's API server rejects; --build-arg keeps them in lockstep.
+ARG KUBECTL_VERSION=v1.36.4
+ARG AGE_PLUGIN_SE_VERSION=0.2.1
+
 FROM zricethezav/gitleaks:v8.30.1 AS gitleaks
 
 FROM ghcr.io/google/osv-scanner:v2.5.1 AS osv-scanner
@@ -22,10 +28,24 @@ FROM koalaman/shellcheck:v0.11.0 AS shellcheck
 FROM hadolint/hadolint:v2.15.1 AS hadolint
 ENTRYPOINT ["hadolint"]
 
-FROM ghcr.io/getsops/sops:v3.13.3-alpine AS sops
+FROM ghcr.io/getsops/sops:v3.13.3-alpine AS sops-bin
 
-FROM alpine:3.24 AS age
-RUN apk add --no-cache age
+FROM alpine:3.24 AS ops
+ARG KUBECTL_VERSION
+ARG AGE_PLUGIN_SE_VERSION
+RUN apk add --no-cache bash age jq yq-go curl && \
+    arch="$(apk --print-arch)" && \
+    case "$arch" in \
+    x86_64) kube_arch=amd64 ;; \
+    aarch64) kube_arch=arm64 ;; \
+    *) echo "unsupported arch: $arch" >&2 && exit 1 ;; \
+    esac && \
+    curl -fsSLo /usr/local/bin/kubectl "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${kube_arch}/kubectl" && \
+    chmod 0755 /usr/local/bin/kubectl && \
+    curl -fsSLo /tmp/age-plugin-se.apk "https://github.com/remko/age-plugin-se/releases/download/v${AGE_PLUGIN_SE_VERSION}/age-plugin-se-${AGE_PLUGIN_SE_VERSION}-r0-${arch}.apk" && \
+    apk add --no-cache --allow-untrusted /tmp/age-plugin-se.apk && \
+    rm /tmp/age-plugin-se.apk
+COPY --from=sops-bin /usr/local/bin/sops /usr/local/bin/sops
 
 FROM alpine/helm:${HELM_VERSION} AS helm
 
