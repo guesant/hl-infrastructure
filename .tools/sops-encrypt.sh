@@ -16,7 +16,7 @@ if [ ! -f "$file" ]; then
   exit 1
 fi
 
-if sops filestatus "$file" | grep -q '"encrypted": true'; then
+if sops filestatus "$file" | grep -q '"encrypted":true'; then
   echo "$file is already encrypted"
   exit 0
 fi

@@ -19,7 +19,7 @@ fi
 encrypted_now=0
 
 while IFS= read -r file; do
-  if ! sops filestatus "$file" | grep -q '"encrypted": true'; then
+  if ! sops filestatus "$file" | grep -q '"encrypted":true'; then
     tmp="$(mktemp "${file}.XXXXXX")"
     trap 'rm -f "$tmp"' EXIT
     sops --config .sops.yaml encrypt "$file" >"$tmp"

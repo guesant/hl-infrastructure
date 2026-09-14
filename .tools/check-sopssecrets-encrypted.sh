@@ -8,7 +8,7 @@ status=0
 expected_recipients="$(yq -o=json '.keys | sort' .sops.yaml)"
 
 while IFS= read -r file; do
-  if ! sops filestatus "$file" | grep -q '"encrypted": true'; then
+  if ! sops filestatus "$file" | grep -q '"encrypted":true'; then
     echo "$file: not encrypted" >&2
     status=1
     continue
