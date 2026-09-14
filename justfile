@@ -162,6 +162,10 @@ tofu module *args: _require-host-sops
 tofu-apply module: _require-host-sops
     SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} .tools/tofu-run.sh {{module}} apply
 
+[doc("Generate the OpenTofu state passphrase into tofu/state.sops.env without printing it; --rotate or --finish-rotation to change it")]
+tofu-state-passphrase *args: _require-host-sops
+    SOPS_AGE_KEY_FILE={{sops_identity}} .tools/tofu-state-passphrase.sh {{args}}
+
 [doc("Fetch the blog tunnel token from the Cloudflare API into its SopsSecret; OpenTofu never sees it")]
 cloudflare-tunnel-token: _require-host-sops _build-ops
     SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} OPS_IMAGE={{ops_image}} \

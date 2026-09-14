@@ -55,7 +55,19 @@ Commite e faça push. O cloudflared que já está rodando continua conectado com
 
 O API token não tem rotina automática. Crie um token novo no dashboard com as mesmas duas permissões, troque o valor com `just sops-edit tofu/cloudflare/cloudflare.sops.env`, confirme com `just tofu cloudflare plan` que nada muda, e só então revogue o antigo no dashboard.
 
-A passphrase do state é comum a todo módulo, então a troca passa por todos eles. Em `tofu/state.sops.env` (`just sops-edit`), mova o valor atual para uma variável nova, `TF_VAR_state_passphrase_previous`, e coloque a passphrase nova em `TF_VAR_state_passphrase`. Em cada módulo, declare `variable "state_passphrase_previous"` e acrescente ao `encryption.tf` um segundo `key_provider "pbkdf2"` e um `method` com ela, referenciados num bloco `fallback` dentro de `state` e de `plan`. Rode `just tofu-apply <módulo>` em cada um, sem mudança de recurso: o OpenTofu lê o state com a antiga e o grava com a nova. Depois remova o `fallback`, a variável e a entrada `_previous`, e commite os states regravados.
+A passphrase do state é comum a todo módulo, então a troca passa por todos eles:
+
+```bash
+just tofu-state-passphrase --rotate
+```
+
+Isso gera uma passphrase nova e guarda a atual como `TF_VAR_state_passphrase_previous`, no mesmo arquivo cifrado, sem nenhuma das duas passar pelo terminal. Em cada módulo, declare `variable "state_passphrase_previous"` e acrescente ao `encryption.tf` um segundo `key_provider "pbkdf2"` e um `method` com ela, referenciados num bloco `fallback` dentro de `state` e de `plan`. Rode `just tofu-apply <módulo>` em cada um, sem mudança de recurso: o OpenTofu lê o state com a antiga e o grava com a nova. Por fim:
+
+```bash
+just tofu-state-passphrase --finish-rotation
+```
+
+Remova o `fallback` e a variável de cada módulo e commite os states regravados junto com o arquivo cifrado.
 
 ## Continue por aqui
 

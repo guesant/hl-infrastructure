@@ -72,11 +72,11 @@ Revise o diff de `.sops.yaml` e commite. A partir daqui, `just sops-sync <arquiv
 O blog só fica acessível de fora depois que o túnel existe. No dashboard da Cloudflare, crie um API token com duas permissões e nada além delas: Cloudflare Tunnel, de edição, restrita à sua conta, e DNS, de edição, restrita à zona do blog. Depois preencha os arquivos que o OpenTofu usa:
 
 ```bash
-just sops-edit tofu/state.sops.env
+just tofu-state-passphrase
 just sops-edit tofu/cloudflare/cloudflare.sops.env
 ```
 
-No primeiro, troque o valor de exemplo por uma passphrase aleatória de pelo menos 32 caracteres (`openssl rand -base64 48` serve) e guarde uma cópia no seu gerenciador de senhas; ela cifra o state de todo módulo OpenTofu, não só o da Cloudflare. No segundo, coloque o API token. Em `tofu/cloudflare/terraform.tfvars`, que não é secreto, coloque o ID da conta, o ID da zona e o hostname real do blog. Então:
+O primeiro gera uma passphrase aleatória com `openssl rand -base64 48` e a grava cifrada em `tofu/state.sops.env`, sem imprimi-la em lugar nenhum; ela cifra o state de todo módulo OpenTofu, não só o da Cloudflare. No segundo, coloque o API token. Em `tofu/cloudflare/terraform.tfvars`, que não é secreto, coloque o ID da conta, o ID da zona e o hostname real do blog. Então:
 
 ```bash
 just tofu cloudflare init

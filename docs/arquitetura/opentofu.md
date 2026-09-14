@@ -1,6 +1,6 @@
 # OpenTofu: a camada da Cloudflare
 
-<!-- source-of-trust paths="tofu .tools/tofu-run.sh .tools/cloudflare-tunnel-token.sh" -->
+<!-- source-of-trust paths="tofu .tools/tofu-run.sh .tools/tofu-state-passphrase.sh .tools/cloudflare-tunnel-token.sh" -->
 
 O Ansible prepara o node e o Argo CD cuida de tudo que roda dentro do cluster, mas o caminho de um visitante até o blog começa fora dos dois: no DNS da Cloudflare e no túnel que liga a borda da Cloudflare ao cloudflared dentro do cluster. [tofu/cloudflare](https://github.com/guesant/hl-infrastructure/tree/main/tofu/cloudflare) declara essa parte com OpenTofu, e o resto desta página explica o que ele possui, o que ele deliberadamente não possui e por quê.
 
@@ -31,6 +31,8 @@ A regra de `.sops.yaml` para `tofu/**/*.sops.env` é separada da regra dos `Sops
 O state fica em `tofu/cloudflare/terraform.tfstate`, commitado, cifrado pela state encryption nativa do OpenTofu: um key provider `pbkdf2` derivando a chave da passphrase, método `aes_gcm`, e `enforced = true` tanto para state quanto para plan, o que faz o OpenTofu recusar gravar qualquer um dos dois em texto claro se a configuração de cifragem sumir. Commitar evita um serviço novo só para guardar um arquivo pequeno, e o que ele contém é pouco sensível mesmo decifrado (IDs de conta, zona e túnel, e o registro DNS), justamente porque nenhum token passa pelo OpenTofu. O custo é não ter lock de concorrência, aceitável com um operador só, e o histórico do git guardar states antigos, todos cifrados.
 
 Perder a passphrase não derruba nada: o túnel e o DNS continuam existindo na Cloudflare. O caminho é gerar uma passphrase nova e reconstruir o state com `tofu import` dos três recursos. Trocar a passphrase de propósito usa um bloco `fallback` com a antiga durante uma execução, que lê com a antiga e grava com a nova.
+
+Ninguém digita a passphrase. `just tofu-state-passphrase` a gera com `openssl rand -base64 48` e a entrega direto ao `sops encrypt` por um pipe, então o valor nunca aparece no terminal, nunca vai para argumento de processo e nunca toca o disco em texto claro; gerar uma do zero nem exige identidade que decifre, porque cifrar só usa as chaves públicas. O script recusa gerar outra por cima quando algum `terraform.tfstate` já existe, porque uma passphrase nova trancaria esses states. Para esse caso existem `--rotate`, que guarda a atual como `TF_VAR_state_passphrase_previous` antes de gerar a nova, e `--finish-rotation`, que descarta a antiga depois que todo módulo regravou o state; os dois precisam decifrar a atual, então pedem a identidade do operador.
 
 A passphrase é uma só para todo módulo. Passphrases separadas não isolariam nada de verdade, porque quem decifra um arquivo SOPS deste repositório decifra todos. O bloco `encryption`, por outro lado, fica repetido em cada root module, de propósito. O OpenTofu aceitaria a mesma configuração pela variável de ambiente `TF_ENCRYPTION`, sem repetir HCL, mas aí a cifragem dependeria de rodar pela recipe: um `tofu apply` executado à mão, sem a variável, não teria configuração de cifragem nenhuma e gravaria o state em texto claro. Com o bloco no HCL e `enforced = true`, esse engano vira erro em vez de vazamento.
 
