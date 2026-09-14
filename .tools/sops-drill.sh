@@ -20,6 +20,6 @@ while IFS= read -r file; do
     status=1
   fi
   rm -f /tmp/sops-drill-err
-done < <(find argocd -type f -name '*-sopssecret.yaml')
+done < <(find argocd -type f -name '*.sops-secret.yaml')
 
 exit "$status"

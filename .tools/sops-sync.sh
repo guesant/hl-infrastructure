@@ -7,8 +7,8 @@ cd "$repo_root"
 target="${1:-}"
 
 if [ -n "$target" ]; then
-  if [[ "$target" != *-sopssecret.yaml ]]; then
-    echo "usage: $0 [path/to/some-sopssecret.yaml]" >&2
+  if [[ "$target" != *.sops-secret.yaml ]]; then
+    echo "usage: $0 [path/to/some.sops-secret.yaml]" >&2
     exit 2
   fi
   if [ ! -f "$target" ]; then
@@ -45,7 +45,7 @@ if [ -n "$target" ]; then
 else
   while IFS= read -r file; do
     sync_one "$file"
-  done < <(find argocd -type f -name '*-sopssecret.yaml')
+  done < <(find argocd -type f -name '*.sops-secret.yaml')
 fi
 
 echo "every SopsSecret is now encrypted with the current recipients ($encrypted_now newly encrypted, $checked_now already-encrypted file(s) checked)"

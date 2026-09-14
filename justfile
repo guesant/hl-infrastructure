@@ -115,7 +115,7 @@ age-keygen: (_build-ops)
 sops-recipients *args: (_build-ops)
     {{run}} --entrypoint bash {{ops_image}} .tools/sops-recipients.sh {{args}}
 
-[doc("Fail if any *-sopssecret.yaml is unencrypted or its recipients don't match .sops.yaml")]
+[doc("Fail if any *.sops-secret.yaml is unencrypted or its recipients don't match .sops.yaml")]
 security-sopssecrets: (_build-ops)
     {{run}} --entrypoint bash {{ops_image}} .tools/check-sopssecrets-encrypted.sh
 
@@ -127,7 +127,7 @@ _require-host-sops:
 age-se-keygen *args: _require-host-sops
     .tools/age-se-keygen.sh {{args}}
 
-[doc("Open a *-sopssecret.yaml for editing with the operator Secure Enclave identity")]
+[doc("Open a *.sops-secret.yaml for editing with the operator Secure Enclave identity")]
 sops-edit file identity=(home_dir() / ".config/hl-infrastructure/sops/operator-se.txt"): _require-host-sops
     SOPS_AGE_KEY_FILE={{identity}} sops {{file}}
 

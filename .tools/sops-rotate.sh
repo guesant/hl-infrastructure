@@ -7,8 +7,8 @@ cd "$repo_root"
 target="${1:-}"
 
 if [ -n "$target" ]; then
-  if [[ "$target" != *-sopssecret.yaml ]]; then
-    echo "usage: $0 [path/to/some-sopssecret.yaml]" >&2
+  if [[ "$target" != *.sops-secret.yaml ]]; then
+    echo "usage: $0 [path/to/some.sops-secret.yaml]" >&2
     exit 2
   fi
   if [ ! -f "$target" ]; then
@@ -49,7 +49,7 @@ if [ -n "$target" ]; then
 else
   while IFS= read -r file; do
     rotate_one "$file"
-  done < <(find argocd -type f -name '*-sopssecret.yaml')
+  done < <(find argocd -type f -name '*.sops-secret.yaml')
 fi
 
 echo "rotated the data key on $rotated file(s), skipped $skipped not-yet-encrypted file(s)"

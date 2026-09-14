@@ -29,30 +29,14 @@ O comando lê a chave pública do node vivo e reescreve só a entrada rotulada `
 Se as outras chaves também se perderam junto com o Mac do operador, não há como recuperar o que já estava cifrado: gere um par novo com `just age-se-keygen` (ou um par de desastre novo com `just age-keygen`), adicione o destinatário em `.sops.yaml` com `just sops-recipients add <rótulo> <pública>` (ou `update <rótulo> <pública>` se o rótulo antigo ainda existir), e recifre cada `SopsSecret` de cada satélite a partir do valor original:
 
 ```bash
-just sops-sync <caminho-do-sopssecret-em-texto-claro>
+just sops-sync <caminho-do-sops-secret-em-texto-claro>
 ```
 
 O valor original de cada segredo só existe onde o satélite o gerou (o token do túnel no painel da Cloudflare, as chaves do bucket no provedor). Commite os `SopsSecret` recifrados nos satélites; o Argo aplica no próximo ciclo.
 
-## 3. Restaurar o Postgres
+## 3. O Postgres não tem backup hoje
 
-O `Cluster` do CNPG no satélite do blog sobe vazio. Para recuperar do último backup no object storage, o satélite declara temporariamente um `Cluster` novo com `bootstrap.recovery` apontando para o mesmo `ObjectStore`:
-
-```yaml
-spec:
-  bootstrap:
-    recovery:
-      source: postgres-backup
-  externalClusters:
-    - name: postgres-backup
-      plugin:
-        name: barman-cloud.cloudnative-pg.io
-        parameters:
-          barmanObjectName: postgres-backup
-          serverName: postgres
-```
-
-O operador reconstrói o banco a partir do último backup base mais os WALs arquivados, até o último ponto recuperável (`kubectl -n blog get cluster postgres -o jsonpath='{.status.firstRecoverabilityPoint}'` mostra desde quando há recuperação possível). Depois que o cluster está `Ready` com os dados, o `bootstrap.recovery` sai do manifesto e o `ScheduledBackup` volta a apontar para ele.
+O `Cluster` do CNPG no satélite do blog sobe vazio, com um banco novo e vazio: o backup contínuo em object storage foi desligado de propósito, e o operador `cnpg-barman-plugin` que o fazia funcionar nem está instalado hoje. Não há `ObjectStore` nem `ScheduledBackup` declarados, então não existe `bootstrap.recovery` possível; os dados que estavam no volume do node perdido não são recuperáveis por este runbook. Se o backup for religado no futuro, este passo volta a valer o formato de referência de recuperação do CNPG (`bootstrap.recovery` com um `externalClusters` apontando para o `ObjectStore`), e esta seção deve ser reescrita para descrevê-lo de novo.
 
 ## 4. Conferir
 

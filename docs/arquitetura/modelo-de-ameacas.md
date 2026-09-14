@@ -6,7 +6,7 @@ Este repositório descreve, e em parte controla, um cluster k3s de um nó só qu
 
 ## O que se protege
 
-Os ativos, em ordem de gravidade se perdidos ou comprometidos: os dados dos serviços (o Postgres do blog e seus backups), qualquer chave privada age listada em `.sops.yaml` (hoje a do node, a de rotina do operador na Secure Enclave e a de desastre no Bitwarden; quem tem uma delas decifra todo `SopsSecret` commitado em qualquer satélite), a credencial de administrador do cluster (o kubeconfig e a chave SSH de root do nó), a capacidade de publicar em `main` deste repositório e dos satélites (porque o Argo aplica o que está lá sem intervenção humana), e a disponibilidade dos serviços públicos.
+Os ativos, em ordem de gravidade se perdidos ou comprometidos: os dados dos serviços (o Postgres do blog, sem backup hoje, então perda de volume é perda total), qualquer chave privada age listada em `.sops.yaml` (hoje a do node, a de rotina do operador na Secure Enclave e a de desastre no Bitwarden; quem tem uma delas decifra todo `SopsSecret` commitado em qualquer satélite), a credencial de administrador do cluster (o kubeconfig e a chave SSH de root do nó), a capacidade de publicar em `main` deste repositório e dos satélites (porque o Argo aplica o que está lá sem intervenção humana), e a disponibilidade dos serviços públicos.
 
 ## Fronteiras de confiança
 
@@ -86,7 +86,7 @@ Hoje o repositório usa esse mecanismo para manter, além da chave do node, uma 
 
 ## O que fica fora do modelo
 
-Um atacante com acesso físico ao nó ou ao hipervisor. Uma vulnerabilidade zero-day no k3s, no Cilium ou no kernel antes do Renovate propor a versão corrigida e ela ser aplicada por um novo `bootstrap`. Um comprometimento da conta do GitHub do dono com MFA vencida. Esses cenários não têm mitigação declarada aqui e devem ser tratados como perda total do cluster, com reconstrução a partir do repositório e dos backups.
+Um atacante com acesso físico ao nó ou ao hipervisor. Uma vulnerabilidade zero-day no k3s, no Cilium ou no kernel antes do Renovate propor a versão corrigida e ela ser aplicada por um novo `bootstrap`. Um comprometimento da conta do GitHub do dono com MFA vencida. Esses cenários não têm mitigação declarada aqui e devem ser tratados como perda total do cluster, com reconstrução a partir do repositório; os dados do Postgres do blog não sobrevivem, porque não há backup hoje.
 
 ## Continue por aqui
 

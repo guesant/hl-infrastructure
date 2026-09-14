@@ -30,7 +30,7 @@ while IFS= read -r file; do
     echo "$file: recipients ($file_recipients) do not match .sops.yaml ($expected_recipients)" >&2
     status=1
   fi
-done < <(find argocd -type f -name '*-sopssecret.yaml')
+done < <(find argocd -type f -name '*.sops-secret.yaml')
 
 if [ "$status" -eq 0 ]; then
   echo "every SopsSecret is encrypted with the current recipients"

@@ -37,6 +37,7 @@ mergeado
 mergear
 mergeia
 nftables
+postgres
 prunar
 recifra
 recifrado
