@@ -15,9 +15,23 @@
       "matchDatasources": ["docker"],
       "matchPackageNames": ["alpine/helm"],
       "enabled": false
+    },
+    {
+      "description": "required_version constrains OpenTofu, not Terraform, so it must not be bumped against Terraform releases",
+      "matchManagers": ["terraform"],
+      "matchDepTypes": ["required_version"],
+      "enabled": false
     }
   ],
   "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^justfile$/"],
+      "matchStrings": ["opentofu_version := \"(?<currentValue>[\\d.]+)\""],
+      "depNameTemplate": "opentofu/opentofu",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.+)$"
+    },
     {
       "customType": "regex",
       "managerFilePatterns": ["/^ansible/group_vars/all/versions\\.yml$/"],

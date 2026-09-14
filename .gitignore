@@ -3,6 +3,8 @@ ansible/inventory.ini
 ansible/group_vars/all/secrets.yml
 ansible/kubeconfig
 ansible/.kubeconfig.fetched
+tofu/**/.terraform/
+tofu/**/*.tfstate.backup
 rendered/
 site/
 .kubeconform-cache/

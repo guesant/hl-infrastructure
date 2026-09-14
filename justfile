@@ -6,6 +6,8 @@ zizmor_version := `grep -oE 'version: "[0-9.]+"' .github/workflows/ci.yml | grep
 helm_version := `grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE "[0-9.]+"`
 k3s_version := `grep -oE 'k3s_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE "v[0-9.]+"`
 opentofu_version := "1.12.6"
+tofu_image := "ghcr.io/opentofu/opentofu:" + opentofu_version
+sops_identity := home_dir() / ".config/hl-infrastructure/sops/operator-se.txt"
 tools_hash := `shasum -a 256 .tools/docker/Dockerfile | cut -c1-12`
 helm_image := "hl-infra/helm:" + tools_hash + "-" + helm_version
 ops_image := "hl-infra/ops:" + tools_hash + "-" + k3s_version
@@ -115,7 +117,7 @@ age-keygen: (_build-ops)
 sops-recipients *args: (_build-ops)
     {{run}} --entrypoint bash {{ops_image}} .tools/sops-recipients.sh {{args}}
 
-[doc("Fail if any *.sops-secret.yaml is unencrypted or its recipients don't match .sops.yaml")]
+[doc("Fail if any *.sops-secret.yaml or tofu/**/*.sops.env is unencrypted or its recipients don't match .sops.yaml")]
 security-sopssecrets: (_build-ops)
     {{run}} --entrypoint bash {{ops_image}} .tools/check-sopssecrets-encrypted.sh
 
@@ -151,9 +153,25 @@ sops-drill-se identity=(home_dir() / ".config/hl-infrastructure/sops/operator-se
 freeze *args: (_build-ops)
     {{run}} -e KUBECONFIG={{kubeconfig}} --entrypoint bash {{ops_image}} .tools/freeze-manifest.sh {{args}}
 
-[doc("Run OpenTofu via Docker; no root module exists yet, this only wires the binary")]
-tofu *args:
-    {{run}} --entrypoint bash ghcr.io/opentofu/opentofu:{{opentofu_version}} .tools/tofu.sh {{args}}
+[doc("Run OpenTofu in tofu/cloudflare with the API token and state passphrase decrypted into its environment only")]
+tofu-cloudflare *args: _require-host-sops
+    SOPS_AGE_KEY_FILE={{sops_identity}} sops exec-env tofu/cloudflare/cloudflare.sops.env \
+        "{{run}} -i -e CLOUDFLARE_API_TOKEN -e TF_VAR_state_passphrase {{tofu_image}} -chdir=tofu/cloudflare {{args}}"
+
+[doc("Apply tofu/cloudflare against the real Cloudflare account")]
+[confirm("This changes the tunnel and DNS records in the real Cloudflare account. Continue?")]
+tofu-cloudflare-apply: (tofu-cloudflare "apply")
+
+[doc("Fetch the blog tunnel token from the Cloudflare API into its SopsSecret; OpenTofu never sees it")]
+cloudflare-tunnel-token: _require-host-sops _build-ops
+    SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} OPS_IMAGE={{ops_image}} \
+        sops exec-env tofu/cloudflare/cloudflare.sops.env .tools/cloudflare-tunnel-token.sh
+
+[doc("tofu fmt and validate over tofu/, with no credential and no backend")]
+lint-tofu:
+    {{run}} {{tofu_image}} fmt -check -recursive tofu
+    {{run}} -e TF_VAR_state_passphrase=validate-only-passphrase-never-used-for-real-state {{tofu_image}} -chdir=tofu/cloudflare init -backend=false -input=false
+    {{run}} -e TF_VAR_state_passphrase=validate-only-passphrase-never-used-for-real-state {{tofu_image}} -chdir=tofu/cloudflare validate
 
 [doc("Check every link in the Markdown files; not part of check or CI because external hosts are flaky")]
 lint-links: (_build "lychee")
@@ -186,7 +204,7 @@ quality-ast-grep: (_build "ast-grep")
 quality-jscpd: (_build "jscpd")
     {{run}} hl-infra/jscpd:{{tools_hash}} jscpd --config .config/jscpd.json
 
-[doc("Render the seven Helm charts into rendered/")]
+[doc("Render the six Helm charts into rendered/")]
 infra-render-charts: _build-helm
     {{run}} --entrypoint bash {{helm_image}} .tools/render-charts.sh
 
@@ -215,9 +233,9 @@ infra-kubeconform: infra-render-charts (_build "kubeconform") (_build "shell")
         rendered argocd/root argocd/applications
     {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-images-pinned.sh
 
-[doc("trivy misconfiguration scan over the rendered charts")]
+[doc("trivy misconfiguration scan over the rendered charts and tofu/")]
 infra-trivy-config: infra-render-charts (_build "trivy")
-    {{run}} hl-infra/trivy:{{tools_hash}} config --misconfig-scanners kubernetes --skip-files rendered/cilium.yaml .
+    {{run}} hl-infra/trivy:{{tools_hash}} config --misconfig-scanners kubernetes,terraform --skip-files rendered/cilium.yaml .
 
 [doc("Build the MkDocs site in strict mode")]
 docs-build:
@@ -230,4 +248,4 @@ docs-serve:
         sh -c "pip install --quiet -r docs/requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000 --config-file .config/mkdocs.yml"
 
 [doc("Every check the CI runs, in order")]
-check: lint-actions lint-yaml lint-ansible lint-shellcheck lint-hadolint lint-markdown lint-prose lint-docs lint-spelling security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-helm-lint docs-build
+check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-docs lint-spelling security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-helm-lint docs-build
