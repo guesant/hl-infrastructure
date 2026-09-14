@@ -16,19 +16,24 @@ if [ -z "${SOPS_AGE_KEY_FILE:-}" ]; then
   exit 2
 fi
 
-skipped=0
+encrypted_now=0
 
 while IFS= read -r file; do
   if ! sops filestatus "$file" | grep -q '"encrypted": true'; then
-    echo "$file: not encrypted yet, skipping"
-    skipped=$((skipped + 1))
+    tmp="$(mktemp "${file}.XXXXXX")"
+    trap 'rm -f "$tmp"' EXIT
+    sops --config .sops.yaml encrypt "$file" >"$tmp"
+    mv "$tmp" "$file"
+    trap - EXIT
+    echo "$file: encrypted"
+    encrypted_now=$((encrypted_now + 1))
     continue
   fi
   sops --config .sops.yaml updatekeys --yes "$file"
 done < <(find argocd -type f -name '*-sopssecret.yaml')
 
-if [ "$skipped" -gt 0 ]; then
-  echo "recipients synced on every already-encrypted SopsSecret; $skipped file(s) skipped, not encrypted yet"
+if [ "$encrypted_now" -gt 0 ]; then
+  echo "every SopsSecret is now encrypted with the current recipients; $encrypted_now file(s) encrypted for the first time"
 else
   echo "recipients on every SopsSecret now match .sops.yaml"
 fi
