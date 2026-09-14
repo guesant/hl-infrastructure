@@ -6,3 +6,7 @@ rendered/
 site/
 .kubeconform-cache/
 jscpd-report/
+*.agekey
+keys.txt
+sops-age-key.txt
+operator-se.txt

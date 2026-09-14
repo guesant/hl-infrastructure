@@ -1,4 +1,12 @@
+keys:
+  - &node age1lzfgngev8hy7jws5yxm0x535fqn5rctd3p5fa2z4xw9435lpm3cq37n2tc
+  - &operator REPLACE_WITH_OPERATOR_SE_PUBLIC_KEY
+  - &dr REPLACE_WITH_DR_PUBLIC_KEY
 creation_rules:
   - path_regex: .*-sopssecret\.yaml$
     encrypted_suffix: Templates
-    age: age1lzfgngev8hy7jws5yxm0x535fqn5rctd3p5fa2z4xw9435lpm3cq37n2tc,REPLACE_WITH_BACKUP_PUBLIC_KEY
+    key_groups:
+      - age:
+          - *node
+          - *operator
+          - *dr
