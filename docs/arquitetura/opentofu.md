@@ -1,6 +1,6 @@
 # OpenTofu: a camada da Cloudflare
 
-<!-- source-of-trust paths="tofu .tools/tofu-run.sh .tools/tofu-state-passphrase.sh .tools/cloudflare-tunnel-token.sh .tools/check-placeholders.sh" -->
+<!-- source-of-trust paths="tofu/*/*.tf tofu/*/terraform.tfvars .tools/tofu-run.sh .tools/tofu-state-passphrase.sh .tools/cloudflare-tunnel-token.sh .tools/check-placeholders.sh" -->
 
 O Ansible prepara o node e o Argo CD cuida de tudo que roda dentro do cluster, mas o caminho de um visitante até o blog começa fora dos dois: no DNS da Cloudflare e no túnel que liga a borda da Cloudflare ao cloudflared dentro do cluster. [tofu/cloudflare](https://github.com/guesant/hl-infrastructure/tree/main/tofu/cloudflare) declara essa parte com OpenTofu, e o resto desta página explica o que ele possui, o que ele deliberadamente não possui e por quê.
 

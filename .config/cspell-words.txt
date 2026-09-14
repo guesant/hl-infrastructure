@@ -51,6 +51,7 @@ taggeada
 taggeado
 taggeando
 taggear
+tfvars
 trivy
 updatekeys
 vendorizada
