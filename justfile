@@ -130,6 +130,10 @@ sops-edit file identity=(home_dir() / ".config/hl-infrastructure/sops/operator-s
 sops-sync *args: _require-host-sops
     .tools/sops-sync.sh {{args}}
 
+[doc("Rotate the data encryption key of every SopsSecret, or just one; recipients stay the same")]
+sops-rotate *args: _require-host-sops
+    .tools/sops-rotate.sh {{args}}
+
 [doc("Decrypt every SopsSecret with a given identity and report OK/FAIL, no plaintext printed")]
 sops-drill-dr key_file: (_build-ops)
     {{run}} -v {{quote(key_file)}}:/tmp/dr-key.txt:ro -e SOPS_AGE_KEY_FILE=/tmp/dr-key.txt --entrypoint bash {{ops_image}} .tools/sops-drill.sh
