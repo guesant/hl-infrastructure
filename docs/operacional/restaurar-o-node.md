@@ -18,15 +18,15 @@ Ao fim, `ansible/kubeconfig` aponta para o cluster novo e `kubectl -n argocd get
 
 ## 2. Confirmar a chave age
 
-Um node novo não herda a chave age do node antigo: a role `sops_age_key` só gera uma chave quando o `Secret` `sops-age-key-file` ainda não existe, e num node recém-instalado ele nunca existe. O `bootstrap` do passo 1 gera uma chave nova, diferente da anterior. Enquanto isso não é corrigido, todo `SopsSecret` commitado continua decifrável pelas outras duas chaves (a de rotina do operador na Secure Enclave, ou a de desastre no Bitwarden), então este passo não é urgente, mas precisa ser feito antes de encerrar a reconstrução:
+Um node novo não herda a chave age do node antigo: a role `sops_age_key` só gera uma chave quando o `Secret` `sops-age-key-file` ainda não existe, e num node recém-instalado ele nunca existe. O `bootstrap` do passo 1 gera uma chave nova, diferente da anterior. Enquanto isso não é corrigido, todo `SopsSecret` commitado continua decifrável pelas outras chaves listadas em `.sops.yaml` (a de rotina do operador na Secure Enclave, a de desastre no Bitwarden, ou qualquer outra que tenha sido adicionada), então este passo não é urgente, mas precisa ser feito antes de encerrar a reconstrução:
 
 ```bash
-just sops-recipients
+just sops-recipients sync-node
 ```
 
-O script lê a chave pública do node vivo e reescreve só a âncora `&node` em `.sops.yaml`, sem tocar nas outras duas; revise o diff e commite. Se você tem a chave de rotina do operador ou a de desastre à mão, rode `just sops-updatekeys` em seguida (com `SOPS_AGE_KEY_FILE` apontando para uma delas) para recifrar todo `SopsSecret` já commitado para os três destinatários atuais; sem isso, os SopsSecret continuam decifráveis pelas duas chaves que não mudaram, só não estão recifrados para a chave nova do node até a próxima vez que alguém os editar.
+O comando lê a chave pública do node vivo e reescreve só a entrada rotulada `node` em `.sops.yaml`, sem tocar nas outras; revise o diff e commite. Se você tem outra chave decifrando à mão (a de rotina do operador ou a de desastre), rode `just sops-updatekeys` em seguida (com `SOPS_AGE_KEY_FILE` apontando para ela) para recifrar todo `SopsSecret` já commitado para os destinatários atuais; sem isso, os SopsSecret continuam decifráveis pelas chaves que não mudaram, só não estão recifrados para a chave nova do node até a próxima vez que alguém os editar.
 
-Se as duas outras chaves também se perderam junto com o Mac do operador, não há como recuperar o que já estava cifrado: gere um par novo com `just age-se-keygen` (ou um par de desastre novo com `just age-keygen`), atualize `.sops.yaml` com `just sops-recipients --operator <pública>` (ou `--dr <pública>`), e recifre cada `SopsSecret` de cada satélite a partir do valor original:
+Se as outras chaves também se perderam junto com o Mac do operador, não há como recuperar o que já estava cifrado: gere um par novo com `just age-se-keygen` (ou um par de desastre novo com `just age-keygen`), adicione o destinatário em `.sops.yaml` com `just sops-recipients add <rótulo> <pública>` (ou `update <rótulo> <pública>` se o rótulo antigo ainda existir), e recifre cada `SopsSecret` de cada satélite a partir do valor original:
 
 ```bash
 just sops-encrypt <caminho-do-sopssecret-em-texto-claro>

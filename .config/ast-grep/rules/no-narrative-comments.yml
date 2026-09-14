@@ -2,6 +2,8 @@ id: no-narrative-comments
 language: yaml
 severity: error
 message: "narrative comment not allowed; only tool-directive comments and an IMPORTANT: marker for a critical non-obvious invariant are permitted"
+ignores:
+  - ".sops.yaml"
 rule:
   kind: comment
   not:

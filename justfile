@@ -110,7 +110,7 @@ sops-encrypt file: (_build-ops)
 age-keygen: (_build-ops)
     {{run}} --entrypoint age-keygen {{ops_image}}
 
-[doc("Write the node's current age recipient into .sops.yaml; pass --operator/--dr to also set those")]
+[doc("Manage .sops.yaml recipients: list, sync-node, add <label> <key>, update <label> <key>, remove <label>")]
 sops-recipients *args: (_build-ops)
     {{run}} --entrypoint bash {{ops_image}} .tools/sops-recipients.sh {{args}}
 
