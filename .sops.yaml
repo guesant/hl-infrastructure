@@ -1,4 +1,5 @@
 keys: &recipients
+  - age1se1qtst37zx9f0t3rsvcuhvfxx7rd67xxmy7nqp4m9ntrgycu0klgygvs3vkh8 # operator-se
   - age1lzfgngev8hy7jws5yxm0x535fqn5rctd3p5fa2z4xw9435lpm3cq37n2tc # node
 creation_rules:
   - path_regex: .*-sopssecret\.yaml$
