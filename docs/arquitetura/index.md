@@ -67,6 +67,7 @@ flowchart TB
 - [Ansible: as roles do bootstrap](ansible.md) descreve a ordem e o papel de cada role.
 - [Helm e os charts](helm-e-charts.md) explica por que nenhum componente fica vendorizado como manifesto estático.
 - [GitOps: root e satélites](gitops-root-e-satelites.md) descreve o padrão de app-of-apps que o ArgoCD usa.
+- [OpenTofu: a camada da Cloudflare](opentofu.md) descreve o túnel e o DNS do blog, e por que o token do túnel nunca passa pelo OpenTofu.
 - [A pipeline de CI](ci.md) descreve os jobs do workflow `ci` e por que eles vivem todos no mesmo arquivo.
 - [Modelo de ameaças](modelo-de-ameacas.md) lista o que se protege, por onde um atacante entraria e o que barra cada caminho.
 - [Mapa de controles](mapa-de-controles.md) inventaria cada garantia com a evidência que a prova.

@@ -34,7 +34,7 @@ O `-K` pede a senha de `sudo` do usuário do inventário; omita se ele tem `sudo
 just bootstrap -K
 ```
 
-O playbook aplica as roles em ordem: hardening de sistema operacional primeiro (cgroups, firewall, atualizações automáticas, sysctl, umask, AppArmor, auditd, SSH, fail2ban), depois k3s, depois Cilium como CNI, depois ArgoCD, depois a aplicação raiz do Argo e a chave age do sops-secrets-operator. Cada role espera o componente anterior ficar pronto antes de seguir, então uma falha no meio do caminho não deixa o cluster pela metade de forma silenciosa. CloudNativePG, o plugin de backup, cert-manager, o sops-secrets-operator e o Argo CD Image Updater não têm role própria: a partir do momento em que a aplicação raiz existe, é o Argo quem os traz, como `Application` de plataforma.
+O playbook aplica as roles em ordem: hardening de sistema operacional primeiro (cgroups, firewall, atualizações automáticas, sysctl, umask, AppArmor, auditd, SSH, fail2ban), depois k3s, depois Cilium como CNI, depois ArgoCD, depois a aplicação raiz do Argo e a chave age do sops-secrets-operator. Cada role espera o componente anterior ficar pronto antes de seguir, então uma falha no meio do caminho não deixa o cluster pela metade de forma silenciosa. CloudNativePG, cert-manager, o sops-secrets-operator e o Argo CD Image Updater não têm role própria: a partir do momento em que a aplicação raiz existe, é o Argo quem os traz, como `Application` de plataforma.
 
 ## Confirme que funcionou
 
@@ -66,6 +66,25 @@ just sops-recipients add dr <pública da chave de desastre>
 ```
 
 Revise o diff de `.sops.yaml` e commite. A partir daqui, `just sops-sync <arquivo>` cifra qualquer `SopsSecret` novo sem precisar de nenhuma chave privada; veja [adicionar um satélite novo](adicionar-um-satelite.md).
+
+## Crie o túnel e o DNS na Cloudflare
+
+O blog só fica acessível de fora depois que o túnel existe. No dashboard da Cloudflare, crie um API token com duas permissões e nada além delas: Cloudflare Tunnel, de edição, restrita à sua conta, e DNS, de edição, restrita à zona do blog. Depois preencha os dois arquivos que o OpenTofu usa:
+
+```bash
+just sops-edit tofu/cloudflare/cloudflare.sops.env
+```
+
+Troque os dois valores de exemplo pelo API token e por uma passphrase aleatória de pelo menos 32 caracteres (`openssl rand -base64 48` serve), e guarde a passphrase também no seu gerenciador de senhas. Em `tofu/cloudflare/terraform.tfvars`, que não é secreto, coloque o ID da conta, o ID da zona e o hostname real do blog. Então:
+
+```bash
+just tofu-cloudflare init
+just tofu-cloudflare plan
+just tofu-cloudflare-apply
+just cloudflare-tunnel-token
+```
+
+O `plan` precisa mostrar exatamente três recursos novos: o túnel, a configuração de ingress e o registro DNS. `cloudflare-tunnel-token` busca o token do túnel recém-criado e o grava cifrado no `SopsSecret` do cloudflared. Commite `terraform.tfstate` (cifrado), `.terraform.lock.hcl`, `terraform.tfvars` e o `SopsSecret` juntos e faça push; o Argo sobe o cloudflared com o token novo. Veja [OpenTofu: a camada da Cloudflare](../arquitetura/opentofu.md) para o porquê de cada peça.
 
 ## Continue por aqui
 

@@ -122,6 +122,8 @@ Este repositório é uma composição de software livre mantido por outras pesso
 | [SOPS](https://github.com/getsops/sops) | Cifra os `SopsSecret` localmente antes do commit | [MPL-2.0](https://github.com/getsops/sops/blob/main/LICENSE) | [contributors](https://github.com/getsops/sops/graphs/contributors) |
 | [age](https://github.com/FiloSottile/age) | O par de chaves que o SOPS usa pra cifrar e decifrar | [BSD-3-Clause](https://github.com/FiloSottile/age/blob/main/LICENSE) | [contributors](https://github.com/FiloSottile/age/graphs/contributors) |
 | [cloudflared](https://github.com/cloudflare/cloudflared) | Túnel de saída que expõe os serviços sem abrir porta | [Apache-2.0](https://github.com/cloudflare/cloudflared/blob/master/LICENSE) | [contributors](https://github.com/cloudflare/cloudflared/graphs/contributors) |
+| [OpenTofu](https://opentofu.org/) | Declara o túnel e o DNS do blog na Cloudflare, com state cifrado | [MPL-2.0](https://github.com/opentofu/opentofu/blob/main/LICENSE) | [contributors](https://github.com/opentofu/opentofu/graphs/contributors) |
+| [Cloudflare Terraform provider](https://github.com/cloudflare/terraform-provider-cloudflare) | A ponte entre o OpenTofu e a API da Cloudflare | [Apache-2.0](https://github.com/cloudflare/terraform-provider-cloudflare/blob/main/LICENSE) | [contributors](https://github.com/cloudflare/terraform-provider-cloudflare/graphs/contributors) |
 | [OpenSSL](https://www.openssl.org/) | Gera o token de join na rotação de credenciais | [Apache-2.0](https://github.com/openssl/openssl/blob/master/LICENSE.txt) | [contributors](https://github.com/openssl/openssl/graphs/contributors) |
 
 ### Automação e documentação

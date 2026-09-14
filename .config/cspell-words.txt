@@ -14,6 +14,7 @@ Bitwarden
 bumpa
 bumpar
 checkov
+cloudflare
 commitada
 commitadas
 commitado
@@ -50,6 +51,7 @@ taggeada
 taggeado
 taggeando
 taggear
+trivy
 updatekeys
 vendorizada
 vendorizadas

@@ -4,7 +4,7 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 
 | Componente | Tema | Controle | Evidência |
 | --- | --- | --- | --- |
-| Repositório | Segredos | Nenhum segredo no git; valores reais só em `secrets.yml` (ignorado) e em `SopsSecret` | `.gitignore`, job `gitleaks` sobre todo o histórico, `trivy-fs` |
+| Repositório | Segredos | Nenhum segredo no git; valores reais só em `secrets.yml` (ignorado), em `SopsSecret` e em `tofu/**/*.sops.env` | `.gitignore`, job `gitleaks` sobre todo o histórico, `trivy-fs`, job `sopssecrets` |
 | Repositório | Integridade de dependências | Toda action, imagem, chart e binário pinado por versão ou SHA | `.github/workflows/*.yml` (SHA em todo `uses`), `.tools/docker/Dockerfile`, `versions.yml`, check `check-images-pinned.sh` |
 | Repositório | Atualização | Renovate abre PR para toda dependência, com sete dias de carência | `.config/renovate.json`, dependency dashboard |
 | CI | Privilégio | `contents: read` por padrão; escrita só no `renovate`, isolado num environment | `permissions:` em cada workflow, `zizmor` a cada push |
@@ -23,7 +23,9 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | ArgoCD | Segregação | Satélites só criam recurso de namespace; `default` esvaziado | `argocd/root/project-*.yaml` |
 | ArgoCD | Comportamento de sync | Server-side apply, prune por último, retry com backoff | `syncPolicy` em todo `Application` |
 | Imagens | Proveniência | Só tags imutáveis `sha-<commit>` são promovidas | `ImageUpdater` de cada satélite com `allowTags` |
-| Dados | Recuperação | Backup contínuo do Postgres em object storage, restauração documentada; depende de cada satélite selar as próprias credenciais do bucket | `ObjectStore` e `ScheduledBackup` do satélite, [restaurar o node](../operacional/restaurar-o-node.md), [checklist operacional](../operacional/checklist.md) |
+| Cloudflare | Privilégio | O API token do OpenTofu só edita túnel e DNS, nunca cria outros tokens | permissões do token no dashboard, [primeiro bootstrap](../operacional/primeiro-bootstrap.md) |
+| Cloudflare | Segredos no state | State do OpenTofu cifrado, recusado em texto claro; o token do túnel nunca passa pelo OpenTofu | `tofu/cloudflare/encryption.tf` com `enforced = true`, `.tools/cloudflare-tunnel-token.sh`, job `tofu` |
+| Dados | Recuperação | Nenhum hoje: o backup contínuo do Postgres foi desligado de propósito, e a perda do volume do node é perda total dos dados | [estado fora do git](../operacional/estado-fora-do-git.md), [restaurar o node](../operacional/restaurar-o-node.md) |
 | Documentação | Fidelidade | Página cuja fonte mudou sem revisão falha a CI | `.tools/check-doc-drift.sh`, marcadores `source-of-trust` |
 
 ## O que este mapa não cobre

@@ -1,6 +1,6 @@
 # Rotacionar credenciais
 
-Três credenciais têm rotina de rotação própria, cada uma num playbook separado de `site.yml`: duas do k3s, que interrompem o cluster por alguns segundos, e a chave age do sops-secrets-operator, que não interrompe nada mas precisa do passo extra de resincronizar `.sops.yaml`. Nenhuma das três deve acontecer como efeito colateral de um bootstrap.
+Cinco credenciais têm rotina de rotação própria. Três vivem no node, cada uma num playbook separado de `site.yml`: duas do k3s, que interrompem o cluster por alguns segundos, e a chave age do sops-secrets-operator, que não interrompe nada mas precisa do passo extra de resincronizar `.sops.yaml`. Duas vivem na Cloudflare: o token do túnel do blog e o API token que o OpenTofu usa. Nenhuma delas deve mudar como efeito colateral de um bootstrap ou de um `apply`.
 
 ## Certificados
 
@@ -40,6 +40,22 @@ just rotate-age-key -K -e sops_age_key_prune=true
 ```
 
 Rodar `just rotate-age-key` sem a variável de novo, antes de prunar a antiga, só adiciona mais uma identidade; nada quebra, mas também não avança a rotação sozinho.
+
+## Token do túnel Cloudflare
+
+Rotacione o token no dashboard (Networking, Tunnels, o túnel `blog`, Rotate token) e depois traga o novo para o `SopsSecret`:
+
+```bash
+just cloudflare-tunnel-token
+```
+
+Commite e faça push. O cloudflared que já está rodando continua conectado com o token antigo até reiniciar, porque a rotação só impede conexões novas; o blog não cai entre a rotação e o sync. Quando o Argo aplicar o `Secret` novo, reinicie o Deployment para ele passar a usar o token novo (`kubectl -n blog rollout restart deployment/cloudflared`). Se o motivo da rotação é um token vazado, não espere: derrube também as conexões existentes pela API da Cloudflare antes do push, senão quem tem o token antigo continua conectado. Rodar `just cloudflare-tunnel-token` sem ter rotacionado nada não muda o arquivo.
+
+## API token da Cloudflare e passphrase do state
+
+O API token não tem rotina automática. Crie um token novo no dashboard com as mesmas duas permissões, troque o valor com `just sops-edit tofu/cloudflare/cloudflare.sops.env`, confirme com `just tofu-cloudflare plan` que nada muda, e só então revogue o antigo no dashboard.
+
+A passphrase do state troca em uma execução com um bloco `fallback` apontando para a antiga em `tofu/cloudflare/encryption.tf`: com a passphrase nova no arquivo cifrado e a antiga no `fallback`, um `just tofu-cloudflare-apply` sem mudanças de recurso lê o state com a antiga e o grava com a nova. Depois remova o `fallback` e commite o state regravado.
 
 ## Continue por aqui
 
