@@ -11,7 +11,7 @@ label_re='^[a-z][a-z0-9-]*$'
 usage() {
   cat >&2 <<'EOF'
 usage: sops-recipients.sh list
-       sops-recipients.sh sync-node
+       sops-recipients.sh sync-node [label]
        sops-recipients.sh add <label> <public key>
        sops-recipients.sh update <label> <public key>
        sops-recipients.sh remove <label>
@@ -41,6 +41,28 @@ require_valid_key() {
   }
 }
 
+add_or_update() {
+  local label="$1" key="$2"
+  if has_label "$label"; then
+    local current
+    current="$(current_key_for_label "$label")"
+    if [ "$current" = "$key" ]; then
+      echo "${label} already up to date: ${key}"
+    else
+      sed -i.bak -E "s@^(\s*- )age1[a-z0-9]+(\s*# ${label})\$@\1${key}\2@" "$sops_file"
+      rm -f "${sops_file}.bak"
+      echo "${label}: ${current} -> ${key}"
+    fi
+  else
+    awk -v new="  - ${key} # ${label}" '
+      { print }
+      /^keys:/ && !done { print new; done=1 }
+    ' "$sops_file" >"${sops_file}.tmp"
+    mv "${sops_file}.tmp" "$sops_file"
+    echo "added ${label}: ${key}"
+  fi
+}
+
 cmd="${1:-}"
 [ -n "$cmd" ] || usage
 shift
@@ -51,6 +73,8 @@ list)
   ;;
 
 sync-node)
+  label="${1:-node}"
+  require_valid_label "$label"
   node_public_key="$(
     kubectl --kubeconfig ansible/kubeconfig -n sops get secret sops-age-key-file \
       -o jsonpath='{.data.keys\.txt}' \
@@ -60,24 +84,7 @@ sync-node)
       | sed 's/^# public key: //'
   )"
   require_valid_key "$node_public_key"
-
-  if has_label node; then
-    current="$(current_key_for_label node)"
-    if [ "$current" = "$node_public_key" ]; then
-      echo "node already up to date: $node_public_key"
-    else
-      sed -i.bak -E "s@^(\s*- )age1[a-z0-9]+(\s*# node)\$@\1${node_public_key}\2@" "$sops_file"
-      rm -f "${sops_file}.bak"
-      echo "node: ${current} -> ${node_public_key}"
-    fi
-  else
-    awk -v new="  - ${node_public_key} # node" '
-      { print }
-      /^keys:/ && !done { print new; done=1 }
-    ' "$sops_file" >"${sops_file}.tmp"
-    mv "${sops_file}.tmp" "$sops_file"
-    echo "added node: ${node_public_key}"
-  fi
+  add_or_update "$label" "$node_public_key"
   ;;
 
 add)
@@ -93,12 +100,7 @@ add)
     echo "that public key is already in .sops.yaml" >&2
     exit 1
   fi
-  awk -v new="  - ${key} # ${label}" '
-    { print }
-    /^keys:/ && !done { print new; done=1 }
-  ' "$sops_file" >"${sops_file}.tmp"
-  mv "${sops_file}.tmp" "$sops_file"
-  echo "added ${label}: ${key}"
+  add_or_update "$label" "$key"
   ;;
 
 update)
@@ -109,14 +111,7 @@ update)
     echo "no recipient labeled $label" >&2
     exit 1
   fi
-  current="$(current_key_for_label "$label")"
-  if [ "$current" = "$key" ]; then
-    echo "${label} already up to date: ${key}"
-  else
-    sed -i.bak -E "s@^(\s*- )age1[a-z0-9]+(\s*# ${label})\$@\1${key}\2@" "$sops_file"
-    rm -f "${sops_file}.bak"
-    echo "${label}: ${current} -> ${key}"
-  fi
+  add_or_update "$label" "$key"
   ;;
 
 remove)
