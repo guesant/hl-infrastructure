@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: postgres
+  name: blog-postgres
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "1"
@@ -10,7 +10,9 @@ spec:
   source:
     repoURL: https://github.com/guesant/hl-infrastructure.git
     targetRevision: main
-    path: argocd/apps/satellites/blog/postgres
+    path: argocd/apps/data/blog-postgres
+    helm:
+      releaseName: postgres
   destination:
     server: https://kubernetes.default.svc
     namespace: blog

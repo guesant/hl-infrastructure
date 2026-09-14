@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cnpg
+  name: cert-manager
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
@@ -10,14 +10,14 @@ spec:
   source:
     repoURL: https://github.com/guesant/hl-infrastructure.git
     targetRevision: main
-    path: argocd/apps/cnpg
+    path: argocd/apps/operators/cert-manager
     helm:
-      releaseName: cnpg
+      releaseName: cert-manager
       valueFiles:
         - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: cnpg-system
+    namespace: cert-manager
   syncPolicy:
     automated:
       selfHeal: true
@@ -34,3 +34,12 @@ spec:
         duration: 5s
         factor: 2
         maxDuration: 3m
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      jsonPointers:
+        - /webhooks/0/clientConfig/caBundle
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      jsonPointers:
+        - /webhooks/0/clientConfig/caBundle

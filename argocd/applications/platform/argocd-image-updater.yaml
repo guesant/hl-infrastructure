@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/guesant/hl-infrastructure.git
     targetRevision: main
-    path: argocd/apps/argocd-image-updater
+    path: argocd/apps/platform/argocd-image-updater
     helm:
       releaseName: argocd-image-updater
   destination:

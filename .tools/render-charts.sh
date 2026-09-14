@@ -22,7 +22,7 @@ helm repo add argo https://argoproj.github.io/argo-helm >/dev/null
 helm repo add cilium https://helm.cilium.io/ >/dev/null
 helm repo update >/dev/null
 
-helm template cert-manager "$repo_root/argocd/apps/cert-manager" \
+helm template cert-manager "$repo_root/argocd/apps/operators/cert-manager" \
   --namespace cert-manager \
   --include-crds >"$out_dir/cert-manager.yaml"
 
@@ -34,21 +34,17 @@ helm template argocd argo/argo-cd \
   --set notifications.metrics.enabled=true \
   --include-crds >"$out_dir/argocd.yaml"
 
-helm template argocd-image-updater "$repo_root/argocd/apps/argocd-image-updater" \
+helm template argocd-image-updater "$repo_root/argocd/apps/platform/argocd-image-updater" \
   --namespace argocd \
   --include-crds >"$out_dir/argocd-image-updater.yaml"
 
-helm template cnpg "$repo_root/argocd/apps/cnpg" \
+helm template cnpg "$repo_root/argocd/apps/operators/cnpg" \
   --namespace cnpg-system \
   --include-crds >"$out_dir/cnpg.yaml"
 
-helm template barman-cloud "$repo_root/argocd/apps/cnpg-barman-plugin" \
-  --namespace cnpg-system \
-  --include-crds >"$out_dir/cnpg-barman-plugin.yaml"
-
-helm template sops-secrets-operator "$repo_root/argocd/apps/sops-secrets-operator" \
+helm template sops-secrets-operator "$repo_root/argocd/apps/operators/sops-secrets-operator" \
   --namespace sops \
-  --values "$repo_root/argocd/apps/sops-secrets-operator/values.yaml" \
+  --values "$repo_root/argocd/apps/operators/sops-secrets-operator/values.yaml" \
   --include-crds >"$out_dir/sops-secrets-operator.yaml"
 
 sed 's/{{ ansible_host }}/10.0.0.1/' "$repo_root/ansible/roles/cilium/templates/values.yaml.j2" >"$out_dir/.cilium-values.yaml"
@@ -59,4 +55,4 @@ helm template cilium cilium/cilium \
   --include-crds >"$out_dir/cilium.yaml"
 rm "$out_dir/.cilium-values.yaml"
 
-echo "rendered 7 charts into $out_dir"
+echo "rendered 6 charts into $out_dir"
