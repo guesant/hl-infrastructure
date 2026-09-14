@@ -103,6 +103,11 @@ lint-markdown: (_build "markdownlint")
 lint-prose: (_build "shell")
     {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-prose.sh
 
+[doc("Fail on any placeholder value left anywhere in the codebase, and on a blog hostname mismatch between OpenTofu and the blog")]
+lint-placeholders: (_build "shell")
+    {{run}} -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0=/repo \
+        --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/lint-placeholders.sh
+
 [doc("Fail when a page's sources changed after the page was last reviewed, or a role has no doc")]
 lint-docs: (_build "shell")
     {{run}} -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0=/repo \
@@ -258,4 +263,4 @@ docs-serve:
         sh -c "pip install --quiet -r docs/requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000 --config-file .config/mkdocs.yml"
 
 [doc("Every check the CI runs, in order")]
-check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-docs lint-spelling security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-helm-lint docs-build
+check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-placeholders lint-docs lint-spelling security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-helm-lint docs-build

@@ -14,13 +14,17 @@ Cada bloco abaixo é um subconjunto disso. Para os workflows do GitHub Actions, 
 just lint-actions
 just lint-yaml
 just lint-ansible
+just lint-tofu
 just lint-shellcheck
 just lint-hadolint
 just lint-markdown
 just lint-prose
+just lint-placeholders
 just lint-docs
 just lint-spelling
 ```
+
+`lint-placeholders` falha em qualquer valor de exemplo que sobrou no repositório; ele não enxerga dentro dos arquivos cifrados, e para isso existe `just placeholders`, que precisa da sua identidade e por isso não está na CI.
 
 A verificação de links fica fora do `check` e da CI, porque depende de sites externos que falham por conta própria; rode-a à mão quando mexer bastante na documentação:
 
@@ -34,6 +38,7 @@ Para segredos, dependências vulneráveis e vulnerabilidades de sistema de arqui
 just security-gitleaks
 just security-osv-scanner
 just security-trivy-fs
+just security-sopssecrets
 ```
 
 Para as regras estruturais próprias e duplicação de código:

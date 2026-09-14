@@ -23,25 +23,17 @@ while IFS= read -r file; do
   fi
   while IFS= read -r key; do
     report "$file: $key still holds a placeholder"
-  done < <(printf '%s\n' "$plaintext" | sed -nE 's/^[[:space:]]*"?([A-Za-z0-9_.-]+)"?[:=][[:space:]]*"?REPLACE_WITH_.*/\1/p')
+  done < <(printf '%s\n' "$plaintext" | sed -nE 's/^[[:space:]]*"?([A-Za-z0-9_.-]+)"?[:=][[:space:]]*"?REPLACE_WITH_[A-Z0-9_]+.*/\1/p')
 done < <(
   find argocd -type f -name '*.sops-secret.yaml'
   find tofu -type f -name '*.sops.env'
 )
 
-while IFS= read -r match; do
-  report "$match"
-done < <(grep -rnE 'REPLACE_WITH_|example\.invalid' argocd tofu --include='*.yaml' --include='*.yml' --include='*.tfvars' | grep -v 'ENC\[' || true)
-
-tofu_hostname="$(sed -nE 's/^blog_hostname[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' tofu/cloudflare/terraform.tfvars)"
-site_url="$(sed -nE 's/^[[:space:]]*PUBLIC_SITE_BASE_URL:[[:space:]]*"?([^"[:space:]]+).*/\1/p' argocd/apps/satellites/blog/blog/values.yaml)"
-site_hostname="${site_url#https://}"
-site_hostname="${site_hostname%%/*}"
-if [ "$tofu_hostname" != "$site_hostname" ]; then
-  report "hostname mismatch: blog_hostname in tofu/cloudflare/terraform.tfvars is $tofu_hostname, PUBLIC_SITE_BASE_URL in the blog values.yaml is $site_url"
+if ! .tools/lint-placeholders.sh; then
+  status=1
 fi
 
 if [ "$status" -eq 0 ]; then
-  echo "nothing pending: no placeholder left and the blog hostname matches in OpenTofu and in the blog"
+  echo "nothing pending: no placeholder in plaintext or inside encrypted files"
 fi
 exit "$status"

@@ -5,8 +5,8 @@ useDefault = true
 
 [allowlist]
 regexes = [
-  '''changeme-generate-a-real-secret''',
-  '''changeme@example\.invalid''',
+  '''changeme-generate-a-real-secret''', # placeholder-lint: ignore
+  '''changeme@example\.invalid''', # placeholder-lint: ignore
 ]
 
 [[rules]]
