@@ -80,6 +80,8 @@ O `argocd_github_webhook_secret` e a chave SSH seguem outro caminho, mais curto:
 
 Isso rotaciona quem consegue decifrar, mas não troca a chave de conteúdo (a DEK) que cifra o valor em si; `just sops-rotate` faz exatamente isso, gera uma DEK nova pra cada `SopsSecret` e recifra os valores com ela, sem alterar quem tem acesso. Como todo `SopsSecret` já cifrado precisa ser decifrado antes de ganhar uma DEK nova, `sops-rotate` sempre exige `SOPS_AGE_KEY_FILE`, mesmo rodando sobre um arquivo só.
 
+Um `.sops.yaml` alterado sem o `sops-sync` correspondente não é um erro silencioso: o gate `security-sopssecrets` compara, para cada `SopsSecret`, o conjunto de destinatários gravado no arquivo contra o conjunto atual de `.sops.yaml`, e falha em qualquer divergência, tanto uma chave que entrou e ainda não foi propagada quanto uma que saiu e ainda decifraria o segredo.
+
 Hoje o repositório usa esse mecanismo para manter, além da chave do node, uma chave de rotina do operador (uma identidade `age-plugin-se` presa à Secure Enclave do Mac, `age1se1...`, gerada com `just age-se-keygen` e nunca exportável dali) e uma chave de desastre (um par age comum cuja metade privada vive só numa nota segura do Bitwarden, gerada com `just age-keygen` e nunca escrita em disco por este repositório). A chave de desastre não decifra nada no dia a dia, é redundância pura: cobre o cenário em que o node e o Mac do operador se perdem juntos, e o `just sops-drill-dr` existe para provar, periodicamente, que ela ainda funciona. Nada impede adicionar uma quarta chave, trocar a de rotina por outra, ou remover a de desastre; o único efeito de remover uma entrada é que a chave privada correspondente para de decifrar segredos cifrados depois disso.
 
 ## O que fica fora do modelo

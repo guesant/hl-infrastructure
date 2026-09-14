@@ -18,7 +18,7 @@ Nem tudo que o cluster precisa está versionado, e o que não está precisa ser 
 | dados do Postgres do blog | volume no nó, com backup em object storage pelo barman-cloud | o CloudNativePG | restaurar do último backup pelo próprio operador CNPG |
 | o sistema operacional do nó | instalado pelo hipervisor ou pela imagem cloud | fora deste repositório | reinstalar e rodar `just bootstrap`; as roles de SO assumem Debian |
 
-`.sops.yaml`, com o destinatário público age do sops-secrets-operator, não entra nesta lista de propósito: ele é commitado no repositório. Uma chave pública age só permite cifrar, nunca decifrar, então commitá-la não expõe nenhum segredo; é o que permite cifrar um segredo novo sem precisar de acesso ao cluster, só com `just sops-sync`.
+`.sops.yaml`, com os destinatários públicos age do sops-secrets-operator, não entra nesta lista de propósito: ele é commitado no repositório. Uma chave pública age só permite cifrar, nunca decifrar, então commitá-la não expõe nenhum segredo; é o que permite cifrar um segredo novo sem precisar de acesso ao cluster, só com `just sops-sync`. O gate `security-sopssecrets` garante que essa lista e o que está de fato cifrado em cada satélite nunca fiquem para trás um do outro.
 
 O critério para algo estar nesta lista é simples: se apagar o repositório e a máquina do operador não fosse suficiente para perder o item, ele não precisa estar aqui. Tudo o que está aqui precisa de uma cópia ou de um caminho de regeneração fora do git, e a coluna da direita é esse caminho.
 
