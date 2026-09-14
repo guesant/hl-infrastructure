@@ -1,5 +1,7 @@
 # Restaurar o node do zero
 
+<!-- source-of-trust paths=".sops.yaml .tools/sops-recipients.sh .tools/sops-encrypt.sh .tools/sops-drill.sh .tools/sops-updatekeys.sh" -->
+
 Este runbook cobre a perda total do node: cartão SD corrompido, hardware trocado, ou um comprometimento em que a única resposta segura é reinstalar. O ponto de partida é um Raspberry Pi OS limpo com SSH por chave e um usuário com `sudo`, exatamente como no [primeiro bootstrap](primeiro-bootstrap.md). A diferença está no que precisa ser recuperado de fora do git, listado em [estado fora do git](estado-fora-do-git.md).
 
 ## 1. Reconstruir o cluster
@@ -16,14 +18,17 @@ Ao fim, `ansible/kubeconfig` aponta para o cluster novo e `kubectl -n argocd get
 
 ## 2. Confirmar a chave age
 
-Um node novo não herda a chave age do node antigo: a role `sops_age_key` só gera uma chave quando o `Secret` `sops-age-key-file` ainda não existe, e num node recém-instalado ele nunca existe. O `bootstrap` do passo 1 gera uma chave nova, diferente da anterior. `just sops-recipients` só substitui o placeholder `REPLACE_WITH_NODE_PUBLIC_KEY` original, então numa reconstrução o valor antigo já commitado precisa ser trocado manualmente pelo novo em `.sops.yaml`; isso não é urgente, porque a chave de backup abaixo já cobre a decifragem enquanto isso não é feito.
-
-É exatamente para este cenário que existe a segunda chave, a de backup, gerada com `just age-keygen` e guardada só no gerenciador de senhas do operador: como `.sops.yaml` já lista os dois destinatários, todo `SopsSecret` commitado continua decifrável pela chave de backup, mesmo com a chave do node tendo mudado. Nada precisa ser recifrado.
-
-Se a chave de backup também se perdeu junto com a máquina do operador, não há como recuperar o que já estava cifrado: gere um par novo, adicione o destinatário em `.sops.yaml` no lugar do antigo, e recifre cada `SopsSecret` de cada satélite a partir do valor original:
+Um node novo não herda a chave age do node antigo: a role `sops_age_key` só gera uma chave quando o `Secret` `sops-age-key-file` ainda não existe, e num node recém-instalado ele nunca existe. O `bootstrap` do passo 1 gera uma chave nova, diferente da anterior. Enquanto isso não é corrigido, todo `SopsSecret` commitado continua decifrável pelas outras duas chaves (a de rotina do operador na Secure Enclave, ou a de desastre no Bitwarden), então este passo não é urgente, mas precisa ser feito antes de encerrar a reconstrução:
 
 ```bash
-just age-keygen
+just sops-recipients
+```
+
+O script lê a chave pública do node vivo e reescreve só a âncora `&node` em `.sops.yaml`, sem tocar nas outras duas; revise o diff e commite. Se você tem a chave de rotina do operador ou a de desastre à mão, rode `just sops-updatekeys` em seguida (com `SOPS_AGE_KEY_FILE` apontando para uma delas) para recifrar todo `SopsSecret` já commitado para os três destinatários atuais; sem isso, os SopsSecret continuam decifráveis pelas duas chaves que não mudaram, só não estão recifrados para a chave nova do node até a próxima vez que alguém os editar.
+
+Se as duas outras chaves também se perderam junto com o Mac do operador, não há como recuperar o que já estava cifrado: gere um par novo com `just age-se-keygen` (ou um par de desastre novo com `just age-keygen`), atualize `.sops.yaml` com `just sops-recipients --operator <pública>` (ou `--dr <pública>`), e recifre cada `SopsSecret` de cada satélite a partir do valor original:
+
+```bash
 just sops-encrypt <caminho-do-sopssecret-em-texto-claro>
 ```
 

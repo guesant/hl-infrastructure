@@ -10,6 +10,7 @@ argocd
 auditd
 autogerenciar
 automatizável
+Bitwarden
 bumpa
 bumpar
 checkov
@@ -42,6 +43,7 @@ taggeada
 taggeado
 taggeando
 taggear
+updatekeys
 vendorizada
 vendorizadas
 vendorizado

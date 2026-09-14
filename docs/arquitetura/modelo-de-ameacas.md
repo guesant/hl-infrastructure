@@ -1,10 +1,12 @@
 # Modelo de ameaças
 
+<!-- source-of-trust paths=".sops.yaml .tools/sops-recipients.sh .tools/sops-encrypt.sh .tools/sops-drill.sh .tools/sops-updatekeys.sh" -->
+
 Este repositório descreve, e em parte controla, um cluster k3s de um nó só que hospeda serviços públicos de uma pessoa. O modelo abaixo diz o que se está protegendo, por onde um atacante entraria, o que já barra cada caminho e o que continua em aberto. Ele existe para que uma mudança de infraestrutura possa ser julgada contra uma lista explícita, e não contra a intuição de quem a escreveu.
 
 ## O que se protege
 
-Os ativos, em ordem de gravidade se perdidos ou comprometidos: os dados dos serviços (o Postgres do blog e seus backups), a chave privada age do sops-secrets-operator (quem a tem decifra todo `SopsSecret` commitado em qualquer satélite), a credencial de administrador do cluster (o kubeconfig e a chave SSH de root do nó), a capacidade de publicar em `main` deste repositório e dos satélites (porque o Argo aplica o que está lá sem intervenção humana), e a disponibilidade dos serviços públicos.
+Os ativos, em ordem de gravidade se perdidos ou comprometidos: os dados dos serviços (o Postgres do blog e seus backups), qualquer uma das três chaves privadas age do sops-secrets-operator, a do node, a de rotina do operador na Secure Enclave e a de desastre no Bitwarden (quem tem uma delas decifra todo `SopsSecret` commitado em qualquer satélite), a credencial de administrador do cluster (o kubeconfig e a chave SSH de root do nó), a capacidade de publicar em `main` deste repositório e dos satélites (porque o Argo aplica o que está lá sem intervenção humana), e a disponibilidade dos serviços públicos.
 
 ## Fronteiras de confiança
 
@@ -63,16 +65,18 @@ sequenceDiagram
     participant Argo as ArgoCD
     participant SSO as sops-secrets-operator (cluster)
     participant Pod as Pod
-    Op->>Git: .sops.yaml (destinatários públicos age, commitados)
-    Op->>Op: just sops-encrypt arquivo.yaml (cifra localmente com os destinatários do repo)
+    Op->>Git: .sops.yaml (três destinatários públicos age, commitados)
+    Op->>Op: just sops-encrypt arquivo.yaml (cifra em Docker, sem nenhuma chave privada)
     Op->>Git: commit do SopsSecret
     Argo->>Git: pull
     Argo->>SSO: apply do SopsSecret
-    SSO->>SSO: decifra com a chave privada age
+    SSO->>SSO: decifra com a chave privada age do node
     SSO->>Pod: cria o Secret no namespace
 ```
 
-O `argocd_github_webhook_secret` e a chave SSH seguem outro caminho, mais curto: ficam em `secrets.yml` na máquina do operador e o Ansible os entrega ao node por SSH, sem passar por nenhum repositório. A chave privada age nem isso: ela nasce dentro do próprio node, na primeira execução da role `sops_age_key`, e nunca existe em texto claro fora dele. `.sops.yaml` aceita mais de um destinatário na mesma lista, e qualquer chave privada correspondente decifra sozinha; por isso existe uma segunda chave, gerada localmente pelo operador com `just age-keygen` e guardada só num gerenciador de senhas, sem nunca passar por este repositório ou pelo Ansible. Ela não decifra nada no dia a dia, é redundância pura: existe só para o cenário em que o node inteiro se perde e leva a chave dele junto.
+O `argocd_github_webhook_secret` e a chave SSH seguem outro caminho, mais curto: ficam em `secrets.yml` na máquina do operador e o Ansible os entrega ao node por SSH, sem passar por nenhum repositório. A chave privada age do node nem isso: ela nasce dentro do próprio node, na primeira execução da role `sops_age_key`, e nunca existe em texto claro fora dele.
+
+`.sops.yaml` lista três destinatários por âncora YAML num único `key_group`, e qualquer uma das três chaves privadas correspondentes decifra sozinha, sem depender das outras duas. Cifrar (`just sops-encrypt`, o gate `security-sopssecrets`) só precisa das chaves públicas e roda inteiro em Docker, sem nenhuma chave privada envolvida. Decifrar fora do cluster, para editar um segredo existente ou rodar o drill de recuperação, usa uma das outras duas: a chave de rotina do operador, uma identidade `age-plugin-se` presa à Secure Enclave do Mac do operador (`age1se1...`), gerada com `just age-se-keygen` e nunca exportável dali; e a chave de desastre, um par age comum cuja metade privada vive só numa nota segura do Bitwarden, gerada com `just age-keygen` e nunca escrita em disco por este repositório. A chave de desastre não decifra nada no dia a dia, é redundância pura: cobre o cenário em que o node e o Mac do operador se perdem juntos, e o `just sops-drill-dr` existe para provar, periodicamente, que ela ainda funciona.
 
 ## O que fica fora do modelo
 

@@ -1,5 +1,7 @@
 # Estado fora do git
 
+<!-- source-of-trust paths=".sops.yaml .tools/sops-recipients.sh .tools/sops-encrypt.sh .tools/sops-drill.sh .tools/sops-updatekeys.sh" -->
+
 Nem tudo que o cluster precisa está versionado, e o que não está precisa ser listado num lugar só, senão vira conhecimento tribal. Esta página é esse lugar: cada item diz onde vive, quem o cria e o que acontece se for perdido.
 
 | Item | Onde vive | Quem cria | Se perdido |
@@ -7,8 +9,9 @@ Nem tudo que o cluster precisa está versionado, e o que não está precisa ser 
 | `ansible/group_vars/all/secrets.yml` | máquina do operador, ignorado pelo git | o operador, a partir de `secrets.example.yml` | reescrever a partir do exemplo; o segredo do webhook do Argo e a chave SSH precisam ser regenerados. As versões não estão aqui: `versions.yml` é versionado |
 | `ansible/inventory.ini` | máquina do operador, ignorado pelo git | o operador, a partir de `inventory.example.ini` | reescrever; só contém o endereço do nó |
 | `ansible/kubeconfig` | máquina do operador, ignorado pelo git | a role `k3s` no bootstrap | rodar `just bootstrap` de novo, que o busca do nó |
-| chave privada age do node | `Secret` `sops-age-key-file` no namespace `sops` | a role `sops_age_key`, com `age-keygen` direto no node, na primeira execução | perdida junto com o node; a chave de backup abaixo é o que evita perder acesso a todo `SopsSecret` junto com ela. A pública de um node vivo se recupera e é escrita em `.sops.yaml` a qualquer momento com `just sops-recipients`, sem depender de ter guardado o output do primeiro `bootstrap` |
-| chave privada age de backup | gerenciador de senhas do operador, fora de qualquer máquina deste fluxo | o operador, com `just age-keygen` | nada muda: ela é redundância pura, a chave do node continua decifrando sozinha. Só importa se as duas se perderem juntas |
+| chave privada age do node | `Secret` `sops-age-key-file` no namespace `sops` | a role `sops_age_key`, com `age-keygen` direto no node, na primeira execução | perdida junto com o node; as duas chaves abaixo são o que evita perder acesso a todo `SopsSecret` junto com ela. A pública de um node vivo se recupera e é escrita em `.sops.yaml` a qualquer momento com `just sops-recipients`, sem depender de ter guardado o output do primeiro `bootstrap` |
+| identidade age-plugin-se do operador | Secure Enclave do Mac do operador; o arquivo `~/.config/hl-infrastructure/sops/operator-se.txt` é só uma referência ao slot, mais uma cópia do seu conteúdo (`AGE-PLUGIN-SE-1...`) como nota segura no Bitwarden | o operador, com `just age-se-keygen` | o slot morre com o Mac; recriar o arquivo a partir da nota do Bitwarden no mesmo Mac recupera o acesso, porque o slot em si continua vivo. Se o Mac também se perdeu, só a chave de desastre abaixo decifra |
+| chave privada age de desastre | Bitwarden, fora de qualquer máquina deste fluxo | o operador, com `just age-keygen` | nada muda: ela é redundância pura, as outras duas continuam decifrando sozinhas. Só importa se as duas acima se perderem juntas; `just sops-drill-dr` confere periodicamente que ela ainda decifra |
 | chave SSH de root do nó | `/root/.ssh/authorized_keys` no nó | a role `ssh_hardening`, a partir de `ssh_root_authorized_key` | acesso ao nó só pelo console do hipervisor |
 | token do Renovate | environment `renovate` do repositório no GitHub | o operador, como PAT com escopo de escrita no repositório | o workflow `renovate` falha até um token novo ser cadastrado |
 | segredos dos satélites | `SopsSecret` no repositório de cada satélite | cada satélite, com `just sops-encrypt` | dependem de uma das duas chaves privadas acima; o valor original só existe onde o satélite o gerou |
