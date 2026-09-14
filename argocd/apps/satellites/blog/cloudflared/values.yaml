@@ -9,20 +9,15 @@ application:
       digest: sha256:51c9cefcb4569df44e1ad403ab1d3d8065aa8e84339bcfc6aee75502e1140339
     args:
       - tunnel
-      - --config
-      - /etc/cloudflared/config/config.yaml
+      - --no-autoupdate
       - run
+      - --token-file
+      - /etc/cloudflared/creds/token
     volumes:
-      config:
-        configMap:
-          name: '{{ include "application.name" $ }}-config'
       creds:
         secret:
           secretName: cloudflared-secret
     volumeMounts:
-      config:
-        mountPath: /etc/cloudflared/config
-        readOnly: true
       creds:
         mountPath: /etc/cloudflared/creds
         readOnly: true
@@ -45,16 +40,4 @@ application:
   service:
     enabled: false
   configMap:
-    enabled: true
-    files:
-      config:
-        config.yaml: |
-          tunnel: REPLACE_WITH_TUNNEL_ID
-          credentials-file: /etc/cloudflared/creds/credentials.json
-          ingress:
-            - hostname: blog.example.invalid
-              path: /api/webhook
-              service: http://argocd-server.argocd.svc.cluster.local:80
-            - hostname: blog.example.invalid
-              service: http://app.blog.svc.cluster.local
-            - service: http_status:404
+    enabled: false

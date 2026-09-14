@@ -1,6 +1,6 @@
 apiVersion: v2
 name: cloudflared
-description: Cloudflare Tunnel Deployment, ConfigMap and SopsSecret
+description: Remotely-managed Cloudflare Tunnel connector and its token SopsSecret
 version: 0.1.0
 dependencies:
   - name: application
