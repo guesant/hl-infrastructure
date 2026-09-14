@@ -48,6 +48,25 @@ kubectl -n argocd get applications
 
 O comando `just kubeconfig` imprime a variável `KUBECONFIG` que aponta para o arquivo que o Ansible copiou do Pi; exporte-a antes dos dois comandos seguintes. Você deve ver o nó do Pi como `Ready` e a aplicação `root` do Argo como `Synced` e `Healthy`.
 
+## Registre os destinatários do SOPS
+
+A role `sops_age_key` já gerou a chave privada do node e imprimiu a pública no meio do output do `bootstrap`, mas `.sops.yaml` ainda não sabe dela. No seu Mac (ou onde você roda os comandos `just`), com `brew install sops age age-plugin-se` já feito:
+
+```bash
+just age-se-keygen
+just age-keygen
+```
+
+O primeiro gera a identidade de rotina do operador, presa à Secure Enclave da sua máquina; guarde o conteúdo do arquivo impresso como nota segura no seu gerenciador de senhas. O segundo gera a chave de desastre; guarde a privada (a linha `AGE-SECRET-KEY-1...`) no mesmo lugar, nunca em disco. Com as duas públicas em mãos:
+
+```bash
+just sops-recipients sync-node
+just sops-recipients add operator-se <pública da identidade SE>
+just sops-recipients add dr <pública da chave de desastre>
+```
+
+Revise o diff de `.sops.yaml` e commite. A partir daqui, `just sops-sync <arquivo>` cifra qualquer `SopsSecret` novo sem precisar de nenhuma chave privada; veja [adicionar um satélite novo](adicionar-um-satelite.md).
+
 ## Continue por aqui
 
 Se você quer expor um serviço através deste cluster, veja o guia operacional de [adicionar um satélite novo](adicionar-um-satelite.md). Se quer entender por que o repositório instala tudo via Helm em vez de manifestos vendorizados, veja [Helm e os charts](../arquitetura/helm-e-charts.md) na arquitetura. Se você quer entender os conceitos por trás de cada ferramenta que este bootstrap instala (Ansible, k3s, Cilium, TLS automático, ArgoCD, o padrão de operator), veja a seção [Aprender](../aprender/index.md).
