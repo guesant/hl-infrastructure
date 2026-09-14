@@ -80,9 +80,3 @@ application:
         TECTONIC_BUNDLE: https://data1.fullyjustified.net/tlextras-2022.0r0.tar
         PORTFOLIO_ADMIN_GOOGLE_CLIENT_ID: ""
         PORTFOLIO_ADMIN_GOOGLE_EMAIL: ""
-  sealedSecret:
-    enabled: true
-    files:
-      secret:
-        encryptedData:
-          PORTFOLIO_ADMIN_GOOGLE_CLIENT_SECRET: AgC1ICSMebYFyb7yWlsFKjd/UZ+qcIhQBWvjX2+IY0eAN7Kn5vpW5WCGlyi3iAYOX7L0gjdnb4RHspfYOljzaNMmX0Z0Kwcs5UMxea37QzKvHS2Ehspw+BmHh0oRjSIlHYqS7Bvg6ASUiKKGH2K0oDrqZsiP6XjxSvLlpkG0fwo3cGSKX28qoN8arFkaBFlL0YZAY9E+b53VooljpJBSXcpawbhzxhU+GnD7KCdhrpZnX6msodqUnIU/ri2hAuG/Y4myTqlR0aoUC5pZLsmoPtFXeM/bI1mQHDN53vjnEmqmgWYZZ7nams8HaTLfnWTejcLg+r+J4uOxuVUAZJhPgqoBh7KHvUv/oB16JzWTXQhn6iN+db46HK1565UOhyrDeKUEkGierC6fhBIGgBTX9suZFp8Ow5s+tiqZHfNwZwd8jV+/eM3xyEpLAk8auw+GAPsf+2OXxxeQnKg8ZjWIF/aOkjNRUMjnP0QNaaX4fyC6dMmXgHRoBrww1yekFX+0KcoAub7ptOSkhIjKVNT4pO6k8BQ38+mWRn3Evml3vuQABQ1YUV+0NSVQY6cThJkWihiu+rHOkr+NMlNHSHHCeWfGl1cdQ6GC0ljzYWjD0hIElTpog39LbShfEG6RlT63iRAI1XrXkIxiBw0e0jytU+ndK/Q3MWCPWkRj7xrkB0wgMYTR62FzZpCaB1nAT0x7A5A= # yamllint disable-line rule:line-length
