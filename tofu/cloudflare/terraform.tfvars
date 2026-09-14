@@ -1,1 +1,1 @@
-blog_hostname = "blog.example.invalid"
+blog_hostname = "guesant.net"
