@@ -26,6 +26,7 @@ decifragem
 firewalld
 gitleaks
 gplv
+greppar
 hipervisor
 hl-infrastructure
 homelab

@@ -145,6 +145,21 @@
         mode: "0644"
       check_mode: false
 
+    - name: Probe whether the Cilium chart differs from the cluster
+      ansible.builtin.shell: >
+        set -o pipefail &&
+        helm template cilium cilium/cilium
+        --version {{ cilium_version }}
+        --namespace kube-system
+        --values /tmp/cilium-values.yaml
+        | k3s kubectl diff --server-side -f -
+      args:
+        executable: /bin/bash
+      register: cilium_diff
+      changed_when: false
+      failed_when: cilium_diff.rc not in [0, 1]
+      check_mode: false
+
     - name: Render and apply the Cilium chart from the declared values
       ansible.builtin.shell: >
         set -o pipefail &&
@@ -152,19 +167,19 @@
         --version {{ cilium_version }}
         --namespace kube-system
         --values /tmp/cilium-values.yaml
-        | k3s kubectl apply --server-side --force-conflicts {{ '--dry-run=server' if ansible_check_mode else '' }} -f -
+        | k3s kubectl apply --server-side --force-conflicts -f -
       args:
         executable: /bin/bash
       register: cilium_apply
-      changed_when: "'unchanged' not in cilium_apply.stdout"
-      check_mode: false
+      when: cilium_diff.rc == 1 and not ansible_check_mode
+      changed_when: true
 
     - name: Restart Cilium to pick up a changed configuration # noqa: no-handler
       ansible.builtin.command: "{{ item }}"
       loop:
         - k3s kubectl -n kube-system rollout restart daemonset/cilium
         - k3s kubectl -n kube-system rollout restart deployment/cilium-operator
-      when: cilium_apply.changed
+      when: cilium_diff.rc == 1 and not ansible_check_mode
       changed_when: true
 
     - name: Wait for Cilium to report ready

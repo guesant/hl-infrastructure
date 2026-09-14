@@ -25,10 +25,17 @@
         - project-infra.yaml
       check_mode: false
 
+    - name: Probe whether the ArgoCD root differs from the cluster
+      ansible.builtin.command: >-
+        k3s kubectl diff --server-side -n argocd -f /tmp/argocd-root/
+      register: bootstrap_app_root_diff
+      changed_when: false
+      failed_when: bootstrap_app_root_diff.rc not in [0, 1]
+      check_mode: false
+
     - name: Apply the ArgoCD root AppProjects and root Application
       ansible.builtin.command: >-
-        k3s kubectl apply --server-side --force-conflicts
-        {{ '--dry-run=server' if ansible_check_mode else '' }} -n argocd -f /tmp/argocd-root/
+        k3s kubectl apply --server-side --force-conflicts -n argocd -f /tmp/argocd-root/
       register: bootstrap_app_root_apply
-      changed_when: "'unchanged' not in bootstrap_app_root_apply.stdout"
-      check_mode: false
+      when: bootstrap_app_root_diff.rc == 1 and not ansible_check_mode
+      changed_when: true

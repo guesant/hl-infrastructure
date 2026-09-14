@@ -34,4 +34,4 @@
   args:
     executable: /bin/bash
   register: recreate_immutable_conflicts_retry
-  changed_when: "'unchanged' not in recreate_immutable_conflicts_retry.stdout"
+  changed_when: true

@@ -31,6 +31,24 @@
       changed_when: false
       check_mode: false
 
+    - name: Probe whether the ArgoCD chart differs from the cluster
+      ansible.builtin.shell: >
+        set -o pipefail &&
+        helm template argocd argo/argo-cd
+        --version {{ argocd_chart_version }}
+        --namespace argocd
+        --set controller.metrics.enabled=true
+        --set server.metrics.enabled=true
+        --set notifications.metrics.enabled=true
+        --include-crds
+        | k3s kubectl diff --server-side -n argocd -f -
+      args:
+        executable: /bin/bash
+      register: argocd_diff
+      changed_when: false
+      failed_when: argocd_diff.rc not in [0, 1]
+      check_mode: false
+
     - name: Render and apply the ArgoCD chart
       ansible.builtin.shell: >
         set -o pipefail &&
@@ -41,13 +59,13 @@
         --set server.metrics.enabled=true
         --set notifications.metrics.enabled=true
         --include-crds
-        | k3s kubectl apply --server-side --force-conflicts {{ '--dry-run=server' if ansible_check_mode else '' }} -n argocd -f -
+        | k3s kubectl apply --server-side --force-conflicts -n argocd -f -
       args:
         executable: /bin/bash
       register: argocd_apply
-      changed_when: "'unchanged' not in argocd_apply.stdout"
+      when: argocd_diff.rc == 1 and not ansible_check_mode
+      changed_when: true
       failed_when: false
-      check_mode: false
 
     - name: Recover from immutable-field conflicts and retry, if needed
       ansible.builtin.include_role:
@@ -55,13 +73,13 @@
       vars:
         recreate_immutable_conflicts_apply: "{{ argocd_apply }}"
         recreate_immutable_conflicts_namespace: argocd
-      when: argocd_apply.rc != 0 and not ansible_check_mode
+      when: argocd_diff.rc == 1 and not ansible_check_mode and argocd_apply.rc != 0
 
     - name: Abort if the chart still failed to apply
       ansible.builtin.assert:
         that:
-          - argocd_apply.rc == 0 or ansible_check_mode or (recreate_immutable_conflicts_retry.rc | default(1)) == 0
-        fail_msg: "the ArgoCD chart failed to apply: {{ argocd_apply.stderr }}"
+          - argocd_diff.rc == 0 or ansible_check_mode or argocd_apply.rc == 0 or (recreate_immutable_conflicts_retry.rc | default(1)) == 0
+        fail_msg: "the ArgoCD chart failed to apply: {{ argocd_apply.stderr | default('') }}"
 
     - name: Wait for the ArgoCD server to roll out
       ansible.builtin.command: k3s kubectl -n argocd rollout status deployment/argocd-server --timeout=180s
