@@ -11,8 +11,6 @@ spec:
     repoURL: https://github.com/guesant/hl-infrastructure.git
     targetRevision: main
     path: argocd/apps/data/blog-postgres
-    helm:
-      releaseName: postgres
   destination:
     server: https://kubernetes.default.svc
     namespace: blog
