@@ -11,8 +11,8 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "blog" {
   config = {
     ingress = [
       {
-        hostname = var.blog_hostname
-        path     = "/api/webhook"
+        hostname = var.ops_hostname
+        path     = "^/api/webhook$"
         service  = "http://argocd-server.argocd.svc.cluster.local:80"
       },
       {

@@ -27,6 +27,20 @@ variable "blog_hostname" {
   }
 }
 
+variable "ops_hostname" {
+  type = string
+
+  validation {
+    condition     = can(regex("^([a-z0-9]([a-z0-9-]*[a-z0-9])?\\.)+[a-z]{2,}$", var.ops_hostname)) && !endswith(var.ops_hostname, ".invalid")
+    error_message = "ops_hostname must be the real public hostname for operational traffic such as the GitHub webhook, not a placeholder under .invalid."
+  }
+
+  validation {
+    condition     = var.ops_hostname != var.blog_hostname
+    error_message = "ops_hostname must differ from blog_hostname, so operational endpoints never share a hostname with the public site."
+  }
+}
+
 variable "state_passphrase" {
   type      = string
   sensitive = true
