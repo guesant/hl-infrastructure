@@ -5,7 +5,7 @@ application:
     reloadOnChange: false
     image:
       repository: ghcr.io/guesant/blog
-      tag: sha-0000000000000000000000000000000000000000
+      tag: sha-bf56a5992fe6cd70c58164ce3291685ad9197e83
     command:
       - /bin/sh
       - -c
