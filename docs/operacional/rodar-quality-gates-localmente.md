@@ -20,6 +20,7 @@ just lint-hadolint
 just lint-markdown
 just lint-prose
 just lint-placeholders
+just lint-secret-age
 just lint-docs
 just lint-spelling
 ```

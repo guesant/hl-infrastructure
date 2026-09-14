@@ -69,6 +69,12 @@ just tofu-state-passphrase --finish-rotation
 
 Remova o `fallback` e a variável de cada módulo e commite os states regravados junto com o arquivo cifrado.
 
+## Prazos de rotação
+
+O job `secret-age` da CI e `just lint-secret-age` leem a data `lastmodified` que o SOPS grava em cada arquivo cifrado e comparam com os prazos de `.config/secret-max-age.conf`: 90 dias para `tofu/cloudflare/cloudflare.sops.env`, 180 para o token do túnel, 365 para a passphrase do state e para o client secret do Google, e 180 para qualquer arquivo novo sem regra própria. Num push o job só anota um aviso; na execução agendada diária ele falha, o que deixa o workflow vermelho e faz o GitHub avisar por e-mail. A recipe local só relata, nunca falha.
+
+Dois limites vêm dessa escolha. O prazo é por arquivo, não por valor: trocar só o API token da Cloudflare zera também o relógio dos dois IDs, que moram no mesmo arquivo. E a data mede a última vez que o arquivo foi recifrado, não a última troca de valor: `just sops-rotate`, que troca só a chave de dados, zera a contagem sem o segredo ter mudado, enquanto `just sops-sync` sobre um arquivo já cifrado, que só atualiza destinatários, não mexe nela. Segredos fora do git, como o segredo do webhook, o PAT do Renovate e os certificados do k3s, não entram nessa conta.
+
 ## Continue por aqui
 
 [Estado fora do git](estado-fora-do-git.md) lista onde cada credencial vive e o que se perde com ela; o [modelo de ameaças](../arquitetura/modelo-de-ameacas.md) diz por que o kubeconfig é o ativo mais sensível da máquina do operador.

@@ -194,6 +194,28 @@ jobs:
           -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0=/repo
           --entrypoint bash hl-infra/shell .tools/lint-placeholders.sh
 
+  secret-age:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: shell
+          smoke: bash --version
+
+      - name: Warn about secrets past their rotation deadline
+        if: github.event_name != 'schedule'
+        run: docker run --rm -v "$PWD":/repo -w /repo -e GITHUB_ACTIONS --entrypoint bash hl-infra/shell .tools/check-secret-age.sh
+
+      - name: Fail on secrets past their rotation deadline
+        if: github.event_name == 'schedule'
+        run: docker run --rm -v "$PWD":/repo -w /repo -e GITHUB_ACTIONS --entrypoint bash hl-infra/shell .tools/check-secret-age.sh --fail-on-stale
+
   docs-consistency:
     runs-on: ubuntu-24.04
     steps:
