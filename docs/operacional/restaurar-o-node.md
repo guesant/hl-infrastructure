@@ -16,7 +16,7 @@ just bootstrap -K
 
 Ao fim, `ansible/kubeconfig` aponta para o cluster novo e `kubectl -n argocd get applications` mostra o `root` sincronizando os satélites.
 
-O túnel e o DNS da Cloudflare não fazem parte desta reconstrução: eles vivem na conta da Cloudflare, não no node, e continuam existindo. O cloudflared volta sozinho quando o Argo sincroniza o satélite do blog, com o token que já está no `SopsSecret`, desde que o passo 2 abaixo deixe a chave do node nova capaz de decifrá-lo. Nenhum `just tofu-cloudflare` é necessário aqui.
+O túnel e o DNS da Cloudflare não fazem parte desta reconstrução: eles vivem na conta da Cloudflare, não no node, e continuam existindo. O cloudflared volta sozinho quando o Argo sincroniza o satélite do blog, com o token que já está no `SopsSecret`, desde que o passo 2 abaixo deixe a chave do node nova capaz de decifrá-lo. Nenhum `just tofu` é necessário aqui.
 
 ## 2. Confirmar a chave age
 

@@ -153,25 +153,27 @@ sops-drill-se identity=(home_dir() / ".config/hl-infrastructure/sops/operator-se
 freeze *args: (_build-ops)
     {{run}} -e KUBECONFIG={{kubeconfig}} --entrypoint bash {{ops_image}} .tools/freeze-manifest.sh {{args}}
 
-[doc("Run OpenTofu in tofu/cloudflare with the API token and state passphrase decrypted into its environment only")]
-tofu-cloudflare *args: _require-host-sops
-    SOPS_AGE_KEY_FILE={{sops_identity}} sops exec-env tofu/cloudflare/cloudflare.sops.env \
-        "{{run}} -i -e CLOUDFLARE_API_TOKEN -e TF_VAR_state_passphrase {{tofu_image}} -chdir=tofu/cloudflare {{args}}"
+[doc("Run OpenTofu in tofu/<module>: just tofu cloudflare plan; decrypts tofu/state.sops.env and the module's own secrets into its environment only")]
+tofu module *args: _require-host-sops
+    SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} .tools/tofu-run.sh {{module}} {{args}}
 
-[doc("Apply tofu/cloudflare against the real Cloudflare account")]
-[confirm("This changes the tunnel and DNS records in the real Cloudflare account. Continue?")]
-tofu-cloudflare-apply: (tofu-cloudflare "apply")
+[doc("Apply tofu/<module> against the real provider account")]
+[confirm("This changes real infrastructure outside the cluster. Continue?")]
+tofu-apply module: _require-host-sops
+    SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} .tools/tofu-run.sh {{module}} apply
 
 [doc("Fetch the blog tunnel token from the Cloudflare API into its SopsSecret; OpenTofu never sees it")]
 cloudflare-tunnel-token: _require-host-sops _build-ops
     SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} OPS_IMAGE={{ops_image}} \
-        sops exec-env tofu/cloudflare/cloudflare.sops.env .tools/cloudflare-tunnel-token.sh
+        sops exec-env tofu/state.sops.env 'sops exec-env tofu/cloudflare/cloudflare.sops.env .tools/cloudflare-tunnel-token.sh'
 
-[doc("tofu fmt and validate over tofu/, with no credential and no backend")]
+[doc("tofu fmt and validate over every module in tofu/, with no credential and no backend")]
 lint-tofu:
     {{run}} {{tofu_image}} fmt -check -recursive tofu
-    {{run}} -e TF_VAR_state_passphrase=validate-only-passphrase-never-used-for-real-state {{tofu_image}} -chdir=tofu/cloudflare init -backend=false -input=false
-    {{run}} -e TF_VAR_state_passphrase=validate-only-passphrase-never-used-for-real-state {{tofu_image}} -chdir=tofu/cloudflare validate
+    for dir in tofu/*/; do \
+        {{run}} -e TF_VAR_state_passphrase=validate-only-passphrase-never-used-for-real-state {{tofu_image}} -chdir="$dir" init -backend=false -input=false && \
+        {{run}} -e TF_VAR_state_passphrase=validate-only-passphrase-never-used-for-real-state {{tofu_image}} -chdir="$dir" validate || exit 1; \
+    done
 
 [doc("Check every link in the Markdown files; not part of check or CI because external hosts are flaky")]
 lint-links: (_build "lychee")

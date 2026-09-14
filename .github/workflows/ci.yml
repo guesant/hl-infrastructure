@@ -537,11 +537,11 @@ jobs:
       - name: tofu validate
         env:
           TOFU_IMAGE: ghcr.io/opentofu/opentofu:${{ steps.tofu.outputs.version }}
-        run: >-
-          docker run --rm -v "$PWD":/repo -w /repo -e TF_VAR_state_passphrase "$TOFU_IMAGE"
-          -chdir=tofu/cloudflare init -backend=false -input=false &&
-          docker run --rm -v "$PWD":/repo -w /repo -e TF_VAR_state_passphrase "$TOFU_IMAGE"
-          -chdir=tofu/cloudflare validate
+        run: |
+          for dir in tofu/*/; do
+            docker run --rm -v "$PWD":/repo -w /repo -e TF_VAR_state_passphrase "$TOFU_IMAGE" -chdir="$dir" init -backend=false -input=false
+            docker run --rm -v "$PWD":/repo -w /repo -e TF_VAR_state_passphrase "$TOFU_IMAGE" -chdir="$dir" validate
+          done
 
   gate:
     runs-on: ubuntu-24.04

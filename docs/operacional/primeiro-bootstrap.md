@@ -69,22 +69,23 @@ Revise o diff de `.sops.yaml` e commite. A partir daqui, `just sops-sync <arquiv
 
 ## Crie o túnel e o DNS na Cloudflare
 
-O blog só fica acessível de fora depois que o túnel existe. No dashboard da Cloudflare, crie um API token com duas permissões e nada além delas: Cloudflare Tunnel, de edição, restrita à sua conta, e DNS, de edição, restrita à zona do blog. Depois preencha os dois arquivos que o OpenTofu usa:
+O blog só fica acessível de fora depois que o túnel existe. No dashboard da Cloudflare, crie um API token com duas permissões e nada além delas: Cloudflare Tunnel, de edição, restrita à sua conta, e DNS, de edição, restrita à zona do blog. Depois preencha os arquivos que o OpenTofu usa:
 
 ```bash
+just sops-edit tofu/state.sops.env
 just sops-edit tofu/cloudflare/cloudflare.sops.env
 ```
 
-Troque os dois valores de exemplo pelo API token e por uma passphrase aleatória de pelo menos 32 caracteres (`openssl rand -base64 48` serve), e guarde a passphrase também no seu gerenciador de senhas. Em `tofu/cloudflare/terraform.tfvars`, que não é secreto, coloque o ID da conta, o ID da zona e o hostname real do blog. Então:
+No primeiro, troque o valor de exemplo por uma passphrase aleatória de pelo menos 32 caracteres (`openssl rand -base64 48` serve) e guarde uma cópia no seu gerenciador de senhas; ela cifra o state de todo módulo OpenTofu, não só o da Cloudflare. No segundo, coloque o API token. Em `tofu/cloudflare/terraform.tfvars`, que não é secreto, coloque o ID da conta, o ID da zona e o hostname real do blog. Então:
 
 ```bash
-just tofu-cloudflare init
-just tofu-cloudflare plan
-just tofu-cloudflare-apply
+just tofu cloudflare init
+just tofu cloudflare plan
+just tofu-apply cloudflare
 just cloudflare-tunnel-token
 ```
 
-O `plan` precisa mostrar exatamente três recursos novos: o túnel, a configuração de ingress e o registro DNS. `cloudflare-tunnel-token` busca o token do túnel recém-criado e o grava cifrado no `SopsSecret` do cloudflared. Commite `terraform.tfstate` (cifrado), `.terraform.lock.hcl`, `terraform.tfvars` e o `SopsSecret` juntos e faça push; o Argo sobe o cloudflared com o token novo. Veja [OpenTofu: a camada da Cloudflare](../arquitetura/opentofu.md) para o porquê de cada peça.
+O `plan` precisa mostrar exatamente três recursos novos: o túnel, a configuração de ingress e o registro DNS. `cloudflare-tunnel-token` busca o token do túnel recém-criado e o grava cifrado no `SopsSecret` do cloudflared. Commite os dois arquivos `.sops.env`, `terraform.tfstate` (cifrado), `.terraform.lock.hcl`, `terraform.tfvars` e o `SopsSecret` juntos e faça push; o Argo sobe o cloudflared com o token novo. Veja [OpenTofu: a camada da Cloudflare](../arquitetura/opentofu.md) para o porquê de cada peça.
 
 ## Continue por aqui
 
