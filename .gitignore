@@ -2,6 +2,7 @@ ansible/inventory.ini
 !ansible/inventory.example.ini
 ansible/group_vars/all/secrets.yml
 ansible/kubeconfig
+ansible/.kubeconfig.fetched
 rendered/
 site/
 .kubeconform-cache/
