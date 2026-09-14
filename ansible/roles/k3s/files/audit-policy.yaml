@@ -19,8 +19,8 @@ rules:
     resources:
       - group: ""
         resources: ["secrets", "configmaps", "serviceaccounts/token"]
-      - group: bitnami.com
-        resources: ["sealedsecrets"]
+      - group: isindir.github.com
+        resources: ["sopssecrets"]
   - level: RequestResponse
     resources:
       - group: rbac.authorization.k8s.io
