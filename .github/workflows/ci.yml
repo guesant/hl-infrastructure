@@ -301,7 +301,7 @@ jobs:
         with:
           target: ops
           build-args: KUBECTL_VERSION=${{ steps.k3s.outputs.version }}
-          smoke: --entrypoint sops --version
+          smoke: sops --version
 
       - name: Every SopsSecret is encrypted
         run: >-
