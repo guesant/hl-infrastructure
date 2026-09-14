@@ -87,7 +87,7 @@ Quando a imagem só tem uma tag móvel, a alternativa é `updateStrategy: digest
 
 ### Um banco Postgres
 
-O operador CloudNativePG e o plugin barman-cloud já estão instalados. Um satélite que precisa de banco declara o próprio `Cluster` no próprio namespace; o formato de referência é este:
+O operador CloudNativePG já está instalado. Um satélite que precisa de banco declara o próprio `Cluster` no próprio namespace; o formato de referência é este:
 
 ```yaml
 apiVersion: postgresql.cnpg.io/v1
@@ -101,28 +101,17 @@ spec:
   instances: 1
   storage:
     size: 5Gi
-  managed:
-    roles:
-      - name: app
-        ensure: present
-        login: true
-        passwordSecret:
-          name: postgres-app
----
-apiVersion: postgresql.cnpg.io/v1
-kind: Database
-metadata:
-  name: app
-  namespace: nome-do-namespace
-spec:
-  cluster:
-    name: postgres
-  name: app
-  owner: app
-  databaseReclaimPolicy: retain
+  bootstrap:
+    initdb:
+      database: app
+      owner: app
 ```
 
-Três escolhas ali protegem os dados de um erro de GitOps. `Prune=false` no `Cluster` faz o Argo se recusar a apagá-lo, mesmo que o arquivo suma do repositório; o volume só vai embora por uma remoção manual e deliberada. `databaseReclaimPolicy: retain` faz o mesmo para o `Database`: remover o objeto do git tira o banco da gestão do operador, mas não roda `DROP DATABASE`. E `managed.roles` com `passwordSecret` deixa a senha num `Secret` que o satélite entrega cifrado com SOPS (`SopsSecret`), em vez de deixar o operador gerar uma que ninguém versiona.
+`Prune=false` no `Cluster` protege os dados de um erro de GitOps: o Argo se recusa a apagá-lo, mesmo que o arquivo suma do repositório; o volume só vai embora por uma remoção manual e deliberada.
+
+Este `Cluster` não tem backup contínuo em object storage: o operador `cnpg-barman-plugin` que fornecia isso foi removido do cluster de propósito. Sem ele, a perda do volume é perda total dos dados do satélite; veja [estado fora do git](estado-fora-do-git.md). Reinstalar o plugin é um pré-requisito antes de qualquer satélite novo poder declarar `spec.plugins` com `barman-cloud.cloudnative-pg.io`.
+
+A senha do role criado por `bootstrap.initdb.owner` fica de fora do git de propósito: o CNPG gera ela sozinho e mantém num `Secret` próprio (`<nome-do-cluster>-app`, por padrão), sem passar por nenhum `SopsSecret`. Isso significa que ninguém, nem quem tem acesso a este repositório nem quem tem uma das chaves age de `.sops.yaml`, consegue ler essa senha fora do próprio cluster; só quem já tem acesso ao namespace do satélite (`kubectl get secret`) consegue. O custo é não existir rotação automatizada dela hoje: trocar a senha significa deixar o CNPG gerar uma nova (apagando o `Secret` que ele mantém) e reiniciar o que a consome, um processo manual por enquanto. Se um satélite precisar de mais de um role ou de controle explícito sobre quando a senha muda, `spec.managed.roles` é o mecanismo do CNPG pra isso, mas evite `passwordSecret` apontando pra um `SopsSecret`: a decisão deste cluster é manter toda senha de role do Postgres fora do git.
 
 ## Continue por aqui
 

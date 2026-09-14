@@ -1,6 +1,6 @@
 # Primeiro bootstrap
 
-Este runbook parte de um Raspberry Pi limpo, com Raspberry Pi OS instalado e acessível por SSH, e termina com um cluster k3s rodando Cilium, cert-manager, CloudNativePG, o plugin de backup Barman Cloud, ArgoCD, o sops-secrets-operator e o Argo CD Image Updater, todos instalados a partir do chart Helm oficial de cada projeto.
+Este runbook parte de um Raspberry Pi limpo, com Raspberry Pi OS instalado e acessível por SSH, e termina com um cluster k3s rodando Cilium, cert-manager, CloudNativePG, ArgoCD, o sops-secrets-operator e o Argo CD Image Updater, todos instalados a partir do chart Helm oficial de cada projeto.
 
 ## Antes de começar
 

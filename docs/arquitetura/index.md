@@ -19,7 +19,7 @@ flowchart TB
     end
     subgraph gitops["GitOps (ArgoCD, contínuo)"]
         C --> E["root sincroniza\nargocd/applications"]
-        E --> F["cert-manager, CNPG, Barman Cloud,\nsops-secrets-operator, Image Updater"]
+        E --> F["cert-manager, CNPG,\nsops-secrets-operator, Image Updater"]
         E --> G["satélites de outros\nrepositórios"]
     end
 ```
@@ -51,7 +51,7 @@ flowchart TB
         cilium["Cilium (CNI, kube-proxy, Hubble)"]
         argocd["ArgoCD + Image Updater"]
         certmanager["cert-manager"]
-        cnpg["CloudNativePG + Barman Cloud"]
+        cnpg["CloudNativePG"]
         sops["sops-secrets-operator"]
         blog["Satélite blog: app, Postgres, cloudflared"]
     end
