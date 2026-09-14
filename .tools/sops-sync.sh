@@ -17,21 +17,8 @@ if [ -n "$target" ]; then
   fi
 fi
 
-require_host_identity() {
-  for tool in sops age-plugin-se; do
-    command -v "$tool" >/dev/null 2>&1 || {
-      echo "$tool not found in PATH; run: brew install sops age age-plugin-se" >&2
-      exit 1
-    }
-  done
-  if [ -z "${SOPS_AGE_KEY_FILE:-}" ]; then
-    echo "SOPS_AGE_KEY_FILE must point at a decrypting identity (the operator SE identity or the DR key)" >&2
-    exit 2
-  fi
-}
-
 encrypted_now=0
-synced_now=0
+checked_now=0
 
 sync_one() {
   local file="$1"
@@ -46,9 +33,11 @@ sync_one() {
     encrypted_now=$((encrypted_now + 1))
     return
   fi
-  require_host_identity
-  sops --config .sops.yaml updatekeys --yes "$file"
-  synced_now=$((synced_now + 1))
+  if ! sops --config .sops.yaml updatekeys --yes "$file"; then
+    echo "$file: could not re-key; SOPS_AGE_KEY_FILE must point at a decrypting identity (the operator SE identity or the DR key)" >&2
+    exit 1
+  fi
+  checked_now=$((checked_now + 1))
 }
 
 if [ -n "$target" ]; then
@@ -59,8 +48,4 @@ else
   done < <(find argocd -type f -name '*-sopssecret.yaml')
 fi
 
-if [ "$encrypted_now" -gt 0 ] || [ "$synced_now" -gt 0 ]; then
-  echo "every SopsSecret is now encrypted with the current recipients ($encrypted_now newly encrypted, $synced_now re-keyed)"
-else
-  echo "recipients on every SopsSecret already match .sops.yaml"
-fi
+echo "every SopsSecret is now encrypted with the current recipients ($encrypted_now newly encrypted, $checked_now already-encrypted file(s) checked)"
