@@ -104,9 +104,14 @@ sops-encrypt file: (_build "sops")
 age-keygen: (_build "age")
     {{run}} hl-infra/age:{{tools_hash}} age-keygen
 
-[doc("Fetch the node's age public key from the cluster, ready to paste into .sops.yaml")]
-sops-recipients: (_build "age")
-    .tools/sops-recipients.sh
+[doc("Print the node's current age public key, without touching .sops.yaml")]
+sops-node-key: (_build "age")
+    kubectl --kubeconfig {{kubeconfig}} -n sops get secret sops-age-key-file -o jsonpath='{.data.keys\.txt}' \
+        | base64 -d | {{run}} -i hl-infra/age:{{tools_hash}} age-keygen -y
+
+[doc("Write both age recipients into .sops.yaml; pass the backup public key from just age-keygen")]
+sops-recipients backup_public_key="": (_build "age")
+    .tools/sops-recipients.sh {{backup_public_key}}
 
 [doc("Print a live resource as a clean manifest ready to commit: just freeze deployment blog -n blog")]
 freeze *args:

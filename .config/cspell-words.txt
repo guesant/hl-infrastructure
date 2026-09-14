@@ -21,6 +21,7 @@ commitar
 commite
 commitá
 datacenters
+decifragem
 firewalld
 gitleaks
 gplv
