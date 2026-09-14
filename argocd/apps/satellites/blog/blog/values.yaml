@@ -78,5 +78,3 @@ application:
       config:
         PUBLIC_SITE_BASE_URL: https://guesant.net
         TECTONIC_BUNDLE: https://data1.fullyjustified.net/tlextras-2022.0r0.tar
-        PORTFOLIO_ADMIN_GOOGLE_CLIENT_ID: ""
-        PORTFOLIO_ADMIN_GOOGLE_EMAIL: ""
