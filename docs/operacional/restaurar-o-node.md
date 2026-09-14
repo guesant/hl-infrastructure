@@ -1,6 +1,6 @@
 # Restaurar o node do zero
 
-<!-- source-of-trust paths=".sops.yaml .tools/sops-recipients.sh .tools/sops-encrypt.sh .tools/sops-drill.sh .tools/sops-updatekeys.sh" -->
+<!-- source-of-trust paths=".sops.yaml .tools/sops-recipients.sh .tools/sops-drill.sh .tools/sops-sync.sh" -->
 
 Este runbook cobre a perda total do node: cartão SD corrompido, hardware trocado, ou um comprometimento em que a única resposta segura é reinstalar. O ponto de partida é um Raspberry Pi OS limpo com SSH por chave e um usuário com `sudo`, exatamente como no [primeiro bootstrap](primeiro-bootstrap.md). A diferença está no que precisa ser recuperado de fora do git, listado em [estado fora do git](estado-fora-do-git.md).
 
@@ -24,12 +24,12 @@ Um node novo não herda a chave age do node antigo: a role `sops_age_key` só ge
 just sops-recipients sync-node
 ```
 
-O comando lê a chave pública do node vivo e reescreve só a entrada rotulada `node` em `.sops.yaml` (o rótulo é o padrão de `sync-node`; passe outro se este cluster convive com mais de um node no mesmo `.sops.yaml`), sem tocar nas outras; revise o diff e commite. Se você tem outra chave decifrando à mão (a de rotina do operador ou a de desastre), rode `just sops-updatekeys` em seguida (com `SOPS_AGE_KEY_FILE` apontando para ela) para recifrar todo `SopsSecret` já commitado para os destinatários atuais; sem isso, os SopsSecret continuam decifráveis pelas chaves que não mudaram, só não estão recifrados para a chave nova do node até a próxima vez que alguém os editar.
+O comando lê a chave pública do node vivo e reescreve só a entrada rotulada `node` em `.sops.yaml` (o rótulo é o padrão de `sync-node`; passe outro se este cluster convive com mais de um node no mesmo `.sops.yaml`), sem tocar nas outras; revise o diff e commite. Se você tem outra chave decifrando à mão (a de rotina do operador ou a de desastre), rode `just sops-sync` em seguida (com `SOPS_AGE_KEY_FILE` apontando para ela) para recifrar todo `SopsSecret` já commitado para os destinatários atuais; sem isso, os SopsSecret continuam decifráveis pelas chaves que não mudaram, só não estão recifrados para a chave nova do node até a próxima vez que alguém os editar.
 
 Se as outras chaves também se perderam junto com o Mac do operador, não há como recuperar o que já estava cifrado: gere um par novo com `just age-se-keygen` (ou um par de desastre novo com `just age-keygen`), adicione o destinatário em `.sops.yaml` com `just sops-recipients add <rótulo> <pública>` (ou `update <rótulo> <pública>` se o rótulo antigo ainda existir), e recifre cada `SopsSecret` de cada satélite a partir do valor original:
 
 ```bash
-just sops-encrypt <caminho-do-sopssecret-em-texto-claro>
+just sops-sync <caminho-do-sopssecret-em-texto-claro>
 ```
 
 O valor original de cada segredo só existe onde o satélite o gerou (o token do túnel no painel da Cloudflare, as chaves do bucket no provedor). Commite os `SopsSecret` recifrados nos satélites; o Argo aplica no próximo ciclo.

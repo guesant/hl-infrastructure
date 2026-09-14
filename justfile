@@ -102,10 +102,6 @@ lint-docs: (_build "shell")
         --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-doc-drift.sh
     {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-roles-documented.sh
 
-[doc("Encrypt a *-sopssecret.yaml manifest in place with SOPS/age, per .sops.yaml")]
-sops-encrypt file: (_build-ops)
-    {{run}} --entrypoint bash {{ops_image}} .tools/sops-encrypt.sh {{file}}
-
 [doc("Generate a new DR age keypair; the private half goes only into Bitwarden, never to disk")]
 age-keygen: (_build-ops)
     {{run}} --entrypoint age-keygen {{ops_image}}
@@ -130,9 +126,9 @@ age-se-keygen *args: _require-host-sops
 sops-edit file identity=(home_dir() / ".config/hl-infrastructure/sops/operator-se.txt"): _require-host-sops
     SOPS_AGE_KEY_FILE={{identity}} sops {{file}}
 
-[doc("Re-key every SopsSecret after .sops.yaml changed; SOPS_AGE_KEY_FILE must be set")]
-sops-updatekeys: _require-host-sops
-    .tools/sops-updatekeys.sh
+[doc("Encrypt any plaintext SopsSecret and re-key any already-encrypted one; pass a file to target just it")]
+sops-sync *args: _require-host-sops
+    .tools/sops-sync.sh {{args}}
 
 [doc("Decrypt every SopsSecret with a given identity and report OK/FAIL, no plaintext printed")]
 sops-drill-dr key_file: (_build-ops)

@@ -1,6 +1,6 @@
 # Modelo de ameaças
 
-<!-- source-of-trust paths=".sops.yaml .tools/sops-recipients.sh .tools/sops-encrypt.sh .tools/sops-drill.sh .tools/sops-updatekeys.sh" -->
+<!-- source-of-trust paths=".sops.yaml .tools/sops-recipients.sh .tools/sops-drill.sh .tools/sops-sync.sh" -->
 
 Este repositório descreve, e em parte controla, um cluster k3s de um nó só que hospeda serviços públicos de uma pessoa. O modelo abaixo diz o que se está protegendo, por onde um atacante entraria, o que já barra cada caminho e o que continua em aberto. Ele existe para que uma mudança de infraestrutura possa ser julgada contra uma lista explícita, e não contra a intuição de quem a escreveu.
 
@@ -66,7 +66,7 @@ sequenceDiagram
     participant SSO as sops-secrets-operator (cluster)
     participant Pod as Pod
     Op->>Git: .sops.yaml (três destinatários públicos age, commitados)
-    Op->>Op: just sops-encrypt arquivo.yaml (cifra em Docker, sem nenhuma chave privada)
+    Op->>Op: just sops-sync arquivo.yaml (cifra sem nenhuma chave privada)
     Op->>Git: commit do SopsSecret
     Argo->>Git: pull
     Argo->>SSO: apply do SopsSecret
@@ -76,7 +76,7 @@ sequenceDiagram
 
 O `argocd_github_webhook_secret` e a chave SSH seguem outro caminho, mais curto: ficam em `secrets.yml` na máquina do operador e o Ansible os entrega ao node por SSH, sem passar por nenhum repositório. A chave privada age do node nem isso: ela nasce dentro do próprio node, na primeira execução da role `sops_age_key`, e nunca existe em texto claro fora dele.
 
-`.sops.yaml` lista destinatários numa lista age só, sob um único `key_group`: qualquer chave privada correspondente a qualquer entrada da lista decifra sozinha, sem depender das outras. Não há um número fixo de destinatários nem papéis fixos, `just sops-recipients add <rótulo> <chave pública>`, `update`, `remove` e `list` operam sobre entradas identificadas só por um rótulo em comentário (`# node`, `# operator-se`, o nome é livre); `sync-node [rótulo]` é só uma conveniência sobre esse mesmo mecanismo, que sabe ler a chave pública do `Secret` do cluster e manter uma entrada sincronizada com ela, `node` por padrão, ou qualquer outro rótulo passado (útil se um segundo node algum dia entrar nesse cluster ou em outro que compartilhe este `.sops.yaml`). Cifrar (`just sops-encrypt`, o gate `security-sopssecrets`) só precisa das chaves públicas e roda inteiro em Docker, sem nenhuma chave privada envolvida.
+`.sops.yaml` lista destinatários numa lista age só, sob um único `key_group`: qualquer chave privada correspondente a qualquer entrada da lista decifra sozinha, sem depender das outras. Não há um número fixo de destinatários nem papéis fixos, `just sops-recipients add <rótulo> <chave pública>`, `update`, `remove` e `list` operam sobre entradas identificadas só por um rótulo em comentário (`# node`, `# operator-se`, o nome é livre); `sync-node [rótulo]` é só uma conveniência sobre esse mesmo mecanismo, que sabe ler a chave pública do `Secret` do cluster e manter uma entrada sincronizada com ela, `node` por padrão, ou qualquer outro rótulo passado (útil se um segundo node algum dia entrar nesse cluster ou em outro que compartilhe este `.sops.yaml`). Cifrar um `SopsSecret` novo (`just sops-sync <arquivo>`) e o gate `security-sopssecrets` só precisam das chaves públicas, nenhuma chave privada envolvida; `just sops-sync`, sem argumento, faz o mesmo para todo satélite de uma vez e, se algum arquivo já estiver cifrado com destinatários desatualizados, aí sim precisa da identidade que decifra pra resincronizar.
 
 Hoje o repositório usa esse mecanismo para manter, além da chave do node, uma chave de rotina do operador (uma identidade `age-plugin-se` presa à Secure Enclave do Mac, `age1se1...`, gerada com `just age-se-keygen` e nunca exportável dali) e uma chave de desastre (um par age comum cuja metade privada vive só numa nota segura do Bitwarden, gerada com `just age-keygen` e nunca escrita em disco por este repositório). A chave de desastre não decifra nada no dia a dia, é redundância pura: cobre o cenário em que o node e o Mac do operador se perdem juntos, e o `just sops-drill-dr` existe para provar, periodicamente, que ela ainda funciona. Nada impede adicionar uma quarta chave, trocar a de rotina por outra, ou remover a de desastre; o único efeito de remover uma entrada é que a chave privada correspondente para de decifrar segredos cifrados depois disso.
 

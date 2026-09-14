@@ -39,6 +39,8 @@ recifrado
 recifrados
 recifrar
 recifre
+resincronizado
+resincronizar
 taggeada
 taggeado
 taggeando
