@@ -41,6 +41,11 @@ rotate-certs *args:
 rotate-token *args:
     ansible-playbook -i ansible/inventory.ini ansible/rotate-token.yml {{args}}
 
+[doc("Add a new age identity on the node and restart the operator; pass -e sops_age_key_prune=true to drop old ones")]
+[confirm("This changes the node's age identities and restarts sops-secrets-operator. Continue?")]
+rotate-age-key *args:
+    ansible-playbook -i ansible/inventory.ini ansible/rotate-age-key.yml {{args}}
+
 [doc("Print the KUBECONFIG export for the fetched kubeconfig")]
 kubeconfig:
     echo "export KUBECONFIG={{justfile_directory()}}/{{kubeconfig}}"

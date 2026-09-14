@@ -36,6 +36,7 @@ mergeado
 mergear
 mergeia
 nftables
+prunar
 recifra
 recifrado
 recifrados

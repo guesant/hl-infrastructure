@@ -1,6 +1,6 @@
-# Rotacionar credenciais do k3s
+# Rotacionar credenciais
 
-Duas credenciais do k3s têm rotina de rotação própria, cada uma num playbook separado de `site.yml`, porque as duas interrompem o cluster por alguns segundos e nunca devem acontecer como efeito colateral de um bootstrap.
+Três credenciais têm rotina de rotação própria, cada uma num playbook separado de `site.yml`: duas do k3s, que interrompem o cluster por alguns segundos, e a chave age do sops-secrets-operator, que não interrompe nada mas precisa do passo extra de resincronizar `.sops.yaml`. Nenhuma das três deve acontecer como efeito colateral de um bootstrap.
 
 ## Certificados
 
@@ -17,6 +17,29 @@ just rotate-token -K
 ```
 
 Lê o token atual em `/var/lib/rancher/k3s/server/token`, gera um novo com `openssl rand`, roda `k3s token rotate` e reinicia o k3s. Num cluster de um nó só o token não é usado por ninguém depois da instalação, então rotacioná-lo custa só o restart; vale fazer se o node foi clonado ou se o token apareceu em algum log.
+
+## Chave age do node
+
+Rotacionar essa chave é em duas fases, porque `.sops.yaml` e o `Secret` do node precisam ficar consistentes o tempo todo, nunca um sem o outro:
+
+```bash
+just rotate-age-key -K
+```
+
+Isso gera uma identidade nova, **acrescenta** ela ao `keys.txt` do `Secret` (a antiga continua lá) e reinicia o sops-secrets-operator; nenhum `SopsSecret` para de decifrar nesse meio-tempo, porque `age` tenta cada identidade do arquivo até uma funcionar. Em seguida:
+
+```bash
+just sops-recipients sync-node
+just sops-sync
+```
+
+O primeiro escreve a chave pública nova em `.sops.yaml`; revise o diff e commite. O segundo recifra todo `SopsSecret` já commitado para os destinatários atuais. Só depois disso, com a chave nova já sendo a única referenciada em `.sops.yaml` e todo segredo já recifrado, feche a rotação removendo a identidade antiga:
+
+```bash
+just rotate-age-key -K -e sops_age_key_prune=true
+```
+
+Rodar `just rotate-age-key` sem a variável de novo, antes de prunar a antiga, só adiciona mais uma identidade; nada quebra, mas também não avança a rotação sozinho.
 
 ## Continue por aqui
 
