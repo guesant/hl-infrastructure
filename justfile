@@ -4,9 +4,11 @@ kubeconfig := "ansible/kubeconfig"
 actionlint_image := `grep -oE "rhysd/actionlint:[0-9.]+" .github/workflows/ci.yml | head -1`
 zizmor_version := `grep -oE 'version: "[0-9.]+"' .github/workflows/ci.yml | grep -oE "[0-9.]+" | head -1`
 helm_version := `grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE "[0-9.]+"`
+k3s_version := `grep -oE 'k3s_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE "v[0-9.]+"`
 opentofu_version := "1.12.6"
 tools_hash := `shasum -a 256 .tools/docker/Dockerfile | cut -c1-12`
 helm_image := "hl-infra/helm:" + tools_hash + "-" + helm_version
+ops_image := "hl-infra/ops:" + tools_hash + "-" + k3s_version
 crd_schema_location := 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
 run := "docker run --rm -v " + quote(justfile_directory()) + ":/repo -w /repo"
 
@@ -64,6 +66,11 @@ _build-helm:
     docker image inspect {{helm_image}} >/dev/null 2>&1 || \
         docker build --target helm --build-arg HELM_VERSION={{helm_version}} -t {{helm_image}} {{justfile_directory()}}/.tools/docker
 
+_build-ops:
+    test -n "{{k3s_version}}" || (echo "could not extract k3s_version from ansible/group_vars/all/versions.yml" >&2 && exit 1)
+    docker image inspect {{ops_image}} >/dev/null 2>&1 || \
+        docker build --target ops --build-arg KUBECTL_VERSION={{k3s_version}} -t {{ops_image}} {{justfile_directory()}}/.tools/docker
+
 [doc("yamllint over every YAML in the repository")]
 lint-yaml: (_build "yamllint")
     {{run}} hl-infra/yamllint:{{tools_hash}} -c .config/yamllint.yml .
@@ -96,26 +103,48 @@ lint-docs: (_build "shell")
     {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-roles-documented.sh
 
 [doc("Encrypt a *-sopssecret.yaml manifest in place with SOPS/age, per .sops.yaml")]
-sops-encrypt file: (_build "sops")
-    {{run}} hl-infra/sops:{{tools_hash}} encrypt {{file}} > {{file}}.tmp
-    mv {{file}}.tmp {{file}}
+sops-encrypt file: (_build-ops)
+    {{run}} --entrypoint bash {{ops_image}} .tools/sops-encrypt.sh {{file}}
 
-[doc("Generate a new age keypair locally; the private half never leaves your terminal")]
-age-keygen: (_build "age")
-    {{run}} hl-infra/age:{{tools_hash}} age-keygen
+[doc("Generate a new DR age keypair; the private half goes only into Bitwarden, never to disk")]
+age-keygen: (_build-ops)
+    {{run}} --entrypoint age-keygen {{ops_image}}
 
-[doc("Print the node's current age public key, without touching .sops.yaml")]
-sops-node-key: (_build "age")
-    kubectl --kubeconfig {{kubeconfig}} -n sops get secret sops-age-key-file -o jsonpath='{.data.keys\.txt}' \
-        | base64 -d | {{run}} -i hl-infra/age:{{tools_hash}} age-keygen -y
+[doc("Write the node's current age recipient into .sops.yaml; pass --operator/--dr to also set those")]
+sops-recipients *args: (_build-ops)
+    {{run}} --entrypoint bash {{ops_image}} .tools/sops-recipients.sh {{args}}
 
-[doc("Write both age recipients into .sops.yaml; pass the backup public key from just age-keygen")]
-sops-recipients backup_public_key="": (_build "age")
-    .tools/sops-recipients.sh {{backup_public_key}}
+[doc("Fail if any *-sopssecret.yaml is unencrypted or its recipients don't match .sops.yaml")]
+security-sopssecrets: (_build-ops)
+    {{run}} --entrypoint bash {{ops_image}} .tools/check-sopssecrets-encrypted.sh
+
+_require-host-sops:
+    command -v sops >/dev/null 2>&1 || (echo "sops not found in PATH; run: brew install sops age age-plugin-se" >&2 && exit 1)
+    command -v age-plugin-se >/dev/null 2>&1 || (echo "age-plugin-se not found in PATH; run: brew install sops age age-plugin-se" >&2 && exit 1)
+
+[doc("Generate the operator's Secure Enclave identity on this Mac; pass --force to replace it")]
+age-se-keygen *args: _require-host-sops
+    .tools/age-se-keygen.sh {{args}}
+
+[doc("Open a *-sopssecret.yaml for editing with the operator Secure Enclave identity")]
+sops-edit file identity=(home_dir() / ".config/hl-infrastructure/sops/operator-se.txt"): _require-host-sops
+    SOPS_AGE_KEY_FILE={{identity}} sops {{file}}
+
+[doc("Re-key every SopsSecret after .sops.yaml changed; SOPS_AGE_KEY_FILE must be set")]
+sops-updatekeys: _require-host-sops
+    .tools/sops-updatekeys.sh
+
+[doc("Decrypt every SopsSecret with a given identity and report OK/FAIL, no plaintext printed")]
+sops-drill-dr key_file: (_build-ops)
+    {{run}} -v {{quote(key_file)}}:/tmp/dr-key.txt:ro -e SOPS_AGE_KEY_FILE=/tmp/dr-key.txt --entrypoint bash {{ops_image}} .tools/sops-drill.sh
+
+[doc("Decrypt every SopsSecret with the operator Secure Enclave identity and report OK/FAIL")]
+sops-drill-se identity=(home_dir() / ".config/hl-infrastructure/sops/operator-se.txt"): _require-host-sops
+    SOPS_AGE_KEY_FILE={{identity}} .tools/sops-drill.sh
 
 [doc("Print a live resource as a clean manifest ready to commit: just freeze deployment blog -n blog")]
-freeze *args:
-    KUBECONFIG={{kubeconfig}} .tools/freeze-manifest.sh {{args}}
+freeze *args: (_build-ops)
+    {{run}} -e KUBECONFIG={{kubeconfig}} --entrypoint bash {{ops_image}} .tools/freeze-manifest.sh {{args}}
 
 [doc("Run OpenTofu via Docker; no root module exists yet, this only wires the binary")]
 tofu *args:
@@ -196,4 +225,4 @@ docs-serve:
         sh -c "pip install --quiet -r docs/requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000 --config-file .config/mkdocs.yml"
 
 [doc("Every check the CI runs, in order")]
-check: lint-actions lint-yaml lint-ansible lint-shellcheck lint-hadolint lint-markdown lint-prose lint-docs lint-spelling security-gitleaks security-osv-scanner security-trivy-fs quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-helm-lint docs-build
+check: lint-actions lint-yaml lint-ansible lint-shellcheck lint-hadolint lint-markdown lint-prose lint-docs lint-spelling security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-helm-lint docs-build
