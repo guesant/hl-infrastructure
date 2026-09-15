@@ -1,0 +1,8 @@
+---
+kube_bench_sha256: 64500561f5fcaa3f86fe951ed26bbfc28f7bbf3d2eac13843abfd2924955d10b
+kube_bench_benchmark: k3s-cis-1.9
+kube_bench_targets: master,etcd,controlplane,node
+kube_bench_install_dir: "/opt/kube-bench-{{ kube_bench_version }}"
+kube_bench_report_dir: /var/lib/kube-bench
+kube_bench_tarball: "kube-bench_{{ kube_bench_version | regex_replace('^v', '') }}_linux_arm64.tar.gz"
+kube_bench_url: "https://github.com/aquasecurity/kube-bench/releases/download/{{ kube_bench_version }}/{{ kube_bench_tarball }}"

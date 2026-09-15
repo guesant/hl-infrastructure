@@ -3,3 +3,4 @@ helm_version: v4.3.0
 cilium_version: 1.20.1
 cilium_cli_version: v0.20.0
 argocd_chart_version: 10.9.0
+kube_bench_version: v0.16.0

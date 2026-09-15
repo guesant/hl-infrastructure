@@ -1,0 +1,55 @@
+---
+- name: Create the kube-bench install and report directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: "{{ kube_bench_install_dir }}", mode: "0755" }
+    - { path: "{{ kube_bench_report_dir }}", mode: "0700" }
+
+- name: Download the kube-bench release tarball
+  ansible.builtin.get_url:
+    url: "{{ kube_bench_url }}"
+    dest: "/var/cache/{{ kube_bench_tarball }}"
+    checksum: "sha256:{{ kube_bench_sha256 }}"
+    owner: root
+    group: root
+    mode: "0644"
+  register: kube_bench_download
+
+- name: Unpack kube-bench
+  ansible.builtin.unarchive:
+    src: "{{ kube_bench_download.dest }}"
+    dest: "{{ kube_bench_install_dir }}"
+    remote_src: true
+    creates: "{{ kube_bench_install_dir }}/kube-bench"
+    owner: root
+    group: root
+  when: not (ansible_check_mode and kube_bench_download.changed)
+
+- name: Install the kube-bench service and timer
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - hl-kube-bench.service
+    - hl-kube-bench.timer
+  register: kube_bench_units
+  notify: Reload systemd
+
+- name: Flush handlers so the timer sees the fresh units
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable the weekly kube-bench timer
+  ansible.builtin.systemd:
+    name: hl-kube-bench.timer
+    enabled: true
+    state: started
+    daemon_reload: true
+  when: not (ansible_check_mode and kube_bench_units.changed)

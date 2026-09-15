@@ -1,0 +1,17 @@
+[Unit]
+Description=CIS benchmark of the k3s node with kube-bench
+After=k3s.service
+
+[Service]
+Type=oneshot
+Environment=PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+ExecStart={{ kube_bench_install_dir }}/kube-bench run --config-dir {{ kube_bench_install_dir }}/cfg --benchmark {{ kube_bench_benchmark }} --targets {{ kube_bench_targets }} --json --outputfile {{ kube_bench_report_dir }}/report.json
+SuccessExitStatus=0 1
+ProtectSystem=strict
+ReadWritePaths={{ kube_bench_report_dir }}
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+RestrictSUIDSGID=true

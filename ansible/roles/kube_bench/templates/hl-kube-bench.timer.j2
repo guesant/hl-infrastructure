@@ -1,0 +1,10 @@
+[Unit]
+Description=Weekly CIS benchmark of the k3s node
+
+[Timer]
+OnCalendar=Mon *-*-* 09:30:00
+Persistent=true
+RandomizedDelaySec=10m
+
+[Install]
+WantedBy=timers.target
