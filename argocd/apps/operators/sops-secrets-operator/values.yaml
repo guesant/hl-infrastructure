@@ -1,4 +1,12 @@
 sops-secrets-operator:
+  image:
+    tag: "0.21.2@sha256:7bba7083dfa09d2e46e40f106af16f4f590165eaec862d6fe1fd7e65bb763faf"
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      memory: 96Mi
   securityContext:
     enabled: true
     seccompProfileType: RuntimeDefault
