@@ -132,6 +132,7 @@
     src: /etc/rancher/k3s/k3s.yaml
     dest: "{{ playbook_dir }}/.kubeconfig.fetched"
     flat: true
+  check_mode: false
   when: k3s_cluster_gate
 
 - name: Point the fetched kubeconfig at the real host
