@@ -5,6 +5,10 @@ resource "cloudflare_dns_record" "blog" {
   content = "${cloudflare_zero_trust_tunnel_cloudflared.blog.id}.cfargotunnel.com"
   proxied = true
   ttl     = 1
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "blog_www" {
@@ -14,6 +18,10 @@ resource "cloudflare_dns_record" "blog_www" {
   content = "${cloudflare_zero_trust_tunnel_cloudflared.blog.id}.cfargotunnel.com"
   proxied = true
   ttl     = 1
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "ops" {
