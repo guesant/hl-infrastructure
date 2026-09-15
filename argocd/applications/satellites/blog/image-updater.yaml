@@ -13,3 +13,7 @@ spec:
           imageName: ghcr.io/guesant/blog:main
           commonUpdateSettings:
             updateStrategy: digest
+          manifestTargets:
+            helm:
+              name: application.deployment.image.repository
+              tag: application.deployment.image.tag
