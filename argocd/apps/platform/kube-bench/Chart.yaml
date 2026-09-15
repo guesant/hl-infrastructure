@@ -1,0 +1,4 @@
+apiVersion: v2
+name: kube-bench
+description: Weekly CIS benchmark of the k3s node with kube-bench, results in the Job log
+version: 0.1.0

@@ -1,0 +1,97 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kube-bench
+  namespace: kube-bench
+  annotations:
+    ignore-check.kube-linter.io/host-pid: "kube-bench inspects the k3s server process arguments on the host"
+    ignore-check.kube-linter.io/sensitive-host-mounts: "kube-bench reads k3s and systemd configuration from the host, always read-only"
+    ignore-check.kube-linter.io/run-as-non-root: "kube-bench needs root to read host configuration files owned by root"
+    ignore-check.kube-linter.io/no-read-only-root-fs: "kube-bench writes its report to the container filesystem before printing it"
+    checkov.io/skip1: CKV_K8S_17=kube-bench inspects host processes
+    checkov.io/skip2: CKV_K8S_23=kube-bench needs root to read root-owned host files
+    checkov.io/skip3: CKV_K8S_40=kube-bench needs root to read root-owned host files
+    checkov.io/skip4: CKV_K8S_22=kube-bench writes its report to the container filesystem
+spec:
+  schedule: "0 9 * * 1"
+  timeZone: America/Sao_Paulo
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      ttlSecondsAfterFinished: 604800
+      template:
+        spec:
+          hostPID: true
+          restartPolicy: Never
+          automountServiceAccountToken: false
+          containers:
+            - name: kube-bench
+              image: docker.io/aquasec/kube-bench:v0.16.0@sha256:75506f222d1eb6ce2a751a5533bdc0a3b54c898e2e49e7751d0ee22cfb862679
+              command:
+                - kube-bench
+                - run
+                - --benchmark
+                - k3s-cis-1.9
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 500m
+                  memory: 256Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                  add:
+                    - DAC_READ_SEARCH
+                seccompProfile:
+                  type: RuntimeDefault
+              volumeMounts:
+                - name: var-lib-rancher
+                  mountPath: /var/lib/rancher
+                  readOnly: true
+                - name: etc-rancher
+                  mountPath: /etc/rancher
+                  readOnly: true
+                - name: etc-systemd
+                  mountPath: /etc/systemd
+                  readOnly: true
+                - name: lib-systemd
+                  mountPath: /lib/systemd
+                  readOnly: true
+                - name: var-lib-kubelet
+                  mountPath: /var/lib/kubelet
+                  readOnly: true
+                - name: etc-cni-netd
+                  mountPath: /etc/cni/net.d
+                  readOnly: true
+                - name: usr-bin
+                  mountPath: /usr/local/mount-from-host/bin
+                  readOnly: true
+          volumes:
+            - name: var-lib-rancher
+              hostPath:
+                path: /var/lib/rancher
+            - name: etc-rancher
+              hostPath:
+                path: /etc/rancher
+            - name: etc-systemd
+              hostPath:
+                path: /etc/systemd
+            - name: lib-systemd
+              hostPath:
+                path: /lib/systemd
+            - name: var-lib-kubelet
+              hostPath:
+                path: /var/lib/kubelet
+            - name: etc-cni-netd
+              hostPath:
+                path: /etc/cni/net.d
+            - name: usr-bin
+              hostPath:
+                path: /usr/local/bin
