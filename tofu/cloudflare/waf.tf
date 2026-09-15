@@ -33,7 +33,7 @@ resource "cloudflare_ruleset" "ratelimit" {
       ref         = "limit_keycloak_login"
       description = "Slow down repeated login attempts against the Keycloak realm"
       action      = "block"
-      expression  = "(http.host eq \"${var.auth_hostname}\" and (starts_with(http.request.uri.path, \"/realms/homelab/login-actions/\") or starts_with(http.request.uri.path, \"/realms/homelab/broker/\")))"
+      expression  = "(starts_with(http.request.uri.path, \"/realms/homelab/login-actions/\") or starts_with(http.request.uri.path, \"/realms/homelab/broker/\"))"
       ratelimit = {
         characteristics     = ["ip.src", "cf.colo.id"]
         period              = 10
