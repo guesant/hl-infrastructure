@@ -26,7 +26,7 @@ while IFS= read -r file; do
   done < <(printf '%s\n' "$plaintext" | sed -nE 's/^[[:space:]]*"?([A-Za-z0-9_.-]+)"?[:=][[:space:]]*"?REPLACE_WITH_[A-Z0-9_]+.*/\1/p')
 done < <(
   find argocd -type f -name '*.sops-secret.yaml'
-  find tofu ansible/recovery -type f -name '*.sops.env' 2>/dev/null
+  find tofu -type f -name '*.sops.env' 2>/dev/null
   find ansible/group_vars -type f -name '*.sops.yaml' 2>/dev/null
 )
 

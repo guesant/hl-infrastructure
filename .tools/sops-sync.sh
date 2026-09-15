@@ -47,7 +47,7 @@ else
     sync_one "$file"
   done < <(
     find argocd -type f -name '*.sops-secret.yaml'
-    find tofu ansible/recovery -type f -name '*.sops.env' 2>/dev/null
+    find tofu -type f -name '*.sops.env' 2>/dev/null
     find ansible/group_vars -type f -name '*.sops.yaml' 2>/dev/null
   )
 fi
