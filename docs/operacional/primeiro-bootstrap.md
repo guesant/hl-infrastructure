@@ -96,6 +96,26 @@ just placeholders
 
 O `plan` só pode criar recursos, nunca alterar nem destruir: o túnel, a configuração de ingress e os registros DNS declarados em `tofu/cloudflare/dns.tf`. Se o domínio já tiver registros nesses nomes, como um CNAME antigo no apex, importe-os com `just tofu cloudflare import` antes do `plan`, senão o apply falha ao tentar criar um nome que já existe. Se algum valor de exemplo sobrou, ele nem chega a rodar: o `just tofu` recusa segredo que ainda começa com `REPLACE_WITH_`, e as validações das variáveis recusam ID fora do formato e hostname terminado em `.invalid`. `cloudflare-tunnel-token` busca o token do túnel recém-criado e o grava cifrado no `SopsSecret` do cloudflared. `placeholders` decifra em memória todo arquivo SOPS e só pode terminar dizendo que não há nada pendente; ele mostra os nomes das chaves que ainda têm valor de exemplo, nunca os valores, e confere que o hostname bate nos dois lugares. Commite os dois arquivos `.sops.env`, `terraform.tfstate` (cifrado), `.terraform.lock.hcl`, `terraform.tfvars` e o `SopsSecret` juntos e faça push; o Argo sobe o cloudflared com o token novo. Por fim, em Settings, Webhooks do repositório no GitHub, aponte o webhook para `https://ops.guesant.net/api/webhook`, com content type `application/json` e o mesmo valor de `argocd_github_webhook_secret` como secret. Veja [OpenTofu: a camada da Cloudflare](../arquitetura/opentofu.md) para o porquê de cada peça.
 
+## Ligue o node à tailnet
+
+O bootstrap já instalou o Tailscale e o `dnsmasq`, mas pulou o passo de entrar na tailnet, porque `tailscale_auth_key` ainda era o valor de exemplo. No console de administração do Tailscale, em Settings, Keys, gere uma auth key reutilizável, de preferência com uma tag (`tag:homelab`) se a sua ACL tiver `tagOwners` para ela, porque um node com tag não tem chave que expira. Grave a chave e as rotas que o node vai anunciar (o CIDR da sua rede local, que é endereço interno e por isso fica cifrado):
+
+```bash
+just sops-edit ansible/group_vars/all/secrets.sops.yaml
+just bootstrap
+```
+
+Na saída da role `tailscale`, o node entra na tailnet e o `dnsmasq` passa a responder `*.guesant.internal` com o endereço dele. Ainda no console, em Machines, aprove a rota que o node anunciou e desligue a expiração da chave dele, se ele não tiver tag. Depois crie um OAuth client em Settings, OAuth clients, com os escopos `dns:write` e `devices:core:read`, e grave o ID e o secret:
+
+```bash
+just sops-edit tofu/tailscale/tailscale.sops.env
+just tofu tailscale init
+just tofu tailscale plan
+just tofu-apply tailscale
+```
+
+O `plan` deve criar só o split DNS de `guesant.internal` apontando para o endereço do node e o search path. Se ele reclamar que o dispositivo não foi encontrado, o node ainda não entrou na tailnet com o hostname declarado em `tofu/tailscale/terraform.tfvars`. Commite o state cifrado. Para conferir de um dispositivo da tailnet, `ssh root@<endereço do node na tailnet>` deve entrar e `dig grafana.guesant.internal` deve devolver esse mesmo endereço; de fora da tailnet, o nome não resolve. Veja [Tailscale: acesso remoto e DNS interno](../arquitetura/tailscale.md) para o que cada peça faz.
+
 ## Continue por aqui
 
 Se você quer expor um serviço através deste cluster, veja o guia operacional de [adicionar um satélite novo](adicionar-um-satelite.md). Se quer entender por que o repositório instala tudo via Helm em vez de manifestos vendorizados, veja [Helm e os charts](../arquitetura/helm-e-charts.md) na arquitetura. Se você quer entender os conceitos por trás de cada ferramenta que este bootstrap instala (Ansible, k3s, Cilium, TLS automático, ArgoCD, o padrão de operator), veja a seção [Aprender](../aprender/index.md).

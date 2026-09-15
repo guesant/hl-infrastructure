@@ -60,6 +60,7 @@ nav:
       - Helm e os charts: arquitetura/helm-e-charts.md
       - "GitOps: root e satélites": arquitetura/gitops-root-e-satelites.md
       - "OpenTofu: a camada da Cloudflare": arquitetura/opentofu.md
+      - "Tailscale: acesso remoto e DNS interno": arquitetura/tailscale.md
       - Rollout de imagens: arquitetura/rollout-de-imagens.md
       - A pipeline de CI: arquitetura/ci.md
       - Modelo de ameaças: arquitetura/modelo-de-ameacas.md

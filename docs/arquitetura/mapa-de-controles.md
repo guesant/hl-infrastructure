@@ -4,7 +4,7 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 
 | Componente | Tema | Controle | Evidência |
 | --- | --- | --- | --- |
-| Repositório | Segredos | Nenhum segredo no git; valores reais só cifrados, em `SopsSecret`, em `tofu/**/*.sops.env`, `ansible/recovery/*.sops.env` e `ansible/group_vars/all/secrets.sops.yaml` | `.gitignore`, job `gitleaks` sobre todo o histórico, `trivy-fs`, job `sopssecrets` |
+| Repositório | Segredos | Nenhum segredo no git; valores reais só cifrados, em `SopsSecret`, em `tofu/**/*.sops.env` e `ansible/group_vars/all/secrets.sops.yaml` | `.gitignore`, job `gitleaks` sobre todo o histórico, `trivy-fs`, job `sopssecrets` |
 | Repositório | Integridade de dependências | Toda action, imagem, chart e binário pinado por versão ou SHA | `.github/workflows/*.yml` (SHA em todo `uses`), `.tools/docker/Dockerfile`, `versions.yml`, check `check-images-pinned.sh` |
 | Repositório | Atualização | Renovate abre PR para toda dependência, com sete dias de carência | `.github/renovate.json`, dependency dashboard |
 | CI | Privilégio | `contents: read` por padrão; escrita só no `renovate`, isolado num environment | `permissions:` em cada workflow, `zizmor` a cada push |
@@ -28,7 +28,10 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | Repositório | Rotação de segredos | Todo arquivo cifrado tem prazo de rotação; vencido, a execução agendada da CI fica vermelha | job `secret-age`, `.config/secret-max-age.conf` |
 | Configuração | Valores de exemplo | Nenhum `REPLACE_WITH_` ou `.invalid` chega a um `apply` ou a um deploy sem ser notado, nem dentro de arquivo cifrado | job `placeholders` em todo push para o texto claro, validações em `tofu/cloudflare/variables.tf`, recusa em `.tools/tofu-run.sh`, `just placeholders` antes do push para o que está cifrado |
 | Dados | Recuperação | Nenhum hoje: o backup contínuo do Postgres foi desligado de propósito, e a perda do volume do node é perda total dos dados | [estado fora do git](../operacional/estado-fora-do-git.md), [restaurar o node](../operacional/restaurar-o-node.md) |
-| Node | Segredos em repouso | `Secret` do Kubernetes cifrados no datastore do k3s, com recifragem dos que já existiam | `secrets-encryption` em `ansible/roles/k3s/templates/config.yaml.j2`, `k3s secrets-encrypt status` checado pela role |
+| Node | Segredos em repouso | `Secret` do Kubernetes cifrados no datastore do k3s desde o primeiro start | `secrets-encryption` em `ansible/roles/k3s/templates/config.yaml.j2`, `k3s secrets-encrypt status` checado pela role |
+| Node | Acesso remoto | SSH e DNS interno alcançáveis pela tailnet numa zona firewalld própria; nada a mais entra por `tailscale0` | zona `tailscale` na role `firewall`, role `tailscale` |
+| Node | Subnet router | Só as rotas declaradas são anunciadas, o encaminhamento passa por uma policy explícita e o masquerade vale só para origens da tailnet | `tailscale_advertise_routes` cifrado, policy `tailscale-to-lan`, rich rule de masquerade na role `firewall` |
+| Tailnet | DNS interno | `*.guesant.internal` só resolve dentro da tailnet, por split DNS apontado ao node, e o `dnsmasq` recusa qualquer outro nome | `tofu/tailscale/dns.tf`, template `internal-domain.conf.j2` |
 | Node | Superfície | kubeconfig do node só para root, `rpcbind` parado e mascarado | roles `k3s` e `os_prerequisites` |
 | Pods | Pod Security Admission | `enforce restricted` em todo namespace de workload; namespace novo sem o label falha a CI | `managedNamespaceMetadata` nas `Application`, `argocd/apps/platform/namespaces`, role `argocd`, job `pod-security` |
 | Pods | Privilégio mínimo | ServiceAccount própria sem token, sistema de arquivos raiz somente leitura, seccomp `RuntimeDefault` e `drop: ALL` | values do blog, do cloudflared e do sops-secrets-operator |
@@ -42,7 +45,8 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | Node | Endurecimento de host | sysctls de kernel e rede, `/tmp` com `noexec`, SSH com `AllowGroups root` e validação antes de gravar, auditd ampliado, serviços de desktop desligados, journald persistente com teto | roles `sysctl_hardening`, `os_prerequisites`, `ssh_hardening`, `auditd`, `maintenance` |
 | Node | Saúde e drift | smartd vigiando o SSD, relatório de pacotes instalados à mão fora da linha de base | role `os_prerequisites`, `files/apt-manual-baseline.txt` |
 | Ansible | Identidade do node | Host key do Pi fixada, conexão recusada se divergir | `ansible/group_vars/all/connection.yml`, `ansible/known_hosts` |
-| Node | Recuperação | Token do k3s guardado cifrado | `ansible/recovery/k3s-token.sops.env`, `just k3s-token-escrow` |
+| Node | Recuperação | Token do k3s declarado no git, cifrado, e imposto pela role a cada bootstrap | `ansible/group_vars/all/secrets.sops.yaml` (`k3s_join_token`), role `k3s` |
+| Node | Acesso SSH | Chaves autorizadas declaradas no git, reconciliadas contra o node com teto de remoção | `ansible/group_vars/all/authorized_keys.yml`, role `ssh_hardening` |
 | Pods | Recursos | `requests` e limite de memória em todo componente de plataforma declarado aqui | values do Argo CD na role `argocd`, values dos operadores, values do Cilium |
 | Documentação | Fidelidade | Página cuja fonte mudou sem revisão falha a CI | `.tools/check-doc-drift.sh`, marcadores `source-of-trust` |
 
