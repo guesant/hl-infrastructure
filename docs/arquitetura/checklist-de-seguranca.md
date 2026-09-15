@@ -190,7 +190,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Monitoramento de expiração de certificado e de domínio | Atende | O TLS público é da Cloudflare e renova sozinho, e o job `domain-expiry` consulta o RDAP e falha na execução agendada a trinta dias do vencimento | AC |
 | Backup de tudo que é crítico, com restauração testada | Não atende | O Postgres do blog não tem backup desde a remoção do barman; só `.sops.yaml` e o state têm cópia, no git | AC, CP |
 | Plano de resposta a incidente e revisão pós-incidente | Atende | [Resposta a incidente](../operacional/resposta-a-incidente.md) com conter, preservar evidência, erradicar e recuperar, e um exercício trimestral junto da revisão periódica | LU, AC |
-| Proteção contra DDoS e WAF na frente do serviço público | Parcial | O tráfego passa pelo proxy da Cloudflare, com a proteção de DDoS do plano gratuito; nenhuma regra de WAF foi configurada | AC |
+| Proteção contra DDoS e WAF na frente do serviço público | Atende | Proxy da Cloudflare com a proteção de DDoS do plano gratuito, regras customizadas de WAF em `tofu/cloudflare/waf.tf` (varreduras por software que a zona não roda e o hostname operacional restrito ao webhook) e rate limit nos fluxos de login do Keycloak | CP, OW |
 
 ## Governança
 

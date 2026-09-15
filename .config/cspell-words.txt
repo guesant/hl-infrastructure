@@ -86,3 +86,4 @@ syscalls
 smartd
 blackbox
 prometheus
+webfinger
