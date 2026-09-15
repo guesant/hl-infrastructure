@@ -3,7 +3,18 @@
   "extends": ["config:recommended"],
   "timezone": "America/Sao_Paulo",
   "minimumReleaseAge": "7 days",
+  "pip-compile": {
+    "managerFilePatterns": ["/^docs/requirements\\.txt$/"]
+  },
+  "pip_requirements": {
+    "enabled": false
+  },
   "packageRules": [
+    {
+      "description": "Keep every Dockerfile base image pinned by digest next to its tag",
+      "matchManagers": ["dockerfile"],
+      "pinDigests": true
+    },
     {
       "description": "Rolling base image tags are rebuilt weekly, so their release age never reaches 7 days",
       "matchDatasources": ["docker"],

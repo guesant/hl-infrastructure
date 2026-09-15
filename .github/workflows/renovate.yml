@@ -6,7 +6,7 @@ on:
   push:
     branches: [main]
     paths:
-      - .config/renovate.json
+      - .github/renovate.json
       - .github/workflows/renovate.yml
   workflow_dispatch:
 
@@ -26,7 +26,7 @@ jobs:
       - name: Self-hosted Renovate
         uses: renovatebot/github-action@c314dda4a9a93b08239ec978f2043b9a433b9ac4 # v46.3.0
         with:
-          configurationFile: .config/renovate.json
+          configurationFile: .github/renovate.json
           token: "${{ secrets.RENOVATE_TOKEN }}"
         env:
           RENOVATE_PLATFORM: github
