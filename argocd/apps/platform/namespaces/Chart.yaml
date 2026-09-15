@@ -1,0 +1,4 @@
+apiVersion: v2
+name: namespaces
+description: Namespaces whose Pod Security labels a satellites-project Application cannot set
+version: 0.1.0

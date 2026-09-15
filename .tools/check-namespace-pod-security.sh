@@ -17,7 +17,14 @@ while IFS= read -r app; do
   fi
 done < <(find argocd/applications -name '*.yaml' | sort)
 
-if grep -q 'pod-security.kubernetes.io/enforce=' ansible/roles/argocd/tasks/main.yml; then
+while IFS= read -r manifest; do
+  grep -qE '^kind: Namespace$' "$manifest" || continue
+  grep -qE '^ +pod-security\.kubernetes\.io/enforce: (restricted|baseline|privileged)$' "$manifest" || continue
+  namespace="$(awk '/^metadata:/ {m=1; next} m && /^  name:/ {print $2; exit}' "$manifest")"
+  [ -n "$namespace" ] && enforced["$namespace"]=1
+done < <(find argocd/apps -path '*/templates/*.yaml' | sort)
+
+if grep -q 'pod-security.kubernetes.io/enforce=restricted' ansible/roles/argocd/tasks/main.yml; then
   enforced[argocd]=1
 fi
 
