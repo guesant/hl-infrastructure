@@ -110,39 +110,6 @@
     fail_msg: "k3s reports Secrets encryption as not enabled: {{ k3s_secrets_encryption.stdout }}"
   when: k3s_cluster_gate and not ansible_check_mode
 
-- name: Check whether the existing Secrets were already re-encrypted
-  ansible.builtin.stat:
-    path: /var/lib/rancher/k3s/server/hl-secrets-reencrypted
-  register: k3s_secrets_reencrypted_marker
-  when: k3s_cluster_gate
-
-# IMPORTANT: single-server reencrypt keeps the stage at "start"; completion comes from the SecretsUpdateComplete event.
-- name: Re-encrypt the Secrets written before encryption was enabled
-  when: >-
-    k3s_cluster_gate and not ansible_check_mode
-    and not k3s_secrets_reencrypted_marker.stat.exists
-  block:
-    - name: Start the re-encryption of every existing Secret
-      ansible.builtin.command: k3s secrets-encrypt reencrypt --force --skip
-      changed_when: true
-
-    - name: Wait for k3s to report the re-encryption as complete
-      ansible.builtin.command: >-
-        k3s kubectl get events -A --field-selector reason=SecretsUpdateComplete -o name
-      register: k3s_secrets_reencrypt_events
-      until: k3s_secrets_reencrypt_events.stdout | length > 0
-      retries: 30
-      delay: 10
-      changed_when: false
-
-    - name: Record that the existing Secrets were re-encrypted
-      ansible.builtin.copy:
-        content: "{{ ansible_date_time.iso8601 }}\n"
-        dest: /var/lib/rancher/k3s/server/hl-secrets-reencrypted
-        owner: root
-        group: root
-        mode: "0600"
-
 - name: Fetch the kubeconfig back to the control machine
   ansible.builtin.fetch:
     src: /etc/rancher/k3s/k3s.yaml
