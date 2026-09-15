@@ -1,0 +1,12 @@
+---
+firewall_public_services:
+  - ssh
+  - dhcpv6-client
+
+firewall_public_ports: []
+
+firewall_trusted_sources:
+  - 10.42.0.0/16
+  - 10.43.0.0/16
+
+firewall_max_removals: 3

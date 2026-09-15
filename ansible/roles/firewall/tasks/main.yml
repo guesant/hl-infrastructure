@@ -5,9 +5,10 @@
       - k3s_api_allowed_cidrs is iterable
       - k3s_api_allowed_cidrs | length > 0
       - k3s_api_allowed_cidrs | reject('match', '^[0-9]{1,3}(\.[0-9]{1,3}){3}/[0-9]{1,2}$') | list | length == 0
+      - "'ssh' in firewall_public_services"
     fail_msg: >-
       k3s_api_allowed_cidrs must be a non-empty list of IPv4 CIDRs like 203.0.113.0/24,
-      got {{ k3s_api_allowed_cidrs | default('undefined') }}
+      got {{ k3s_api_allowed_cidrs | default('undefined') }}, and firewall_public_services must keep ssh
 
 - name: Install firewalld
   ansible.builtin.apt:
@@ -49,37 +50,115 @@
       register: firewall_ssh
       changed_when: "'ALREADY_ENABLED' not in firewall_ssh.stderr"
 
+    - name: Allow the declared public services
+      ansible.builtin.command: "firewall-cmd --permanent --zone=public --add-service={{ item }}"
+      loop: "{{ firewall_public_services }}"
+      register: firewall_services
+      changed_when: "'ALREADY_ENABLED' not in firewall_services.stderr"
+
     - name: Trust the pod and service CIDRs
       ansible.builtin.command: "firewall-cmd --permanent --zone=trusted --add-source={{ item }}"
-      loop:
-        - 10.42.0.0/16
-        - 10.43.0.0/16
+      loop: "{{ firewall_trusted_sources }}"
       register: firewall_trust
       changed_when: "'ALREADY_ENABLED' not in firewall_trust.stderr"
 
     - name: Allow the k3s API port from the operator CIDRs only
       ansible.builtin.command: >-
         firewall-cmd --permanent --zone=public --add-rich-rule='rule family="ipv4"
-        source address="{{ item }}" port protocol="tcp" port="6443" accept'
+        source address="{{ item }}" port port="6443" protocol="tcp" accept'
       loop: "{{ k3s_api_allowed_cidrs }}"
       register: firewall_api_port
       changed_when: "'ALREADY_ENABLED' not in firewall_api_port.stderr"
 
+    - name: Read the permanent public and trusted zones
+      ansible.builtin.command: "firewall-cmd --permanent --zone={{ item.zone }} {{ item.flag }}"
+      loop:
+        - { key: public_services, zone: public, flag: --list-services }
+        - { key: public_ports, zone: public, flag: --list-ports }
+        - { key: public_rich_rules, zone: public, flag: --list-rich-rules }
+        - { key: trusted_sources, zone: trusted, flag: --list-sources }
+      loop_control:
+        label: "{{ item.key }}"
+      register: firewall_current
+      changed_when: false
+      check_mode: false
+
+    - name: Work out which permanent entries nothing declares
+      ansible.builtin.set_fact:
+        firewall_undeclared:
+          services: "{{ firewall_current_by_key.public_services.split() | difference(firewall_public_services) }}"
+          ports: "{{ firewall_current_by_key.public_ports.split() | difference(firewall_public_ports) }}"
+          rich_rules: "{{ firewall_current_by_key.public_rich_rules.splitlines() | reject('equalto', '') | difference(firewall_declared_rich_rules) }}"
+          sources: "{{ firewall_current_by_key.trusted_sources.split() | difference(firewall_trusted_sources) }}"
+      vars:
+        firewall_current_by_key: "{{ dict(firewall_current.results | map(attribute='item.key') | zip(firewall_current.results | map(attribute='stdout'))) }}"
+        firewall_declared_rich_rules: >-
+          {{ k3s_api_allowed_cidrs
+             | map('regex_replace', '^(.*)$', 'rule family="ipv4" source address="\1" port port="6443" protocol="tcp" accept')
+             | list }}
+
+    - name: Refuse to remove more undeclared entries than the safety cap allows
+      ansible.builtin.assert:
+        that:
+          - firewall_removal_count | int <= firewall_max_removals
+          - "'ssh' not in firewall_undeclared.services"
+        fail_msg: >-
+          {{ firewall_removal_count }} undeclared firewall entries would be removed, above the cap of
+          {{ firewall_max_removals }}: {{ firewall_undeclared }}; declare them or raise firewall_max_removals
+          for one run after reviewing the list
+      vars:
+        firewall_removal_count: >-
+          {{ firewall_undeclared.services | length + firewall_undeclared.ports | length
+             + firewall_undeclared.rich_rules | length + firewall_undeclared.sources | length }}
+
+    - name: Remove undeclared public services
+      ansible.builtin.command: "firewall-cmd --permanent --zone=public --remove-service={{ item }}"
+      loop: "{{ firewall_undeclared.services }}"
+      register: firewall_removed_services
+      changed_when: true
+
+    - name: Remove undeclared public ports
+      ansible.builtin.command: "firewall-cmd --permanent --zone=public --remove-port={{ item }}"
+      loop: "{{ firewall_undeclared.ports }}"
+      register: firewall_removed_ports
+      changed_when: true
+
+    - name: Remove undeclared public rich rules
+      ansible.builtin.command:
+        argv:
+          - firewall-cmd
+          - --permanent
+          - --zone=public
+          - "--remove-rich-rule={{ item }}"
+      loop: "{{ firewall_undeclared.rich_rules }}"
+      register: firewall_removed_rich_rules
+      changed_when: true
+
+    - name: Remove undeclared trusted sources
+      ansible.builtin.command: "firewall-cmd --permanent --zone=trusted --remove-source={{ item }}"
+      loop: "{{ firewall_undeclared.sources }}"
+      register: firewall_removed_sources
+      changed_when: true
+
     - name: Read the permanent public zone before reloading
       ansible.builtin.command: firewall-cmd --permanent --zone=public --list-services
-      register: firewall_public_services
+      register: firewall_public_services_after
       changed_when: false
       check_mode: false
 
     - name: Refuse to reload a configuration that would drop SSH
       ansible.builtin.assert:
         that:
-          - "'ssh' in firewall_public_services.stdout.split()"
+          - "'ssh' in firewall_public_services_after.stdout.split()"
         fail_msg: >-
-          the permanent public zone does not allow ssh ({{ firewall_public_services.stdout }});
+          the permanent public zone does not allow ssh ({{ firewall_public_services_after.stdout }});
           reloading now would lock the operator out, so nothing was reloaded
 
     - name: Reload firewalld if anything changed
       ansible.builtin.command: firewall-cmd --reload
-      when: firewall_ssh.changed or firewall_trust.changed or firewall_api_port.changed
+      when: >-
+        firewall_ssh.changed or firewall_services.changed or firewall_trust.changed
+        or firewall_api_port.changed or firewall_removed_services.changed
+        or firewall_removed_ports.changed or firewall_removed_rich_rules.changed
+        or firewall_removed_sources.changed
       changed_when: true
