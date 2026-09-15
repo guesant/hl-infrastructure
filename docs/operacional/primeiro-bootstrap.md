@@ -4,7 +4,7 @@ Este runbook parte de um Raspberry Pi limpo, com Raspberry Pi OS instalado e ace
 
 ## Antes de começar
 
-Você precisa de acesso SSH por chave ao Pi como root, e do [Ansible](https://docs.ansible.com/) instalado na sua máquina. Nenhuma ferramenta precisa estar pré-instalada no Pi além do próprio SSH: o Ansible cuida de instalar Helm, k3s e tudo o mais.
+Você precisa de acesso SSH por chave ao Pi como root, e do [Ansible](https://docs.ansible.com/) instalado na sua máquina. Nenhuma ferramenta precisa estar pré-instalada no Pi além do próprio SSH: o Ansible cuida de instalar Helm, k3s e tudo o mais. O usuário padrão que a imagem cria, com senha, `sudo` e login automático no desktop, não é usado por nada; depois do bootstrap, remova-o como descrito em [restaurar o node](restaurar-o-node.md).
 
 ## Configure o inventário e as variáveis
 

@@ -16,6 +16,19 @@ just bootstrap
 
 Ao fim, `ansible/kubeconfig` aponta para o cluster novo e `kubectl -n argocd get applications` mostra o `root` sincronizando os satélites.
 
+A imagem do Raspberry Pi OS cria de novo o usuário padrão (`user`, uid 1000), com senha, grupo `sudo`, chave SSH e login automático tanto no desktop gráfico quanto no console `tty1`. Nada do cluster usa esse usuário, e o Ansible não o remove, então o passo é manual, por SSH como root, depois de confirmar que o `authorized_keys` do root tem a chave do operador:
+
+```bash
+systemctl set-default multi-user.target
+systemctl disable --now lightdm
+rm -rf /etc/systemd/system/getty@tty1.service.d && systemctl daemon-reload && systemctl restart getty@tty1
+loginctl terminate-user user; userdel -r -f user
+```
+
+Não use `pkill -u user` nem espere o `userdel` sem `-f` passar: vários contêineres do cluster rodam com uid 1000, o mesmo número do usuário da imagem, então o `pkill` derruba pods de operadores e o `userdel` sempre encontra processos com esse uid. O `-f` só remove a conta e a home; os contêineres continuam rodando com o número de uid, que não depende da entrada em `/etc/passwd`.
+
+Depois disso não existe login pelo console local: o root continua com a senha bloqueada e só entra por SSH com chave. Perder o SSH passa a significar tirar o disco e corrigi-lo em outra máquina.
+
 O túnel e o DNS da Cloudflare não fazem parte desta reconstrução: eles vivem na conta da Cloudflare, não no node, e continuam existindo. O cloudflared volta sozinho quando o Argo sincroniza o satélite do blog, com o token que já está no `SopsSecret`, desde que o passo 2 abaixo deixe a chave do node nova capaz de decifrá-lo. Nenhum `just tofu` é necessário aqui.
 
 ## 2. Confirmar a chave age
