@@ -140,7 +140,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | SBOM e atestados de proveniência | Não atende | Nenhum SBOM nem assinatura publicados | SE |
 | Isolamento de workloads sensíveis por nó ou runtime isolado | Não se aplica | Um nó só; gVisor e Kata não compensam no Raspberry Pi | K8, SR, SE, MD |
 | Namespaces separados por função | Atende | Um por operador, um para o Argo CD e um para o blog | SR, SE, MD |
-| Benchmark CIS periódico (kube-bench) | Atende | `CronJob` semanal com o perfil `k3s-cis-1.9`, resultado no log do Job; o resumo no Discord entra junto com os alertas | SR, SE |
+| Benchmark CIS periódico (kube-bench) | Parcial | `CronJob` semanal com o perfil `k3s-cis-1.9`, só nas checagens de `policies`; as de master e node dependem de `journalctl` e dos argumentos do processo `k3s`, que um pod não enxerga, e ficam para uma execução no próprio node; o resumo no Discord entra junto com os alertas | SR, SE |
 | Correções de segurança aplicadas logo | Parcial | Renovate propõe versões novas de k3s e charts, mas o k3s só muda com um novo `bootstrap` manual | SR, SE |
 
 ## OpenTofu

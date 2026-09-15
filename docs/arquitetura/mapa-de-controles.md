@@ -28,6 +28,12 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | Repositório | Rotação de segredos | Todo arquivo cifrado tem prazo de rotação; vencido, a execução agendada da CI fica vermelha | job `secret-age`, `.config/secret-max-age.conf` |
 | Configuração | Valores de exemplo | Nenhum `REPLACE_WITH_` ou `.invalid` chega a um `apply` ou a um deploy sem ser notado, nem dentro de arquivo cifrado | job `placeholders` em todo push para o texto claro, validações em `tofu/cloudflare/variables.tf`, recusa em `.tools/tofu-run.sh`, `just placeholders` antes do push para o que está cifrado |
 | Dados | Recuperação | Nenhum hoje: o backup contínuo do Postgres foi desligado de propósito, e a perda do volume do node é perda total dos dados | [estado fora do git](../operacional/estado-fora-do-git.md), [restaurar o node](../operacional/restaurar-o-node.md) |
+| Node | Segredos em repouso | `Secret` do Kubernetes cifrados no datastore do k3s, com recifragem dos que já existiam | `secrets-encryption` em `ansible/roles/k3s/templates/config.yaml.j2`, `k3s secrets-encrypt status` checado pela role |
+| Node | Superfície | kubeconfig do node só para root, `rpcbind` parado e mascarado | roles `k3s` e `os_prerequisites` |
+| Pods | Pod Security Admission | `enforce restricted` em todo namespace de workload; namespace novo sem o label falha a CI | `managedNamespaceMetadata` nas `Application`, `argocd/apps/platform/namespaces`, role `argocd`, job `pod-security` |
+| Pods | Privilégio mínimo | ServiceAccount própria sem token, sistema de arquivos raiz somente leitura, seccomp `RuntimeDefault` e `drop: ALL` | values do blog, do cloudflared e do sops-secrets-operator |
+| Rede | Listas de liberação | Cada namespace só fala com o que usa; ainda em modo auditoria no Cilium | `argocd/apps/platform/network-policies`, `cilium-egress.yaml` do blog, Hubble |
+| Cluster | Benchmark | kube-bench semanal nas checagens de RBAC e política do CIS para k3s, sem root e sem acesso a `Secret` | `argocd/apps/platform/kube-bench` |
 | Documentação | Fidelidade | Página cuja fonte mudou sem revisão falha a CI | `.tools/check-doc-drift.sh`, marcadores `source-of-trust` |
 
 ## O que este mapa não cobre
