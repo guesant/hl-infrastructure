@@ -7,8 +7,8 @@ cd "$repo_root"
 target="${1:-}"
 
 if [ -n "$target" ]; then
-  if [[ "$target" != *.sops-secret.yaml && "$target" != *.sops.env ]]; then
-    echo "usage: $0 [path/to/some.sops-secret.yaml | path/to/some.sops.env]" >&2
+  if [[ "$target" != *.sops-secret.yaml && "$target" != *.sops.env && "$target" != *.sops.yaml ]]; then
+    echo "usage: $0 [path/to/some.sops-secret.yaml | path/to/some.sops.env | path/to/some.sops.yaml]" >&2
     exit 2
   fi
   if [ ! -f "$target" ]; then
@@ -48,6 +48,7 @@ else
   done < <(
     find argocd -type f -name '*.sops-secret.yaml'
     find tofu node -type f -name '*.sops.env' 2>/dev/null
+    find ansible/group_vars -type f -name '*.sops.yaml' 2>/dev/null
   )
 fi
 

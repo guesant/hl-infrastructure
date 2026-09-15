@@ -5,6 +5,7 @@ ignore:
   - site/
   - .kubeconform-cache/
   - ansible/group_vars/all/secrets.yml
+  - ansible/group_vars/all/secrets.sops.yaml
   - "**/*.sops-secret.yaml"
 
 rules:

@@ -6,7 +6,7 @@ As variáveis do Ansible vivem em dois arquivos dentro de [ansible/group_vars/al
 
 `versions.yml` é versionado e é o arquivo real, sem cópia: toda versão de binário e de chart fica nele, o Renovate abre PR contra ele, e o Ansible, o `render-charts.sh` e a CI leem dele. Uma versão mergeada em `main` é a versão que o próximo `bootstrap` instala, sem passo manual entre os dois.
 
-`secrets.yml` não é rastreado pelo git e guarda o que é de cada instalação: segredo, rede e chave. `secrets.example.yml` é o modelo versionado com placeholders, e o [primeiro bootstrap](../operacional/primeiro-bootstrap.md) é o único lugar que pede para copiá-lo.
+`secrets.sops.yaml` guarda o que é de cada instalação, rede e segredo, cifrado com SOPS para os mesmos destinatários de `.sops.yaml` e commitado. O Ansible o decifra sozinho ao carregar as variáveis, pelo vars plugin da coleção `community.sops` ligado em `ansible.cfg`, usando a identidade da Secure Enclave do operador; o valor em claro só existe na memória do processo. `secrets.example.yml` é o modelo versionado com placeholders, e o [primeiro bootstrap](../operacional/primeiro-bootstrap.md) é o único lugar que pede para partir dele.
 
 Esta página não rastreia `versions.yml` para o gate de deriva de documentação: o Renovate bumpa um valor ali quase todo dia, e um bump isolado não muda nada que a tabela abaixo descreva, só o valor atual de uma variável que já existe. A página precisa de revisão quando uma variável é adicionada ou removida, o que também muda `ansible/roles` ou `ansible/site.yml`, já rastreados pela página de [Ansible](ansible.md).
 
@@ -22,7 +22,7 @@ Esta página não rastreia `versions.yml` para o gate de deriva de documentaçã
 
 O cert-manager, o operador CloudNativePG, o sops-secrets-operator e o Argo CD Image Updater não têm entrada aqui: desde que passaram a ser `Application` do ArgoCD em vez de uma role, a versão de cada um vive na própria dependency do `Chart.yaml` local ([cert-manager](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/cert-manager/Chart.yaml), [cnpg](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/cnpg/Chart.yaml), [sops-secrets-operator](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/sops-secrets-operator/Chart.yaml), [argocd-image-updater](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/platform/argocd-image-updater/Chart.yaml)), e o Renovate atualiza cada uma pelo gerenciador nativo de chart Helm, sem precisar do regex customizado que os dois restantes usam.
 
-## secrets.yml
+## secrets.sops.yaml
 
 | Variável | Controla | Consumida por |
 | --- | --- | --- |
@@ -32,8 +32,8 @@ O cert-manager, o operador CloudNativePG, o sops-secrets-operator e o Argo CD Im
 
 A chave SSH do operador também não mora aqui. Ela precisa estar no node antes do primeiro `bootstrap`, porque é por ela que o Ansible entra, e a role `ssh_hardening` só confere que o `authorized_keys` do usuário do inventário não está vazio antes de desligar login por senha. Declarar a mesma chave de novo numa variável não acrescentava acesso nenhum.
 
-A role `sops_age_key` não consome nenhuma variável daqui: ela gera o próprio par de chaves com `age-keygen` direto no node, na primeira execução, em vez de receber um valor pronto de `secrets.yml`. Veja [Ansible: as roles do bootstrap](ansible.md) para o porquê.
+A role `sops_age_key` não consome nenhuma variável daqui: ela gera o próprio par de chaves com `age-keygen` direto no node, na primeira execução, em vez de receber um valor pronto de `secrets.sops.yaml`. Veja [Ansible: as roles do bootstrap](ansible.md) para o porquê.
 
 ## Continue por aqui
 
-Para ver como cada versão de chart é mantida em dia automaticamente, veja [Helm e os charts](helm-e-charts.md). Para a lista de tudo o que, como `secrets.yml`, vive fora do git, veja [estado fora do git](../operacional/estado-fora-do-git.md).
+Para ver como cada versão de chart é mantida em dia automaticamente, veja [Helm e os charts](helm-e-charts.md). Para a lista de tudo o que, como a chave privada do node, vive fora do git, veja [estado fora do git](../operacional/estado-fora-do-git.md).

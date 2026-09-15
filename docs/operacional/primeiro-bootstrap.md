@@ -8,16 +8,18 @@ Você precisa de acesso SSH por chave ao Pi como root, e do [Ansible](https://do
 
 ## Configure o inventário e as variáveis
 
-Copie os dois arquivos de exemplo:
+Copie o inventário de exemplo e crie o arquivo de segredos cifrado a partir do modelo:
 
 ```bash
 cp ansible/inventory.example.ini ansible/inventory.ini
-cp ansible/group_vars/all/secrets.example.yml ansible/group_vars/all/secrets.yml
+cp ansible/group_vars/all/secrets.example.yml ansible/group_vars/all/secrets.sops.yaml
+just sops-sync ansible/group_vars/all/secrets.sops.yaml
+just sops-edit ansible/group_vars/all/secrets.sops.yaml
 ```
 
-Edite `ansible/inventory.ini` com o IP real do Pi, o usuário SSH e o caminho da chave privada. Edite `ansible/group_vars/all/secrets.yml` preenchendo `k3s_api_allowed_cidrs` com o CIDR real da sua rede (a API do k3s fica bloqueada por firewall para qualquer origem fora dessa lista) e `argocd_github_webhook_secret` com um segredo gerado por você (não o valor de exemplo). A chave SSH não entra aqui: ela já precisa estar autorizada no Pi para o Ansible conseguir entrar, e o bootstrap aborta antes de desligar login por senha se o `authorized_keys` do usuário do inventário estiver vazio.
+O `sops-sync` cifra o arquivo no lugar, ainda com os valores de exemplo, e o `sops-edit` o abre decifrado só em memória. Edite `ansible/inventory.ini` com o IP real do Pi, o usuário SSH e o caminho da chave privada. No `secrets.sops.yaml`, preencha `k3s_api_allowed_cidrs` com o CIDR real da sua rede (a API do k3s fica bloqueada por firewall para qualquer origem fora dessa lista) e `argocd_github_webhook_secret` com um segredo gerado por você (não o valor de exemplo). A chave SSH não entra aqui: ela já precisa estar autorizada no Pi para o Ansible conseguir entrar, e o bootstrap aborta antes de desligar login por senha se o `authorized_keys` do usuário do inventário estiver vazio.
 
-Nenhum dos dois arquivos reais é rastreado pelo git; só os `.example` ficam versionados. As versões de k3s, Helm e de cada chart não precisam de nada: elas vivem em `ansible/group_vars/all/versions.yml`, que é versionado e mantido pelo Renovate, e o Ansible mescla os dois arquivos sozinho.
+O inventário real não é rastreado pelo git; o `secrets.sops.yaml` é, mas só cifrado, e o job `sopssecrets` da CI falha se algum valor dele estiver em claro. As versões de k3s, Helm e de cada chart não precisam de nada: elas vivem em `ansible/group_vars/all/versions.yml`, que é versionado e mantido pelo Renovate, e o Ansible mescla os dois arquivos sozinho.
 
 ## Confira o acesso e veja o que vai mudar
 

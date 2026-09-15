@@ -19,34 +19,34 @@ default:
     @just --list
 
 [doc("Check access to the node and the assumptions the roles make")]
-preflight *args:
-    ansible-playbook -i ansible/inventory.ini ansible/preflight.yml {{args}}
+preflight *args: _require-host-sops
+    SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/preflight.yml {{args}}
 
 [doc("Dry-run the whole bootstrap with --check --diff, applying charts as server dry-runs")]
 bootstrap-check *args: (preflight args)
     ansible-galaxy collection install -r ansible/requirements.yml
-    ansible-playbook -i ansible/inventory.ini ansible/site.yml --check --diff {{args}}
+    SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/site.yml --check --diff {{args}}
 
 [doc("Run the whole Ansible bootstrap against the inventory")]
 [confirm("This applies every role to the node in ansible/inventory.ini. Continue?")]
 bootstrap *args: (preflight args)
     ansible-galaxy collection install -r ansible/requirements.yml
-    ansible-playbook -i ansible/inventory.ini ansible/site.yml {{args}}
+    SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/site.yml {{args}}
 
 [doc("Rotate every k3s certificate and refresh the local kubeconfig")]
 [confirm("This stops k3s for a few seconds and invalidates the current kubeconfig. Continue?")]
-rotate-certs *args:
-    ansible-playbook -i ansible/inventory.ini ansible/rotate-certs.yml {{args}}
+rotate-certs *args: _require-host-sops
+    SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/rotate-certs.yml {{args}}
 
 [doc("Rotate the k3s node join token and restart k3s")]
 [confirm("This restarts k3s. Continue?")]
-rotate-token *args:
-    ansible-playbook -i ansible/inventory.ini ansible/rotate-token.yml {{args}}
+rotate-token *args: _require-host-sops
+    SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/rotate-token.yml {{args}}
 
 [doc("Add a new age identity on the node and restart the operator; pass -e sops_age_key_prune=true to drop old ones")]
 [confirm("This changes the node's age identities and restarts sops-secrets-operator. Continue?")]
-rotate-age-key *args:
-    ansible-playbook -i ansible/inventory.ini ansible/rotate-age-key.yml {{args}}
+rotate-age-key *args: _require-host-sops
+    SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/rotate-age-key.yml {{args}}
 
 [doc("Print the KUBECONFIG export for the fetched kubeconfig")]
 kubeconfig:
@@ -146,7 +146,7 @@ _require-host-sops:
 age-se-keygen *args: _require-host-sops
     .tools/age-se-keygen.sh {{args}}
 
-[doc("Open a *.sops-secret.yaml for editing with the operator Secure Enclave identity")]
+[doc("Open any SOPS file for editing with the operator Secure Enclave identity")]
 sops-edit file identity=(home_dir() / ".config/hl-infrastructure/sops/operator-se.txt"): _require-host-sops
     SOPS_AGE_KEY_FILE={{identity}} sops {{file}}
 

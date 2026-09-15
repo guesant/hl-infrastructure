@@ -6,7 +6,7 @@ Este runbook cobre a perda total do node: cartão SD corrompido, hardware trocad
 
 ## 1. Reconstruir o cluster
 
-Na máquina do operador, `ansible/inventory.ini` e `ansible/group_vars/all/secrets.yml` continuam válidos se a máquina do operador sobreviveu; se não, recrie os dois a partir dos exemplos, com um segredo de webhook novo (o antigo está perdido junto com o cluster, e o webhook no GitHub precisa ser atualizado).
+Na máquina do operador, `ansible/inventory.ini` continua válido se a máquina do operador sobreviveu; se não, recrie-o a partir do exemplo. `ansible/group_vars/all/secrets.sops.yaml` vem do próprio repositório, cifrado, e decifra com a identidade da Secure Enclave ou com a chave de recuperação.
 
 Um node reinstalado tem host keys novas, e o `ansible/known_hosts` antigo faz o Ansible recusar a conexão, de propósito. Confira as impressões digitais novas no console do Pi e grave o arquivo de novo, como no [primeiro bootstrap](primeiro-bootstrap.md), antes de seguir:
 

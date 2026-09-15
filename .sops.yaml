@@ -8,6 +8,9 @@ creation_rules:
   - path_regex: (^|/)node/.+\.sops\.env$
     key_groups:
       - age: *recipients
+  - path_regex: (^|/)ansible/group_vars/.+\.sops\.yaml$
+    key_groups:
+      - age: *recipients
   - path_regex: .*\.sops-secret\.yaml$
     encrypted_suffix: Templates
     key_groups:

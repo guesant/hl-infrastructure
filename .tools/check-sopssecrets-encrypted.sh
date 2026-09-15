@@ -53,6 +53,19 @@ while IFS= read -r file; do
   check_recipients "$file" "$(grep -E '^sops_age__list_[0-9]+__map_recipient=' "$file" | cut -d= -f2- | jq -R . | jq -sc sort)" || status=1
 done < <(find tofu node -type f -name '*.sops.env' 2>/dev/null)
 
+while IFS= read -r file; do
+  check_encrypted "$file" || {
+    status=1
+    continue
+  }
+  unencrypted="$(yq 'del(.sops) | .. | select(kind == "scalar")' "$file" | grep -vc '^ENC\[' || true)"
+  if [ "$unencrypted" -gt 0 ]; then
+    echo "$file: has a plaintext value" >&2
+    status=1
+  fi
+  check_recipients "$file" "$(yq -o=json -I=0 '[.sops.age[].recipient] | sort' "$file")" || status=1
+done < <(find ansible/group_vars -type f -name '*.sops.yaml' 2>/dev/null)
+
 if [ "$status" -eq 0 ]; then
   echo "every SOPS file is encrypted with the current recipients"
 fi
