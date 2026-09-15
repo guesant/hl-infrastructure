@@ -11,6 +11,12 @@ ipam:
       - 10.42.0.0/16
 operator:
   replicas: 1
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      memory: 128Mi
 envoy:
   enabled: false
 policyEnforcementMode: always
@@ -19,3 +25,15 @@ hubble:
   enabled: true
   relay:
     enabled: true
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        memory: 64Mi
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi

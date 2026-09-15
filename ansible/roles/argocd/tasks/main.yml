@@ -46,15 +46,22 @@
       changed_when: false
       check_mode: false
 
+    - name: Install the declared ArgoCD chart values
+      ansible.builtin.copy:
+        src: values.yaml
+        dest: /etc/rancher/argocd-values.yaml
+        owner: root
+        group: root
+        mode: "0600"
+      check_mode: false
+
     - name: Probe whether the ArgoCD chart differs from the cluster
       ansible.builtin.shell: >
         set -o pipefail &&
         helm template argocd argo/argo-cd
         --version {{ argocd_chart_version }}
         --namespace argocd
-        --set controller.metrics.enabled=true
-        --set server.metrics.enabled=true
-        --set notifications.metrics.enabled=true
+        --values /etc/rancher/argocd-values.yaml
         --include-crds
         | k3s kubectl diff --server-side -n argocd -f -
       args:
@@ -70,9 +77,7 @@
         helm template argocd argo/argo-cd
         --version {{ argocd_chart_version }}
         --namespace argocd
-        --set controller.metrics.enabled=true
-        --set server.metrics.enabled=true
-        --set notifications.metrics.enabled=true
+        --values /etc/rancher/argocd-values.yaml
         --include-crds
         | k3s kubectl apply --server-side --force-conflicts -n argocd -f -
       args:
