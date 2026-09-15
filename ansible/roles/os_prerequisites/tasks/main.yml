@@ -25,6 +25,75 @@
     - rpcbind.service
   when: os_prerequisites_nfs_mounts.stdout | length == 0
 
+- name: List the unit files present on the node # noqa: command-instead-of-module
+  ansible.builtin.command: systemctl list-unit-files --no-legend --no-pager
+  register: os_prerequisites_unit_files
+  changed_when: false
+  check_mode: false
+
+- name: Disable desktop and peripheral services nothing on this node uses
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+  loop: "{{ os_prerequisites_disabled_units }}"
+  when: (item + ' ') in os_prerequisites_unit_files.stdout
+
+- name: Mount /tmp without exec, suid or device files
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/tmp.mount.d/noexec.conf
+    content: |
+      [Mount]
+      Options=mode=1777,strictatime,nosuid,nodev,noexec,size=50%,nr_inodes=1m
+    owner: root
+    group: root
+    mode: "0644"
+  register: os_prerequisites_tmp_noexec
+
+- name: Apply noexec to the running /tmp # noqa: no-handler command-instead-of-module
+  ansible.builtin.command: mount -o remount,noexec,nosuid,nodev /tmp
+  when: os_prerequisites_tmp_noexec.changed and not ansible_check_mode
+  changed_when: true
+
+- name: Install smartmontools to watch the SSD health
+  ansible.builtin.apt:
+    name: smartmontools
+    state: present
+
+- name: Point smartd at the SSD behind its USB bridge
+  ansible.builtin.copy:
+    dest: /etc/smartd.conf
+    content: |
+      {{ os_prerequisites_smart_device }} -d {{ os_prerequisites_smart_device_type }} -a -n standby,q -W 4,60,70
+    owner: root
+    group: root
+    mode: "0644"
+  register: os_prerequisites_smartd_config
+
+- name: Ensure smartd is enabled and running
+  ansible.builtin.systemd_service:
+    name: smartmontools
+    enabled: true
+    state: "{{ 'restarted' if os_prerequisites_smartd_config.changed else 'started' }}"
+  when: not ansible_check_mode
+
+- name: List the packages marked as manually installed
+  ansible.builtin.command: apt-mark showmanual
+  register: os_prerequisites_manual_packages
+  changed_when: false
+  check_mode: false
+
+- name: Report packages installed by hand outside the recorded baseline
+  ansible.builtin.debug:
+    msg: >-
+      packages marked manual that are not in files/apt-manual-baseline.txt:
+      {{ os_prerequisites_manual_drift | join(', ') if os_prerequisites_manual_drift else 'none' }}
+  vars:
+    os_prerequisites_manual_drift: >-
+      {{ os_prerequisites_manual_packages.stdout_lines
+         | difference(lookup('ansible.builtin.file', 'apt-manual-baseline.txt').splitlines()
+                      + os_prerequisites_expected_manual_packages) }}
+
 - name: Find the active kernel cmdline file
   ansible.builtin.stat:
     path: "{{ item }}"

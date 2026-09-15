@@ -78,3 +78,9 @@ seifrajhi
 tmpfs
 trimstray
 RDAP
+avahi
+bluetooth
+udisks
+wayvnc
+syscalls
+smartd

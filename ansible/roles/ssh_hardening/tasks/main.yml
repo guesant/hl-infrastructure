@@ -25,6 +25,10 @@
     owner: root
     group: root
     mode: "0644"
+    validate: >-
+      /bin/sh -c 'printf "Include %s\nInclude /etc/ssh/sshd_config\n" > /run/sshd-validate.conf
+      && /usr/sbin/sshd -t -f /run/sshd-validate.conf; status=$?;
+      rm -f /run/sshd-validate.conf; exit $status'
   notify: Reload sshd
 
 - name: Validate sshd configuration syntax before reload

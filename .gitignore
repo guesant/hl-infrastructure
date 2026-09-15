@@ -16,3 +16,4 @@ sops-age-key.txt
 operator-se.txt
 sbom/
 images.txt
+ansible/known_hosts

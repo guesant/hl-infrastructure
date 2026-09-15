@@ -21,6 +21,12 @@ Nenhum dos dois arquivos reais é rastreado pelo git; só os `.example` ficam ve
 
 ## Confira o acesso e veja o que vai mudar
 
+Antes do primeiro contato, fixe a host key do Pi. Confira as impressões digitais que o `ssh-keyscan` mostra contra as que o próprio Pi imprime no console (`ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub`) e só então grave o arquivo; o Ansible usa `StrictHostKeyChecking=yes` contra ele e recusa conectar sem ele:
+
+```bash
+ssh-keyscan <IP do Pi> | tee ansible/known_hosts | ssh-keygen -lf -
+```
+
 ```bash
 just preflight
 just bootstrap-check

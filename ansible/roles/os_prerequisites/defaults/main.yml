@@ -1,0 +1,26 @@
+---
+os_prerequisites_disabled_units:
+  - avahi-daemon.socket
+  - avahi-daemon.service
+  - bluetooth.service
+  - cups.socket
+  - cups.service
+  - cups-browsed.service
+  - accounts-daemon.service
+  - udisks2.service
+  - wayvnc-control.service
+  - nfs-blkmap.service
+
+os_prerequisites_smart_device: /dev/sda
+os_prerequisites_smart_device_type: sntjmicron
+
+os_prerequisites_expected_manual_packages:
+  - curl
+  - ca-certificates
+  - smartmontools
+  - auditd
+  - fail2ban
+  - firewalld
+  - jq
+  - apparmor
+  - unattended-upgrades

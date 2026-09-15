@@ -8,6 +8,12 @@ Este runbook cobre a perda total do node: cartão SD corrompido, hardware trocad
 
 Na máquina do operador, `ansible/inventory.ini` e `ansible/group_vars/all/secrets.yml` continuam válidos se a máquina do operador sobreviveu; se não, recrie os dois a partir dos exemplos, com um segredo de webhook novo (o antigo está perdido junto com o cluster, e o webhook no GitHub precisa ser atualizado).
 
+Um node reinstalado tem host keys novas, e o `ansible/known_hosts` antigo faz o Ansible recusar a conexão, de propósito. Confira as impressões digitais novas no console do Pi e grave o arquivo de novo, como no [primeiro bootstrap](primeiro-bootstrap.md), antes de seguir:
+
+```bash
+ssh-keyscan <IP do Pi> | tee ansible/known_hosts | ssh-keygen -lf -
+```
+
 ```bash
 just preflight
 just bootstrap-check

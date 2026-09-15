@@ -5,3 +5,13 @@ After=k3s.service
 [Service]
 Type=oneshot
 ExecStart=/usr/local/sbin/hl-gc
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/var/log/journal /root/.kube /run/k3s /var/lib/rancher/k3s/agent/containerd
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes

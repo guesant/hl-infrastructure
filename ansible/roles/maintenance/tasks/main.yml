@@ -13,12 +13,14 @@
     group: root
     mode: "0755"
 
-- name: Cap the journal size so logs never fill the disk
+- name: Keep the journal on disk, capped so logs never fill it
   ansible.builtin.copy:
     dest: /etc/systemd/journald.conf.d/50-cap.conf
     content: |
       [Journal]
+      Storage=persistent
       SystemMaxUse=500M
+      SystemKeepFree=1G
       MaxRetentionSec=1month
     owner: root
     group: root
