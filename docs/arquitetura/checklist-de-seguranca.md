@@ -127,7 +127,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Acesso de pods à API de metadados de nuvem bloqueado | Não se aplica | Raspberry Pi, sem serviço de metadados | K8, SR |
 | `Secret` cifrado em repouso | Atende | `secrets-encryption` ligado pela role `k3s`, com recifragem dos `Secret` que já existiam; a chave fica só no node | K8, SR, SE |
 | Nada confidencial em `ConfigMap` | Atende | As credenciais do blog saíram do `ConfigMap` para o `SopsSecret` `app-secret` | K8 |
-| `Secret` montado como volume em vez de variável de ambiente | Não atende | O blog recebe credenciais por `envFrom` | SE |
+| `Secret` montado como volume em vez de variável de ambiente | Atende | As credenciais do blog chegam como arquivos em `/secrets/app`, lidos pelo `AddKeyPerFile` do ASP.NET, com modo 0440 e `fsGroup` do usuário do app; nenhuma aparece no ambiente do processo | SE |
 | Datastore isolado, com TLS e acesso só do API server | Atende | k3s com sqlite local, sem porta de rede | SR, SE |
 | Backup do datastore, cifrado, fora do node e com restauração testada | Não atende | Nenhum snapshot; a reconstrução parte do git e perde o que só existia no cluster | SE |
 | Audit log do API server ligado, com política e rotação | Atende | `audit-policy.yaml`, `audit-log-maxage=30`, rotação por tamanho, arquivo com modo 600 | K8, SR, SE |

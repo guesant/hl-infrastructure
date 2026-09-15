@@ -21,13 +21,14 @@ application:
       config:
         type: configmap
         nameSuffix: config
-      secret:
-        type: secret
-        nameSuffix: secret
     volumes:
       db-credentials:
         secret:
           secretName: postgres-app
+      app-secret:
+        secret:
+          secretName: app-secret
+          defaultMode: 0440
       public-assets:
         emptyDir: {}
       resume-cache:
@@ -37,6 +38,9 @@ application:
     volumeMounts:
       db-credentials:
         mountPath: /secrets/db
+        readOnly: true
+      app-secret:
+        mountPath: /secrets/app
         readOnly: true
       public-assets:
         mountPath: /data/public
@@ -64,6 +68,7 @@ application:
     securityContext:
       runAsNonRoot: true
       runAsUser: 1654
+      fsGroup: 1654
     containerSecurityContext:
       readOnlyRootFilesystem: true
       runAsNonRoot: true
