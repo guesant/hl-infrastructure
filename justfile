@@ -118,6 +118,10 @@ lint-docs: (_build "shell")
         --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-doc-drift.sh
     {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-roles-documented.sh
 
+[doc("Fail when a namespace created by an Application has no Pod Security enforce label")]
+lint-pod-security: (_build "shell")
+    {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-namespace-pod-security.sh
+
 [doc("Generate a new DR age keypair; the private half goes only into Bitwarden, never to disk")]
 age-keygen: (_build-ops)
     {{run}} --entrypoint age-keygen {{ops_image}}
@@ -264,4 +268,4 @@ docs-serve:
         sh -c "pip install --quiet -r docs/requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000 --config-file .config/mkdocs.yml"
 
 [doc("Every check the CI runs, in order")]
-check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-placeholders lint-secret-age lint-docs lint-spelling security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-helm-lint docs-build
+check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-placeholders lint-secret-age lint-docs lint-pod-security lint-spelling security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-helm-lint docs-build
