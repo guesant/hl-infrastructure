@@ -1,5 +1,8 @@
 application:
   applicationName: cloudflared
+  rbac:
+    serviceAccount:
+      create: true
   deployment:
     replicas: 1
     reloadOnChange: false
@@ -29,7 +32,7 @@ application:
         cpu: 200m
         memory: 128Mi
     containerSecurityContext:
-      readOnlyRootFilesystem: false
+      readOnlyRootFilesystem: true
       runAsNonRoot: true
       allowPrivilegeEscalation: false
       capabilities:

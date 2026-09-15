@@ -1,4 +1,16 @@
 sops-secrets-operator:
+  securityContext:
+    enabled: true
+    seccompProfileType: RuntimeDefault
+    container:
+      enabled: true
+      customContainerSecurityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        capabilities:
+          drop:
+            - ALL
   secretsAsFiles:
     - name: sops-age-key
       mountPath: /etc/sops-age-keys

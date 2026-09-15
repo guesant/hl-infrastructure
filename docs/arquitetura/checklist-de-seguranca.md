@@ -109,23 +109,23 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Nenhum binding para `system:unauthenticated` além do mínimo | Atende | Só o `system:public-info-viewer` padrão, que expõe versão e saúde | KA |
 | RBAC com privilégio mínimo e sem conceder criação de roles | Parcial | Os satélites não criam `ClusterRole`, mas o Argo CD, o sops-secrets-operator e os componentes do k3s têm papéis amplos por natureza, e não há revisão periódica | K8, KA, SR, SE |
 | `system:masters` só no bootstrap | Parcial | O kubeconfig do operador é o de administrador do k3s; não há usuário nominal com permissão menor | K8 |
-| Kubeconfig com leitura restrita | Parcial | Na máquina do operador fica fora do git; no node, `write-kubeconfig-mode` deixa `/etc/rancher/k3s/k3s.yaml` com modo 644, legível por qualquer usuário local | SR |
+| Kubeconfig com leitura restrita | Atende | Na máquina do operador fica fora do git, com modo 600; no node, `write-kubeconfig-mode: "0600"` deixa `/etc/rancher/k3s/k3s.yaml` legível só pelo root | SR |
 | Plugins de admissão recomendados, incluindo `NodeRestriction` | Atende | `NodeRestriction` ligado, junto com os padrões do k3s | K8 |
 | Pod Security Standards aplicados em todo namespace | Não atende | Nenhum namespace tem os labels `pod-security.kubernetes.io/*` | K8, KA, SR, SE |
 | Motor de políticas na admissão (Kyverno, Gatekeeper, ValidatingAdmissionPolicy) | Não atende | As regras só existem como gate de CI sobre os charts renderizados | SE, MD, PL, CP |
-| Contêiner sem privilégio, sem escalada, com capabilities removidas | Atende | Todos os pods de `argocd`, `blog`, `cert-manager` e `cnpg-system` rodam `runAsNonRoot` com `drop: ALL`; o sops-secrets-operator é a exceção | KA, SR, SE |
-| Perfil seccomp `RuntimeDefault` | Parcial | Presente em todos os pods, menos no sops-secrets-operator | K8, KA, SE |
-| Sistema de arquivos raiz somente leitura | Parcial | Sim no Argo CD, cert-manager, CNPG e Postgres; não no app do blog, no cloudflared e no sops-secrets-operator | KA, SR, SE |
+| Contêiner sem privilégio, sem escalada, com capabilities removidas | Atende | Todos os pods de `argocd`, `blog`, `cert-manager`, `cnpg-system` e `sops` rodam `runAsNonRoot` com `drop: ALL` e sem escalada | KA, SR, SE |
+| Perfil seccomp `RuntimeDefault` | Atende | Presente em todos os pods, inclusive no sops-secrets-operator depois de ligar o `securityContext` do chart | K8, KA, SE |
+| Sistema de arquivos raiz somente leitura | Atende | Em todos os pods de `argocd`, `blog`, `cert-manager`, `cnpg-system` e `sops`; o app do blog escreve só em `emptyDir` | KA, SR, SE |
 | AppArmor ou SELinux nos contêineres | Parcial | AppArmor ligado no node, com o perfil padrão do containerd; nenhum perfil próprio por workload | K8, KA, SE |
-| Token de ServiceAccount só onde o pod usa a API | Não atende | O app do blog e o cloudflared usam a ServiceAccount `default` com montagem automática, sem precisar da API | K8, KA, SR, SE |
-| ServiceAccount própria por workload | Parcial | Os operadores têm a sua; o blog e o cloudflared usam `default` | KA, SE |
+| Token de ServiceAccount só onde o pod usa a API | Atende | O chart do blog e do cloudflared já renderiza `automountServiceAccountToken: false`, e os pods não têm o volume `kube-api-access` | K8, KA, SR, SE |
+| ServiceAccount própria por workload | Atende | Os operadores têm a sua, e o blog e o cloudflared passaram a criar a própria em vez de usar `default` | KA, SE |
 | Plugin de rede com suporte a NetworkPolicy | Atende | Cilium com `enable-policy: always` | K8, SR, SE |
 | `default-deny` de entrada e saída, liberando só o necessário | Parcial | Declarado no namespace `blog`, mas o Cilium roda com `policyAuditMode: true` e só registra, sem bloquear; os outros namespaces não têm política | K8, KA, SR, SE |
 | Tráfego entre pods cifrado | Não atende | Sem WireGuard nem IPsec no Cilium; num nó só o tráfego não sai da máquina | K8, SE, MD |
 | Saída e DNS controlados contra vazamento de dados | Não atende | Nenhuma política de egress aplicada | SE |
 | `LoadBalancer`, `NodePort` e `externalIPs` restritos | Atende | Só há `Service` `ClusterIP`; Traefik e ServiceLB desligados pela role `k3s` | K8 |
 | Acesso de pods à API de metadados de nuvem bloqueado | Não se aplica | Raspberry Pi, sem serviço de metadados | K8, SR |
-| `Secret` cifrado em repouso | Não atende | `k3s secrets-encrypt status` informa desligado; os valores ficam em claro no `state.db` do node | K8, SR, SE |
+| `Secret` cifrado em repouso | Atende | `secrets-encryption` ligado pela role `k3s`, com recifragem dos `Secret` que já existiam; a chave fica só no node | K8, SR, SE |
 | Nada confidencial em `ConfigMap` | Atende | As credenciais do blog saíram do `ConfigMap` para o `SopsSecret` `app-secret` | K8 |
 | `Secret` montado como volume em vez de variável de ambiente | Não atende | O blog recebe credenciais por `envFrom` | SE |
 | Datastore isolado, com TLS e acesso só do API server | Atende | k3s com sqlite local, sem porta de rede | SR, SE |
@@ -168,7 +168,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Root sem login por SSH | Recusado | `PermitRootLogin prohibit-password`: o Ansible entra como root por chave; trocar por um usuário com `sudo` é possível, mas não muda o que a chave permite | PS |
 | Limite de tentativas e banimento de quem insiste | Atende | `MaxAuthTries 3` e `fail2ban` com a jail `sshd` | PS, AC |
 | SSH fora da porta 22 e com lista de usuários permitidos | Não atende | Porta 22 e sem `AllowUsers`; o firewall e o fail2ban são a barreira hoje | PS |
-| Firewall ligado, só com o necessário exposto | Parcial | firewalld só libera SSH e 6443 na zona pública, mas o `rpcbind` está habilitado e escutando em todas as interfaces sem uso | PS |
+| Firewall ligado, só com o necessário exposto | Atende | firewalld só libera SSH e 6443 na zona pública, e o `rpcbind`, que escutava em todas as interfaces sem uso, fica parado e mascarado pela role `os_prerequisites` | PS |
 | Atualizações de segurança automáticas | Atende | `unattended-upgrades` habilitado | AC, PS |
 | MAC aplicando perfis | Parcial | AppArmor ligado, com parte dos perfis em modo `complain` | TS, PS |
 | Auditoria de chamadas de sistema | Atende | `auditd` ativo com regras da role `auditd` | TS |

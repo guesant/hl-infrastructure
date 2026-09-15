@@ -1,5 +1,8 @@
 application:
   applicationName: app
+  rbac:
+    serviceAccount:
+      create: true
   deployment:
     replicas: 1
     reloadOnChange: false
@@ -29,6 +32,8 @@ application:
         emptyDir: {}
       resume-cache:
         emptyDir: {}
+      tmp:
+        emptyDir: {}
     volumeMounts:
       db-credentials:
         mountPath: /secrets/db
@@ -37,6 +42,8 @@ application:
         mountPath: /data/public
       resume-cache:
         mountPath: /data/resume-cache
+      tmp:
+        mountPath: /tmp
     livenessProbe:
       enabled: true
       httpGet:
@@ -58,7 +65,7 @@ application:
       runAsNonRoot: true
       runAsUser: 1654
     containerSecurityContext:
-      readOnlyRootFilesystem: false
+      readOnlyRootFilesystem: true
       runAsNonRoot: true
       allowPrivilegeEscalation: false
       capabilities:
