@@ -8,6 +8,7 @@ k3s_version := `grep -oE 'k3s_version:\s*v[0-9.]+' ansible/group_vars/all/versio
 opentofu_version := "1.12.6"
 tofu_image := "ghcr.io/opentofu/opentofu:" + opentofu_version
 sops_identity := home_dir() / ".config/hl-infrastructure/sops/operator-se.txt"
+ansible_env := "ANSIBLE_CONFIG=" + quote(justfile_directory() / "ansible/ansible.cfg")
 tools_hash := `shasum -a 256 .tools/docker/Dockerfile | cut -c1-12`
 helm_image := "hl-infra/helm:" + tools_hash + "-" + helm_version
 ops_image := "hl-infra/ops:" + tools_hash + "-" + k3s_version
@@ -20,33 +21,33 @@ default:
 
 [doc("Check access to the node and the assumptions the roles make")]
 preflight *args: _require-host-sops
-    SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/preflight.yml {{args}}
+    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/preflight.yml {{args}}
 
 [doc("Dry-run the whole bootstrap with --check --diff, applying charts as server dry-runs")]
 bootstrap-check *args: (preflight args)
     ansible-galaxy collection install -r ansible/requirements.yml
-    SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/site.yml --check --diff {{args}}
+    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/site.yml --check --diff {{args}}
 
 [doc("Run the whole Ansible bootstrap against the inventory")]
 [confirm("This applies every role to the node in ansible/inventory.ini. Continue?")]
 bootstrap *args: (preflight args)
     ansible-galaxy collection install -r ansible/requirements.yml
-    SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/site.yml {{args}}
+    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/site.yml {{args}}
 
 [doc("Rotate every k3s certificate and refresh the local kubeconfig")]
 [confirm("This stops k3s for a few seconds and invalidates the current kubeconfig. Continue?")]
 rotate-certs *args: _require-host-sops
-    SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/rotate-certs.yml {{args}}
+    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/rotate-certs.yml {{args}}
 
 [doc("Rotate the k3s node join token and restart k3s")]
 [confirm("This restarts k3s. Continue?")]
 rotate-token *args: _require-host-sops
-    SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/rotate-token.yml {{args}}
+    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/rotate-token.yml {{args}}
 
 [doc("Add a new age identity on the node and restart the operator; pass -e sops_age_key_prune=true to drop old ones")]
 [confirm("This changes the node's age identities and restarts sops-secrets-operator. Continue?")]
 rotate-age-key *args: _require-host-sops
-    SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/rotate-age-key.yml {{args}}
+    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/rotate-age-key.yml {{args}}
 
 [doc("Print the KUBECONFIG export for the fetched kubeconfig")]
 kubeconfig:
@@ -247,10 +248,6 @@ security-trivy-images: infra-render-charts (_build "shell") (_build "trivy")
 [doc("commitlint over the commits between two refs, by default the unpushed ones")]
 lint-commits from="origin/main" to="HEAD": (_build "commitlint")
     COMMITLINT_IMAGE=hl-infra/commitlint:{{tools_hash}} .tools/lint-commits.sh {{from}} {{to}}
-
-[doc("Copy the node k3s token into ansible/recovery/k3s-token.sops.env, encrypted, for disaster recovery")]
-k3s-token-escrow: _require-host-sops
-    .tools/k3s-token-escrow.sh
 
 [doc("Point git at the versioned hooks in .githooks")]
 hooks:
