@@ -112,7 +112,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Kubeconfig com leitura restrita | Atende | Na máquina do operador fica fora do git, com modo 600; no node, `write-kubeconfig-mode: "0600"` deixa `/etc/rancher/k3s/k3s.yaml` legível só pelo root | SR |
 | Plugins de admissão recomendados, incluindo `NodeRestriction` | Atende | `NodeRestriction` ligado, junto com os padrões do k3s | K8 |
 | Pod Security Standards aplicados em todo namespace | Atende | `enforce`, `warn` e `audit` `restricted` em `blog`, `argocd`, `cert-manager`, `cnpg-system` e `sops`, por `managedNamespaceMetadata` nos operadores, por um manifesto `Namespace` no projeto `infra` para o `blog` e pela role `argocd`; `kube-system` fica sem enforce porque o Cilium e o k3s precisam de privilégio; o job `pod-security` exige o label em todo namespace novo | K8, KA, SR, SE |
-| Motor de políticas na admissão (Kyverno, Gatekeeper, ValidatingAdmissionPolicy) | Não atende | As regras só existem como gate de CI sobre os charts renderizados | SE, MD, PL, CP |
+| Motor de políticas na admissão (Kyverno, Gatekeeper, ValidatingAdmissionPolicy) | Atende | `ValidatingAdmissionPolicy` nativas, sem controller extra, em `argocd/apps/platform/admission-policies`: todo pod fora do `kube-system` precisa de imagem por digest, de registry na lista permitida e de `allowPrivilegeEscalation: false`, `runAsNonRoot` e `drop: ALL`, com `Deny` | SE, MD, PL, CP |
 | Contêiner sem privilégio, sem escalada, com capabilities removidas | Atende | Todos os pods de `argocd`, `blog`, `cert-manager`, `cnpg-system` e `sops` rodam `runAsNonRoot` com `drop: ALL` e sem escalada | KA, SR, SE |
 | Perfil seccomp `RuntimeDefault` | Atende | Presente em todos os pods, inclusive no sops-secrets-operator depois de ligar o `securityContext` do chart | K8, KA, SE |
 | Sistema de arquivos raiz somente leitura | Atende | Em todos os pods de `argocd`, `blog`, `cert-manager`, `cnpg-system` e `sops`; o app do blog escreve só em `emptyDir` | KA, SR, SE |
@@ -121,7 +121,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | ServiceAccount própria por workload | Atende | Os operadores têm a sua, e o blog e o cloudflared passaram a criar a própria em vez de usar `default` | KA, SE |
 | Plugin de rede com suporte a NetworkPolicy | Atende | Cilium com `enable-policy: always` | K8, SR, SE |
 | `default-deny` de entrada e saída, liberando só o necessário | Parcial | O Cilium já nega tudo por padrão (`enable-policy: always`) e cada namespace tem uma `CiliumNetworkPolicy` com o que usa, mas `policyAuditMode: true` continua ligado: a virada para bloquear espera o Hubble ficar sem veredictos `AUDIT` | K8, KA, SR, SE |
-| Tráfego entre pods cifrado | Não atende | Sem WireGuard nem IPsec no Cilium; num nó só o tráfego não sai da máquina | K8, SE, MD |
+| Tráfego entre pods cifrado | Atende | Cilium com `encryption.type: wireguard`; num nó só o ganho é pequeno, mas um segundo node já nasce com o tráfego entre eles cifrado | K8, SE, MD |
 | Saída e DNS controlados contra vazamento de dados | Parcial | Cada namespace só sai para o CoreDNS, para o API server e para as portas externas de que precisa (443 no Argo CD e no app do blog, 7844 e 443 no cloudflared); vale de verdade quando o modo auditoria for desligado | SE |
 | `LoadBalancer`, `NodePort` e `externalIPs` restritos | Atende | Só há `Service` `ClusterIP`; Traefik e ServiceLB desligados pela role `k3s` | K8 |
 | Acesso de pods à API de metadados de nuvem bloqueado | Não se aplica | Raspberry Pi, sem serviço de metadados | K8, SR |
@@ -135,12 +135,12 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Detecção em runtime (Falco, Tetragon) | Não atende | Hubble está ligado, mas só como observação | SE, SR |
 | `requests` e `limits` de memória nos workloads | Atende | Blog, Postgres, Argo CD, cert-manager, CNPG, sops-secrets-operator, Image Updater e Cilium com `requests` e limite de memória; CoreDNS, metrics-server e local-path-provisioner são addons do k3s e ficam com os valores dele | K8, KA, SR, SE |
 | Imagem sem conteúdo desnecessário e com usuário sem privilégio | Parcial | O blog roda com UID 1654 e sem root; o conteúdo da imagem é responsabilidade do repositório do blog | K8, SR |
-| Imagem referenciada por digest ou assinatura verificada | Parcial | Argo CD, dex, operadores, Cilium, cloudflared e Postgres por digest, mantido pelo Renovate; o blog por tag `sha-<commit>`, o redis do Argo CD e os addons do k3s por tag; nenhuma assinatura verificada | K8, SE |
+| Imagem referenciada por digest ou assinatura verificada | Atende | Tudo fora do `kube-system` por digest, imposto na admissão; o blog promovido pelo Image Updater com `updateStrategy: digest`; o `kube-system` fica de fora por causa do CoreDNS e do local-path-provisioner embutidos no k3s, que o k3s atualiza junto do binário | CP, K8 |
 | Varredura de imagens no build e no deploy | Atende | O blog varre a própria imagem no build, e o job `trivy-images` varre toda imagem implantada, falhando em CVE crítica com correção fora do `.trivyignore.yaml` com prazo | K8, KA, SR, SE |
 | SBOM e atestados de proveniência | Parcial | O job `trivy-images` gera um SBOM CycloneDX por imagem implantada; ainda não há assinatura nem atestado de proveniência | SE |
 | Isolamento de workloads sensíveis por nó ou runtime isolado | Não se aplica | Um nó só; gVisor e Kata não compensam no Raspberry Pi | K8, SR, SE, MD |
 | Namespaces separados por função | Atende | Um por operador, um para o Argo CD e um para o blog | SR, SE, MD |
-| Benchmark CIS periódico (kube-bench) | Parcial | `CronJob` semanal com o perfil `k3s-cis-1.9`, só nas checagens de `policies`; as de master e node dependem de `journalctl` e dos argumentos do processo `k3s`, que um pod não enxerga, e ficam para uma execução no próprio node; a primeira execução apontou curingas em roles de operadores, a ServiceAccount `default` em uso pelo `argocd-redis` e tokens montados onde não são usados; o resumo no Discord entra junto com os alertas | SR, SE |
+| Benchmark CIS periódico (kube-bench) | Atende | `CronJob` semanal no cluster para as checagens de `policies` e timer semanal no host (role `kube_bench`) para master, etcd, control plane e node, com relatório JSON em `/var/lib/kube-bench`; o resumo no Discord espera o webhook | K8, KB |
 | Correções de segurança aplicadas logo | Parcial | Renovate propõe versões novas de k3s e charts, mas o k3s só muda com um novo `bootstrap` manual | SR, SE |
 
 ## OpenTofu

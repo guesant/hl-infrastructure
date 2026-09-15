@@ -1,0 +1,4 @@
+apiVersion: v2
+name: admission-policies
+description: ValidatingAdmissionPolicies requiring digests, an allowed registry and a hardened securityContext on every pod outside kube-system
+version: 0.1.0
