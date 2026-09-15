@@ -10,8 +10,8 @@ exclude_paths:
   - rendered/
   - site/
   - .kubeconform-cache/
-  - ansible/group_vars/all/secrets.yml
   - ansible/group_vars/all/secrets.sops.yaml
+  - ansible/group_vars/all/authorized_keys.yml
 
 kinds:
   - playbook: ansible/site.yml
