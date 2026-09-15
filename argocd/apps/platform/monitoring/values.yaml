@@ -1,0 +1,120 @@
+kube-prometheus-stack:
+  fullnameOverride: kps
+  grafana:
+    enabled: false
+  kubeEtcd:
+    enabled: false
+  kubeControllerManager:
+    enabled: false
+  kubeScheduler:
+    enabled: false
+  kubeProxy:
+    enabled: false
+  coreDns:
+    enabled: false
+  defaultRules:
+    rules:
+      etcd: false
+      kubeControllerManager: false
+      kubeSchedulerAlerting: false
+      kubeSchedulerRecording: false
+      kubeProxy: false
+      windows: false
+
+  prometheusOperator:
+    admissionWebhooks:
+      enabled: false
+      patch:
+        enabled: false
+    tls:
+      enabled: false
+    image:
+      sha: cf153f64d6c38113fceb2cda7642365ea887f71edd7888f054e43e54cf177e55
+    prometheusConfigReloader:
+      image:
+        sha: 142a1f11df8dd165f00375b0b1826aecb9c9adeb05c39855893138d7c7575ff7
+    resources:
+      requests:
+        cpu: 20m
+        memory: 64Mi
+      limits:
+        memory: 128Mi
+
+  prometheus:
+    prometheusSpec:
+      image:
+        sha: 50c707e96da5ade383cb1707790576480485e93de06aa60ad8802cb5f744bd0a
+      retention: 15d
+      retentionSize: 6GB
+      serviceMonitorSelectorNilUsesHelmValues: false
+      podMonitorSelectorNilUsesHelmValues: false
+      probeSelectorNilUsesHelmValues: false
+      ruleSelectorNilUsesHelmValues: false
+      resources:
+        requests:
+          cpu: 100m
+          memory: 512Mi
+        limits:
+          memory: 1Gi
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            accessModes: [ReadWriteOnce]
+            resources:
+              requests:
+                storage: 8Gi
+
+  alertmanager:
+    alertmanagerSpec:
+      image:
+        sha: 690c7b525f4367aa91f73e2f91c632206d32e97c6384bdbf2fb7a861b420340d
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          memory: 64Mi
+
+  kube-state-metrics:
+    image:
+      sha: sha256:42cfe3723a5f058171c627537fb57a3ea0f26e4380fa18555a95cb1a1b4cfc5b
+    resources:
+      requests:
+        cpu: 10m
+        memory: 48Mi
+      limits:
+        memory: 128Mi
+
+  prometheus-node-exporter:
+    image:
+      digest: sha256:8c9bac11973b94b59be88d6e11fee4429aa743c8846cdc75d65b18db33f6a106
+    hostPID: false
+    daemonsetAnnotations:
+      ignore-check.kube-linter.io/host-network: node-exporter reads the host network interfaces
+      ignore-check.kube-linter.io/sensitive-host-mounts: node-exporter reads the host filesystems read-only
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+    resources:
+      requests:
+        cpu: 10m
+        memory: 24Mi
+      limits:
+        memory: 64Mi
+
+prometheus-blackbox-exporter:
+  fullnameOverride: blackbox-exporter
+  image:
+    digest: sha256:e753ff9f3fc458d02cca5eddab5a77e1c175eee484a8925ac7d524f04366c2fc
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  resources:
+    requests:
+      cpu: 10m
+      memory: 24Mi
+    limits:
+      memory: 64Mi

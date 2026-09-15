@@ -185,7 +185,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 
 | Recomendação | Status | Situação aqui | Fontes |
 | --- | --- | --- | --- |
-| Logs centralizados e alertas de atividade anômala | Não atende | Não há métricas, logs centralizados nem alertas; é a lacuna que o [mapa de controles](mapa-de-controles.md) já aponta | LU, AC, PL, CP |
+| Logs centralizados e alertas de atividade anômala | Parcial | Prometheus e Alertmanager com alertas de host, de cluster e dos endpoints públicos por blackbox; faltam logs centralizados e a entrega dos alertas, que espera o webhook do Discord | LU, AC, PL, CP |
 | Detecção de intrusão ou de comportamento em runtime | Não atende | Hubble observa o tráfego, mas nada alerta sobre ele | LU, SR |
 | Monitoramento de expiração de certificado e de domínio | Atende | O TLS público é da Cloudflare e renova sozinho, e o job `domain-expiry` consulta o RDAP e falha na execução agendada a trinta dias do vencimento | AC |
 | Backup de tudo que é crítico, com restauração testada | Não atende | O Postgres do blog não tem backup desde a remoção do barman; só `.sops.yaml` e o state têm cópia, no git | AC, CP |
@@ -198,6 +198,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | --- | --- | --- | --- |
 | Responsabilidades e processo de mudança escritos | Atende | [Metodologia de mudança](../operacional/metodologia-de-mudanca.md) e o [checklist operacional](../operacional/checklist.md) | CN, LU |
 | Modelo de ameaças explícito | Atende | [Modelo de ameaças](modelo-de-ameacas.md) | LU, DO |
+| Mudança de manifesto revisada antes do merge | Atende | Job `manifest-diff` publica em todo PR o diff renderizado entre base e cabeça; substitui o `argocd app diff`, que exigiria expor a API do Argo CD | CN |
 | Revisão periódica de permissões e de exposição | Atende | Roteiro em [revisão periódica](../operacional/revisao-periodica.md), última em 2026-09-15, prazo de 90 dias em `.config/security-review.conf`, cobrado pelo job `secret-age` | LU, AC |
 | Teste de invasão e bug bounty | Não se aplica | Fora da escala de um homelab; o relato privado de vulnerabilidade cobre o canal de entrada | LU, AC |
 | Conformidade com normas (SOC 2, ISO 27001, GDPR, HIPAA) | Não se aplica | Nenhum dado regulado nem cliente | RG, TG, AC |

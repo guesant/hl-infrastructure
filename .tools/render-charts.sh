@@ -47,6 +47,10 @@ helm template sops-secrets-operator "$repo_root/argocd/apps/operators/sops-secre
   --values "$repo_root/argocd/apps/operators/sops-secrets-operator/values.yaml" \
   --include-crds >"$out_dir/sops-secrets-operator.yaml"
 
+helm template monitoring "$repo_root/argocd/apps/platform/monitoring" \
+  --namespace monitoring \
+  --include-crds >"$out_dir/monitoring.yaml"
+
 sed 's/{{ ansible_host }}/10.0.0.1/' "$repo_root/ansible/roles/cilium/templates/values.yaml.j2" >"$out_dir/.cilium-values.yaml"
 helm template cilium cilium/cilium \
   --version "$cilium_version" \
@@ -55,4 +59,4 @@ helm template cilium cilium/cilium \
   --include-crds >"$out_dir/cilium.yaml"
 rm "$out_dir/.cilium-values.yaml"
 
-echo "rendered 6 charts into $out_dir"
+echo "rendered 7 charts into $out_dir"

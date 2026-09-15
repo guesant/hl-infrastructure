@@ -4,7 +4,8 @@ vulnerabilities:
       - usr/local/bin/gomplate
       - usr/local/bin/kustomize
       - usr/local/bin/git-lfs
-    statement: Go stdlib in binaries shipped by the upstream dex and argocd images; waiting for the Argo CD chart to ship rebuilt images
+      - bin/blackbox_exporter
+    statement: Go stdlib in the upstream dex, argocd and blackbox-exporter images (a TLS client of public probes only); waiting for rebuilt releases
     expired_at: 2026-10-15
   - id: CVE-2026-31789
     statement: OpenSSL in the upstream dex image (alpine 3.23.3); waiting for the Argo CD chart to ship a rebuilt dex

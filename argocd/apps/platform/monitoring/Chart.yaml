@@ -1,0 +1,11 @@
+apiVersion: v2
+name: monitoring
+description: Prometheus, Alertmanager, node-exporter, kube-state-metrics and blackbox probes for the node, the cluster and the public endpoints
+version: 0.1.0
+dependencies:
+  - name: kube-prometheus-stack
+    version: 91.4.0
+    repository: oci://ghcr.io/prometheus-community/charts
+  - name: prometheus-blackbox-exporter
+    version: 11.18.0
+    repository: oci://ghcr.io/prometheus-community/charts

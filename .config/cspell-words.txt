@@ -84,3 +84,5 @@ udisks
 wayvnc
 syscalls
 smartd
+blackbox
+prometheus
