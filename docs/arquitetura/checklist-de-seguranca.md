@@ -62,7 +62,7 @@ Cada linha junta recomendações equivalentes de fontes diferentes numa frase s�
 | Recomendação | Status | Situação aqui | Fontes |
 | --- | --- | --- | --- |
 | Pipeline versionada e tratada com o mesmo cuidado do produto | Atende | Workflows no git, `permissions` mínimas, sem `persist-credentials`, auditados por `actionlint` e `zizmor` | AC, CP |
-| Actions, imagens e binários pinados | Parcial | Actions por SHA, charts e binários por versão com checksum; os `FROM` do Dockerfile de ferramentas e o `pip install` do workflow `docs` não usam hash, e o Scorecard aponta isso | HC, PL |
+| Actions, imagens e binários pinados | Atende | Actions por SHA, charts e binários por versão com checksum, `FROM` do Dockerfile de ferramentas por digest mantido pelo Renovate, e `pip install --require-hashes` no workflow `docs` a partir de `docs/requirements.in` | HC, PL |
 | Atualização contínua de dependências vulneráveis | Atende | Renovate com sete dias de carência e `osv-scanner` na CI | AC, LU, PL |
 | Varredura de dependências e imagens, bloqueando achados graves | Atende | `osv-scanner`, `trivy-fs` e `trivy config` no `gate` | PL, LU, AC |
 | Lint e análise estática dos manifestos e da IaC | Atende | `kubeconform`, `kube-linter`, `checkov`, `trivy config`, `ansible-lint`, `tofu validate` | PL, CP |
