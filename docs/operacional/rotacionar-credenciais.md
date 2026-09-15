@@ -1,6 +1,6 @@
 # Rotacionar credenciais
 
-Cinco credenciais têm rotina de rotação própria. Três vivem no node, cada uma num playbook separado de `site.yml`: duas do k3s, que interrompem o cluster por alguns segundos, e a chave age do sops-secrets-operator, que não interrompe nada mas precisa do passo extra de resincronizar `.sops.yaml`. Duas vivem na Cloudflare: o token do túnel do blog e o API token que o OpenTofu usa. Nenhuma delas deve mudar como efeito colateral de um bootstrap ou de um `apply`.
+Cada credencial abaixo tem rotina de rotação própria. Três vivem no node, cada uma num playbook separado de `site.yml`: duas do k3s, que interrompem o cluster por alguns segundos, e a chave age do sops-secrets-operator, que não interrompe nada mas precisa do passo extra de resincronizar `.sops.yaml`. Duas vivem na Cloudflare: o token do túnel do blog e o API token que o OpenTofu usa. Nenhuma delas deve mudar como efeito colateral de um bootstrap ou de um `apply`.
 
 ## Certificados
 
@@ -68,6 +68,21 @@ just tofu-state-passphrase --finish-rotation
 ```
 
 Remova o `fallback` e a variável de cada módulo e commite os states regravados junto com o arquivo cifrado.
+
+## Segredo do webhook do GitHub
+
+O segredo que o GitHub usa para assinar os eventos de push enviados ao Argo CD mora cifrado em `ansible/group_vars/all/secrets.sops.yaml`, em `argocd_github_webhook_secret`, e existe em mais dois lugares: no `argocd-secret`, na chave `webhook.github.secret`, e na configuração do webhook do repositório no GitHub. Os três precisam bater. Enquanto não batem, o Argo recusa a assinatura e volta a descobrir commits só pelo polling de três minutos, sem quebrar nada.
+
+Gere o valor e grave-o sem que ele passe pela tela nem pela linha de comando:
+
+```bash
+new="$(openssl rand -hex 32)"
+printf '"%s"' "$new" | SOPS_AGE_KEY_FILE=~/.config/hl-infrastructure/sops/operator-se.txt sops set --value-stdin ansible/group_vars/all/secrets.sops.yaml '["argocd_github_webhook_secret"]'
+printf '{"config":{"url":"https://ops.guesant.net/api/webhook","content_type":"json","insecure_ssl":"0","secret":"%s"}}' "$new" | gh api -X PATCH repos/guesant/hl-infrastructure/hooks/<id> --input -
+unset new
+```
+
+O id do webhook sai de `gh api repos/guesant/hl-infrastructure/hooks`. Depois, `just bootstrap` grava o valor novo no `argocd-secret`: a role `argocd` compara o que está no cluster com o valor cifrado e só reaplica quando os dois diferem, e o `argocd-server` lê a mudança sem reiniciar. Por fim, confira em `gh api repos/guesant/hl-infrastructure/hooks/<id>/deliveries` que a entrega seguinte de `push` voltou com status 200. Commite o `secrets.sops.yaml`.
 
 ## Prazos de rotação
 

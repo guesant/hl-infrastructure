@@ -124,11 +124,12 @@
       changed_when: false
       failed_when: false
       check_mode: false
+      no_log: true
 
     - name: Patch the GitHub webhook secret into argocd-secret
       ansible.builtin.command: >-
         k3s kubectl -n argocd patch secret argocd-secret --type merge
         -p '{"stringData":{"webhook.github.secret":"{{ argocd_github_webhook_secret }}"}}'
-      when: argocd_webhook_secret_check.stdout | length == 0
+      when: argocd_webhook_secret_check.stdout != (argocd_github_webhook_secret | b64encode)
       changed_when: true
       no_log: true
