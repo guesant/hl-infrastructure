@@ -39,6 +39,11 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | Manifestos | Postura NSA e MITRE | A nota do kubescape não pode cair abaixo do piso registrado | job `kubescape` com `--compliance-threshold` |
 | Repositório | Convenção de commit | Todo commit segue o formato do CONTRIBUTING, na CI e antes do commit | job `commitlint`, `.githooks/commit-msg` |
 | Domínio | Expiração | O registro de `guesant.net` não vence sem aviso | job `domain-expiry` |
+| Node | Endurecimento de host | sysctls de kernel e rede, `/tmp` com `noexec`, SSH com `AllowGroups root` e validação antes de gravar, auditd ampliado, serviços de desktop desligados, journald persistente com teto | roles `sysctl_hardening`, `os_prerequisites`, `ssh_hardening`, `auditd`, `maintenance` |
+| Node | Saúde e drift | smartd vigiando o SSD, relatório de pacotes instalados à mão fora da linha de base | role `os_prerequisites`, `files/apt-manual-baseline.txt` |
+| Ansible | Identidade do node | Host key do Pi fixada, conexão recusada se divergir | `ansible/group_vars/all/connection.yml`, `ansible/known_hosts` |
+| Node | Recuperação | Token do k3s guardado cifrado | `node/k3s-token.sops.env`, `just k3s-token-escrow` |
+| Pods | Recursos | `requests` e limite de memória em todo componente de plataforma declarado aqui | values do Argo CD na role `argocd`, values dos operadores, values do Cilium |
 | Documentação | Fidelidade | Página cuja fonte mudou sem revisão falha a CI | `.tools/check-doc-drift.sh`, marcadores `source-of-trust` |
 
 ## O que este mapa não cobre

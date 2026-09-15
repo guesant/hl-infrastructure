@@ -240,6 +240,10 @@ security-trivy-images: infra-render-charts (_build "shell") (_build "trivy")
 lint-commits from="origin/main" to="HEAD": (_build "commitlint")
     COMMITLINT_IMAGE=hl-infra/commitlint:{{tools_hash}} .tools/lint-commits.sh {{from}} {{to}}
 
+[doc("Copy the node k3s token into node/k3s-token.sops.env, encrypted, for disaster recovery")]
+k3s-token-escrow: _require-host-sops
+    .tools/k3s-token-escrow.sh
+
 [doc("Point git at the versioned hooks in .githooks")]
 hooks:
     git config core.hooksPath .githooks

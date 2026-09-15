@@ -51,7 +51,7 @@ while IFS= read -r file; do
     status=1
   fi
   check_recipients "$file" "$(grep -E '^sops_age__list_[0-9]+__map_recipient=' "$file" | cut -d= -f2- | jq -R . | jq -sc sort)" || status=1
-done < <(find tofu -type f -name '*.sops.env')
+done < <(find tofu node -type f -name '*.sops.env' 2>/dev/null)
 
 if [ "$status" -eq 0 ]; then
   echo "every SOPS file is encrypted with the current recipients"

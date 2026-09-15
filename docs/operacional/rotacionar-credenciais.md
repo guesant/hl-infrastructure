@@ -16,7 +16,7 @@ Para o k3s, roda `k3s certificate rotate`, sobe de novo, espera o API server res
 just rotate-token
 ```
 
-Lê o token atual em `/var/lib/rancher/k3s/server/token`, gera um novo com `openssl rand`, roda `k3s token rotate` e reinicia o k3s. Num cluster de um nó só o token não é usado por ninguém depois da instalação, então rotacioná-lo custa só o restart; vale fazer se o node foi clonado ou se o token apareceu em algum log.
+Lê o token atual em `/var/lib/rancher/k3s/server/token`, gera um novo com `openssl rand`, roda `k3s token rotate` e reinicia o k3s. Num cluster de um nó só o token não é usado por ninguém depois da instalação, então rotacioná-lo custa só o restart; vale fazer se o node foi clonado ou se o token apareceu em algum log. Depois de rotacionar, rode `just k3s-token-escrow`, que busca o token novo por SSH e o grava cifrado em `node/k3s-token.sops.env`; sem isso, a cópia de recuperação fica com o token antigo.
 
 ## Chave age do node
 

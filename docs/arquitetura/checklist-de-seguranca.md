@@ -133,9 +133,9 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Audit log do API server ligado, com política e rotação | Atende | `audit-policy.yaml`, `audit-log-maxage=30`, rotação por tamanho, arquivo com modo 600 | K8, SR, SE |
 | Audit log e logs dos contêineres enviados para fora, imutáveis | Não atende | Tudo fica no disco do node | SR, SE |
 | Detecção em runtime (Falco, Tetragon) | Não atende | Hubble está ligado, mas só como observação | SE, SR |
-| `requests` e `limits` de memória nos workloads | Parcial | O blog e o Postgres têm, com `LimitRange` e `ResourceQuota` no namespace; vários pods de `argocd`, `cert-manager`, `kube-system` e `sops` não têm | K8, KA, SR, SE |
+| `requests` e `limits` de memória nos workloads | Atende | Blog, Postgres, Argo CD, cert-manager, CNPG, sops-secrets-operator, Image Updater e Cilium com `requests` e limite de memória; CoreDNS, metrics-server e local-path-provisioner são addons do k3s e ficam com os valores dele | K8, KA, SR, SE |
 | Imagem sem conteúdo desnecessário e com usuário sem privilégio | Parcial | O blog roda com UID 1654 e sem root; o conteúdo da imagem é responsabilidade do repositório do blog | K8, SR |
-| Imagem referenciada por digest ou assinatura verificada | Parcial | cloudflared e Postgres por digest; o blog por tag `sha-<commit>` imutável por convenção; os operadores por tag de versão | K8, SE |
+| Imagem referenciada por digest ou assinatura verificada | Parcial | Argo CD, dex, operadores, Cilium, cloudflared e Postgres por digest, mantido pelo Renovate; o blog por tag `sha-<commit>`, o redis do Argo CD e os addons do k3s por tag; nenhuma assinatura verificada | K8, SE |
 | Varredura de imagens no build e no deploy | Atende | O blog varre a própria imagem no build, e o job `trivy-images` varre toda imagem implantada, falhando em CVE crítica com correção fora do `.trivyignore.yaml` com prazo | K8, KA, SR, SE |
 | SBOM e atestados de proveniência | Parcial | O job `trivy-images` gera um SBOM CycloneDX por imagem implantada; ainda não há assinatura nem atestado de proveniência | SE |
 | Isolamento de workloads sensíveis por nó ou runtime isolado | Não se aplica | Um nó só; gVisor e Kata não compensam no Raspberry Pi | K8, SR, SE, MD |
@@ -167,13 +167,13 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | SSH só por chave, sem senha e sem login vazio | Atende | `PasswordAuthentication no`, `PermitEmptyPasswords no`, conferidos no `sshd -T` | PS, AC |
 | Root sem login por SSH | Recusado | `PermitRootLogin prohibit-password`: o Ansible entra como root por chave; trocar por um usuário com `sudo` é possível, mas não muda o que a chave permite | PS |
 | Limite de tentativas e banimento de quem insiste | Atende | `MaxAuthTries 3` e `fail2ban` com a jail `sshd` | PS, AC |
-| SSH fora da porta 22 e com lista de usuários permitidos | Não atende | Porta 22 e sem `AllowUsers`; o firewall e o fail2ban são a barreira hoje | PS |
+| SSH fora da porta 22 e com lista de usuários permitidos | Parcial | `AllowGroups root`, `LoginGraceTime 30` e `LogLevel VERBOSE`; a porta continua 22, e o acesso só a partir de origens conhecidas fica para a fase seguinte | PS |
 | Firewall ligado, só com o necessário exposto | Atende | firewalld só libera SSH e 6443 na zona pública, e o `rpcbind`, que escutava em todas as interfaces sem uso, fica parado e mascarado pela role `os_prerequisites` | PS |
 | Atualizações de segurança automáticas | Atende | `unattended-upgrades` habilitado | AC, PS |
 | MAC aplicando perfis | Parcial | AppArmor ligado, com parte dos perfis em modo `complain` | TS, PS |
-| Auditoria de chamadas de sistema | Atende | `auditd` ativo com regras da role `auditd` | TS |
-| sysctls de rede e kernel endurecidos | Parcial | `randomize_va_space`, `tcp_syncookies`, redirects e `suid_dumpable` corretos; `dmesg_restrict` e `kptr_restrict` ficam no padrão, e `ip_forward` precisa estar ligado para o Kubernetes | TS, PS |
-| Partições separadas e opções de montagem restritas | Parcial | `/tmp` e `/dev/shm` são tmpfs com `nosuid,nodev`; `/var`, `/var/log` e `/home` dividem a raiz, sem `noexec` | TS, PS |
+| Auditoria de chamadas de sistema | Atende | `auditd` vigia identidade (`passwd`, `shadow`, `group`, `sudoers.d`), SSH, firewalld, cron, carga de módulos do kernel e as credenciais e a configuração do k3s | TS |
+| sysctls de rede e kernel endurecidos | Atende | `randomize_va_space`, `tcp_syncookies`, `kptr_restrict=2`, `dmesg_restrict=1`, redirects e source route desligados em IPv4 e IPv6, `suid_dumpable=0`; `ip_forward` fica ligado porque o Kubernetes precisa | TS, PS |
+| Partições separadas e opções de montagem restritas | Parcial | `/tmp` é tmpfs com `nosuid,nodev,noexec` e `/dev/shm` com `nosuid,nodev`; `/var`, `/var/log` e `/home` continuam dividindo a raiz | TS, PS |
 | Disco cifrado | Não atende | Sem LUKS; o [modelo de ameaças](modelo-de-ameacas.md) já deixa acesso físico fora do perímetro | PS, TS |
 | Senha de firmware, boot só pelo disco, módulo USB bloqueado | Não se aplica | Raspberry Pi sem BIOS configurável; fica coberto pela premissa de acesso físico fora do modelo | PS |
 | Política de senha, bloqueio por falhas e expiração | Não se aplica | Não há login por senha em nenhum usuário | TS, PS |
