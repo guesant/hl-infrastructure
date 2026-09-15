@@ -51,6 +51,16 @@ helm template monitoring "$repo_root/argocd/apps/platform/monitoring" \
   --namespace monitoring \
   --include-crds >"$out_dir/monitoring.yaml"
 
+helm template keycloak-operator "$repo_root/argocd/apps/operators/keycloak-operator" \
+  --namespace keycloak \
+  --include-crds >"$out_dir/keycloak-operator.yaml"
+
+helm template keycloak-postgres "$repo_root/argocd/apps/data/keycloak-postgres" \
+  --namespace keycloak >"$out_dir/keycloak-postgres.yaml"
+
+helm template keycloak "$repo_root/argocd/apps/platform/keycloak" \
+  --namespace keycloak >"$out_dir/keycloak.yaml"
+
 sed 's/{{ ansible_host }}/10.0.0.1/' "$repo_root/ansible/roles/cilium/templates/values.yaml.j2" >"$out_dir/.cilium-values.yaml"
 helm template cilium cilium/cilium \
   --version "$cilium_version" \
@@ -59,4 +69,4 @@ helm template cilium cilium/cilium \
   --include-crds >"$out_dir/cilium.yaml"
 rm "$out_dir/.cilium-values.yaml"
 
-echo "rendered 7 charts into $out_dir"
+echo "rendered 10 charts into $out_dir"

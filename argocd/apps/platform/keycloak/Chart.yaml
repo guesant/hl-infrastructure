@@ -1,0 +1,4 @@
+apiVersion: v2
+name: keycloak
+description: Keycloak instance and homelab realm, brokering Google sign-in for Argo CD, Grafana and the blog
+version: 0.1.0

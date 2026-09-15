@@ -32,3 +32,12 @@ resource "cloudflare_dns_record" "ops" {
   proxied = true
   ttl     = 1
 }
+
+resource "cloudflare_dns_record" "auth" {
+  zone_id = var.cloudflare_zone_id
+  name    = var.auth_hostname
+  type    = "CNAME"
+  content = "${cloudflare_zero_trust_tunnel_cloudflared.blog.id}.cfargotunnel.com"
+  proxied = true
+  ttl     = 1
+}

@@ -41,6 +41,20 @@ variable "ops_hostname" {
   }
 }
 
+variable "auth_hostname" {
+  type = string
+
+  validation {
+    condition     = can(regex("^([a-z0-9]([a-z0-9-]*[a-z0-9])?\\.)+[a-z]{2,}$", var.auth_hostname)) && !endswith(var.auth_hostname, ".invalid")
+    error_message = "auth_hostname must be the real public hostname of Keycloak, not a placeholder under .invalid."
+  }
+
+  validation {
+    condition     = !contains([var.blog_hostname, var.ops_hostname], var.auth_hostname)
+    error_message = "auth_hostname must differ from blog_hostname and ops_hostname, so the identity provider never shares a hostname with other traffic."
+  }
+}
+
 variable "state_passphrase" {
   type      = string
   sensitive = true

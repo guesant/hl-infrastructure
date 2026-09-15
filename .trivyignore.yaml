@@ -7,6 +7,9 @@ vulnerabilities:
       - bin/blackbox_exporter
     statement: Go stdlib in the upstream dex, argocd and blackbox-exporter images (a TLS client of public probes only); waiting for rebuilt releases
     expired_at: 2026-10-15
+  - id: CVE-2026-75595
+    statement: Netty SNI mTLS bypass in keycloak 26.7.3; both serve plain HTTP behind the tunnel with no per-SNI mTLS; fix tracked in keycloak#52763
+    expired_at: 2026-10-15
   - id: CVE-2026-31789
     statement: OpenSSL in the upstream dex image (alpine 3.23.3); waiting for the Argo CD chart to ship a rebuilt dex
     expired_at: 2026-10-15
