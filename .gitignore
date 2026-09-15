@@ -5,6 +5,7 @@ ansible/kubeconfig
 ansible/.kubeconfig.fetched
 tofu/**/.terraform/
 tofu/**/*.tfstate.backup
+tofu/**/*.tfplan
 rendered/
 site/
 .kubeconform-cache/

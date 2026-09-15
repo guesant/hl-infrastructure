@@ -23,6 +23,10 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "blog" {
         service  = "http://app.blog.svc.cluster.local"
       },
       {
+        hostname = "www.${var.blog_hostname}"
+        service  = "http://app.blog.svc.cluster.local"
+      },
+      {
         service = "http_status:404"
       },
     ]
