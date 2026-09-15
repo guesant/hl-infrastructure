@@ -7,6 +7,24 @@
     state: present
     update_cache: true
 
+- name: Check whether any NFS filesystem is mounted
+  ansible.builtin.command: findmnt -rn -t nfs,nfs4
+  register: os_prerequisites_nfs_mounts
+  changed_when: false
+  failed_when: os_prerequisites_nfs_mounts.rc not in [0, 1]
+  check_mode: false
+
+- name: Stop and mask rpcbind, which nothing on this node uses
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+    masked: true
+  loop:
+    - rpcbind.socket
+    - rpcbind.service
+  when: os_prerequisites_nfs_mounts.stdout | length == 0
+
 - name: Find the active kernel cmdline file
   ansible.builtin.stat:
     path: "{{ item }}"

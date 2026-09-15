@@ -4,7 +4,8 @@ disable:
 flannel-backend: "none"
 disable-network-policy: true
 disable-kube-proxy: true
-write-kubeconfig-mode: "0644"
+secrets-encryption: true
+write-kubeconfig-mode: "0600"
 kube-apiserver-arg:
   - audit-policy-file=/etc/rancher/k3s/audit-policy.yaml
   - audit-log-path=/var/lib/rancher/k3s/server/logs/audit.log
