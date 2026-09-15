@@ -34,6 +34,11 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | Pods | Privilégio mínimo | ServiceAccount própria sem token, sistema de arquivos raiz somente leitura, seccomp `RuntimeDefault` e `drop: ALL` | values do blog, do cloudflared e do sops-secrets-operator |
 | Rede | Listas de liberação | Cada namespace só fala com o que usa; ainda em modo auditoria no Cilium | `argocd/apps/platform/network-policies`, `cilium-egress.yaml` do blog, Hubble |
 | Cluster | Benchmark | kube-bench semanal nas checagens de RBAC e política do CIS para k3s, sem root e sem acesso a `Secret` | `argocd/apps/platform/kube-bench` |
+| Cloudflare | Mudança destrutiva | Registros do apex e do `www` não podem ser destruídos por um `apply`, e as regras da Cloudflare são política como código | `prevent_destroy` em `tofu/cloudflare/dns.tf`, políticas em `.config/conftest/tofu`, job `tofu` |
+| Imagens | Vulnerabilidades e SBOM | Nenhuma imagem implantada com CVE crítica corrigível fora de exceção com prazo; SBOM CycloneDX por imagem | job `trivy-images`, `.tools/list-images.sh`, `.trivyignore.yaml` |
+| Manifestos | Postura NSA e MITRE | A nota do kubescape não pode cair abaixo do piso registrado | job `kubescape` com `--compliance-threshold` |
+| Repositório | Convenção de commit | Todo commit segue o formato do CONTRIBUTING, na CI e antes do commit | job `commitlint`, `.githooks/commit-msg` |
+| Domínio | Expiração | O registro de `guesant.net` não vence sem aviso | job `domain-expiry` |
 | Documentação | Fidelidade | Página cuja fonte mudou sem revisão falha a CI | `.tools/check-doc-drift.sh`, marcadores `source-of-trust` |
 
 ## O que este mapa não cobre

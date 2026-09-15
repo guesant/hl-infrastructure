@@ -46,6 +46,11 @@ recifrados
 recifrar
 recifre
 recifragem
+kubescape
+conftest
+Conftest
+commitlint
+CycloneDX
 resincronizado
 resincronizar
 taggeada
@@ -72,3 +77,4 @@ levansula
 seifrajhi
 tmpfs
 trimstray
+RDAP

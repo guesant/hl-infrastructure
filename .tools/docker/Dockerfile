@@ -1,11 +1,6 @@
-# IMPORTANT: the real value always comes from --build-arg, derived from
-# ansible/group_vars/all/versions.yml, so the CI render uses the same Helm
-# the Ansible roles install; this default only covers a manual build.
 ARG HELM_VERSION=4.3.0
 
-# IMPORTANT: kubectl's minor version must stay within one of k3s_version in
-# ansible/group_vars/all/versions.yml, or the ops image can silently apply
-# manifests the node's API server rejects; --build-arg keeps them in lockstep.
+# IMPORTANT: kubectl must stay within one minor of k3s_version, or the ops image applies manifests the API server rejects.
 ARG KUBECTL_VERSION=v1.36.4
 ARG AGE_PLUGIN_SE_VERSION=0.2.1
 
@@ -73,3 +68,13 @@ RUN npm install --global markdownlint-cli2@0.23.2
 FROM node:24-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 AS cspell
 RUN mkdir -p /opt/cspell && npm install --prefix /opt/cspell cspell@10.3.0 @cspell/dict-pt-br@2.4.2
 ENTRYPOINT ["/opt/cspell/node_modules/.bin/cspell"]
+
+FROM node:24-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 AS commitlint
+RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /opt/commitlint && npm install --prefix /opt/commitlint @commitlint/cli@21.2.2 @commitlint/config-conventional@21.2.0
+ENV NODE_PATH=/opt/commitlint/node_modules
+ENTRYPOINT ["/opt/commitlint/node_modules/.bin/commitlint"]
+
+FROM quay.io/kubescape/kubescape-cli:v4.0.13@sha256:cf9b0dc386e75e8dea9ad443f9497fe73e0251476bbea5efe51a0d368d7a7d12 AS kubescape
+
+FROM openpolicyagent/conftest:v0.69.0@sha256:a38ba21668929a00dce2fe6ee43d1312228340bce5fd243f47dd0ce90516e558 AS conftest

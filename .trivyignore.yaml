@@ -1,0 +1,17 @@
+vulnerabilities:
+  - id: CVE-2025-68121
+    paths:
+      - usr/local/bin/gomplate
+      - usr/local/bin/kustomize
+      - usr/local/bin/git-lfs
+    statement: Go stdlib in binaries shipped by the upstream dex and argocd images; waiting for the Argo CD chart to ship rebuilt images
+    expired_at: 2026-10-15
+  - id: CVE-2026-31789
+    statement: OpenSSL in the upstream dex image (alpine 3.23.3); waiting for the Argo CD chart to ship a rebuilt dex
+    expired_at: 2026-10-15
+  - id: CVE-2026-33186
+    statement: grpc in the upstream dex image; waiting for the Argo CD chart to ship a rebuilt dex
+    expired_at: 2026-10-15
+  - id: CVE-2026-60002
+    statement: openssh client in the upstream argocd-image-updater image; waiting for a rebuilt release
+    expired_at: 2026-10-15

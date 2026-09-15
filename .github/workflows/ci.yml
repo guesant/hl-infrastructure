@@ -386,6 +386,18 @@ jobs:
           docker run --rm -v "$PWD":/repo -w /repo hl-infra/ast-grep
           ast-grep scan --config .config/ast-grep/sgconfig.yml .
 
+      - name: Build shell image
+        uses: ./.github/actions/tool-image
+        with:
+          target: shell
+          smoke: bash --version
+
+      - name: No narrative comment in a Dockerfile
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo
+          -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0=/repo
+          --entrypoint bash hl-infra/shell .tools/check-dockerfile-comments.sh
+
   jscpd:
     runs-on: ubuntu-24.04
     steps:
@@ -596,6 +608,145 @@ jobs:
           TOFU_IMAGE: ghcr.io/opentofu/opentofu:${{ steps.tofu.outputs.version }}
         run: .tools/tofu-validate.sh
 
+      - name: Build conftest image
+        uses: ./.github/actions/tool-image
+        with:
+          target: conftest
+          smoke: --version
+
+      - name: conftest over the OpenTofu modules
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo hl-infra/conftest
+          test --no-color --parser hcl2 --policy .config/conftest/tofu tofu/cloudflare/*.tf
+
+  kubescape:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Read helm_version
+        id: helm
+        run: echo "version=$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" >> "$GITHUB_OUTPUT"
+
+      - name: Build helm image
+        uses: ./.github/actions/tool-image
+        with:
+          target: helm
+          build-args: HELM_VERSION=${{ steps.helm.outputs.version }}
+          smoke: version
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: kubescape
+          smoke: version
+
+      - name: Render charts
+        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
+
+      - name: kubescape NSA and MITRE frameworks
+        run: >-
+          docker run --rm -v "$PWD":/repo -w /repo hl-infra/kubescape
+          scan framework nsa,mitre rendered argocd
+          --compliance-threshold 78 --logger warning
+
+  trivy-images:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Read helm_version
+        id: helm
+        run: echo "version=$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" >> "$GITHUB_OUTPUT"
+
+      - name: Build helm image
+        uses: ./.github/actions/tool-image
+        with:
+          target: helm
+          build-args: HELM_VERSION=${{ steps.helm.outputs.version }}
+          smoke: version
+
+      - name: Build shell image
+        uses: ./.github/actions/tool-image
+        with:
+          target: shell
+          smoke: bash --version
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: trivy
+          smoke: --version
+
+      - name: Render charts
+        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
+
+      - name: No fixable critical vulnerability in a deployed image, and an SBOM for each
+        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/shell .tools/list-images.sh > images.txt && .tools/trivy-images.sh images.txt sbom
+
+      - name: Upload SBOMs
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sbom-cyclonedx
+          path: sbom/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  commitlint:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: commitlint
+          smoke: --version
+
+      - name: Commit messages follow the convention
+        env:
+          BEFORE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          AFTER: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: .tools/lint-commits.sh "$BEFORE" "$AFTER"
+
+  domain-expiry:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Read k3s_version
+        id: k3s
+        run: echo "version=$(grep -oE 'k3s_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE 'v[0-9.]+')" >> "$GITHUB_OUTPUT"
+
+      - name: Build tool image
+        uses: ./.github/actions/tool-image
+        with:
+          target: ops
+          build-args: KUBECTL_VERSION=${{ steps.k3s.outputs.version }}
+          smoke: sops --version
+
+      - name: Warn when the domain is close to expiring
+        if: github.event_name != 'schedule'
+        run: docker run --rm -v "$PWD":/repo -w /repo -e GITHUB_ACTIONS --entrypoint bash hl-infra/ops .tools/check-domain-expiry.sh
+
+      - name: Fail when the domain is about to expire
+        if: github.event_name == 'schedule'
+        run: docker run --rm -v "$PWD":/repo -w /repo -e GITHUB_ACTIONS --entrypoint bash hl-infra/ops .tools/check-domain-expiry.sh --fail-on-near
+
   gate:
     runs-on: ubuntu-24.04
     if: always()
@@ -624,6 +775,10 @@ jobs:
       - kubeconform
       - trivy-config
       - tofu
+      - kubescape
+      - trivy-images
+      - commitlint
+      - domain-expiry
     steps:
       - name: Write summary
         env:

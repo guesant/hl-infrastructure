@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+tools_hash="$(shasum -a 256 .tools/docker/Dockerfile | cut -c1-12)"
+image="hl-infra/commitlint:$tools_hash"
+docker image inspect "$image" >/dev/null 2>&1 || just _build commitlint >/dev/null
+
+docker run --rm -i -v "$repo_root":/repo -w /repo "$image" --config .config/commitlint.config.mjs <"$1"

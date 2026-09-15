@@ -136,8 +136,8 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | `requests` e `limits` de memória nos workloads | Parcial | O blog e o Postgres têm, com `LimitRange` e `ResourceQuota` no namespace; vários pods de `argocd`, `cert-manager`, `kube-system` e `sops` não têm | K8, KA, SR, SE |
 | Imagem sem conteúdo desnecessário e com usuário sem privilégio | Parcial | O blog roda com UID 1654 e sem root; o conteúdo da imagem é responsabilidade do repositório do blog | K8, SR |
 | Imagem referenciada por digest ou assinatura verificada | Parcial | cloudflared e Postgres por digest; o blog por tag `sha-<commit>` imutável por convenção; os operadores por tag de versão | K8, SE |
-| Varredura de imagens no build e no deploy | Parcial | O blog varre a própria imagem; este repositório varre charts e configuração, não as imagens em execução | K8, KA, SR, SE |
-| SBOM e atestados de proveniência | Não atende | Nenhum SBOM nem assinatura publicados | SE |
+| Varredura de imagens no build e no deploy | Atende | O blog varre a própria imagem no build, e o job `trivy-images` varre toda imagem implantada, falhando em CVE crítica com correção fora do `.trivyignore.yaml` com prazo | K8, KA, SR, SE |
+| SBOM e atestados de proveniência | Parcial | O job `trivy-images` gera um SBOM CycloneDX por imagem implantada; ainda não há assinatura nem atestado de proveniência | SE |
 | Isolamento de workloads sensíveis por nó ou runtime isolado | Não se aplica | Um nó só; gVisor e Kata não compensam no Raspberry Pi | K8, SR, SE, MD |
 | Namespaces separados por função | Atende | Um por operador, um para o Argo CD e um para o blog | SR, SE, MD |
 | Benchmark CIS periódico (kube-bench) | Parcial | `CronJob` semanal com o perfil `k3s-cis-1.9`, só nas checagens de `policies`; as de master e node dependem de `journalctl` e dos argumentos do processo `k3s`, que um pod não enxerga, e ficam para uma execução no próprio node; a primeira execução apontou curingas em roles de operadores, a ServiceAccount `default` em uso pelo `argocd-redis` e tokens montados onde não são usados; o resumo no Discord entra junto com os alertas | SR, SE |
@@ -155,8 +155,8 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Variáveis sensíveis marcadas como `sensitive` | Atende | IDs de conta e zona e a passphrase | HC |
 | Mudança de state só pela CLI e por import versionado | Atende | A virada do domínio foi feita com `tofu import` e plano salvo, sem editar o state | HC |
 | `plan` revisado antes do `apply`, procurando exclusões inesperadas | Atende | `just tofu-apply` confirma; os applies de risco usaram plano salvo e conferido | TG, PL |
-| Política como código sobre os recursos | Parcial | `trivy config` e `checkov` passam sobre `tofu/`, mas as regras deles para Cloudflare são poucas; não há Sentinel nem OPA | HC, PL |
-| Proteção contra destruição acidental | Não atende | Nenhum `prevent_destroy` nos registros do apex | TG |
+| Política como código sobre os recursos | Atende | Conftest com políticas próprias para a Cloudflare no job `tofu`, além de `trivy config` e `checkov` sobre `tofu/` | HC, PL |
+| Proteção contra destruição acidental | Atende | `prevent_destroy` nos registros do apex e do `www`, exigido por uma política do Conftest no job `tofu` | TG |
 | Controles de hospedagem do Terraform Enterprise | Não se aplica | O OpenTofu roda local, num container, sem servidor | HV |
 | Controles de conformidade AWS, HIPAA, GDPR e afins | Não se aplica | Nada roda em AWS e não há dado regulado | TG |
 
@@ -187,7 +187,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | --- | --- | --- | --- |
 | Logs centralizados e alertas de atividade anômala | Não atende | Não há métricas, logs centralizados nem alertas; é a lacuna que o [mapa de controles](mapa-de-controles.md) já aponta | LU, AC, PL, CP |
 | Detecção de intrusão ou de comportamento em runtime | Não atende | Hubble observa o tráfego, mas nada alerta sobre ele | LU, SR |
-| Monitoramento de expiração de certificado e de domínio | Parcial | O TLS público é da Cloudflare e renova sozinho; a expiração do domínio não é monitorada | AC |
+| Monitoramento de expiração de certificado e de domínio | Atende | O TLS público é da Cloudflare e renova sozinho, e o job `domain-expiry` consulta o RDAP e falha na execução agendada a trinta dias do vencimento | AC |
 | Backup de tudo que é crítico, com restauração testada | Não atende | O Postgres do blog não tem backup desde a remoção do barman; só `.sops.yaml` e o state têm cópia, no git | AC, CP |
 | Plano de resposta a incidente e revisão pós-incidente | Parcial | Os runbooks de [restaurar o node](../operacional/restaurar-o-node.md) e [rotacionar credenciais](../operacional/rotacionar-credenciais.md) cobrem a recuperação; não há plano de comunicação nem exercício periódico | LU, AC |
 | Proteção contra DDoS e WAF na frente do serviço público | Parcial | O tráfego passa pelo proxy da Cloudflare, com a proteção de DDoS do plano gratuito; nenhuma regra de WAF foi configurada | AC |

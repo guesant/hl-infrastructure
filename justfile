@@ -217,8 +217,36 @@ security-trivy-fs: (_build "trivy")
     {{run}} hl-infra/trivy:{{tools_hash}} fs --scanners vuln,secret --skip-dirs rendered /repo
 
 [doc("ast-grep structural rules from .config/ast-grep")]
-quality-ast-grep: (_build "ast-grep")
+quality-ast-grep: (_build "ast-grep") (_build "shell")
     {{run}} hl-infra/ast-grep:{{tools_hash}} ast-grep scan --config .config/ast-grep/sgconfig.yml .
+    {{run}} -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0=/repo \
+        --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-dockerfile-comments.sh
+
+[doc("conftest policies over the OpenTofu modules")]
+infra-conftest: (_build "conftest")
+    {{run}} hl-infra/conftest:{{tools_hash}} test --no-color --parser hcl2 --policy .config/conftest/tofu tofu/cloudflare/*.tf
+
+[doc("kubescape NSA and MITRE frameworks over the rendered charts and argocd/, failing below the recorded score")]
+infra-kubescape: infra-render-charts (_build "kubescape")
+    {{run}} hl-infra/kubescape:{{tools_hash}} scan framework nsa,mitre rendered argocd --compliance-threshold 78 --logger warning
+
+[doc("trivy over every deployed image: fail on a fixable critical CVE, write a CycloneDX SBOM per image to sbom/")]
+security-trivy-images: infra-render-charts (_build "shell") (_build "trivy")
+    {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/list-images.sh > images.txt
+    TRIVY_IMAGE=hl-infra/trivy:{{tools_hash}} .tools/trivy-images.sh images.txt sbom
+    rm -f images.txt
+
+[doc("commitlint over the commits between two refs, by default the unpushed ones")]
+lint-commits from="origin/main" to="HEAD": (_build "commitlint")
+    COMMITLINT_IMAGE=hl-infra/commitlint:{{tools_hash}} .tools/lint-commits.sh {{from}} {{to}}
+
+[doc("Point git at the versioned hooks in .githooks")]
+hooks:
+    git config core.hooksPath .githooks
+
+[doc("Report how many days are left before the domain registration expires")]
+lint-domain-expiry: (_build-ops)
+    {{run}} --entrypoint bash {{ops_image}} .tools/check-domain-expiry.sh
 
 [doc("jscpd duplication report, informational only")]
 quality-jscpd: (_build "jscpd")
@@ -268,4 +296,4 @@ docs-serve:
         sh -c "pip install --quiet -r docs/requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000 --config-file .config/mkdocs.yml"
 
 [doc("Every check the CI runs, in order")]
-check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-placeholders lint-secret-age lint-docs lint-pod-security lint-spelling security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-helm-lint docs-build
+check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-placeholders lint-secret-age lint-docs lint-pod-security lint-spelling security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-conftest infra-kubescape security-trivy-images lint-commits infra-helm-lint docs-build
