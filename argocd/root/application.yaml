@@ -5,12 +5,17 @@ metadata:
   namespace: argocd
 spec:
   project: infra
-  source:
-    repoURL: https://github.com/guesant/hl-infrastructure.git
-    targetRevision: main
-    path: argocd/applications
-    directory:
-      recurse: true
+  sources:
+    - repoURL: https://github.com/guesant/hl-infrastructure.git
+      targetRevision: main
+      path: argocd/applications
+      directory:
+        recurse: true
+    - repoURL: https://github.com/guesant/hl-infrastructure.git
+      targetRevision: main
+      path: argocd/root
+      directory:
+        include: project-*.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

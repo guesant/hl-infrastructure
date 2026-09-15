@@ -3,6 +3,8 @@ kind: AppProject
 metadata:
   name: infra
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
 spec:
   description: Cluster infrastructure managed directly from this repository
   sourceRepos:

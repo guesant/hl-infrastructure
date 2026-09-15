@@ -3,6 +3,8 @@ kind: AppProject
 metadata:
   name: satellites
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
 spec:
   description: Application repositories that only manage their own namespaced resources
   sourceRepos:
