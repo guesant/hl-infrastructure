@@ -1,0 +1,4 @@
+---
+tailscale_hostname: pi-blog
+tailscale_internal_domain: guesant.internal
+tailscale_advertise_tags: []

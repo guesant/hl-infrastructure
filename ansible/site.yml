@@ -5,6 +5,7 @@
   roles:
     - os_prerequisites
     - firewall
+    - tailscale
     - unattended_upgrades
     - sysctl_hardening
     - umask_hardening

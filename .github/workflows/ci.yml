@@ -625,7 +625,7 @@ jobs:
       - name: conftest over the OpenTofu modules
         run: >-
           docker run --rm -v "$PWD":/repo -w /repo hl-infra/conftest
-          test --no-color --parser hcl2 --policy .config/conftest/tofu tofu/cloudflare/*.tf
+          test --no-color --parser hcl2 --policy .config/conftest/tofu tofu/*/*.tf
 
   kubescape:
     runs-on: ubuntu-24.04

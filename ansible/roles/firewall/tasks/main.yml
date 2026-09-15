@@ -70,6 +70,67 @@
       register: firewall_api_port
       changed_when: "'ALREADY_ENABLED' not in firewall_api_port.stderr"
 
+    - name: Masquerade the tailnet sources that the node routes into the LAN
+      ansible.builtin.command: >-
+        firewall-cmd --permanent --zone=public --add-rich-rule='rule family="ipv4"
+        source address="{{ item }}" masquerade'
+      loop: "{{ firewall_masquerade_sources }}"
+      register: firewall_masquerade
+      changed_when: "'ALREADY_ENABLED' not in firewall_masquerade.stderr"
+
+    - name: Read the permanent zones and policies that exist
+      ansible.builtin.command: "firewall-cmd --permanent {{ item }}"
+      loop:
+        - --get-zones
+        - --get-policies
+      register: firewall_objects
+      changed_when: false
+      check_mode: false
+
+    - name: Create the tailnet zone
+      ansible.builtin.command: "firewall-cmd --permanent --new-zone={{ firewall_tailscale_zone }}"
+      register: firewall_tailscale_zone_created
+      changed_when: true
+      when: firewall_tailscale_zone not in firewall_objects.results[0].stdout.split()
+
+    - name: Bind the tailnet interface to its zone
+      ansible.builtin.command: "firewall-cmd --permanent --zone={{ firewall_tailscale_zone }} --add-interface={{ firewall_tailscale_interface }}"
+      register: firewall_tailscale_interface_bound
+      changed_when: "'ALREADY_ENABLED' not in firewall_tailscale_interface_bound.stderr"
+
+    - name: Allow the declared services from the tailnet
+      ansible.builtin.command: "firewall-cmd --permanent --zone={{ firewall_tailscale_zone }} --add-service={{ item }}"
+      loop: "{{ firewall_tailscale_services }}"
+      register: firewall_tailscale_services_added
+      changed_when: "'ALREADY_ENABLED' not in firewall_tailscale_services_added.stderr"
+
+    - name: Create the policy that lets the tailnet reach the LAN through the node
+      ansible.builtin.command: "firewall-cmd --permanent --new-policy={{ firewall_tailscale_policy }}"
+      register: firewall_tailscale_policy_created
+      changed_when: true
+      when: firewall_tailscale_policy not in firewall_objects.results[1].stdout.split()
+
+    - name: Point the policy from the tailnet zone to the public zone
+      ansible.builtin.command: "firewall-cmd --permanent --policy={{ firewall_tailscale_policy }} {{ item }}"
+      loop:
+        - "--add-ingress-zone={{ firewall_tailscale_zone }}"
+        - --add-egress-zone=public
+      register: firewall_tailscale_policy_zones
+      changed_when: "'ALREADY_ENABLED' not in firewall_tailscale_policy_zones.stderr"
+
+    - name: Read the policy target
+      ansible.builtin.command: "firewall-cmd --permanent --policy={{ firewall_tailscale_policy }} --get-target"
+      register: firewall_tailscale_policy_target
+      changed_when: false
+      failed_when: false
+      check_mode: false
+
+    - name: Accept forwarded traffic under the policy
+      ansible.builtin.command: "firewall-cmd --permanent --policy={{ firewall_tailscale_policy }} --set-target=ACCEPT"
+      register: firewall_tailscale_policy_accept
+      changed_when: true
+      when: firewall_tailscale_policy_target.rc != 0 or firewall_tailscale_policy_target.stdout | trim != 'ACCEPT'
+
     - name: Read the permanent public and trusted zones
       ansible.builtin.command: "firewall-cmd --permanent --zone={{ item.zone }} {{ item.flag }}"
       loop:
@@ -83,6 +144,13 @@
       changed_when: false
       check_mode: false
 
+    - name: Read the permanent tailnet zone, which a dry run may not have created yet
+      ansible.builtin.command: "firewall-cmd --permanent --zone={{ firewall_tailscale_zone }} --list-services"
+      register: firewall_tailscale_current
+      changed_when: false
+      failed_when: false
+      check_mode: false
+
     - name: Work out which permanent entries nothing declares
       ansible.builtin.set_fact:
         firewall_undeclared:
@@ -90,12 +158,18 @@
           ports: "{{ firewall_current_by_key.public_ports.split() | difference(firewall_public_ports) }}"
           rich_rules: "{{ firewall_current_by_key.public_rich_rules.splitlines() | reject('equalto', '') | difference(firewall_declared_rich_rules) }}"
           sources: "{{ firewall_current_by_key.trusted_sources.split() | difference(firewall_trusted_sources) }}"
+          tailscale_services: >-
+            {{ (firewall_tailscale_current.stdout if firewall_tailscale_current.rc == 0 else '').split()
+               | difference(firewall_tailscale_services) }}
       vars:
         firewall_current_by_key: "{{ dict(firewall_current.results | map(attribute='item.key') | zip(firewall_current.results | map(attribute='stdout'))) }}"
         firewall_declared_rich_rules: >-
-          {{ k3s_api_allowed_cidrs
-             | map('regex_replace', '^(.*)$', 'rule family="ipv4" source address="\1" port port="6443" protocol="tcp" accept')
-             | list }}
+          {{ (k3s_api_allowed_cidrs
+              | map('regex_replace', '^(.*)$', 'rule family="ipv4" source address="\1" port port="6443" protocol="tcp" accept')
+              | list)
+             + (firewall_masquerade_sources
+                | map('regex_replace', '^(.*)$', 'rule family="ipv4" source address="\1" masquerade')
+                | list) }}
 
     - name: Refuse to remove more undeclared entries than the safety cap allows
       ansible.builtin.assert:
@@ -109,7 +183,8 @@
       vars:
         firewall_removal_count: >-
           {{ firewall_undeclared.services | length + firewall_undeclared.ports | length
-             + firewall_undeclared.rich_rules | length + firewall_undeclared.sources | length }}
+             + firewall_undeclared.rich_rules | length + firewall_undeclared.sources | length
+             + firewall_undeclared.tailscale_services | length }}
 
     - name: Remove undeclared public services
       ansible.builtin.command: "firewall-cmd --permanent --zone=public --remove-service={{ item }}"
@@ -140,6 +215,12 @@
       register: firewall_removed_sources
       changed_when: true
 
+    - name: Remove undeclared tailnet services
+      ansible.builtin.command: "firewall-cmd --permanent --zone={{ firewall_tailscale_zone }} --remove-service={{ item }}"
+      loop: "{{ firewall_undeclared.tailscale_services }}"
+      register: firewall_removed_tailscale_services
+      changed_when: true
+
     - name: Read the permanent public zone before reloading
       ansible.builtin.command: firewall-cmd --permanent --zone=public --list-services
       register: firewall_public_services_after
@@ -158,7 +239,11 @@
       ansible.builtin.command: firewall-cmd --reload
       when: >-
         firewall_ssh.changed or firewall_services.changed or firewall_trust.changed
-        or firewall_api_port.changed or firewall_removed_services.changed
-        or firewall_removed_ports.changed or firewall_removed_rich_rules.changed
-        or firewall_removed_sources.changed
+        or firewall_api_port.changed or firewall_masquerade.changed
+        or firewall_tailscale_zone_created.changed or firewall_tailscale_interface_bound.changed
+        or firewall_tailscale_services_added.changed or firewall_tailscale_policy_created.changed
+        or firewall_tailscale_policy_zones.changed or firewall_tailscale_policy_accept.changed
+        or firewall_removed_services.changed or firewall_removed_ports.changed
+        or firewall_removed_rich_rules.changed or firewall_removed_sources.changed
+        or firewall_removed_tailscale_services.changed
       changed_when: true

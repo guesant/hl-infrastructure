@@ -1,0 +1,5 @@
+---
+tailscale_apt_suite: trixie
+tailscale_keyring: /usr/share/keyrings/tailscale-archive-keyring.gpg
+tailscale_auth_key_file: /run/tailscale-authkey
+tailscale_dnsmasq_conf: /etc/dnsmasq.d/internal-domain.conf

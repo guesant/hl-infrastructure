@@ -233,7 +233,7 @@ quality-ast-grep: (_build "ast-grep") (_build "shell")
 
 [doc("conftest policies over the OpenTofu modules")]
 infra-conftest: (_build "conftest")
-    {{run}} hl-infra/conftest:{{tools_hash}} test --no-color --parser hcl2 --policy .config/conftest/tofu tofu/cloudflare/*.tf
+    {{run}} hl-infra/conftest:{{tools_hash}} test --no-color --parser hcl2 --policy .config/conftest/tofu tofu/*/*.tf
 
 [doc("kubescape NSA and MITRE frameworks over the rendered charts and argocd/, failing below the recorded score")]
 infra-kubescape: infra-render-charts (_build "kubescape")

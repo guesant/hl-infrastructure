@@ -9,4 +9,13 @@ firewall_trusted_sources:
   - 10.42.0.0/16
   - 10.43.0.0/16
 
+firewall_tailscale_zone: tailscale
+firewall_tailscale_interface: tailscale0
+firewall_tailscale_services:
+  - ssh
+  - dns
+firewall_tailscale_policy: tailscale-to-lan
+firewall_masquerade_sources:
+  - 100.64.0.0/10
+
 firewall_max_removals: 3

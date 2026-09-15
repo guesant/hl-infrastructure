@@ -87,3 +87,7 @@ smartd
 blackbox
 prometheus
 webfinger
+tailscale
+tailnet
+tailscaled
+dnsmasq

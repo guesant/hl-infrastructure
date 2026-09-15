@@ -1,0 +1,180 @@
+---
+- name: Assert the tailscale variables are declared and well formed
+  ansible.builtin.assert:
+    that:
+      - tailscale_hostname is match('^[a-z0-9]([a-z0-9-]*[a-z0-9])?$')
+      - tailscale_internal_domain is match('^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$')
+      - tailscale_advertise_routes is iterable
+      - tailscale_advertise_routes | reject('match', '^[0-9]{1,3}(\.[0-9]{1,3}){3}/[0-9]{1,2}$') | list | length == 0
+    fail_msg: >-
+      tailscale_hostname must be a bare hostname, tailscale_internal_domain a DNS zone,
+      and tailscale_advertise_routes a list of IPv4 CIDRs
+
+- name: Install the Tailscale apt signing key
+  ansible.builtin.get_url:
+    url: "https://pkgs.tailscale.com/stable/debian/{{ tailscale_apt_suite }}.noarmor.gpg"
+    dest: "{{ tailscale_keyring }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Declare the Tailscale apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by={{ tailscale_keyring }}] https://pkgs.tailscale.com/stable/debian {{ tailscale_apt_suite }} main"
+    filename: tailscale
+    state: present
+  register: tailscale_repo
+
+- name: Install tailscale and dnsmasq
+  ansible.builtin.apt:
+    name:
+      - tailscale
+      - dnsmasq
+    state: present
+    update_cache: true
+  register: tailscale_install
+  when: not (ansible_check_mode and tailscale_repo.changed)
+
+- name: Ensure tailscaled is enabled and running
+  ansible.builtin.systemd:
+    name: tailscaled
+    enabled: true
+    state: started
+  when: not (ansible_check_mode and (tailscale_repo.changed or tailscale_install.changed))
+
+- name: Read the tailscaled backend state
+  ansible.builtin.command: tailscale status --json
+  register: tailscale_status
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Work out whether the node is already part of the tailnet
+  ansible.builtin.set_fact:
+    tailscale_logged_in: "{{ tailscale_status.rc == 0 and (tailscale_status.stdout | from_json).BackendState == 'Running' }}"
+    tailscale_auth_key_ready: "{{ (tailscale_auth_key | default('')) | length > 0 and not (tailscale_auth_key | default('')) is match('^REPLACE_WITH_') }}"
+
+- name: Report that the node still waits for a real auth key
+  ansible.builtin.debug:
+    msg: >-
+      tailscale_auth_key still holds a placeholder and the node is not in the tailnet yet;
+      fill it with just sops-edit ansible/group_vars/all/secrets.sops.yaml and run the bootstrap again.
+      The rest of this role is skipped until then.
+  when: not tailscale_logged_in and not tailscale_auth_key_ready
+
+- name: Join the tailnet with the declared auth key
+  when: not tailscale_logged_in and tailscale_auth_key_ready and not ansible_check_mode
+  block:
+    - name: Write the auth key to tmpfs for tailscale to read
+      ansible.builtin.copy:
+        content: "{{ tailscale_auth_key }}\n"
+        dest: "{{ tailscale_auth_key_file }}"
+        owner: root
+        group: root
+        mode: "0600"
+      no_log: true
+
+    - name: Work out the tailscale up arguments
+      ansible.builtin.set_fact:
+        tailscale_up_args: >-
+          {{ ['tailscale', 'up',
+              '--auth-key=file:' + tailscale_auth_key_file,
+              '--hostname=' + tailscale_hostname,
+              '--advertise-routes=' + (tailscale_advertise_routes | join(',')),
+              '--accept-dns=false',
+              '--accept-routes=false']
+             + (['--advertise-tags=' + (tailscale_advertise_tags | join(','))] if tailscale_advertise_tags | length > 0 else []) }}
+
+    - name: Run tailscale up
+      ansible.builtin.command:
+        argv: "{{ tailscale_up_args }}"
+      changed_when: true
+      no_log: true
+
+    - name: Record that the node joined the tailnet
+      ansible.builtin.set_fact:
+        tailscale_logged_in: true
+  always:
+    - name: Remove the auth key from tmpfs
+      ansible.builtin.file:
+        path: "{{ tailscale_auth_key_file }}"
+        state: absent
+
+- name: Reconcile the node preferences with the declared values
+  when: tailscale_logged_in
+  block:
+    - name: Read the preferences before reconciling
+      ansible.builtin.command: tailscale debug prefs
+      register: tailscale_prefs_before
+      changed_when: false
+      check_mode: false
+
+    - name: Apply the declared preferences
+      ansible.builtin.command:
+        argv:
+          - tailscale
+          - set
+          - "--hostname={{ tailscale_hostname }}"
+          - "--advertise-routes={{ tailscale_advertise_routes | join(',') }}"
+          - --accept-dns=false
+          - --accept-routes=false
+      changed_when: false
+      when: not ansible_check_mode
+
+    - name: Read the preferences after reconciling
+      ansible.builtin.command: tailscale debug prefs
+      register: tailscale_prefs_after
+      changed_when: tailscale_prefs_after.stdout != tailscale_prefs_before.stdout
+      check_mode: false
+
+    - name: Read the node address in the tailnet
+      ansible.builtin.command: tailscale ip -4
+      register: tailscale_ip
+      changed_when: false
+      check_mode: false
+
+    - name: Keep the tailnet address as a fact for the DNS zone
+      ansible.builtin.set_fact:
+        tailscale_ipv4: "{{ tailscale_ip.stdout | trim }}"
+
+- name: Serve the internal domain from the tailnet address
+  when: tailscale_logged_in
+  block:
+    - name: Create the dnsmasq unit drop-in directory
+      ansible.builtin.file:
+        path: /etc/systemd/system/dnsmasq.service.d
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Start dnsmasq only after tailscaled
+      ansible.builtin.template:
+        src: dnsmasq-after-tailscale.conf.j2
+        dest: /etc/systemd/system/dnsmasq.service.d/after-tailscale.conf
+        owner: root
+        group: root
+        mode: "0644"
+      notify:
+        - Reload systemd
+        - Restart dnsmasq
+
+    - name: Declare the internal zone answered only on the tailnet interface
+      ansible.builtin.template:
+        src: internal-domain.conf.j2
+        dest: "{{ tailscale_dnsmasq_conf }}"
+        owner: root
+        group: root
+        mode: "0644"
+        validate: dnsmasq --test --conf-file=%s
+      notify: Restart dnsmasq
+
+    - name: Flush handlers so dnsmasq picks up the zone
+      ansible.builtin.meta: flush_handlers
+
+    - name: Ensure dnsmasq is enabled and running
+      ansible.builtin.systemd:
+        name: dnsmasq
+        enabled: true
+        state: started
+      when: not ansible_check_mode

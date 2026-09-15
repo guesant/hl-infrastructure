@@ -31,6 +31,7 @@ debianutils
 dhcpcd-base
 diffutils
 dmidecode
+dnsmasq
 dosfstools
 dpkg
 e2fsprogs
@@ -231,6 +232,7 @@ systemd
 systemd-sysv
 systemd-timesyncd
 sysvinit-utils
+tailscale
 tar
 tzdata
 udev
