@@ -40,14 +40,14 @@
       failed_when: preflight_root_id.stdout | default('') != "0"
       ignore_errors: true
 
-    - name: Explain how to pass the sudo password when escalation failed
+    - name: Explain what to fix when escalation failed
       ansible.builtin.assert:
         that:
           - not preflight_root_id.failed
         fail_msg: >-
-          sudo on the node asked for a password that Ansible did not have; run the
-          recipes with --ask-become-pass (just bootstrap-check -K, just bootstrap -K)
-          or give {{ ansible_user }} passwordless sudo on the node
+          privilege escalation did not reach uid 0 as {{ ansible_user }}; the roles
+          expect the inventory to connect as root, so set ansible_user=root and
+          authorize the operator key in /root/.ssh/authorized_keys
 
     - name: Assert the memory cgroup controller is available to the kernel
       ansible.builtin.stat:

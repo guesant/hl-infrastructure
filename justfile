@@ -18,7 +18,7 @@ run := "docker run --rm -v " + quote(justfile_directory()) + ":/repo -w /repo"
 default:
     @just --list
 
-[doc("Check access to the node and the assumptions the roles make (pass -K if sudo asks a password)")]
+[doc("Check access to the node and the assumptions the roles make")]
 preflight *args:
     ansible-playbook -i ansible/inventory.ini ansible/preflight.yml {{args}}
 

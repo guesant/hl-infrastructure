@@ -4,7 +4,7 @@ Este runbook parte de um Raspberry Pi limpo, com Raspberry Pi OS instalado e ace
 
 ## Antes de começar
 
-Você precisa de acesso SSH por chave ao Pi, com um usuário que tenha `sudo`, e do [Ansible](https://docs.ansible.com/) instalado na sua máquina. Nenhuma ferramenta precisa estar pré-instalada no Pi além do próprio SSH: o Ansible cuida de instalar Helm, k3s e tudo o mais.
+Você precisa de acesso SSH por chave ao Pi como root, e do [Ansible](https://docs.ansible.com/) instalado na sua máquina. Nenhuma ferramenta precisa estar pré-instalada no Pi além do próprio SSH: o Ansible cuida de instalar Helm, k3s e tudo o mais.
 
 ## Configure o inventário e as variáveis
 
@@ -22,16 +22,16 @@ Nenhum dos dois arquivos reais é rastreado pelo git; só os `.example` ficam ve
 ## Confira o acesso e veja o que vai mudar
 
 ```bash
-just preflight -K
-just bootstrap-check -K
+just preflight
+just bootstrap-check
 ```
 
-O `-K` pede a senha de `sudo` do usuário do inventário; omita se ele tem `sudo` sem senha. O preflight confirma que o Ansible fala com a máquina certa e o `bootstrap-check` mostra, sem aplicar nada, tudo o que a execução real faria; veja [preflight e dry-run](preflight-e-dry-run.md).
+O inventário usa `root`, então nenhuma receita pede senha de `sudo`. O preflight confirma que o Ansible fala com a máquina certa e o `bootstrap-check` mostra, sem aplicar nada, tudo o que a execução real faria; veja [preflight e dry-run](preflight-e-dry-run.md).
 
 ## Rode o bootstrap
 
 ```bash
-just bootstrap -K
+just bootstrap
 ```
 
 O playbook aplica as roles em ordem: hardening de sistema operacional primeiro (cgroups, firewall, atualizações automáticas, sysctl, umask, AppArmor, auditd, SSH, fail2ban), depois k3s, depois Cilium como CNI, depois ArgoCD, depois a aplicação raiz do Argo e a chave age do sops-secrets-operator. Cada role espera o componente anterior ficar pronto antes de seguir, então uma falha no meio do caminho não deixa o cluster pela metade de forma silenciosa. CloudNativePG, cert-manager, o sops-secrets-operator e o Argo CD Image Updater não têm role própria: a partir do momento em que a aplicação raiz existe, é o Argo quem os traz, como `Application` de plataforma.

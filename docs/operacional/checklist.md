@@ -4,9 +4,9 @@ Lista curta para marcar a cada bootstrap, upgrade de versão ou mudança de rede
 
 | Item | Como conferir | Última execução |
 | --- | --- | --- |
-| Preflight passou | `just preflight -K` termina sem `failed` | 2026-09-13 |
-| Dry-run mostrou só a mudança esperada | `just bootstrap-check -K` com diff revisado linha a linha | 2026-09-13 |
-| Segunda execução é idempotente | `just bootstrap -K` de novo termina com `changed=0` | pendente |
+| Preflight passou | `just preflight` termina sem `failed` | 2026-09-13 |
+| Dry-run mostrou só a mudança esperada | `just bootstrap-check` com diff revisado linha a linha | 2026-09-13 |
+| Segunda execução é idempotente | `just bootstrap` de novo termina com `changed=0` | pendente |
 | SSH continua acessível por uma sessão nova | `ssh` novo depois de qualquer mudança em `firewall` ou `ssh_hardening` | 2026-09-13 |
 | API do k3s só responde dos CIDRs permitidos | `firewall-cmd --list-rich-rules` mostra só `k3s_api_allowed_cidrs` na 6443 | pendente |
 | Node `Ready` e Cilium saudável | `kubectl get nodes` e `cilium status` sem erro | 2026-09-13 |

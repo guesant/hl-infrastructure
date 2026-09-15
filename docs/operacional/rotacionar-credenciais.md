@@ -5,7 +5,7 @@ Cinco credenciais têm rotina de rotação própria. Três vivem no node, cada u
 ## Certificados
 
 ```bash
-just rotate-certs -K
+just rotate-certs
 ```
 
 Para o k3s, roda `k3s certificate rotate`, sobe de novo, espera o API server responder e traz o kubeconfig novo para `ansible/kubeconfig`. O kubeconfig anterior deixa de funcionar no mesmo instante, então qualquer outra cópia dele (em outra máquina, num CI) precisa ser substituída. Os certificados do k3s valem um ano e o próprio k3s os renova ao reiniciar quando faltam menos de 90 dias; esta rotina é para rotação deliberada, como depois de um kubeconfig exposto.
@@ -13,7 +13,7 @@ Para o k3s, roda `k3s certificate rotate`, sobe de novo, espera o API server res
 ## Token de join
 
 ```bash
-just rotate-token -K
+just rotate-token
 ```
 
 Lê o token atual em `/var/lib/rancher/k3s/server/token`, gera um novo com `openssl rand`, roda `k3s token rotate` e reinicia o k3s. Num cluster de um nó só o token não é usado por ninguém depois da instalação, então rotacioná-lo custa só o restart; vale fazer se o node foi clonado ou se o token apareceu em algum log.
@@ -23,7 +23,7 @@ Lê o token atual em `/var/lib/rancher/k3s/server/token`, gera um novo com `open
 Rotacionar essa chave é em duas fases, porque `.sops.yaml` e o `Secret` do node precisam ficar consistentes o tempo todo, nunca um sem o outro:
 
 ```bash
-just rotate-age-key -K
+just rotate-age-key
 ```
 
 Isso gera uma identidade nova, **acrescenta** ela ao `keys.txt` do `Secret` (a antiga continua lá) e reinicia o sops-secrets-operator; nenhum `SopsSecret` para de decifrar nesse meio-tempo, porque `age` tenta cada identidade do arquivo até uma funcionar. Em seguida:
@@ -36,7 +36,7 @@ just sops-sync
 O primeiro escreve a chave pública nova em `.sops.yaml`; revise o diff e commite. O segundo recifra todo `SopsSecret` já commitado para os destinatários atuais. Só depois disso, com a chave nova já sendo a única referenciada em `.sops.yaml` e todo segredo já recifrado, feche a rotação removendo a identidade antiga:
 
 ```bash
-just rotate-age-key -K -e sops_age_key_prune=true
+just rotate-age-key -e sops_age_key_prune=true
 ```
 
 Rodar `just rotate-age-key` sem a variável de novo, antes de prunar a antiga, só adiciona mais uma identidade; nada quebra, mas também não avança a rotação sozinho.

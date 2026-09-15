@@ -8,18 +8,14 @@ Antes de aplicar qualquer coisa no node, duas receitas respondem, na ordem, "con
 just preflight
 ```
 
-Roda `ansible/preflight.yml`: ping, shell POSIX para o usuário do inventário, família Debian, arquitetura `aarch64` ou `x86_64` (as únicas para as quais k3s, Helm e cilium-cli são baixados), escalação de privilégio funcionando e um resumo da máquina (distribuição, kernel, memória, controladores de cgroup disponíveis). Se o `sudo` do node pede senha, o preflight falha explicando que as receitas precisam de `-K`:
+Roda `ansible/preflight.yml`: ping, shell POSIX para o usuário do inventário, família Debian, arquitetura `aarch64` ou `x86_64` (as únicas para as quais k3s, Helm e cilium-cli são baixados), escalação de privilégio funcionando e um resumo da máquina (distribuição, kernel, memória, controladores de cgroup disponíveis). O inventário conecta como `root`, então a escalação nunca pede senha; se ela falhar, o preflight diz que o `ansible_user` precisa ser `root`.
 
-```bash
-just preflight -K
-```
-
-Todo argumento extra passado a `preflight`, `bootstrap-check` e `bootstrap` vai direto para o `ansible-playbook`, então `-K`, `--limit` e `--tags` funcionam como de costume.
+Todo argumento extra passado a `preflight`, `bootstrap-check` e `bootstrap` vai direto para o `ansible-playbook`, então `--limit` e `--tags` funcionam como de costume.
 
 ## Dry-run
 
 ```bash
-just bootstrap-check -K
+just bootstrap-check
 ```
 
 Roda o preflight e depois `site.yml` com `--check --diff`. Cada role sabe o que consegue prever num node que ainda não tem k3s: a role `k3s` registra se o binário já existe e, quando não existe sob `--check`, a role `check_mode_gate` avisa que nada que fale com o cluster pode ser conferido ainda e as roles seguintes pulam o bloco que depende da API, em vez de falhar com um erro sem relação com o que se queria saber. O mesmo vale para o firewalld e para cada serviço systemd: uma unit que só seria instalada numa execução real não é iniciada em modo de verificação.

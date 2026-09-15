@@ -2,16 +2,16 @@
 
 <!-- source-of-trust paths=".sops.yaml .tools/sops-recipients.sh .tools/sops-drill.sh .tools/sops-sync.sh .tools/sops-rotate.sh" -->
 
-Este runbook cobre a perda total do node: cartão SD corrompido, hardware trocado, ou um comprometimento em que a única resposta segura é reinstalar. O ponto de partida é um Raspberry Pi OS limpo com SSH por chave e um usuário com `sudo`, exatamente como no [primeiro bootstrap](primeiro-bootstrap.md). A diferença está no que precisa ser recuperado de fora do git, listado em [estado fora do git](estado-fora-do-git.md).
+Este runbook cobre a perda total do node: cartão SD corrompido, hardware trocado, ou um comprometimento em que a única resposta segura é reinstalar. O ponto de partida é um Raspberry Pi OS limpo com SSH por chave e acesso como root, exatamente como no [primeiro bootstrap](primeiro-bootstrap.md). A diferença está no que precisa ser recuperado de fora do git, listado em [estado fora do git](estado-fora-do-git.md).
 
 ## 1. Reconstruir o cluster
 
 Na máquina do operador, `ansible/inventory.ini` e `ansible/group_vars/all/secrets.yml` continuam válidos se a máquina do operador sobreviveu; se não, recrie os dois a partir dos exemplos, com um segredo de webhook novo (o antigo está perdido junto com o cluster, e o webhook no GitHub precisa ser atualizado).
 
 ```bash
-just preflight -K
-just bootstrap-check -K
-just bootstrap -K
+just preflight
+just bootstrap-check
+just bootstrap
 ```
 
 Ao fim, `ansible/kubeconfig` aponta para o cluster novo e `kubectl -n argocd get applications` mostra o `root` sincronizando os satélites.
