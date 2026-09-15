@@ -116,8 +116,7 @@
   register: k3s_secrets_reencrypted_marker
   when: k3s_cluster_gate
 
-# IMPORTANT: on a single server, reencrypt --force leaves the rotation stage at "start",
-# so completion is read from the SecretsUpdateComplete event and recorded in a marker file.
+# IMPORTANT: single-server reencrypt keeps the stage at "start"; completion comes from the SecretsUpdateComplete event.
 - name: Re-encrypt the Secrets written before encryption was enabled
   when: >-
     k3s_cluster_gate and not ansible_check_mode
