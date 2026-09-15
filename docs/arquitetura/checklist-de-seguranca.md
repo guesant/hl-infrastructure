@@ -68,7 +68,7 @@ Cada linha junta recomendações equivalentes de fontes diferentes numa frase s�
 | Lint e análise estática dos manifestos e da IaC | Atende | `kubeconform`, `kube-linter`, `checkov`, `trivy config`, `ansible-lint`, `tofu validate` | PL, CP |
 | SAST no código | Não se aplica | Este repositório não tem código de aplicação; o blog tem os próprios gates no repositório dele | LU, AC |
 | DAST contra o que está no ar | Não atende | Nada testa o blog publicado | LU, AC |
-| Imagens assinadas e verificadas na admissão | Não atende | O Image Updater só aceita tags `sha-<commit>`, mas nenhuma assinatura é conferida | CP, K8, SR |
+| Imagens assinadas e verificadas na admissão | Não atende | Toda imagem fora do `kube-system` precisa de digest na admissão e o blog é promovido por digest da tag `main`, mas nenhuma assinatura é conferida | CP, K8, SR |
 | Nota pública de práticas do repositório | Atende | OpenSSF Scorecard semanal e a cada push, com o resultado no code scanning | PL |
 | Webhook do Git disparando a sincronização | Atende | Webhook do GitHub em `ops.guesant.net/api/webhook`, validado por assinatura | CN |
 
