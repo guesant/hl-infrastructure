@@ -187,10 +187,7 @@ cloudflare-tunnel-token: _require-host-sops _build-ops
 [doc("tofu fmt and validate over every module in tofu/, with no credential and no backend")]
 lint-tofu:
     {{run}} {{tofu_image}} fmt -check -recursive tofu
-    for dir in tofu/*/; do \
-        {{run}} -e TF_VAR_state_passphrase=validate-only-passphrase-never-used-for-real-state {{tofu_image}} -chdir="$dir" init -backend=false -input=false && \
-        {{run}} -e TF_VAR_state_passphrase=validate-only-passphrase-never-used-for-real-state {{tofu_image}} -chdir="$dir" validate || exit 1; \
-    done
+    TOFU_IMAGE={{tofu_image}} .tools/tofu-validate.sh
 
 [doc("Check every link in the Markdown files; not part of check or CI because external hosts are flaky")]
 lint-links: (_build "lychee")
