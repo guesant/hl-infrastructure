@@ -15,7 +15,7 @@ spec:
       releaseName: blog
       parameters:
         - name: application.deployment.image.tag
-          value: sha-bf56a5992fe6cd70c58164ce3291685ad9197e83
+          value: sha-c00a7684852c182bbc38fb7c1be82b14e0c5302f
   destination:
     server: https://kubernetes.default.svc
     namespace: blog
