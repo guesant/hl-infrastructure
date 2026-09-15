@@ -120,9 +120,9 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Token de ServiceAccount só onde o pod usa a API | Atende | O chart do blog e do cloudflared já renderiza `automountServiceAccountToken: false`, e os pods não têm o volume `kube-api-access` | K8, KA, SR, SE |
 | ServiceAccount própria por workload | Atende | Os operadores têm a sua, e o blog e o cloudflared passaram a criar a própria em vez de usar `default` | KA, SE |
 | Plugin de rede com suporte a NetworkPolicy | Atende | Cilium com `enable-policy: always` | K8, SR, SE |
-| `default-deny` de entrada e saída, liberando só o necessário | Parcial | Declarado no namespace `blog`, mas o Cilium roda com `policyAuditMode: true` e só registra, sem bloquear; os outros namespaces não têm política | K8, KA, SR, SE |
+| `default-deny` de entrada e saída, liberando só o necessário | Parcial | O Cilium já nega tudo por padrão (`enable-policy: always`) e cada namespace tem uma `CiliumNetworkPolicy` com o que usa, mas `policyAuditMode: true` continua ligado: a virada para bloquear espera o Hubble ficar sem veredictos `AUDIT` | K8, KA, SR, SE |
 | Tráfego entre pods cifrado | Não atende | Sem WireGuard nem IPsec no Cilium; num nó só o tráfego não sai da máquina | K8, SE, MD |
-| Saída e DNS controlados contra vazamento de dados | Não atende | Nenhuma política de egress aplicada | SE |
+| Saída e DNS controlados contra vazamento de dados | Parcial | Cada namespace só sai para o CoreDNS, para o API server e para as portas externas de que precisa (443 no Argo CD e no app do blog, 7844 e 443 no cloudflared); vale de verdade quando o modo auditoria for desligado | SE |
 | `LoadBalancer`, `NodePort` e `externalIPs` restritos | Atende | Só há `Service` `ClusterIP`; Traefik e ServiceLB desligados pela role `k3s` | K8 |
 | Acesso de pods à API de metadados de nuvem bloqueado | Não se aplica | Raspberry Pi, sem serviço de metadados | K8, SR |
 | `Secret` cifrado em repouso | Atende | `secrets-encryption` ligado pela role `k3s`, com recifragem dos `Secret` que já existiam; a chave fica só no node | K8, SR, SE |

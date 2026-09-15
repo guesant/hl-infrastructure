@@ -1,0 +1,4 @@
+apiVersion: v2
+name: platform-network-policies
+description: CiliumNetworkPolicy allow-lists for the platform namespaces under policyEnforcementMode always
+version: 0.1.0
