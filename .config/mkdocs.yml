@@ -64,6 +64,7 @@ nav:
       - A pipeline de CI: arquitetura/ci.md
       - Modelo de ameaças: arquitetura/modelo-de-ameacas.md
       - Mapa de controles: arquitetura/mapa-de-controles.md
+      - Checklist de segurança: arquitetura/checklist-de-seguranca.md
       - Variáveis: arquitetura/variaveis.md
   - Operacional:
       - operacional/index.md

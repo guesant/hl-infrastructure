@@ -36,4 +36,4 @@ Observabilidade (métricas, alertas, logs centralizados) não tem controle decla
 
 ## Continue por aqui
 
-O [modelo de ameaças](modelo-de-ameacas.md) diz de que cada controle protege; [a pipeline de CI](ci.md) detalha os gates citados como evidência.
+O [modelo de ameaças](modelo-de-ameacas.md) diz de que cada controle protege; [a pipeline de CI](ci.md) detalha os gates citados como evidência. O [checklist de segurança](checklist-de-seguranca.md) faz o caminho inverso: parte do que guias públicos de GitOps, DevOps, Linux, Terraform e Kubernetes recomendam e mostra também o que falta.

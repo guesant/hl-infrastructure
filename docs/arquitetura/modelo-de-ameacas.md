@@ -30,7 +30,7 @@ flowchart LR
     apps["workloads"]
   end
   internet["Internet"]
-  ansible -->|SSH, chave ed25519| ssh
+  ansible -->|SSH, chave do operador| ssh
   kubeconfig -->|6443, só k3s_api_allowed_cidrs| api
   argo -->|pull| infra
   argo -->|pull, projeto satellites| sat
@@ -74,7 +74,7 @@ sequenceDiagram
     SSO->>Pod: cria o Secret no namespace
 ```
 
-O `argocd_github_webhook_secret` e a chave SSH seguem outro caminho, mais curto: ficam em `secrets.yml` na máquina do operador e o Ansible os entrega ao node por SSH, sem passar por nenhum repositório. A chave privada age do node nem isso: ela nasce dentro do próprio node, na primeira execução da role `sops_age_key`, e nunca existe em texto claro fora dele.
+O `argocd_github_webhook_secret` segue outro caminho, mais curto: fica em `secrets.yml` na máquina do operador e o Ansible o entrega ao node por SSH, sem passar por nenhum repositório. A chave SSH do operador nem passa pelo Ansible: ela já precisa estar autorizada no node para o primeiro bootstrap entrar. A chave privada age do node nem isso: ela nasce dentro do próprio node, na primeira execução da role `sops_age_key`, e nunca existe em texto claro fora dele.
 
 `.sops.yaml` lista destinatários numa lista age só, sob um único `key_group`: qualquer chave privada correspondente a qualquer entrada da lista decifra sozinha, sem depender das outras. Não há um número fixo de destinatários nem papéis fixos, `just sops-recipients add <rótulo> <chave pública>`, `update`, `remove` e `list` operam sobre entradas identificadas só por um rótulo em comentário (`# node`, `# operator-se`, o nome é livre); `sync-node [rótulo]` é só uma conveniência sobre esse mesmo mecanismo, que sabe ler a chave pública do `Secret` do cluster e manter uma entrada sincronizada com ela, `node` por padrão, ou qualquer outro rótulo passado (útil se um segundo node algum dia entrar nesse cluster ou em outro que compartilhe este `.sops.yaml`). Cifrar um `SopsSecret` novo (`just sops-sync <arquivo>`) e o gate `security-sopssecrets` só precisam das chaves públicas, nenhuma chave privada envolvida; `just sops-sync`, sem argumento, faz o mesmo para todo satélite de uma vez, arquivo por arquivo: só pede a identidade que decifra no exato arquivo que precisa mesmo de resincronizar, nunca antecipadamente para o lote inteiro, então cifrar um satélite novo num lote que já tem outros satélites cifrados e em dia não trava esperando chave nenhuma.
 
@@ -92,4 +92,4 @@ Um atacante com acesso físico ao nó ou ao hipervisor. Uma vulnerabilidade zero
 
 ## Continue por aqui
 
-O [SECURITY.md](https://github.com/guesant/hl-infrastructure/blob/main/SECURITY.md) diz como reportar uma falha que este modelo não previu. A página [GitOps: root e satélites](gitops-root-e-satelites.md) detalha as permissões de cada projeto do Argo, e [a pipeline de CI](ci.md) lista os gates que barram um manifesto perigoso antes do apply.
+O [SECURITY.md](https://github.com/guesant/hl-infrastructure/blob/main/SECURITY.md) diz como reportar uma falha que este modelo não previu. A página [GitOps: root e satélites](gitops-root-e-satelites.md) detalha as permissões de cada projeto do Argo, e [a pipeline de CI](ci.md) lista os gates que barram um manifesto perigoso antes do apply. O [checklist de segurança](checklist-de-seguranca.md) confronta este modelo com as recomendações de guias públicos e lista as lacunas conhecidas.

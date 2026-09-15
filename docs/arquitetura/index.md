@@ -71,4 +71,5 @@ flowchart TB
 - [A pipeline de CI](ci.md) descreve os jobs do workflow `ci` e por que eles vivem todos no mesmo arquivo.
 - [Modelo de ameaças](modelo-de-ameacas.md) lista o que se protege, por onde um atacante entraria e o que barra cada caminho.
 - [Mapa de controles](mapa-de-controles.md) inventaria cada garantia com a evidência que a prova.
+- [Checklist de segurança](checklist-de-seguranca.md) confronta o repositório e o cluster com as recomendações de guias públicos de GitOps, DevOps, Linux, Terraform e Kubernetes, com as fontes e as lacunas.
 - [Variáveis](variaveis.md) lista toda variável de `ansible/group_vars/all/`, separando versões de segredos.
