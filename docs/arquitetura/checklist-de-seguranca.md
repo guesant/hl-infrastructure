@@ -109,9 +109,9 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Nenhum binding para `system:unauthenticated` além do mínimo | Atende | Só o `system:public-info-viewer` padrão, que expõe versão e saúde | KA |
 | RBAC com privilégio mínimo e sem conceder criação de roles | Parcial | Os satélites não criam `ClusterRole`, mas o Argo CD, o sops-secrets-operator e os componentes do k3s têm papéis amplos por natureza, e não há revisão periódica | K8, KA, SR, SE |
 | `system:masters` só no bootstrap | Parcial | O kubeconfig do operador é o de administrador do k3s; não há usuário nominal com permissão menor | K8 |
-| Kubeconfig com leitura restrita | Parcial | Na máquina do operador fica fora do git, com modo 600; no node, `write-kubeconfig-mode: "0600"` deixa `/etc/rancher/k3s/k3s.yaml` legível só pelo root; a mudança está na role `k3s` e passa a valer no próximo `just bootstrap` | SR |
+| Kubeconfig com leitura restrita | Atende | Na máquina do operador fica fora do git, com modo 600; no node, `write-kubeconfig-mode: "0600"` deixa `/etc/rancher/k3s/k3s.yaml` legível só pelo root | SR |
 | Plugins de admissão recomendados, incluindo `NodeRestriction` | Atende | `NodeRestriction` ligado, junto com os padrões do k3s | K8 |
-| Pod Security Standards aplicados em todo namespace | Parcial | `enforce`, `warn` e `audit` `restricted` em `blog`, `argocd`, `cert-manager`, `cnpg-system` e `sops`, por `managedNamespaceMetadata` nos operadores, por um manifesto `Namespace` no projeto `infra` para o `blog` e pela role `argocd`; `kube-system` fica sem enforce porque o Cilium e o k3s precisam de privilégio; o label do `argocd` passa a valer no próximo `just bootstrap`; o job `pod-security` exige o label em todo namespace novo | K8, KA, SR, SE |
+| Pod Security Standards aplicados em todo namespace | Atende | `enforce`, `warn` e `audit` `restricted` em `blog`, `argocd`, `cert-manager`, `cnpg-system` e `sops`, por `managedNamespaceMetadata` nos operadores, por um manifesto `Namespace` no projeto `infra` para o `blog` e pela role `argocd`; `kube-system` fica sem enforce porque o Cilium e o k3s precisam de privilégio; o job `pod-security` exige o label em todo namespace novo | K8, KA, SR, SE |
 | Motor de políticas na admissão (Kyverno, Gatekeeper, ValidatingAdmissionPolicy) | Não atende | As regras só existem como gate de CI sobre os charts renderizados | SE, MD, PL, CP |
 | Contêiner sem privilégio, sem escalada, com capabilities removidas | Atende | Todos os pods de `argocd`, `blog`, `cert-manager`, `cnpg-system` e `sops` rodam `runAsNonRoot` com `drop: ALL` e sem escalada | KA, SR, SE |
 | Perfil seccomp `RuntimeDefault` | Atende | Presente em todos os pods, inclusive no sops-secrets-operator depois de ligar o `securityContext` do chart | K8, KA, SE |
@@ -125,7 +125,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Saída e DNS controlados contra vazamento de dados | Parcial | Cada namespace só sai para o CoreDNS, para o API server e para as portas externas de que precisa (443 no Argo CD e no app do blog, 7844 e 443 no cloudflared); vale de verdade quando o modo auditoria for desligado | SE |
 | `LoadBalancer`, `NodePort` e `externalIPs` restritos | Atende | Só há `Service` `ClusterIP`; Traefik e ServiceLB desligados pela role `k3s` | K8 |
 | Acesso de pods à API de metadados de nuvem bloqueado | Não se aplica | Raspberry Pi, sem serviço de metadados | K8, SR |
-| `Secret` cifrado em repouso | Parcial | `secrets-encryption` ligado pela role `k3s`, com recifragem dos `Secret` que já existiam; a chave fica só no node; a role está pronta e passa a valer no próximo `just bootstrap`, que reinicia o node | K8, SR, SE |
+| `Secret` cifrado em repouso | Atende | `secrets-encryption` ligado pela role `k3s`, com recifragem dos `Secret` que já existiam; a chave fica só no node | K8, SR, SE |
 | Nada confidencial em `ConfigMap` | Atende | As credenciais do blog saíram do `ConfigMap` para o `SopsSecret` `app-secret` | K8 |
 | `Secret` montado como volume em vez de variável de ambiente | Não atende | O blog recebe credenciais por `envFrom` | SE |
 | Datastore isolado, com TLS e acesso só do API server | Atende | k3s com sqlite local, sem porta de rede | SR, SE |
@@ -168,7 +168,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Root sem login por SSH | Recusado | `PermitRootLogin prohibit-password`: o Ansible entra como root por chave; trocar por um usuário com `sudo` é possível, mas não muda o que a chave permite | PS |
 | Limite de tentativas e banimento de quem insiste | Atende | `MaxAuthTries 3` e `fail2ban` com a jail `sshd` | PS, AC |
 | SSH fora da porta 22 e com lista de usuários permitidos | Não atende | Porta 22 e sem `AllowUsers`; o firewall e o fail2ban são a barreira hoje | PS |
-| Firewall ligado, só com o necessário exposto | Parcial | firewalld só libera SSH e 6443 na zona pública, e o `rpcbind`, que escutava em todas as interfaces sem uso, fica parado e mascarado pela role `os_prerequisites`; o `rpcbind` só para depois do próximo `just bootstrap` | PS |
+| Firewall ligado, só com o necessário exposto | Atende | firewalld só libera SSH e 6443 na zona pública, e o `rpcbind`, que escutava em todas as interfaces sem uso, fica parado e mascarado pela role `os_prerequisites` | PS |
 | Atualizações de segurança automáticas | Atende | `unattended-upgrades` habilitado | AC, PS |
 | MAC aplicando perfis | Parcial | AppArmor ligado, com parte dos perfis em modo `complain` | TS, PS |
 | Auditoria de chamadas de sistema | Atende | `auditd` ativo com regras da role `auditd` | TS |
