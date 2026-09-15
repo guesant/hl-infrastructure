@@ -28,8 +28,9 @@ O cert-manager, o operador CloudNativePG, o sops-secrets-operator e o Argo CD Im
 | --- | --- | --- |
 | `k3s_api_allowed_cidrs` | Lista de CIDRs autorizados a acessar a porta da API do k3s no firewall | role `firewall` |
 | `bootstrap_app_repo_url` | Opcional; URL do repositório que a `Application` root sincroniza, por padrão este repositório | role `bootstrap_app` |
-| `ssh_root_authorized_key` | Chave pública SSH autorizada para login como root | role `ssh_hardening` |
 | `argocd_github_webhook_secret` | Segredo compartilhado usado para validar o webhook do GitHub que acelera a sincronização do Argo | role `argocd` |
+
+A chave SSH do operador também não mora aqui. Ela precisa estar no node antes do primeiro `bootstrap`, porque é por ela que o Ansible entra, e a role `ssh_hardening` só confere que o `authorized_keys` do usuário do inventário não está vazio antes de desligar login por senha. Declarar a mesma chave de novo numa variável não acrescentava acesso nenhum.
 
 A role `sops_age_key` não consome nenhuma variável daqui: ela gera o próprio par de chaves com `age-keygen` direto no node, na primeira execução, em vez de receber um valor pronto de `secrets.yml`. Veja [Ansible: as roles do bootstrap](ansible.md) para o porquê.
 

@@ -15,7 +15,7 @@ cp ansible/inventory.example.ini ansible/inventory.ini
 cp ansible/group_vars/all/secrets.example.yml ansible/group_vars/all/secrets.yml
 ```
 
-Edite `ansible/inventory.ini` com o IP real do Pi, o usuário SSH e o caminho da chave privada. Edite `ansible/group_vars/all/secrets.yml` preenchendo as três variáveis: `k3s_api_allowed_cidrs` com o CIDR real da sua rede (a API do k3s fica bloqueada por firewall para qualquer origem fora dessa lista), `ssh_root_authorized_key` com a chave pública que vai autorizar login como root, e `argocd_github_webhook_secret` com um segredo gerado por você (não o valor de exemplo).
+Edite `ansible/inventory.ini` com o IP real do Pi, o usuário SSH e o caminho da chave privada. Edite `ansible/group_vars/all/secrets.yml` preenchendo `k3s_api_allowed_cidrs` com o CIDR real da sua rede (a API do k3s fica bloqueada por firewall para qualquer origem fora dessa lista) e `argocd_github_webhook_secret` com um segredo gerado por você (não o valor de exemplo). A chave SSH não entra aqui: ela já precisa estar autorizada no Pi para o Ansible conseguir entrar, e o bootstrap aborta antes de desligar login por senha se o `authorized_keys` do usuário do inventário estiver vazio.
 
 Nenhum dos dois arquivos reais é rastreado pelo git; só os `.example` ficam versionados. As versões de k3s, Helm e de cada chart não precisam de nada: elas vivem em `ansible/group_vars/all/versions.yml`, que é versionado e mantido pelo Renovate, e o Ansible mescla os dois arquivos sozinho.
 
