@@ -51,7 +51,7 @@ while IFS= read -r file; do
     status=1
   fi
   check_recipients "$file" "$(grep -E '^sops_age__list_[0-9]+__map_recipient=' "$file" | cut -d= -f2- | jq -R . | jq -sc sort)" || status=1
-done < <(find tofu node -type f -name '*.sops.env' 2>/dev/null)
+done < <(find tofu ansible/recovery -type f -name '*.sops.env' 2>/dev/null)
 
 while IFS= read -r file; do
   check_encrypted "$file" || {

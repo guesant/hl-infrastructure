@@ -16,7 +16,7 @@ Para o k3s, roda `k3s certificate rotate`, sobe de novo, espera o API server res
 just rotate-token
 ```
 
-Lê o token atual em `/var/lib/rancher/k3s/server/token`, gera um novo com `openssl rand`, roda `k3s token rotate` e reinicia o k3s. Num cluster de um nó só o token não é usado por ninguém depois da instalação, então rotacioná-lo custa só o restart; vale fazer se o node foi clonado ou se o token apareceu em algum log. Depois de rotacionar, rode `just k3s-token-escrow`, que busca o token novo por SSH e o grava cifrado em `node/k3s-token.sops.env`; sem isso, a cópia de recuperação fica com o token antigo.
+Lê o token atual em `/var/lib/rancher/k3s/server/token`, gera um novo com `openssl rand`, roda `k3s token rotate` e reinicia o k3s. Num cluster de um nó só o token não é usado por ninguém depois da instalação, então rotacioná-lo custa só o restart; vale fazer se o node foi clonado ou se o token apareceu em algum log. Depois de rotacionar, rode `just k3s-token-escrow`, que busca o token novo por SSH e o grava cifrado em `ansible/recovery/k3s-token.sops.env`; sem isso, a cópia de recuperação fica com o token antigo.
 
 ## Chave age do node
 
@@ -82,7 +82,7 @@ printf '{"config":{"url":"https://ops.guesant.net/api/webhook","content_type":"j
 unset new
 ```
 
-O id do webhook sai de `gh api repos/guesant/hl-infrastructure/hooks`. Depois, `just bootstrap` grava o valor novo no `argocd-secret`: a role `argocd` compara o que está no cluster com o valor cifrado e só reaplica quando os dois diferem, e o `argocd-server` lê a mudança sem reiniciar. Por fim, confira em `gh api repos/guesant/hl-infrastructure/hooks/<id>/deliveries` que a entrega seguinte de `push` voltou com status 200. Commite o `secrets.sops.yaml`.
+O id do webhook sai de `gh api repos/guesant/hl-infrastructure/hooks`. Para configurar o webhook à mão pela interface do GitHub, em vez do `gh api`, `just webhook-secret | pbcopy` copia o valor atual decifrado para a área de transferência sem mostrá-lo na tela; sem o `pbcopy`, a recipe o imprime. Depois, `just bootstrap` grava o valor novo no `argocd-secret`: a role `argocd` compara o que está no cluster com o valor cifrado e só reaplica quando os dois diferem, e o `argocd-server` lê a mudança sem reiniciar. Por fim, confira em `gh api repos/guesant/hl-infrastructure/hooks/<id>/deliveries` que a entrega seguinte de `push` voltou com status 200. Commite o `secrets.sops.yaml`.
 
 ## Prazos de rotação
 

@@ -5,7 +5,7 @@ creation_rules:
   - path_regex: (^|/)tofu/.+\.sops\.env$
     key_groups:
       - age: *recipients
-  - path_regex: (^|/)node/.+\.sops\.env$
+  - path_regex: (^|/)ansible/recovery/.+\.sops\.env$
     key_groups:
       - age: *recipients
   - path_regex: (^|/)ansible/group_vars/.+\.sops\.yaml$

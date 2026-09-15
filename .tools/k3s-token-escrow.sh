@@ -4,7 +4,7 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
-target=node/k3s-token.sops.env
+target=ansible/recovery/k3s-token.sops.env
 inventory=ansible/inventory.ini
 
 command -v sops >/dev/null 2>&1 || { echo "sops not found in PATH" >&2; exit 1; }

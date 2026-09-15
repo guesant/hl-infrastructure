@@ -150,6 +150,10 @@ age-se-keygen *args: _require-host-sops
 sops-edit file identity=(home_dir() / ".config/hl-infrastructure/sops/operator-se.txt"): _require-host-sops
     SOPS_AGE_KEY_FILE={{identity}} sops {{file}}
 
+[doc("Print the GitHub webhook secret Argo CD expects, to paste into the repository webhook settings; pipe to pbcopy to keep it off the screen")]
+webhook-secret identity=sops_identity: _require-host-sops
+    @SOPS_AGE_KEY_FILE={{identity}} sops decrypt --extract '["argocd_github_webhook_secret"]' ansible/group_vars/all/secrets.sops.yaml
+
 [doc("Encrypt any plaintext SopsSecret and re-key any already-encrypted one; pass a file to target just it")]
 sops-sync *args: _require-host-sops
     .tools/sops-sync.sh {{args}}
@@ -244,7 +248,7 @@ security-trivy-images: infra-render-charts (_build "shell") (_build "trivy")
 lint-commits from="origin/main" to="HEAD": (_build "commitlint")
     COMMITLINT_IMAGE=hl-infra/commitlint:{{tools_hash}} .tools/lint-commits.sh {{from}} {{to}}
 
-[doc("Copy the node k3s token into node/k3s-token.sops.env, encrypted, for disaster recovery")]
+[doc("Copy the node k3s token into ansible/recovery/k3s-token.sops.env, encrypted, for disaster recovery")]
 k3s-token-escrow: _require-host-sops
     .tools/k3s-token-escrow.sh
 

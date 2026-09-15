@@ -20,7 +20,7 @@ just bootstrap-check
 just bootstrap
 ```
 
-Ao fim, `ansible/kubeconfig` aponta para o cluster novo e `kubectl -n argocd get applications` mostra o `root` sincronizando os satélites. O k3s reinstalado gera um token de join novo, então rode `just k3s-token-escrow` e commite `node/k3s-token.sops.env`: sem isso, a cópia cifrada continua guardando o token do node que se perdeu.
+Ao fim, `ansible/kubeconfig` aponta para o cluster novo e `kubectl -n argocd get applications` mostra o `root` sincronizando os satélites. O k3s reinstalado gera um token de join novo, então rode `just k3s-token-escrow` e commite `ansible/recovery/k3s-token.sops.env`: sem isso, a cópia cifrada continua guardando o token do node que se perdeu.
 
 A imagem do Raspberry Pi OS cria de novo o usuário padrão (`user`, uid 1000), com senha, grupo `sudo`, chave SSH e login automático tanto no desktop gráfico quanto no console `tty1`. Nada do cluster usa esse usuário, e o Ansible não o remove, então o passo é manual, por SSH como root, depois de confirmar que o `authorized_keys` do root tem a chave do operador:
 

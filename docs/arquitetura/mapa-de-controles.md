@@ -4,7 +4,7 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 
 | Componente | Tema | Controle | Evidência |
 | --- | --- | --- | --- |
-| Repositório | Segredos | Nenhum segredo no git; valores reais só cifrados, em `SopsSecret`, em `tofu/**/*.sops.env`, `node/*.sops.env` e `ansible/group_vars/all/secrets.sops.yaml` | `.gitignore`, job `gitleaks` sobre todo o histórico, `trivy-fs`, job `sopssecrets` |
+| Repositório | Segredos | Nenhum segredo no git; valores reais só cifrados, em `SopsSecret`, em `tofu/**/*.sops.env`, `ansible/recovery/*.sops.env` e `ansible/group_vars/all/secrets.sops.yaml` | `.gitignore`, job `gitleaks` sobre todo o histórico, `trivy-fs`, job `sopssecrets` |
 | Repositório | Integridade de dependências | Toda action, imagem, chart e binário pinado por versão ou SHA | `.github/workflows/*.yml` (SHA em todo `uses`), `.tools/docker/Dockerfile`, `versions.yml`, check `check-images-pinned.sh` |
 | Repositório | Atualização | Renovate abre PR para toda dependência, com sete dias de carência | `.github/renovate.json`, dependency dashboard |
 | CI | Privilégio | `contents: read` por padrão; escrita só no `renovate`, isolado num environment | `permissions:` em cada workflow, `zizmor` a cada push |
@@ -42,7 +42,7 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | Node | Endurecimento de host | sysctls de kernel e rede, `/tmp` com `noexec`, SSH com `AllowGroups root` e validação antes de gravar, auditd ampliado, serviços de desktop desligados, journald persistente com teto | roles `sysctl_hardening`, `os_prerequisites`, `ssh_hardening`, `auditd`, `maintenance` |
 | Node | Saúde e drift | smartd vigiando o SSD, relatório de pacotes instalados à mão fora da linha de base | role `os_prerequisites`, `files/apt-manual-baseline.txt` |
 | Ansible | Identidade do node | Host key do Pi fixada, conexão recusada se divergir | `ansible/group_vars/all/connection.yml`, `ansible/known_hosts` |
-| Node | Recuperação | Token do k3s guardado cifrado | `node/k3s-token.sops.env`, `just k3s-token-escrow` |
+| Node | Recuperação | Token do k3s guardado cifrado | `ansible/recovery/k3s-token.sops.env`, `just k3s-token-escrow` |
 | Pods | Recursos | `requests` e limite de memória em todo componente de plataforma declarado aqui | values do Argo CD na role `argocd`, values dos operadores, values do Cilium |
 | Documentação | Fidelidade | Página cuja fonte mudou sem revisão falha a CI | `.tools/check-doc-drift.sh`, marcadores `source-of-trust` |
 
