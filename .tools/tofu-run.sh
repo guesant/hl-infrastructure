@@ -73,4 +73,15 @@ if [ "${#placeholders[@]}" -gt 0 ]; then
   exit 1
 fi
 
+case "${1:-} ${2:-}" in
+  "plan "* | "show "* | "output "* | "validate "* | "providers "* | "state list" | "state show")
+    if [ -n "${CLOUDFLARE_API_TOKEN_READ:-}" ]; then
+      export CLOUDFLARE_API_TOKEN="$CLOUDFLARE_API_TOKEN_READ"
+    elif [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
+      echo "note: no CLOUDFLARE_API_TOKEN_READ in $module_secrets; this read-only command runs with the write token" >&2
+    fi
+    ;;
+esac
+unset CLOUDFLARE_API_TOKEN_READ
+
 exec docker run --rm -i -v "$repo_root":/repo -w /repo "${env_args[@]}" "$TOFU_IMAGE" -chdir="$module_dir" "$@"
