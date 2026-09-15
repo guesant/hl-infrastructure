@@ -3,6 +3,7 @@
   "extends": ["config:recommended"],
   "timezone": "America/Sao_Paulo",
   "minimumReleaseAge": "7 days",
+  "platformCommit": "enabled",
   "pip-compile": {
     "managerFilePatterns": ["/^docs/requirements\\.txt$/"]
   },
