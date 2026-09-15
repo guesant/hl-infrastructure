@@ -78,6 +78,8 @@ nav:
       - Adicionar um satélite novo: operacional/adicionar-um-satelite.md
       - Estado fora do git: operacional/estado-fora-do-git.md
       - Restaurar o node do zero: operacional/restaurar-o-node.md
+      - Resposta a incidente: operacional/resposta-a-incidente.md
+      - Revisão periódica: operacional/revisao-periodica.md
   - Contribuindo:
       - contribuindo/index.md
       - Convenções de escrita: contribuindo/convencoes-de-escrita.md

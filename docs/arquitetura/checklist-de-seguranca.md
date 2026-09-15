@@ -107,7 +107,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | API server fora da internet, só de redes confiáveis | Atende | Porta 6443 só dos CIDRs em `k3s_api_allowed_cidrs`, filtrada na chain `INPUT` | K8, SR, SE |
 | Autenticação anônima desligada no API server e no kubelet | Atende | `anonymous-auth=false` no API server; os dois respondem 401 sem credencial, e a porta read-only 10255 está fechada | SR, SE |
 | Nenhum binding para `system:unauthenticated` além do mínimo | Atende | Só o `system:public-info-viewer` padrão, que expõe versão e saúde | KA |
-| RBAC com privilégio mínimo e sem conceder criação de roles | Parcial | Os satélites não criam `ClusterRole`, mas o Argo CD, o sops-secrets-operator e os componentes do k3s têm papéis amplos por natureza, e não há revisão periódica | K8, KA, SR, SE |
+| RBAC com privilégio mínimo e sem conceder criação de roles | Parcial | Revisado em 2026-09-15: curinga só no `argocd-application-controller` (aplica qualquer recurso, por desenho do GitOps), no `argocd-server` (ações da interface), no sops-secrets-operator (cria `Secret` em qualquer namespace) e nos componentes do k3s; o kube-bench roda com ClusterRole só de leitura; a revisão periódica confere se aparece curinga novo | K8, KA, SR, SE |
 | `system:masters` só no bootstrap | Parcial | O kubeconfig do operador é o de administrador do k3s; não há usuário nominal com permissão menor | K8 |
 | Kubeconfig com leitura restrita | Atende | Na máquina do operador fica fora do git, com modo 600; no node, `write-kubeconfig-mode: "0600"` deixa `/etc/rancher/k3s/k3s.yaml` legível só pelo root | SR |
 | Plugins de admissão recomendados, incluindo `NodeRestriction` | Atende | `NodeRestriction` ligado, junto com os padrões do k3s | K8 |
@@ -149,7 +149,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | --- | --- | --- | --- |
 | Providers com origem e versão fixas, lock file commitado | Atende | `cloudflare` pinado em versão exata e `.terraform.lock.hcl` no git | HC |
 | Credencial do provider fora do código, com privilégio mínimo | Atende | API token só com Tunnel e DNS, injetado por `sops exec-env`, nunca em arquivo | HC, TG |
-| Credenciais separadas para `plan` e `apply` | Não atende | Um token só serve os dois | HC |
+| Credenciais separadas para `plan` e `apply` | Parcial | `.tools/tofu-run.sh` usa `CLOUDFLARE_API_TOKEN_READ` nos comandos que só leem (`plan`, `show`, `output`, `state list`) e o token de escrita no resto; falta criar o token só de leitura no dashboard e gravá-lo cifrado, e até lá os comandos de leitura avisam e usam o de escrita | HC |
 | Credenciais de vida curta, por OIDC | Não se aplica | O provider da Cloudflare não emite credencial dinâmica; a rotação com prazo cobre parte do risco | HC |
 | State protegido e fora do alcance de quem não opera | Atende | State cifrado com `enforced = true`, passphrase em SOPS | HC, TG |
 | Variáveis sensíveis marcadas como `sensitive` | Atende | IDs de conta e zona e a passphrase | HC |
@@ -170,7 +170,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | SSH fora da porta 22 e com lista de usuários permitidos | Parcial | `AllowGroups root`, `LoginGraceTime 30` e `LogLevel VERBOSE`; a porta continua 22, e o acesso só a partir de origens conhecidas fica para a fase seguinte | PS |
 | Firewall ligado, só com o necessário exposto | Atende | firewalld só libera SSH e 6443 na zona pública, e o `rpcbind`, que escutava em todas as interfaces sem uso, fica parado e mascarado pela role `os_prerequisites` | PS |
 | Atualizações de segurança automáticas | Atende | `unattended-upgrades` habilitado | AC, PS |
-| MAC aplicando perfis | Parcial | AppArmor ligado, com parte dos perfis em modo `complain` | TS, PS |
+| MAC aplicando perfis | Atende | AppArmor ligado com perfis em `enforce` para o que roda; os perfis em `complain` (servidor gráfico, desktop, build de pacotes, cliente de torrent, `unix-chkpwd` e `unprivileged_userns`) são de pacotes da imagem que nada no node executa, conferido na revisão de 2026-09-15, e forçá-los a `enforce` não protegeria processo nenhum | TS, PS |
 | Auditoria de chamadas de sistema | Atende | `auditd` vigia identidade (`passwd`, `shadow`, `group`, `sudoers.d`), SSH, firewalld, cron, carga de módulos do kernel e as credenciais e a configuração do k3s | TS |
 | sysctls de rede e kernel endurecidos | Atende | `randomize_va_space`, `tcp_syncookies`, `kptr_restrict=2`, `dmesg_restrict=1`, redirects e source route desligados em IPv4 e IPv6, `suid_dumpable=0`; `ip_forward` fica ligado porque o Kubernetes precisa | TS, PS |
 | Partições separadas e opções de montagem restritas | Parcial | `/tmp` é tmpfs com `nosuid,nodev,noexec` e `/dev/shm` com `nosuid,nodev`; `/var`, `/var/log` e `/home` continuam dividindo a raiz | TS, PS |
@@ -189,7 +189,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Detecção de intrusão ou de comportamento em runtime | Não atende | Hubble observa o tráfego, mas nada alerta sobre ele | LU, SR |
 | Monitoramento de expiração de certificado e de domínio | Atende | O TLS público é da Cloudflare e renova sozinho, e o job `domain-expiry` consulta o RDAP e falha na execução agendada a trinta dias do vencimento | AC |
 | Backup de tudo que é crítico, com restauração testada | Não atende | O Postgres do blog não tem backup desde a remoção do barman; só `.sops.yaml` e o state têm cópia, no git | AC, CP |
-| Plano de resposta a incidente e revisão pós-incidente | Parcial | Os runbooks de [restaurar o node](../operacional/restaurar-o-node.md) e [rotacionar credenciais](../operacional/rotacionar-credenciais.md) cobrem a recuperação; não há plano de comunicação nem exercício periódico | LU, AC |
+| Plano de resposta a incidente e revisão pós-incidente | Atende | [Resposta a incidente](../operacional/resposta-a-incidente.md) com conter, preservar evidência, erradicar e recuperar, e um exercício trimestral junto da revisão periódica | LU, AC |
 | Proteção contra DDoS e WAF na frente do serviço público | Parcial | O tráfego passa pelo proxy da Cloudflare, com a proteção de DDoS do plano gratuito; nenhuma regra de WAF foi configurada | AC |
 
 ## Governança
@@ -198,7 +198,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | --- | --- | --- | --- |
 | Responsabilidades e processo de mudança escritos | Atende | [Metodologia de mudança](../operacional/metodologia-de-mudanca.md) e o [checklist operacional](../operacional/checklist.md) | CN, LU |
 | Modelo de ameaças explícito | Atende | [Modelo de ameaças](modelo-de-ameacas.md) | LU, DO |
-| Revisão periódica de permissões e de exposição | Não atende | Não há rotina; esta página é a primeira revisão registrada | LU, AC |
+| Revisão periódica de permissões e de exposição | Atende | Roteiro em [revisão periódica](../operacional/revisao-periodica.md), última em 2026-09-15, prazo de 90 dias em `.config/security-review.conf`, cobrado pelo job `secret-age` | LU, AC |
 | Teste de invasão e bug bounty | Não se aplica | Fora da escala de um homelab; o relato privado de vulnerabilidade cobre o canal de entrada | LU, AC |
 | Conformidade com normas (SOC 2, ISO 27001, GDPR, HIPAA) | Não se aplica | Nenhum dado regulado nem cliente | RG, TG, AC |
 | Treinamento e exercícios de phishing | Não se aplica | Uma pessoa; a seção [Aprender](../aprender/index.md) faz o papel de material de estudo | LU, AC |

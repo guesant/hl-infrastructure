@@ -233,6 +233,14 @@ jobs:
         if: github.event_name == 'schedule'
         run: docker run --rm -v "$PWD":/repo -w /repo -e GITHUB_ACTIONS --entrypoint bash hl-infra/shell .tools/check-secret-age.sh --fail-on-stale
 
+      - name: Warn when the periodic security review is overdue
+        if: github.event_name != 'schedule'
+        run: docker run --rm -v "$PWD":/repo -w /repo -e GITHUB_ACTIONS --entrypoint bash hl-infra/shell .tools/check-security-review.sh
+
+      - name: Fail when the periodic security review is overdue
+        if: github.event_name == 'schedule'
+        run: docker run --rm -v "$PWD":/repo -w /repo -e GITHUB_ACTIONS --entrypoint bash hl-infra/shell .tools/check-security-review.sh --fail-on-stale
+
   docs-consistency:
     runs-on: ubuntu-24.04
     steps:

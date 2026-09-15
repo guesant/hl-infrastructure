@@ -112,6 +112,10 @@ lint-placeholders: (_build "shell")
 lint-secret-age: (_build "shell")
     {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-secret-age.sh
 
+[doc("Report how long ago the periodic permission and exposure review was, warning past its deadline")]
+lint-security-review: (_build "shell")
+    {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-security-review.sh
+
 [doc("Fail when a page's sources changed after the page was last reviewed, or a role has no doc")]
 lint-docs: (_build "shell")
     {{run}} -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0=/repo \
