@@ -205,13 +205,11 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 
 ## O que atacar primeiro
 
-Nem toda lacuna pesa igual. Quatro delas mudam o risco real do cluster e são baratas perto do que protegem.
+Nem toda lacuna pesa igual. As abaixo mudam o risco real do cluster e são baratas perto do que protegem.
 
-A política de rede não está sendo aplicada. O Cilium roda com `policyAuditMode: true`, o que faz toda `NetworkPolicy`, inclusive o `default-deny` do namespace `blog`, apenas registrar o que bloquearia. As regras parecem ativas no git e no cluster, mas qualquer pod alcança o Postgres do blog. Desligar o modo de auditoria, depois de conferir no Hubble que nada legítimo seria barrado, transforma essas regras em controle de verdade.
+A política de rede ainda não bloqueia. Desde 15 de setembro de 2026 cada namespace tem uma `CiliumNetworkPolicy` com o que usa, e o Hubble deixou de mostrar veredictos `AUDIT` logo depois de elas entrarem, mas o Cilium continua com `policyAuditMode: true`, então as regras só registram o que barrariam e qualquer pod ainda alcança o Postgres do blog. A pendência é virar esse modo, e o procedimento é este: a partir de 17 de setembro de 2026, conferir no Hubble (`hubble observe --type policy-verdict --verdict AUDIT`, dentro do agente) que nenhum veredicto `AUDIT` apareceu em coletas espalhadas por pelo menos dois dias, incluindo um sync do Argo CD, uma troca de imagem pelo Image Updater e um push com webhook; trocar `policyAuditMode` para `false` em `ansible/roles/cilium/templates/values.yaml.j2` e rodar `just bootstrap`; depois confirmar que só tráfego esperado aparece como `DROPPED`, que todas as `Application` seguem Healthy e que o blog, o login com Google e o webhook continuam funcionando. Se algo parar, `cilium config set policy-audit-mode true` no agente devolve o modo auditoria na hora, antes de reverter o commit.
 
 Os dados do blog não têm backup. Enquanto o banco estiver vazio isso não custa nada, mas o primeiro post publicado muda a conta, e a restauração precisa ser testada, não só configurada.
-
-Os pods não têm Pod Security Admission. Nenhum namespace carrega os labels `pod-security.kubernetes.io/enforce`, então só os gates de CI impedem um pod privilegiado, e eles não enxergam o que for aplicado fora do git.
 
 O Argo CD mantém o login local de administrador. Ele não está exposto na internet, mas quem obtiver a senha inicial ou o kubeconfig administra o cluster pela interface, sem trilha de identidade própria.
 
