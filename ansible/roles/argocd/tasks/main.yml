@@ -19,6 +19,22 @@
       changed_when: argocd_namespace.rc == 0
       failed_when: argocd_namespace.rc != 0 and 'AlreadyExists' not in argocd_namespace.stderr
 
+    - name: Label the argocd namespace with its Pod Security levels
+      ansible.builtin.command:
+        argv:
+          - k3s
+          - kubectl
+          - label
+          - namespace
+          - argocd
+          - --overwrite
+          - pod-security.kubernetes.io/enforce=restricted
+          - pod-security.kubernetes.io/warn=restricted
+          - pod-security.kubernetes.io/audit=restricted
+      register: argocd_namespace_labels
+      changed_when: "'not labeled' not in argocd_namespace_labels.stdout"
+      when: not ansible_check_mode
+
     - name: Add the Argo Helm repository
       ansible.builtin.command: helm repo add argo https://argoproj.github.io/argo-helm
       register: argocd_repo_add
