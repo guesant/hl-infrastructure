@@ -13,3 +13,4 @@ spec:
       static:
         - https://guesant.net
         - https://www.guesant.net
+        - https://auth.guesant.net/realms/homelab/.well-known/openid-configuration
