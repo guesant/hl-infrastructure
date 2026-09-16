@@ -10,6 +10,12 @@ kube-prometheus-stack:
     initChownData:
       enabled: false
     defaultDashboardsTimezone: America/Sao_Paulo
+    startupProbe:
+      httpGet:
+        path: /api/health
+        port: grafana
+      periodSeconds: 10
+      failureThreshold: 36
     grafana.ini:
       server:
         root_url: https://grafana.guesant.internal
