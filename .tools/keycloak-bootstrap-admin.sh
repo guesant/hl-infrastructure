@@ -38,7 +38,11 @@ echo "logging in as the permanent administrator"
 token="$(token_for "$operator_user" "$operator_password")"
 
 temp_user="$(kubectl -n keycloak get secret keycloak-initial-admin -o jsonpath='{.data.username}' 2>/dev/null | base64 -d || true)"
-if [ -n "$temp_user" ] && [ "$temp_user" != "$operator_user" ]; then
+if [ -z "$temp_user" ]; then
+  temp_user="temp-admin"
+  echo "kubectl could not read keycloak-initial-admin; assuming the operator's default bootstrap user, $temp_user"
+fi
+if [ "$temp_user" != "$operator_user" ]; then
   temp_id="$(curl -fsS --cacert "$ca_file" -H "Authorization: Bearer $token" \
     "$keycloak_url/admin/realms/master/users?username=$temp_user&exact=true" |
     python3 -c 'import json, sys; users = json.load(sys.stdin); print(users[0]["id"] if users else "")')"
