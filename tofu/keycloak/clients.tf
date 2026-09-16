@@ -14,6 +14,13 @@ locals {
       logout_redirect_uri = "https://grafana.${var.internal_domain}/*"
       secret              = var.grafana_client_secret
     }
+    oauth2-proxy = {
+      name                = "oauth2-proxy"
+      base_url            = "https://auth.${var.internal_domain}"
+      redirect_uris       = ["https://auth.${var.internal_domain}/oauth2/callback"]
+      logout_redirect_uri = "https://auth.${var.internal_domain}/*"
+      secret              = var.oauth2_proxy_client_secret
+    }
     blog = {
       name                = var.blog_hostname
       base_url            = "https://${var.blog_hostname}"
