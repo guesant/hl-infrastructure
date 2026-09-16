@@ -14,6 +14,13 @@ locals {
       logout_redirect_uri = "https://grafana.${var.internal_domain}/*"
       secret              = var.grafana_client_secret
     }
+    portainer = {
+      name                = "Portainer"
+      base_url            = "https://portainer.${var.internal_domain}"
+      redirect_uris       = ["https://portainer.${var.internal_domain}", "https://portainer.${var.internal_domain}/"]
+      logout_redirect_uri = "https://portainer.${var.internal_domain}/*"
+      secret              = var.portainer_client_secret
+    }
     oauth2-proxy = {
       name                = "oauth2-proxy"
       base_url            = "https://auth.${var.internal_domain}"
