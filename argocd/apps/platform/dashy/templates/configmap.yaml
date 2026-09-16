@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashy-config
+  namespace: dashy
+data:
+  conf.yml: |
+    pageInfo:
+      title: homelab
+      description: Serviços do node, alcançáveis só pela tailnet
+      navLinks:
+        - title: Repositório
+          path: https://github.com/guesant/hl-infrastructure
+        - title: Documentação
+          path: https://guesant.github.io/hl-infrastructure/
+    appConfig:
+      theme: nord
+      layout: auto
+      iconSize: medium
+      language: pt
+      preventWriteToDisk: true
+      preventLocalSave: true
+      disableConfiguration: true
+      hideComponents:
+        hideSettings: true
+    sections:
+      - name: Plataforma
+        icon: fas fa-server
+        items:
+          - title: Argo CD
+            description: GitOps, estado das Application
+            url: https://argocd.guesant.internal
+            icon: hl-argocd
+          - title: Portainer
+            description: Interface do cluster
+            url: https://portainer.guesant.internal
+            icon: hl-portainer
+          - title: Keycloak
+            description: Console de administração do realm homelab
+            url: https://keycloak.guesant.internal/admin/
+            icon: hl-keycloak
+      - name: Observabilidade
+        icon: fas fa-chart-line
+        items:
+          - title: Prometheus
+            description: Métricas e alvos
+            url: https://prometheus.guesant.internal
+            icon: hl-prometheus
+          - title: Alertmanager
+            description: Alertas ativos e silêncios
+            url: https://alertmanager.guesant.internal
+            icon: hl-alertmanager
+      - name: Fora do node
+        icon: fas fa-cloud
+        items:
+          - title: guesant.net
+            description: O blog, pelo túnel Cloudflare
+            url: https://guesant.net
+            icon: fas fa-globe
+          - title: Tailscale
+            description: Console da tailnet
+            url: https://login.tailscale.com/admin/machines
+            icon: hl-tailscale
+          - title: Cloudflare
+            description: DNS, túnel e WAF
+            url: https://dash.cloudflare.com
+            icon: hl-cloudflare

@@ -61,6 +61,9 @@ helm template keycloak-postgres "$repo_root/argocd/apps/data/keycloak-postgres" 
 helm template keycloak "$repo_root/argocd/apps/platform/keycloak" \
   --namespace keycloak >"$out_dir/keycloak.yaml"
 
+helm template dashy "$repo_root/argocd/apps/platform/dashy" \
+  --namespace dashy >"$out_dir/dashy.yaml"
+
 helm template portainer "$repo_root/argocd/apps/platform/portainer" \
   --namespace portainer >"$out_dir/portainer.yaml"
 

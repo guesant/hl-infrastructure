@@ -1,0 +1,4 @@
+apiVersion: v2
+name: dashy
+description: Dashy as the landing page of the tailnet names, with its dashboard declared as a ConfigMap and served read-only through the internal ingress
+version: 0.1.0
