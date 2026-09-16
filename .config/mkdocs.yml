@@ -81,6 +81,7 @@ nav:
       - Rodar os quality gates localmente: operacional/rodar-quality-gates-localmente.md
       - Adicionar um satélite novo: operacional/adicionar-um-satelite.md
       - Estado fora do git: operacional/estado-fora-do-git.md
+      - Restaurar um volume retido: operacional/restaurar-um-volume-retido.md
       - Restaurar o node do zero: operacional/restaurar-o-node.md
       - Resposta a incidente: operacional/resposta-a-incidente.md
       - Revisão periódica: operacional/revisao-periodica.md

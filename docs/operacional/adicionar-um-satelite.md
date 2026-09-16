@@ -150,7 +150,7 @@ spec:
       owner: app
 ```
 
-`Prune=false,Delete=false` no `Cluster` protege os dados de um erro de GitOps em dois momentos distintos: `Prune=false` faz o Argo se recusar a apagá-lo quando o arquivo some do repositório, e `Delete=false` o preserva quando a própria `Application` é apagada, porque toda `Application` daqui carrega o finalizer `resources-finalizer.argocd.argoproj.io`, que faz um `git rm` do arquivo dela levar junto tudo o que ela criou. Sem a segunda opção, remover o satélite do git apagaria o banco. O volume só vai embora por uma remoção manual e deliberada.
+O `Cluster` não declara `storageClass`: a classe padrão do cluster é a única que existe, `local-path` com `Retain`, e a política de admissão não é necessária porque não há outra classe a escolher. `Prune=false,Delete=false` no `Cluster` protege os dados de um erro de GitOps em dois momentos distintos: `Prune=false` faz o Argo se recusar a apagá-lo quando o arquivo some do repositório, e `Delete=false` o preserva quando a própria `Application` é apagada, porque toda `Application` daqui carrega o finalizer `resources-finalizer.argocd.argoproj.io`, que faz um `git rm` do arquivo dela levar junto tudo o que ela criou. Sem a segunda opção, remover o satélite do git apagaria o banco. O volume só vai embora por uma remoção manual e deliberada.
 
 Este `Cluster` não tem backup contínuo em object storage: o operador `cnpg-barman-plugin` que fornecia isso foi removido do cluster de propósito. Sem ele, a perda do volume é perda total dos dados do satélite; veja [estado fora do git](estado-fora-do-git.md). Reinstalar o plugin é um pré-requisito antes de qualquer satélite novo poder declarar `spec.plugins` com `barman-cloud.cloudnative-pg.io`.
 
