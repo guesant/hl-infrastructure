@@ -116,9 +116,9 @@ just tofu-apply tailscale
 
 O `plan` deve criar só o split DNS de `guesant.internal` apontando para o endereço do node; se esse split DNS já existir no console, importe-o antes com `just tofu tailscale import tailscale_dns_split_nameservers.internal guesant.internal`. Se ele reclamar que o dispositivo não foi encontrado, o node ainda não entrou na tailnet com o hostname declarado em `tofu/tailscale/terraform.tfvars`. Commite o state cifrado. Para conferir de um dispositivo da tailnet, `ssh root@<endereço do node na tailnet>` deve entrar e `dig grafana.guesant.internal` deve devolver esse mesmo endereço; de fora da tailnet, o nome não resolve. Veja [Tailscale: acesso remoto e DNS interno](../arquitetura/tailscale.md) para o que cada peça faz.
 
-## Assuma os realms do Keycloak com o OpenTofu
+## Crie os realms do Keycloak com o OpenTofu
 
-O operator criou o realm `homelab` a partir do `KeycloakRealmImport`, mas quem mantém os realms são os três módulos `tofu/keycloak-*`, na ordem `master`, `management`, `homelab`. Eles falam com o Keycloak por `keycloak.guesant.internal`, então precisam da tailnet e da CA interna, já commitada ao lado de cada módulo. O `keycloak-master.sops.env` já traz o administrador e as contas de serviço cifrados, e os outros dois módulos leem seus segredos dos `SopsSecret` pelo `secrets.map`; confira com `just placeholders`. Antes do `management`, adicione no console do Google, no client OAuth do Keycloak, o redirect `https://auth.guesant.net/realms/management/broker/google/endpoint`.
+Os realms são criados e mantidos pelos três módulos `tofu/keycloak-*`, na ordem `master`, `management`, `homelab`. Eles falam com o Keycloak por `keycloak.guesant.internal`, então precisam da tailnet e da CA interna, já commitada ao lado de cada módulo. O `keycloak-master.sops.env` já traz o administrador e as contas de serviço cifrados, e os outros dois módulos leem seus segredos dos `SopsSecret` pelo `secrets.map`; confira com `just placeholders`. Antes, adicione no console do Google, no client OAuth do Keycloak, um redirect por realm: `https://auth.guesant.net/realms/<realm>/broker/google/endpoint` para `homelab` e `management`.
 
 ```bash
 just tofu keycloak-master init && just tofu keycloak-master plan && just tofu-apply keycloak-master
@@ -126,7 +126,7 @@ just tofu keycloak-management init && just tofu keycloak-management plan && just
 just tofu keycloak-homelab init && just tofu keycloak-homelab plan && just tofu-apply keycloak-homelab
 ```
 
-O `plan` do `master` importa o realm `homelab`, cria o `management`, o administrador permanente e as duas contas de serviço. O do `management` cria tudo: grupo, usuário, fluxo, Google, escopo e os três clients. O do `homelab` mostra os blocos `import` assumindo o que já existia e, em seguida, as correções: os escopos padrão que a importação original não aplicou e os clients `argocd` e `grafana` desligados. Nada deve aparecer como destruição; se aparecer, os IDs em `imports.tf` não batem com o cluster e o `apply` não deve seguir. Commite os três states cifrados. Depois de um `apply` limpo, os blocos `import` podem ser removidos num commit seguinte, e os dois clients desligados do `homelab` apagados assim que Grafana e Argo CD estiverem entrando pelo `management`. Por fim, apague o `temp-admin` no console (realm `master`, Users) e troque, no `keycloak-master.sops.env`, `keycloak_admin_user` e `keycloak_admin_password` pelos valores do administrador permanente.
+O `master` entra com o administrador temporário do `Secret` `keycloak-initial-admin` e cria os dois realms, o administrador permanente e as contas de serviço; os outros dois entram com a sua conta de serviço e criam o conteúdo do realm. Commite os três states cifrados. Depois, apague o `temp-admin` no console (realm `master`, Users) e troque, no `keycloak-master.sops.env`, `keycloak_admin_user` e `keycloak_admin_password` pelos valores do administrador permanente.
 
 ## Confie na CA interna
 
