@@ -6,9 +6,11 @@ vars_file="$repo_root/ansible/group_vars/all/versions.yml"
 out_dir="$repo_root/rendered"
 
 argocd_chart_version="$(grep -oE 'argocd_chart_version:\s*[0-9.]+' "$vars_file" | grep -oE '[0-9.]+')"
+argocd_chart_sha256="$(grep -oE 'argocd_chart_sha256:\s*[0-9a-f]+' "$vars_file" | grep -oE '[0-9a-f]{64}')"
 cilium_version="$(grep -oE 'cilium_version:\s*[0-9.]+' "$vars_file" | grep -oE '[0-9.]+')"
+cilium_chart_sha256="$(grep -oE 'cilium_chart_sha256:\s*[0-9a-f]+' "$vars_file" | grep -oE '[0-9a-f]{64}')"
 
-for name in argocd_chart_version cilium_version; do
+for name in argocd_chart_version argocd_chart_sha256 cilium_version cilium_chart_sha256; do
   test -n "${!name}" || {
     echo "could not extract $name from $vars_file" >&2
     exit 1
@@ -22,16 +24,26 @@ helm repo add argo https://argoproj.github.io/argo-helm >/dev/null
 helm repo add cilium https://helm.cilium.io/ >/dev/null
 helm repo update >/dev/null
 
+charts_dir="$out_dir/.charts"
+mkdir -p "$charts_dir"
+helm pull argo/argo-cd --version "$argocd_chart_version" --destination "$charts_dir" >/dev/null
+helm pull cilium/cilium --version "$cilium_version" --destination "$charts_dir" >/dev/null
+test "$(sha256sum "$charts_dir/argo-cd-$argocd_chart_version.tgz" | cut -d' ' -f1)" = "$argocd_chart_sha256" || {
+  echo "argo-cd-$argocd_chart_version.tgz does not match argocd_chart_sha256 in $vars_file; review the chart and update the digest" >&2
+  exit 1
+}
+test "$(sha256sum "$charts_dir/cilium-$cilium_version.tgz" | cut -d' ' -f1)" = "$cilium_chart_sha256" || {
+  echo "cilium-$cilium_version.tgz does not match cilium_chart_sha256 in $vars_file; review the chart and update the digest" >&2
+  exit 1
+}
+
 helm template cert-manager "$repo_root/argocd/apps/operators/cert-manager" \
   --namespace cert-manager \
   --include-crds >"$out_dir/cert-manager.yaml"
 
-helm template argocd argo/argo-cd \
-  --version "$argocd_chart_version" \
+helm template argocd "$charts_dir/argo-cd-$argocd_chart_version.tgz" \
   --namespace argocd \
-  --set controller.metrics.enabled=true \
-  --set server.metrics.enabled=true \
-  --set notifications.metrics.enabled=true \
+  --values "$repo_root/ansible/roles/argocd/files/values.yaml" \
   --include-crds >"$out_dir/argocd.yaml"
 
 helm template argocd-image-updater "$repo_root/argocd/apps/platform/argocd-image-updater" \
@@ -83,11 +95,11 @@ helm template ingress "$repo_root/argocd/apps/platform/ingress" \
   --include-crds >"$out_dir/ingress.yaml"
 
 cp "$repo_root/ansible/roles/cilium/templates/values.yaml.j2" "$out_dir/.cilium-values.yaml"
-helm template cilium cilium/cilium \
-  --version "$cilium_version" \
+helm template cilium "$charts_dir/cilium-$cilium_version.tgz" \
   --namespace kube-system \
   --values "$out_dir/.cilium-values.yaml" \
   --include-crds >"$out_dir/cilium.yaml"
 rm "$out_dir/.cilium-values.yaml"
+rm -rf "$charts_dir"
 
 echo "rendered $(find "$out_dir" -name '*.yaml' | wc -l | tr -d ' ') charts into $out_dir"

@@ -3,6 +3,7 @@
   ansible.builtin.assert:
     that:
       - cilium_version is match('^[0-9]+\.[0-9]+\.[0-9]+$')
+      - cilium_chart_sha256 is match('^[0-9a-f]{64}$')
       - cilium_cli_version is match('^v[0-9]+\.[0-9]+\.[0-9]+$')
       - helm_version is match('^v[0-9]+\.[0-9]+\.[0-9]+$')
     fail_msg: >-
@@ -170,11 +171,46 @@
       check_mode: false
       when: cilium_reconcile
 
+    - name: Keep the pulled charts next to the k3s configuration
+      ansible.builtin.file:
+        path: /etc/rancher/charts
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Pull the declared Cilium chart
+      ansible.builtin.command: >-
+        helm pull cilium/cilium --version {{ cilium_version }}
+        --destination /etc/rancher/charts
+      args:
+        creates: "/etc/rancher/charts/cilium-{{ cilium_version }}.tgz"
+      register: cilium_chart_pull
+      changed_when: cilium_chart_pull is not skipped
+      check_mode: false
+      when: cilium_reconcile
+
+    - name: Verify the Cilium chart against the declared digest
+      ansible.builtin.stat:
+        path: "/etc/rancher/charts/cilium-{{ cilium_version }}.tgz"
+        checksum_algorithm: sha256
+      register: cilium_chart_file
+      when: cilium_reconcile
+
+    - name: Refuse a chart whose digest is not the declared one
+      ansible.builtin.assert:
+        that:
+          - cilium_chart_file.stat.exists
+          - cilium_chart_file.stat.checksum == cilium_chart_sha256
+        fail_msg: >-
+          cilium-{{ cilium_version }}.tgz has sha256 {{ cilium_chart_file.stat.checksum | default('none') }},
+          not the declared cilium_chart_sha256; update versions.yml after reviewing the chart, or remove the file to pull it again
+      when: cilium_reconcile
+
     - name: Probe whether the Cilium chart differs from the cluster
       ansible.builtin.shell: >
         set -o pipefail &&
-        helm template cilium cilium/cilium
-        --version {{ cilium_version }}
+        helm template cilium /etc/rancher/charts/cilium-{{ cilium_version }}.tgz
         --namespace kube-system
         --values /tmp/cilium-values.yaml
         | k3s kubectl diff --server-side -f -
@@ -189,8 +225,7 @@
     - name: Render and apply the Cilium chart from the declared values
       ansible.builtin.shell: >
         set -o pipefail &&
-        helm template cilium cilium/cilium
-        --version {{ cilium_version }}
+        helm template cilium /etc/rancher/charts/cilium-{{ cilium_version }}.tgz
         --namespace kube-system
         --values /tmp/cilium-values.yaml
         | k3s kubectl apply --server-side --force-conflicts -f -
