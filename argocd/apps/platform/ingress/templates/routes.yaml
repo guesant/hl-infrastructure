@@ -49,3 +49,81 @@ spec:
           name: keycloak-service
           port: 8080
           weight: 1
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+      namespace: ingress
+      sectionName: websecure
+  hostnames:
+    - prometheus.guesant.internal
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: kps-prometheus
+          port: 9090
+          weight: 1
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: alertmanager
+  namespace: monitoring
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+      namespace: ingress
+      sectionName: websecure
+  hostnames:
+    - alertmanager.guesant.internal
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: kps-alertmanager
+          port: 9093
+          weight: 1
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: portainer
+  namespace: portainer
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+      namespace: ingress
+      sectionName: websecure
+  hostnames:
+    - portainer.guesant.internal
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: portainer
+          port: 9000
+          weight: 1
