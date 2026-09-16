@@ -223,11 +223,11 @@ security-gitleaks: (_build "gitleaks")
 [doc("osv-scanner over every dependency manifest")]
 security-osv-scanner: (_build "osv-scanner")
     {{run}} hl-infra/osv-scanner:{{tools_hash}} \
-        scan source --recursive --experimental-exclude rendered --allow-no-lockfiles /repo
+        scan source --recursive --experimental-exclude rendered --experimental-exclude .tofu --allow-no-lockfiles /repo
 
 [doc("trivy filesystem scan for vulnerabilities and secrets")]
 security-trivy-fs: (_build "trivy")
-    {{run}} hl-infra/trivy:{{tools_hash}} fs --scanners vuln,secret --skip-dirs rendered /repo
+    {{run}} hl-infra/trivy:{{tools_hash}} fs --scanners vuln,secret --skip-dirs rendered --skip-dirs .tofu /repo
 
 [doc("ast-grep structural rules from .config/ast-grep")]
 quality-ast-grep: (_build "ast-grep") (_build "shell")

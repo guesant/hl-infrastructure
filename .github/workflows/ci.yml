@@ -611,6 +611,9 @@ jobs:
           TOFU_IMAGE: ghcr.io/opentofu/opentofu:${{ steps.tofu.outputs.version }}
         run: docker run --rm -v "$PWD":/repo -w /repo "$TOFU_IMAGE" fmt -check -recursive tofu
 
+      - name: Mirror the providers the registry cannot verify
+        run: .tools/tofu-mirror.sh
+
       - name: tofu validate
         env:
           TOFU_IMAGE: ghcr.io/opentofu/opentofu:${{ steps.tofu.outputs.version }}

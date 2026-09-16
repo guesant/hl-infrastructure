@@ -3,8 +3,8 @@ terraform {
 
   required_providers {
     keycloak = {
-      source  = "mrparkers/keycloak"
-      version = "4.5.0"
+      source  = "keycloak/keycloak"
+      version = "5.9.0"
     }
   }
 }
@@ -17,5 +17,6 @@ provider "keycloak" {
   username            = var.keycloak_admin_user
   password            = var.keycloak_admin_password
   client_timeout      = 120
+  keycloak_version    = "26.7.3"
   root_ca_certificate = file("${path.module}/internal-ca.crt")
 }
