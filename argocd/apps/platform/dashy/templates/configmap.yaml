@@ -43,6 +43,10 @@ data:
       - name: Observabilidade
         icon: fas fa-chart-line
         items:
+          - title: Grafana
+            description: Dashboards do node e do cluster
+            url: https://grafana.guesant.internal
+            icon: hl-grafana
           - title: Prometheus
             description: Métricas e alvos
             url: https://prometheus.guesant.internal

@@ -1,7 +1,41 @@
 kube-prometheus-stack:
   fullnameOverride: kps
   grafana:
-    enabled: false
+    enabled: true
+    fullnameOverride: kps-grafana
+    image:
+      sha: 3600073f45a9895d2e2c4042da0e745819f5b78bf781266952a400c40dcd8d69
+    testFramework:
+      enabled: false
+    initChownData:
+      enabled: false
+    defaultDashboardsTimezone: America/Sao_Paulo
+    grafana.ini:
+      server:
+        root_url: https://grafana.guesant.internal
+      analytics:
+        check_for_updates: false
+        check_for_plugin_updates: false
+        reporting_enabled: false
+      news:
+        news_feed_enabled: false
+      users:
+        allow_sign_up: false
+    sidecar:
+      image:
+        sha: 2912be006f62f9ea080194cf6d3afcd90daead8d101d0ba686a137a849f6a4f6
+      resources:
+        requests:
+          cpu: 10m
+          memory: 48Mi
+        limits:
+          memory: 128Mi
+    resources:
+      requests:
+        cpu: 30m
+        memory: 160Mi
+      limits:
+        memory: 384Mi
   kubeEtcd:
     enabled: false
   kubeControllerManager:
