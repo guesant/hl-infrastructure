@@ -14,5 +14,7 @@ firewall_tailscale_interface: tailscale0
 firewall_tailscale_services:
   - ssh
   - dns
+  - http
+  - https
 
 firewall_max_removals: 3

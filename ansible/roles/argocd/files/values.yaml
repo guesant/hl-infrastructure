@@ -12,6 +12,10 @@ controller:
     limits:
       memory: 768Mi
 
+configs:
+  params:
+    server.insecure: true
+
 server:
   metrics:
     enabled: true

@@ -20,6 +20,7 @@
     - { name: net.ipv6.conf.all.accept_redirects, value: "0" }
     - { name: net.ipv6.conf.default.accept_redirects, value: "0" }
     - { name: net.ipv6.conf.all.accept_source_route, value: "0" }
+    - { name: net.ipv4.ip_unprivileged_port_start, value: "80" }
   register: sysctl_hardening_candidates
   loop_control:
     label: "{{ item.name }}"
