@@ -89,6 +89,16 @@ helm template dashy "$repo_root/argocd/apps/platform/dashy" \
 helm template portainer "$repo_root/argocd/apps/platform/portainer" \
   --namespace portainer >"$out_dir/portainer.yaml"
 
+helm template blog-delivery "$repo_root/argocd/apps/satellites/blog/delivery" \
+  --values "$repo_root/argocd/apps/satellites/blog/delivery/values.yaml" \
+  --namespace blog-delivery >"$out_dir/blog-delivery.yaml"
+
+helm template kargo "$repo_root/argocd/apps/platform/kargo" \
+  --namespace kargo \
+  --values "$repo_root/argocd/apps/platform/kargo/values.yaml" \
+  --api-versions monitoring.coreos.com/v1 \
+  --include-crds >"$out_dir/kargo.yaml"
+
 helm template ingress "$repo_root/argocd/apps/platform/ingress" \
   --namespace ingress \
   --api-versions monitoring.coreos.com/v1 \

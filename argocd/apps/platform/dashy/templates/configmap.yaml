@@ -36,6 +36,10 @@ data:
             description: Interface do cluster
             url: https://portainer.guesant.internal
             icon: hl-portainer
+          - title: Kargo
+            description: Promoção de imagens dos satélites
+            url: https://kargo.guesant.internal
+            icon: fas fa-truck-ramp-box
           - title: Keycloak
             description: Console de administração (realm master)
             url: https://keycloak.guesant.internal/admin/

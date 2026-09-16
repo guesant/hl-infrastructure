@@ -1,0 +1,95 @@
+kargo:
+  image:
+    tag: "v1.11.4@sha256:1413bdb63b1ad409c0a38a0ae5d6f4080e1fd3226aaf8344dfe0e5552921f533"
+  global:
+    sharedResources:
+      extraNamespaceLabels:
+        pod-security.kubernetes.io/enforce: restricted
+        pod-security.kubernetes.io/warn: restricted
+        pod-security.kubernetes.io/audit: restricted
+    systemResources:
+      extraNamespaceLabels:
+        pod-security.kubernetes.io/enforce: restricted
+        pod-security.kubernetes.io/warn: restricted
+        pod-security.kubernetes.io/audit: restricted
+    createClusterSecretsNamespace: false
+    createClusterSecretsRBAC: false
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      seccompProfile:
+        type: RuntimeDefault
+  api:
+    host: kargo.guesant.internal
+    secretManagementEnabled: false
+    adminAccount:
+      enabled: false
+    oidc:
+      enabled: true
+      issuerURL: https://auth.guesant.net/realms/management
+      clientID: kargo
+      cliClientID: kargo
+      additionalScopes:
+        - groups
+      usernameClaim: preferred_username
+      admins:
+        claims:
+          groups:
+            - admins
+      dex:
+        enabled: false
+    argocd:
+      urls:
+        "": https://argocd.guesant.internal
+    rollouts:
+      integrationEnabled: false
+    tls:
+      enabled: false
+      terminatedUpstream: true
+    resources:
+      requests:
+        cpu: 20m
+        memory: 64Mi
+      limits:
+        memory: 192Mi
+  controller:
+    argocd:
+      integrationEnabled: true
+      namespace: argocd
+    rollouts:
+      integrationEnabled: false
+    reconcilers:
+      warehouses:
+        minReconciliationInterval: 2m0s
+    resources:
+      requests:
+        cpu: 20m
+        memory: 64Mi
+      limits:
+        memory: 256Mi
+  managementController:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        memory: 128Mi
+  webhooksServer:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        memory: 128Mi
+  externalWebhooksServer:
+    enabled: false
+  garbageCollector:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        memory: 128Mi

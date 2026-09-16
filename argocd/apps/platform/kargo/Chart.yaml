@@ -1,0 +1,8 @@
+apiVersion: v2
+name: kargo
+description: Kargo wrapper with Keycloak login and the Argo CD integration
+version: 0.1.0
+dependencies:
+  - name: kargo
+    version: 1.11.4
+    repository: oci://ghcr.io/akuity/kargo-charts

@@ -95,3 +95,8 @@ vendorizar
 wayvnc
 webfinger
 zizmor
+Kargo
+kargo
+Freight
+Warehouse
+Akuity
