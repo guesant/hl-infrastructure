@@ -29,6 +29,7 @@
   ansible.posix.sysctl:
     name: "{{ item.item.name }}"
     value: "{{ item.item.value }}"
+    sysctl_file: /etc/sysctl.d/90-hl-hardening.conf
     sysctl_set: true
     state: present
     reload: true
