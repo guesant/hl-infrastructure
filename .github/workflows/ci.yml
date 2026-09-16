@@ -22,7 +22,7 @@ jobs:
 
       - name: actionlint
         run: >-
-          docker run --rm -v "$PWD":/repo -w /repo --entrypoint sh rhysd/actionlint:1.7.12
+          docker run --rm -v "$PWD":/repo -w /repo --entrypoint sh rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
           -c "actionlint -color .github/workflows/*.yml"
 
   zizmor:
@@ -602,13 +602,13 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Read opentofu_version
+      - name: Read the pinned OpenTofu image
         id: tofu
-        run: echo "version=$(grep -oE 'opentofu_version := "[0-9.]+"' justfile | grep -oE '[0-9.]+')" >> "$GITHUB_OUTPUT"
+        run: echo "image=$(grep -oE 'tofu_image := "[^"]+"' justfile | grep -oE 'ghcr.io[^"]+')" >> "$GITHUB_OUTPUT"
 
       - name: tofu fmt
         env:
-          TOFU_IMAGE: ghcr.io/opentofu/opentofu:${{ steps.tofu.outputs.version }}
+          TOFU_IMAGE: ${{ steps.tofu.outputs.image }}
         run: docker run --rm -v "$PWD":/repo -w /repo "$TOFU_IMAGE" fmt -check -recursive tofu
 
       - name: Mirror the providers the registry cannot verify
@@ -616,7 +616,7 @@ jobs:
 
       - name: tofu validate
         env:
-          TOFU_IMAGE: ghcr.io/opentofu/opentofu:${{ steps.tofu.outputs.version }}
+          TOFU_IMAGE: ${{ steps.tofu.outputs.image }}
         run: .tools/tofu-validate.sh
 
       - name: Build conftest image

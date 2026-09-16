@@ -4,16 +4,16 @@ kubeconfig := "ansible/kubeconfig"
 node_host := `grep -oE 'ansible_host=[^ ]+' ansible/inventory.ini | cut -d= -f2`
 node_key := `grep -oE 'ansible_ssh_private_key_file=[^ ]+' ansible/inventory.ini | cut -d= -f2`
 node_ssh := "ssh -o StrictHostKeyChecking=yes -o UserKnownHostsFile=" + quote(justfile_directory() / "ansible/known_hosts") + " -i " + node_key + " root@" + node_host
-actionlint_image := `grep -oE "rhysd/actionlint:[0-9.]+" .github/workflows/ci.yml | head -1`
+actionlint_image := `grep -oE "rhysd/actionlint:[0-9.]+@sha256:[0-9a-f]+" .github/workflows/ci.yml | head -1`
 zizmor_version := `grep -oE 'version: "[0-9.]+"' .github/workflows/ci.yml | grep -oE "[0-9.]+" | head -1`
 helm_version := `grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE "[0-9.]+"`
+helm_image_version := `grep -oE "alpine/helm:[0-9.]+" .tools/docker/Dockerfile | grep -oE "[0-9.]+"`
 k3s_version := `grep -oE 'k3s_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE "v[0-9.]+"`
-opentofu_version := "1.12.6"
-tofu_image := "ghcr.io/opentofu/opentofu:" + opentofu_version
+tofu_image := "ghcr.io/opentofu/opentofu:1.12.6@sha256:22cb52f6c5bf5c72a48a8f56d993d8df3e9462b1cdfb5db7e77143c87e8d159f"
 sops_identity := home_dir() / ".config/hl-infrastructure/sops/operator-se.txt"
 ansible_env := "ANSIBLE_CONFIG=" + quote(justfile_directory() / "ansible/ansible.cfg")
 tools_hash := `shasum -a 256 .tools/docker/Dockerfile | cut -c1-12`
-helm_image := "hl-infra/helm:" + tools_hash + "-" + helm_version
+helm_image := "hl-infra/helm:" + tools_hash + "-" + helm_image_version
 ops_image := "hl-infra/ops:" + tools_hash + "-" + k3s_version
 crd_schema_location := 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
 run := "docker run --rm -v " + quote(justfile_directory()) + ":/repo -w /repo"
