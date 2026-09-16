@@ -26,7 +26,6 @@ O cert-manager, o operador CloudNativePG, o sops-secrets-operator e o Argo CD Im
 
 | Variável | Controla | Consumida por |
 | --- | --- | --- |
-| `k3s_api_allowed_cidrs` | Lista de CIDRs autorizados a acessar a porta da API do k3s no firewall | role `firewall` |
 | `k3s_join_token` | Token de join do k3s, gravado em `config.yaml` na instalação e alvo de `just rotate-token` num node vivo | role `k3s`, `rotate-token.yml` |
 | `bootstrap_app_repo_url` | Opcional; URL do repositório que a `Application` root sincroniza, por padrão este repositório | role `bootstrap_app` |
 | `argocd_github_webhook_secret` | Segredo compartilhado usado para validar o webhook do GitHub que acelera a sincronização do Argo | role `argocd` |

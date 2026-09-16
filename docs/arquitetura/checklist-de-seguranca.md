@@ -104,7 +104,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 
 | Recomendação | Status | Situação aqui | Fontes |
 | --- | --- | --- | --- |
-| API server fora da internet, só de redes confiáveis | Atende | Porta 6443 só dos CIDRs em `k3s_api_allowed_cidrs`, filtrada na chain `INPUT` | K8, SR, SE |
+| API server fora da internet, só de redes confiáveis | Atende | Porta 6443 fechada em todas as zonas do firewalld; o único acesso à API é `kubectl` no próprio node, por SSH com chave | K8, SR, SE |
 | Autenticação anônima desligada no API server e no kubelet | Atende | `anonymous-auth=false` no API server; os dois respondem 401 sem credencial, e a porta read-only 10255 está fechada | SR, SE |
 | Nenhum binding para `system:unauthenticated` além do mínimo | Atende | Só o `system:public-info-viewer` padrão, que expõe versão e saúde | KA |
 | RBAC com privilégio mínimo e sem conceder criação de roles | Parcial | Revisado em 2026-09-15: curinga só no `argocd-application-controller` (aplica qualquer recurso, por desenho do GitOps), no `argocd-server` (ações da interface), no sops-secrets-operator (cria `Secret` em qualquer namespace) e nos componentes do k3s; o kube-bench roda com ClusterRole só de leitura; a revisão periódica confere se aparece curinga novo | K8, KA, SR, SE |

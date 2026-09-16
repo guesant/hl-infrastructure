@@ -10,7 +10,7 @@ Tudo o que o repositório declara cabe em cinco camadas, e cada uma só faz sent
 
 A primeira é o host: o Raspberry Pi com Debian, SSH e um usuário com chave. Ela não está no repositório; é o único pré-requisito humano, descrito em [restaurar o node](restaurar-o-node.md). O que o repositório exige dela é pouco: um IP alcançável, um usuário que consegue `sudo` e a chave pública do operador já em `authorized_keys`, porque a role `ssh_hardening` reconcilia esse arquivo e recusa aplicar uma lista que não contenha a chave da própria conexão.
 
-A segunda é o Ansible, `just bootstrap`, que transforma esse host num node: endurecimento do sistema, firewall com as zonas `public` e `tailscale`, o cliente Tailscale e o `dnsmasq` do DNS interno, o k3s com Cilium, o Argo CD e a `Application` `root`. É a única camada que roda com a identidade do operador e precisa do Touch ID, porque decifra `ansible/group_vars/all/secrets.sops.yaml` em memória para ler o token do k3s, o segredo do webhook, os CIDRs da API e a chave da tailnet. Depois dela o node está inteiro, mas o cluster ainda está vazio de aplicações.
+A segunda é o Ansible, `just bootstrap`, que transforma esse host num node: endurecimento do sistema, firewall com as zonas `public` e `tailscale`, o cliente Tailscale e o `dnsmasq` do DNS interno, o k3s com Cilium, o Argo CD e a `Application` `root`. É a única camada que roda com a identidade do operador e precisa do Touch ID, porque decifra `ansible/group_vars/all/secrets.sops.yaml` em memória para ler o token do k3s, o segredo do webhook e a chave da tailnet. Depois dela o node está inteiro, mas o cluster ainda está vazio de aplicações.
 
 A terceira é o Argo CD, que a partir da `root` sincroniza tudo em `argocd/applications` sem ninguém rodar nada: operadores, políticas, monitoramento, ingress, Keycloak, Portainer, Dashy, oauth2-proxy e o blog. Os segredos dessa camada são `SopsSecret`, cifrados para a chave age do node, que o sops-secrets-operator decifra dentro do cluster; o operador não participa. É por isso que um push em `main` chega ao cluster sem Touch ID.
 
@@ -36,7 +36,7 @@ Toda credencial que o repositório conhece está cifrada com SOPS para os destin
 
 | Arquivo | Formato | Quem lê | Quando | Conteúdo (chaves, não valores) |
 | --- | --- | --- | --- | --- |
-| `ansible/group_vars/all/secrets.sops.yaml` | YAML | Ansible, pelo vars plugin `community.sops`, no Mac do operador | Todo `bootstrap`, `bootstrap-check` e playbook de rotação | `k3s_join_token`, `k3s_api_allowed_cidrs`, `argocd_github_webhook_secret`, `tailscale_auth_key` |
+| `ansible/group_vars/all/secrets.sops.yaml` | YAML | Ansible, pelo vars plugin `community.sops`, no Mac do operador | Todo `bootstrap`, `bootstrap-check` e playbook de rotação | `k3s_join_token`, `argocd_github_webhook_secret`, `tailscale_auth_key` |
 | `tofu/state.sops.env` | dotenv | `tofu-run.sh`, para todo módulo | Todo `plan` e `apply` | `TF_VAR_state_passphrase`, que cifra os `terraform.tfstate` commitados |
 | `tofu/cloudflare/cloudflare.sops.env` | dotenv | `tofu-run.sh`, só para `cloudflare` | `plan`, `apply`, `just cloudflare-tunnel-token` | API token e IDs de conta e zona |
 | `tofu/tailscale/tailscale.sops.env` | dotenv | `tofu-run.sh`, só para `tailscale` | `plan` e `apply` | OAuth client da tailnet |
@@ -66,7 +66,6 @@ Declarar um segredo no git só vale alguma coisa se a mudança chegar ao serviç
 | Chave | Arquivo | Comportamento | Como a mudança chega |
 | --- | --- | --- | --- |
 | `k3s_join_token` | `secrets.sops.yaml` | só bootstrap na instalação; depois, rotação por playbook | `just rotate-token`: roda `k3s token rotate`, regrava `config.yaml` e reinicia o k3s; um `bootstrap` comum só confere |
-| `k3s_api_allowed_cidrs` | `secrets.sops.yaml` | vivo no host | próximo `just bootstrap` (ou `--tags firewall`): a role reconcilia as rich rules e recarrega o firewalld, sem reiniciar nada |
 | `argocd_github_webhook_secret` | `secrets.sops.yaml` | vivo | próximo `just bootstrap` (`--tags argocd`) grava em `argocd-secret`; o Argo relê esse `Secret` a cada webhook, sem restart |
 | `tailscale_auth_key` | `secrets.sops.yaml` | só bootstrap | usada uma vez para entrar na tailnet; depois disso a role a ignora, e uma chave nova só importa numa reinstalação |
 | `ssh_hardening_authorized_keys` | `authorized_keys.yml` (texto claro) | vivo no host | próximo `just bootstrap` reconcilia o arquivo; o `sshd` lê `authorized_keys` a cada login |

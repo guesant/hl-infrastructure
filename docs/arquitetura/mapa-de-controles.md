@@ -15,7 +15,7 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | Ansible | Integridade de binários | k3s, Helm e cilium-cli verificados contra o checksum publicado pelo projeto | roles `k3s` e `cilium`, campo `checksum` de cada `get_url` |
 | Ansible | Resiliência de upgrade | Um chart que muda `selector` entre versões não trava o bootstrap; o objeto conflitante é recriado, nunca aplicado às cegas | role `recreate_immutable_conflicts` |
 | Node | Acesso | SSH só por chave, root só com chave, fail2ban | roles `ssh_hardening` e `fail2ban` |
-| Node | Rede | Firewall ligado, API do k3s só dos CIDRs do operador, SSH nunca removido da zona | role `firewall`, `assert` antes do reload |
+| Node | Rede | Firewall ligado, API do k3s fechada para toda rede (só `kubectl` no próprio node, por SSH), SSH nunca removido da zona | role `firewall`, `assert` antes do reload, `just kubectl` |
 | Node | Kernel | sysctls de hardening, reboot automático após oops | role `sysctl_hardening` |
 | Node | Auditoria | auditd para chamadas de sistema, audit log do API server para toda escrita | roles `auditd` e `k3s`, `audit-policy.yaml` |
 | Node | Atualizações | Correções de segurança automáticas | role `unattended_upgrades` |
