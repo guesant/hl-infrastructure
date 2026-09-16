@@ -55,6 +55,10 @@ data:
             description: Dashboards do node e do cluster
             url: https://grafana.guesant.internal
             icon: hl-grafana
+          - title: Hubble
+            description: Fluxos de rede do Cilium, por namespace
+            url: https://hubble.guesant.internal
+            icon: hl-cilium
           - title: Prometheus
             description: Métricas e alvos
             url: https://prometheus.guesant.internal
