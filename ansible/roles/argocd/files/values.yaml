@@ -20,7 +20,7 @@ configs:
     admin.enabled: true
     oidc.config: |
       name: Keycloak
-      issuer: https://auth.guesant.net/realms/homelab
+      issuer: https://auth.guesant.net/realms/management
       clientID: argocd
       clientSecret: $argocd-oidc:clientSecret
       requestedScopes:
@@ -31,7 +31,7 @@ configs:
   rbac:
     policy.default: ""
     policy.csv: |
-      g, homelab-admins, role:admin
+      g, admins, role:admin
     scopes: "[groups, email]"
 
 server:

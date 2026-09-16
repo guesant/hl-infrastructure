@@ -32,12 +32,12 @@ spec:
             - --reverse-proxy=true
             - --provider=oidc
             - --provider-display-name=Keycloak
-            - --oidc-issuer-url=https://auth.guesant.net/realms/homelab
+            - --oidc-issuer-url=https://auth.guesant.net/realms/management
             - --client-id=oauth2-proxy
             - --code-challenge-method=S256
             - --scope=openid profile email groups
             - --oidc-groups-claim=groups
-            - --allowed-group=homelab-admins
+            - --allowed-group=admins
             - --email-domain=*
             - --redirect-url=https://auth.guesant.internal/oauth2/callback
             - --cookie-domain=.guesant.internal

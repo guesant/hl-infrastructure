@@ -42,14 +42,14 @@ kube-prometheus-stack:
         use_pkce: true
         client_id: grafana
         scopes: openid profile email groups
-        auth_url: https://auth.guesant.net/realms/homelab/protocol/openid-connect/auth
-        token_url: https://auth.guesant.net/realms/homelab/protocol/openid-connect/token
-        api_url: https://auth.guesant.net/realms/homelab/protocol/openid-connect/userinfo
-        signout_redirect_url: https://auth.guesant.net/realms/homelab/protocol/openid-connect/logout?post_logout_redirect_uri=https%3A%2F%2Fgrafana.guesant.internal%2Flogin
+        auth_url: https://auth.guesant.net/realms/management/protocol/openid-connect/auth
+        token_url: https://auth.guesant.net/realms/management/protocol/openid-connect/token
+        api_url: https://auth.guesant.net/realms/management/protocol/openid-connect/userinfo
+        signout_redirect_url: https://auth.guesant.net/realms/management/protocol/openid-connect/logout?post_logout_redirect_uri=https%3A%2F%2Fgrafana.guesant.internal%2Flogin
         login_attribute_path: preferred_username
         email_attribute_path: email
         name_attribute_path: name
-        role_attribute_path: contains(groups[*], 'homelab-admins') && 'Admin' || 'Viewer'
+        role_attribute_path: contains(groups[*], 'admins') && 'Admin' || 'Viewer'
         role_attribute_strict: true
         allow_assign_grafana_admin: true
     sidecar:
