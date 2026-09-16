@@ -60,6 +60,37 @@ A regra que organiza a tabela: um segredo vive ao lado de quem o consome no clus
 
 Os `terraform.tfstate` dos cinco módulos são commitados cifrados com a passphrase de `state.sops.env`; perder essa passphrase não derruba nada, só obriga a reimportar os recursos.
 
+## O que acontece quando um segredo muda no git
+
+Declarar um segredo no git só vale alguma coisa se a mudança chegar ao serviço, e cada segredo chega por um caminho diferente. A tabela abaixo classifica todas as chaves, uma a uma, em quatro comportamentos: **só bootstrap** (o valor é lido uma vez, na criação de algo, e mudá-lo depois não muda nada por si só), **reinicia sozinho** (o consumidor lê por variável de ambiente ou arquivo no start e tem a anotação do Reloader, então o `Secret` novo derruba e recria o pod), **reinicia à mão** (mesma leitura no start, mas sem Reloader, então alguém precisa reiniciar o pod), e **vivo** (o consumidor relê o valor a cada uso, sem restart). Para os arquivos que só o operador lê, a coluna diz qual comando aplica a mudança.
+
+| Chave | Arquivo | Comportamento | Como a mudança chega |
+| --- | --- | --- | --- |
+| `k3s_join_token` | `secrets.sops.yaml` | só bootstrap na instalação; depois, rotação por playbook | `just rotate-token`: roda `k3s token rotate`, regrava `config.yaml` e reinicia o k3s; um `bootstrap` comum só confere |
+| `k3s_api_allowed_cidrs` | `secrets.sops.yaml` | vivo no host | próximo `just bootstrap` (ou `--tags firewall`): a role reconcilia as rich rules e recarrega o firewalld, sem reiniciar nada |
+| `argocd_github_webhook_secret` | `secrets.sops.yaml` | vivo | próximo `just bootstrap` (`--tags argocd`) grava em `argocd-secret`; o Argo relê esse `Secret` a cada webhook, sem restart |
+| `tailscale_auth_key` | `secrets.sops.yaml` | só bootstrap | usada uma vez para entrar na tailnet; depois disso a role a ignora, e uma chave nova só importa numa reinstalação |
+| `ssh_hardening_authorized_keys` | `authorized_keys.yml` (texto claro) | vivo no host | próximo `just bootstrap` reconcilia o arquivo; o `sshd` lê `authorized_keys` a cada login |
+| `TF_VAR_state_passphrase` | `tofu/state.sops.env` | lida em todo `plan` e `apply` | mudar exige recifrar todo `terraform.tfstate` com um `fallback` no `encryption.tf`; nenhum pod envolvido |
+| `CLOUDFLARE_API_TOKEN` e IDs | `cloudflare.sops.env` | lidos em todo `plan` e `apply` | nada no cluster os consome; um token novo vale no próximo comando |
+| OAuth client da tailnet | `tailscale.sops.env` | lido em todo `plan` e `apply` | idem |
+| `TF_VAR_keycloak_admin_user` e `_password` | `keycloak-master.sops.env` | credencial de login do módulo | precisa refletir a senha real no Keycloak; mudar aqui não muda a senha lá, só como o módulo entra |
+| `TF_VAR_operator_admin_password` | `keycloak-master.sops.env` | só bootstrap na criação do usuário | o provider grava a senha ao criar o `admin`; para rotacionar, `just tofu keycloak-master taint keycloak_user.operator_admin` (com as aspas escapadas como no primeiro bootstrap) e `apply`, que recria o usuário |
+| `TF_VAR_homelab_service_secret`, `TF_VAR_management_service_secret` | `keycloak-master.sops.env` | vivo por `apply` | `just tofu-apply keycloak-master` regrava o segredo do client no Keycloak; os módulos de realm o leem dali pelo `secrets.map` na execução seguinte |
+| `ADMIN_EMAIL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | `SopsSecret` `keycloak-realm` | vivo por `apply` | `just tofu-apply keycloak-homelab` e `keycloak-management` gravam no Keycloak; nenhum pod consome mais esse `Secret` desde que o `KeycloakRealmImport` saiu |
+| `BLOG_CLIENT_SECRET` | `SopsSecret` `keycloak-realm` | vivo por `apply` no Keycloak; o blog ainda não o consome | `just tofu-apply keycloak-homelab`; quando o blog fizer login por OIDC, o lado dele entra na linha do `admin-google` abaixo |
+| `clientSecret` | `SopsSecret` `argocd-oidc` | vivo nos dois lados | o Argo relê os `Secret` com o label `part-of: argocd` sem restart; `just tofu-apply keycloak-management` grava o mesmo valor no client |
+| `client_secret` | `SopsSecret` `grafana-oidc` | reinicia sozinho | vai por variável de ambiente; o `Deployment` do Grafana tem a anotação do Reloader; o Keycloak recebe pelo `apply` do `management` |
+| `client-secret` e `cookie-secret` | `SopsSecret` `oauth2-proxy` | reinicia sozinho | variáveis de ambiente com Reloader; trocar o `cookie-secret` invalida todas as sessões abertas, o que é o efeito desejado numa rotação |
+| `client-secret` | `SopsSecret` `portainer-oidc` | vivo por Job | o Job de `PostSync` regrava as configurações de OAuth pela API a cada sync; o Portainer as lê do banco a cada login |
+| `admin-email` | `SopsSecret` `portainer-oidc` | vivo por Job | o Job cria ou promove o usuário com esse e-mail a cada sync |
+| `password` | `SopsSecret` `portainer-admin` | só bootstrap na criação do admin, e credencial do Job depois | o Portainer só lê `--admin-password-file` ao criar o admin; mudar o valor no git sem mudar a senha no Portainer quebra o Job, que entra com ela. Para rotacionar, mude a senha no Portainer pela API e depois no git, ou apague o banco (PVC) e deixe o pod recriar tudo |
+| `token` | `SopsSecret` `cloudflared-secret` | reinicia à mão | o cloudflared lê `--token-file` no start e o `Deployment` não tem Reloader; depois de `just cloudflare-tunnel-token`, `kubectl -n blog rollout restart deploy/cloudflared` |
+| `PORTFOLIO_ADMIN_GOOGLE_*` | `SopsSecret` `admin-google` (blog) | reinicia à mão | o blog lê os arquivos em `/secrets/app` no start e o `Deployment` não tem Reloader; `kubectl -n blog rollout restart deploy/app` |
+| certificado de `*.guesant.internal` | `Secret` `internal-domain-tls`, emitido pelo cert-manager | vivo | o Traefik observa o `Secret` e troca o certificado sem restart; a CA que o assina só muda com a rotação descrita em [rotacionar credenciais](rotacionar-credenciais.md) e exige reinstalar a CA nos dispositivos |
+
+Três coisas que a tabela deixa explícitas. Primeiro, os dois consumidores do namespace `blog` (cloudflared e o próprio blog) ainda dependem de um restart manual; dar a eles a anotação do Reloader é a pendência que fecha essa coluna. Segundo, a senha do admin do Portainer é o único valor em que o git e o serviço podem divergir silenciosamente, porque o Portainer não a relê; é por isso que ela só serve ao Job e a rotação dela passa pela API. Terceiro, tudo o que o Keycloak recebe passa por um `apply` do operador, com Touch ID; um segredo de client mudado no git vale para o consumidor no próximo sync do Argo, mas só vale para o Keycloak depois do `apply`, e nesse intervalo o login daquele client falha.
+
 ## O que é bootstrap e o que é manutenção
 
 Bootstrap é o que só acontece quando o node ou o Keycloak nascem: o primeiro `just bootstrap`, que instala tudo e gera no node a chave age (registrada em `.sops.yaml` com `just sops-recipients` e seguida de `just sops-sync`); o primeiro `apply` de cada módulo do Tofu, que cria o que ainda não existe; ligar o node à tailnet com uma chave de autorização, que só serve para entrar; criar no console do Google os redirects dos realms; instalar a CA interna nos dispositivos; apagar o `temp-admin` e trocar a credencial do módulo `master` pelo administrador permanente. Cada um desses passos deixa um rastro no repositório (state, destinatário, `SopsSecret`) e não precisa ser repetido.
