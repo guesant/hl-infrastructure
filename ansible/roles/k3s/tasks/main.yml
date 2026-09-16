@@ -38,7 +38,7 @@
 
 - name: Reboot if the k3s config changed on an already-installed node # noqa: no-handler
   ansible.builtin.reboot:
-    reboot_timeout: 300
+    reboot_timeout: 900
   when: (k3s_config.changed or k3s_audit_policy.changed) and k3s_binary.stat.exists
 
 - name: Select the k3s release asset for this architecture

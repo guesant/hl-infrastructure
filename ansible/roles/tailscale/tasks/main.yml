@@ -137,8 +137,8 @@
       ansible.builtin.set_fact:
         tailscale_ipv4: "{{ tailscale_ip.stdout | trim }}"
 
-- name: Serve the internal domain from the tailnet address
-  when: tailscale_logged_in
+- name: Keep dnsmasq bound to the tailnet interface even before the node joins
+  when: not (ansible_check_mode and (tailscale_repo.changed or tailscale_install.changed))
   block:
     - name: Create the dnsmasq unit drop-in directory
       ansible.builtin.file:
@@ -159,7 +159,20 @@
         - Reload systemd
         - Restart dnsmasq
 
-    - name: Declare the internal zone answered only on the tailnet interface
+    - name: Listen only on the tailnet interface, with no upstream
+      ansible.builtin.template:
+        src: listen.conf.j2
+        dest: /etc/dnsmasq.d/listen.conf
+        owner: root
+        group: root
+        mode: "0644"
+        validate: dnsmasq --test --conf-file=%s
+      notify: Restart dnsmasq
+
+- name: Serve the internal domain from the tailnet address
+  when: tailscale_logged_in
+  block:
+    - name: Declare the internal zone
       ansible.builtin.template:
         src: internal-domain.conf.j2
         dest: "{{ tailscale_dnsmasq_conf }}"
@@ -169,12 +182,12 @@
         validate: dnsmasq --test --conf-file=%s
       notify: Restart dnsmasq
 
-    - name: Flush handlers so dnsmasq picks up the zone
-      ansible.builtin.meta: flush_handlers
+- name: Flush handlers so dnsmasq picks up its configuration
+  ansible.builtin.meta: flush_handlers
 
-    - name: Ensure dnsmasq is enabled and running
-      ansible.builtin.systemd:
-        name: dnsmasq
-        enabled: true
-        state: started
-      when: not ansible_check_mode
+- name: Ensure dnsmasq is enabled and running
+  ansible.builtin.systemd:
+    name: dnsmasq
+    enabled: true
+    state: started
+  when: not (ansible_check_mode and (tailscale_repo.changed or tailscale_install.changed))

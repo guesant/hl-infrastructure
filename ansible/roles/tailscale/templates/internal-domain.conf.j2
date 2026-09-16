@@ -1,11 +1,2 @@
-interface=tailscale0
-except-interface=lo
-bind-dynamic
-no-resolv
-no-hosts
-no-poll
-domain-needed
-bogus-priv
-cache-size=0
 local=/{{ tailscale_internal_domain }}/
 address=/{{ tailscale_internal_domain }}/{{ tailscale_ipv4 }}

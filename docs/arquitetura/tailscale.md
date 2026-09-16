@@ -16,7 +16,7 @@ O Argo CD não entra nesta camada, de propósito. O DNS interno é um serviço d
 
 ## Como uma consulta chega ao node
 
-Um dispositivo da tailnet pergunta por `grafana.guesant.internal`. O cliente Tailscale nele vê que o domínio tem split DNS configurado e manda a consulta para o servidor de nomes declarado, que é o endereço do node na tailnet. No node, o `dnsmasq` escuta só em `tailscale0`, responde qualquer nome sob `guesant.internal` com o próprio endereço do node e recusa qualquer outro nome, porque não tem upstream configurado. A zona é um curinga (`address=/guesant.internal/...`), então um serviço novo não precisa de registro DNS: precisa só de uma regra no ingress. Nada disso vale fora da tailnet: na rede local ou na internet, `guesant.internal` não existe, e a porta 53 do node não está aberta em nenhuma outra interface.
+Um dispositivo da tailnet pergunta por `grafana.guesant.internal`. O cliente Tailscale nele vê que o domínio tem split DNS configurado e manda a consulta para o servidor de nomes declarado, que é o endereço do node na tailnet. No node, o `dnsmasq` escuta só em `tailscale0` desde a instalação, antes mesmo de o node entrar na tailnet, responde qualquer nome sob `guesant.internal` com o próprio endereço do node assim que esse endereço existe, e recusa qualquer outro nome, porque não tem upstream configurado. A zona é um curinga (`address=/guesant.internal/...`), então um serviço novo não precisa de registro DNS: precisa só de uma regra no ingress. Nada disso vale fora da tailnet: na rede local ou na internet, `guesant.internal` não existe, e a porta 53 do node não está aberta em nenhuma outra interface.
 
 ## Como o node vira subnet router
 
