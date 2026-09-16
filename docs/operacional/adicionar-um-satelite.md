@@ -90,6 +90,7 @@ spec:
         repoURL: ghcr.io/guesant/nome-da-imagem
         imageSelectionStrategy: Digest
         constraint: main
+        strictSemvers: true
 ---
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage

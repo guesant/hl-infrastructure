@@ -100,3 +100,4 @@ kargo
 Freight
 Warehouse
 Akuity
+finalizer

@@ -13,4 +13,5 @@ spec:
         repoURL: ghcr.io/guesant/blog
         imageSelectionStrategy: Digest
         constraint: main
+        strictSemvers: true
         discoveryLimit: 5
