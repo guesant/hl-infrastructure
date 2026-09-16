@@ -33,7 +33,6 @@ spec:
             - --data=/data
             - --bind=:9000
             - --tunnel-port=0
-            - --feature-flags=hide-upgrade-notices
           ports:
             - name: http
               containerPort: 9000
