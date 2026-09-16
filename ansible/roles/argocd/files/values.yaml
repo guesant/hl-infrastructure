@@ -15,6 +15,24 @@ controller:
 configs:
   params:
     server.insecure: true
+  cm:
+    url: https://argocd.guesant.internal
+    admin.enabled: true
+    oidc.config: |
+      name: Keycloak
+      issuer: https://auth.guesant.net/realms/homelab
+      clientID: argocd
+      clientSecret: $argocd-oidc:clientSecret
+      requestedScopes:
+        - openid
+        - profile
+        - email
+        - groups
+  rbac:
+    policy.default: ""
+    policy.csv: |
+      g, homelab-admins, role:admin
+    scopes: "[groups, email]"
 
 server:
   metrics:
