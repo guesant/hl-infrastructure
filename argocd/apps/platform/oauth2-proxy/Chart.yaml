@@ -1,0 +1,4 @@
+apiVersion: v2
+name: oauth2-proxy
+description: oauth2-proxy as the Keycloak login the ingress asks before serving the internal names that have no login of their own
+version: 0.1.0

@@ -68,6 +68,9 @@ helm template reloader "$repo_root/argocd/apps/platform/reloader" \
 helm template sso "$repo_root/argocd/apps/platform/sso" \
   --namespace argocd >"$out_dir/sso.yaml"
 
+helm template oauth2-proxy "$repo_root/argocd/apps/platform/oauth2-proxy" \
+  --namespace oauth2-proxy >"$out_dir/oauth2-proxy.yaml"
+
 helm template dashy "$repo_root/argocd/apps/platform/dashy" \
   --namespace dashy >"$out_dir/dashy.yaml"
 
