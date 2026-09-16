@@ -31,15 +31,23 @@ data:
           - title: Argo CD
             description: GitOps, estado das Application
             url: https://argocd.guesant.internal
-            icon: hl-argocd
+            icon: hl-argo-cd
           - title: Portainer
             description: Interface do cluster
             url: https://portainer.guesant.internal
             icon: hl-portainer
           - title: Keycloak
-            description: Console de administração do realm homelab
+            description: Console de administração (realm master)
             url: https://keycloak.guesant.internal/admin/
             icon: hl-keycloak
+          - title: Minha conta
+            description: Senha e TOTP no realm management
+            url: https://auth.guesant.net/realms/management/account
+            icon: fas fa-user-shield
+          - title: Sair
+            description: Encerra a sessão do oauth2-proxy nos nomes internos
+            url: https://auth.guesant.internal/oauth2/sign_out
+            icon: fas fa-right-from-bracket
       - name: Observabilidade
         icon: fas fa-chart-line
         items:
