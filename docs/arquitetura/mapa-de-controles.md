@@ -41,7 +41,7 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | Cloudflare | Mudança destrutiva | Registros do apex e do `www` não podem ser destruídos por um `apply`, e as regras da Cloudflare são política como código | `prevent_destroy` em `tofu/cloudflare/dns.tf`, políticas em `.config/conftest/tofu`, job `tofu` |
 | Imagens | Vulnerabilidades e SBOM | Nenhuma imagem implantada com CVE crítica corrigível fora de exceção com prazo; SBOM CycloneDX por imagem | job `trivy-images`, `.tools/list-images.sh`, `.trivyignore.yaml` |
 | Manifestos | Postura NSA e MITRE | A nota do kubescape não pode cair abaixo do piso registrado | job `kubescape` com `--compliance-threshold` |
-| Repositório | Convenção de commit | Todo commit segue o formato do CONTRIBUTING, na CI e antes do commit | job `commitlint`, `.githooks/commit-msg` |
+| Repositório | Convenção de commit | Todo commit segue o formato do CONTRIBUTING, na CI e antes do commit | job `commitlint`, `.config/githooks/commit-msg` |
 | Domínio | Expiração | O registro de `guesant.net` não vence sem aviso | job `domain-expiry` |
 | Node | Endurecimento de host | sysctls de kernel e rede, `/tmp` com `noexec`, SSH com `AllowGroups root` e validação antes de gravar, auditd ampliado, serviços de desktop desligados, journald persistente com teto | roles `sysctl_hardening`, `os_prerequisites`, `ssh_hardening`, `auditd`, `maintenance` |
 | Node | Saúde e drift | smartd vigiando o SSD, relatório de pacotes instalados à mão fora da linha de base | role `os_prerequisites`, `files/apt-manual-baseline.txt` |

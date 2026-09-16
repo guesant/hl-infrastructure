@@ -273,9 +273,9 @@ security-trivy-images: infra-render-charts (_build "shell") (_build "trivy")
 lint-commits from="origin/main" to="HEAD": (_build "commitlint")
     COMMITLINT_IMAGE=hl-infra/commitlint:{{tools_hash}} .tools/lint-commits.sh {{from}} {{to}}
 
-[doc("Point git at the versioned hooks in .githooks")]
+[doc("Point git at the versioned hooks in .config/githooks")]
 hooks:
-    git config core.hooksPath .githooks
+    git config core.hooksPath .config/githooks
 
 [doc("Report how many days are left before the domain registration expires")]
 lint-domain-expiry: (_build-ops)
