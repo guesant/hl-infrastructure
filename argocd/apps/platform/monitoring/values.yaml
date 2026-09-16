@@ -17,12 +17,19 @@ kube-prometheus-stack:
         secretKeyRef:
           name: grafana-oidc
           key: client_secret
+    deploymentStrategy:
+      type: Recreate
     startupProbe:
       httpGet:
         path: /api/health
         port: grafana
       periodSeconds: 10
       failureThreshold: 36
+    readinessProbe:
+      httpGet:
+        path: /api/health
+        port: grafana
+      timeoutSeconds: 10
     grafana.ini:
       server:
         root_url: https://grafana.guesant.internal
@@ -67,9 +74,9 @@ kube-prometheus-stack:
     resources:
       requests:
         cpu: 30m
-        memory: 160Mi
+        memory: 256Mi
       limits:
-        memory: 384Mi
+        memory: 640Mi
   kubeEtcd:
     enabled: false
   kubeControllerManager:
