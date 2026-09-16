@@ -6,11 +6,15 @@ metadata:
 spec:
   endpointSelector: {}
   ingress:
+    - fromEndpoints:
+        - {}
     - fromEntities:
         - host
         - remote-node
         - kube-apiserver
   egress:
+    - toEndpoints:
+        - {}
     - toEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: kube-system
@@ -23,3 +27,9 @@ spec:
               protocol: TCP
     - toEntities:
         - kube-apiserver
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

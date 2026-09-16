@@ -33,6 +33,7 @@ spec:
             - --data=/data
             - --bind=:9000
             - --tunnel-port=0
+            - --admin-password-file=/run/secrets/portainer/password
           ports:
             - name: http
               containerPort: 9000
@@ -46,6 +47,9 @@ spec:
               mountPath: /data
             - name: tmp
               mountPath: /tmp
+            - name: admin
+              mountPath: /run/secrets/portainer
+              readOnly: true
           readinessProbe:
             httpGet:
               path: /api/system/status
@@ -67,6 +71,9 @@ spec:
             claimName: portainer
         - name: tmp
           emptyDir: {}
+        - name: admin
+          secret:
+            secretName: portainer-admin
 ---
 apiVersion: v1
 kind: Service
