@@ -21,6 +21,7 @@ data:
       preventWriteToDisk: true
       preventLocalSave: true
       disableConfiguration: true
+      disableUpdateChecks: true
       hideComponents:
         hideSettings: true
     sections:
