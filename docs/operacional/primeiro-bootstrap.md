@@ -126,7 +126,13 @@ just tofu keycloak-management init && just tofu keycloak-management plan && just
 just tofu keycloak-homelab init && just tofu keycloak-homelab plan && just tofu-apply keycloak-homelab
 ```
 
-O `master` entra com o administrador temporário do `Secret` `keycloak-initial-admin` e cria os dois realms, o administrador permanente e as contas de serviço; os outros dois entram com a sua conta de serviço e criam o conteúdo do realm, inclusive o usuário do operador com uma senha temporária. Commite os três states cifrados. Depois abra `https://auth.guesant.net/realms/management/account` (e o mesmo em `homelab`), entre com o usuário de `terraform.tfvars` e a senha inicial de `keycloak-master.sops.env`, e o Keycloak obriga a trocar a senha e a cadastrar um TOTP; a partir daí a credencial vive só nele. Depois, apague o `temp-admin` no console (realm `master`, Users) e troque, no `keycloak-master.sops.env`, `keycloak_admin_user` e `keycloak_admin_password` pelos valores do administrador permanente.
+O `master` entra com o administrador temporário do `Secret` `keycloak-initial-admin` e cria os dois realms, o administrador permanente e as contas de serviço; os outros dois entram com a sua conta de serviço e criam o conteúdo do realm, inclusive o usuário do operador com uma senha temporária. Commite os três states cifrados. O administrador temporário que o operator gerou já cumpriu o papel dele no `apply` do `master`; um único comando o aposenta:
+
+```bash
+just keycloak-bootstrap-admin
+```
+
+Ele entra como o `admin` permanente que o Tofu criou, apaga o `temp-admin` do realm `master` pela API, grava `admin` e a senha permanente como a credencial do módulo em `keycloak-master.sops.env` (com `sops set`, nada passa em claro pelo disco) e confere que o `plan` do `master` ficou vazio. Commite o `.sops.env`. Depois abra `https://auth.guesant.net/realms/management/account` (e o mesmo em `homelab`), entre com o usuário de `terraform.tfvars` e a senha inicial de `keycloak-master.sops.env`, e o Keycloak obriga a trocar a senha e a cadastrar um TOTP; a partir daí a credencial vive só nele.
 
 ## Confie na CA interna
 
