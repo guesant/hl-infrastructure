@@ -1,6 +1,9 @@
 set shell := ["bash", "-uc"]
 
 kubeconfig := "ansible/kubeconfig"
+node_host := `grep -oE 'ansible_host=[^ ]+' ansible/inventory.ini | cut -d= -f2`
+node_key := `grep -oE 'ansible_ssh_private_key_file=[^ ]+' ansible/inventory.ini | cut -d= -f2`
+node_ssh := "ssh -o StrictHostKeyChecking=yes -o UserKnownHostsFile=" + quote(justfile_directory() / "ansible/known_hosts") + " -i " + node_key + " root@" + node_host
 actionlint_image := `grep -oE "rhysd/actionlint:[0-9.]+" .github/workflows/ci.yml | head -1`
 zizmor_version := `grep -oE 'version: "[0-9.]+"' .github/workflows/ci.yml | grep -oE "[0-9.]+" | head -1`
 helm_version := `grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE "[0-9.]+"`
@@ -53,10 +56,13 @@ rotate-age-key *args: _require-host-sops
 kubeconfig:
     echo "export KUBECONFIG={{justfile_directory()}}/{{kubeconfig}}"
 
+[doc("Run kubectl on the node over SSH; the API server is not reachable from anywhere else")]
+kubectl *args:
+    {{node_ssh}} k3s kubectl {{args}}
+
 [doc("Show nodes and ArgoCD applications")]
 status:
-    kubectl --kubeconfig {{kubeconfig}} get nodes
-    kubectl --kubeconfig {{kubeconfig}} -n argocd get applications
+    {{node_ssh}} 'k3s kubectl get nodes; k3s kubectl -n argocd get applications'
 
 [doc("Turn the Keycloak bootstrap administrator into the permanent one: apply keycloak-master, delete temp-admin, point the module at admin")]
 [confirm("This deletes the temp-admin user from the Keycloak master realm once the permanent admin exists. Continue?")]
@@ -74,7 +80,7 @@ keycloak-rotate-admin: _require-host-sops
 
 [doc("Print the internal CA certificate (public) to trust on a device that uses the tailnet names")]
 internal-ca:
-    kubectl --kubeconfig {{kubeconfig}} -n cert-manager get secret internal-ca -o jsonpath='{.data.ca\.crt}' | base64 -d
+    {{node_ssh}} "k3s kubectl -n cert-manager get secret internal-ca -o jsonpath='{.data.ca\\.crt}' | base64 -d"
 
 [doc("actionlint and zizmor over the GitHub Actions workflows")]
 lint-actions:
@@ -191,7 +197,7 @@ sops-drill-se identity=(home_dir() / ".config/hl-infrastructure/sops/operator-se
 
 [doc("Print a live resource as a clean manifest ready to commit: just freeze deployment blog -n blog")]
 freeze *args: (_build-ops)
-    {{run}} -e KUBECONFIG={{kubeconfig}} --entrypoint bash {{ops_image}} .tools/freeze-manifest.sh {{args}}
+    {{node_ssh}} k3s kubectl get {{args}} -o json | {{run}} --entrypoint bash {{ops_image}} .tools/freeze-manifest.sh
 
 [doc("Run OpenTofu in tofu/<module>: just tofu cloudflare plan; decrypts tofu/state.sops.env and the module's own secrets into its environment only")]
 tofu module *args: _require-host-sops
