@@ -34,7 +34,8 @@ flowchart LR
   kubeconfig -->|6443 só de dentro do node, via SSH| api
   argo -->|pull| infra
   argo -->|pull, projeto satellites| sat
-  argo -->|Image Updater| ghcr
+  kargo[Kargo] -->|Warehouse| ghcr
+  kargo -->|argocd-update| argo
   internet -->|túnel Cloudflare| apps
 ```
 
@@ -46,7 +47,7 @@ Do GitHub para o cluster, o Argo puxa `main` deste repositório com o projeto `i
 
 O único satélite deste cluster, o blog, é uma exceção deliberada a essa fronteira: suas `Application`s vivem neste mesmo repositório, sob o projeto `satellites` (o teto de permissão continua o mesmo), então quem administra este repositório já administra o namespace do blog de qualquer forma, sem precisar de um segundo repositório. Isso reduz o número de lugares a proteger, não a superfície administrável por quem já escreve aqui; veja "Por que o blog não é um satélite de verdade" em [GitOps: root e satélites](gitops-root-e-satelites.md).
 
-Do GHCR para o cluster, o Image Updater troca a imagem de um satélite sempre que aparece uma tag nova no padrão `sha-<commit>`. Quem consegue publicar nesse pacote do GHCR consegue rodar código no namespace do satélite; a barreira é a permissão de escrita no pacote, que só a pipeline do repositório do satélite tem via `GITHUB_TOKEN`. Uma tag fora do padrão é ignorada, então um `latest` reescrito não afeta o que roda.
+Do GHCR para o cluster, o `Warehouse` do Kargo observa a tag `main` do pacote do satélite e, a cada digest novo, o `Stage` escreve esse digest na `Application` do Argo (veja [Rollout de imagens](rollout-de-imagens.md)). Quem consegue publicar nesse pacote do GHCR consegue rodar código no namespace do satélite; a barreira é a permissão de escrita no pacote, que só a pipeline do repositório do satélite tem via `GITHUB_TOKEN`. O Kargo só escreve na `Application` que carrega a anotação `kargo.akuity.io/authorized-stage` apontando para aquele `Stage`, e o que ele grava é o digest, não a tag, então mover a tag depois não muda o que roda até a próxima promoção, que fica registrada.
 
 Das Actions para o GitHub, o `ci` e o `docs` rodam com `contents: read` e sem credencial persistida no checkout, então um passo comprometido lê o repositório público e nada mais. O `renovate` é o único com token de escrita, guardado num environment restrito a `main`, e só ele pode abrir PRs; o merge continua humano. Toda action é pinada por SHA e auditada por `zizmor` a cada push.
 

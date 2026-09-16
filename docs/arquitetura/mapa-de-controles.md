@@ -22,7 +22,7 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | Node | Capacidade | Journal limitado, GC semanal de imagens e ReplicaSets | role `maintenance`, `hl-gc.timer` |
 | ArgoCD | Segregação | Satélites só criam recurso de namespace; `default` esvaziado | `argocd/root/project-*.yaml` |
 | ArgoCD | Comportamento de sync | Server-side apply, prune por último, retry com backoff | `syncPolicy` em todo `Application` |
-| Imagens | Proveniência | Só tags imutáveis `sha-<commit>` são promovidas | `ImageUpdater` de cada satélite com `allowTags` |
+| Imagens | Proveniência | Só o digest que a tag `main` aponta no momento é promovido, por um `Warehouse` do Kargo; a promoção fica registrada como `Promotion` e o `Stage` só escreve na `Application` que o autorizou | `Warehouse` e `Stage` em `argocd/apps/satellites/<satélite>/delivery`, anotação `kargo.akuity.io/authorized-stage` na `Application` |
 | Cloudflare | Privilégio | O API token do OpenTofu só edita túnel e DNS, nunca cria outros tokens | permissões do token no dashboard, [primeiro bootstrap](../operacional/primeiro-bootstrap.md) |
 | Cloudflare | Segredos no state | State do OpenTofu cifrado, recusado em texto claro; o token do túnel nunca passa pelo OpenTofu | `tofu/cloudflare/encryption.tf` com `enforced = true`, `.tools/cloudflare-tunnel-token.sh`, job `tofu` |
 | Repositório | Rotação de segredos | Todo arquivo cifrado tem prazo de rotação; vencido, a execução agendada da CI fica vermelha | job `secret-age`, `.config/secret-max-age.conf` |

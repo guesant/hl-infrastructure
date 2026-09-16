@@ -42,11 +42,11 @@ spec:
         maxDuration: 3m
 ```
 
-O `project: satellites` é obrigatório: esse projeto do Argo está restrito a recursos de namespace, com uma única exceção liberada para o tipo `StorageClass`. Um satélite não pode criar `ClusterRole`, `CustomResourceDefinition` ou qualquer outro recurso de escopo de cluster; se o outro repositório precisar disso, esse recurso pertence a este repositório, não a um satélite.
+O `project: satellites` é obrigatório: esse projeto do Argo está restrito a recursos de namespace, com duas exceções liberadas: o tipo `StorageClass` e o `Project` do Kargo, que é de escopo de cluster porque é ele que cria o namespace do projeto de entrega. Um satélite não pode criar `ClusterRole`, `CustomResourceDefinition` ou qualquer outro recurso de escopo de cluster; se o outro repositório precisar disso, esse recurso pertence a este repositório, não a um satélite.
 
 A onda `10` e o bloco `syncPolicy` são os mesmos de todo `Application` daqui, e [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) explica o que cada opção resolve. Copie o bloco inteiro; um satélite sem `retry`, por exemplo, fica travado em erro na primeira vez que uma CRD demorar a subir.
 
-O caminho em `source.path` deve apontar para uma pasta que contenha só os objetos de controle do Argo (`Application`, `ImageUpdater` e afins) daquele outro repositório, não os manifestos da aplicação em si; quem interpreta esses objetos de controle e sincroniza os manifestos de verdade é o Argo, recursivamente, a partir dali.
+O caminho em `source.path` deve apontar para uma pasta que contenha só os objetos de controle do Argo (`Application` e afins) daquele outro repositório, não os manifestos da aplicação em si; quem interpreta esses objetos de controle e sincroniza os manifestos de verdade é o Argo, recursivamente, a partir dali.
 
 Depois de commitar o arquivo novo e dar push em `main` deste repositório, o Argo detecta a mudança sozinho no próximo ciclo de sincronização (por padrão, a cada três minutos) e cria a aplicação. Confirme com:
 
@@ -60,30 +60,70 @@ Os `Application` filhos, dentro da pasta de GitOps do outro repositório, devem 
 
 ### Atualização automática de imagem
 
-O ArgoCD Image Updater já roda no cluster e é configurado por um recurso `ImageUpdater`, que fica na mesma pasta de objetos de controle do outro repositório, ao lado dos `Application` filhos:
+O Kargo já roda no cluster, e a promoção de imagem de um satélite é declarada num projeto de entrega próprio, separado do namespace da aplicação: uma pasta como `argocd/apps/satellites/<nome>/delivery`, sincronizada por uma `Application` do projeto `satellites` que cria o namespace `<nome>-delivery` já com o label `kargo.akuity.io/project: "true"`, para o Kargo adotá-lo em vez de tentar criar um segundo. O nome não pode ser o mesmo do namespace da aplicação, porque um `Project` do Kargo é também um namespace. Dentro dessa pasta ficam quatro objetos, no modelo do blog em [argocd/apps/satellites/blog/delivery](https://github.com/guesant/hl-infrastructure/tree/main/argocd/apps/satellites/blog/delivery):
 
 ```yaml
-apiVersion: argocd-image-updater.argoproj.io/v1alpha1
-kind: ImageUpdater
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Project
 metadata:
-  name: nome-do-satelite
-  namespace: argocd
+  name: nome-do-satelite-delivery
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: ProjectConfig
+metadata:
+  name: nome-do-satelite-delivery
+  namespace: nome-do-satelite-delivery
 spec:
-  writeBackConfig:
-    method: argocd
-  applicationRefs:
-    - namePattern: nome-da-application-filha
-      images:
-        - alias: app
-          imageName: ghcr.io/guesant/nome-da-imagem
-          commonUpdateSettings:
-            updateStrategy: newest-build
-            allowTags: regexp:^sha-[0-9a-f]{40}$
+  promotionPolicies:
+    - stage: prod
+      autoPromotionEnabled: true
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: app
+  namespace: nome-do-satelite-delivery
+spec:
+  interval: 2m0s
+  subscriptions:
+    - image:
+        repoURL: ghcr.io/guesant/nome-da-imagem
+        imageSelectionStrategy: Digest
+        constraint: main
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: prod
+  namespace: nome-do-satelite-delivery
+spec:
+  requestedFreight:
+    - origin:
+        kind: Warehouse
+        name: app
+      sources:
+        direct: true
+  promotionTemplate:
+    spec:
+      steps:
+        - uses: argocd-update
+          config:
+            apps:
+              - name: nome-da-application-filha
+                namespace: argocd
+                sources:
+                  - repoURL: https://github.com/guesant/hl-infrastructure.git
+                    helm:
+                      images:
+                        - key: caminho.do.values.para.a.tag
+                          value: main@${{ imageFrom("ghcr.io/guesant/nome-da-imagem").Digest }}
 ```
 
-A combinação de `newest-build` com `allowTags` restrito a `sha-<commit>` é a que este cluster adota: a pipeline do outro repositório publica uma tag imutável por commit, e o Image Updater escolhe sempre a mais recente delas, ignorando `latest`, `main` ou qualquer tag que possa mudar de conteúdo. O resultado é que a imagem em execução sempre aponta para um commit identificável, sem precisar de digest explícito. `method: argocd` grava a mudança como parâmetro da própria `Application`, sem commit no repositório; o git continua declarando a tag base, e a tag corrente fica visível em `kubectl -n argocd get application nome -o yaml`.
+O `Warehouse` acompanha a tag `main` pela estratégia `Digest`: cada vez que a pipeline do outro repositório publica e o digest atrás da tag muda, nasce um `Freight` novo, e a política de promoção automática o leva ao `Stage` `prod`. O passo `argocd-update` grava `main@sha256:...` como parâmetro Helm da própria `Application`, sem commit em nenhum repositório; o git continua declarando a tag base como ponto de partida, e o digest corrente fica visível em `kubectl -n argocd get application nome -o yaml` e na UI do Kargo. Se o satélite renderiza a imagem a partir de um chart, o `value` precisa produzir o formato que o campo do chart espera; renderize e confira antes de ligar.
 
-Quando a imagem só tem uma tag móvel, a alternativa é `updateStrategy: digest`, que acompanha essa tag e troca a imagem sempre que o digest por trás dela muda.
+Duas coisas acompanham esse bloco. A `Application` filha precisa carregar a anotação `kargo.akuity.io/authorized-stage: nome-do-satelite-delivery:prod`, que é a prova de que quem pode editar aquela `Application` consentiu com aquele `Stage` a editar; sem ela a promoção falha com erro explícito. E a `Application` `root` deste repositório precisa de um `ignoreDifferences` para `/spec/source/helm/parameters` dessa `Application`, como já existe para o blog em `argocd/root/application.yaml`, senão o `selfHeal` do root devolve a tag do git a cada reconciliação. Se a expressão `${{ ... }}` for escrita dentro de um template Helm deste repositório, ela precisa ser protegida como texto literal, porque o Helm tentaria interpretá-la.
+
+Quando a imagem for publicada só com tags imutáveis `sha-<commit>` e sem tag móvel, troque a estratégia por `NewestBuild` com `allowTagsRegexes: ["^sha-[0-9a-f]{40}$"]` e use `imageFrom(...).Tag` no `value`.
 
 ### Um banco Postgres
 
@@ -115,4 +155,4 @@ A senha do role criado por `bootstrap.initdb.owner` fica de fora do git de prop�
 
 ## Continue por aqui
 
-Para entender a razão de existir dessa separação entre a aplicação raiz e os satélites, e o que cada opção de `syncPolicy` resolve, veja [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) na arquitetura. Para duas armadilhas reais do Image Updater que travam a atualização de imagem em silêncio, veja [rollout de imagens](../arquitetura/rollout-de-imagens.md).
+Para entender a razão de existir dessa separação entre a aplicação raiz e os satélites, e o que cada opção de `syncPolicy` resolve, veja [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) na arquitetura. Para entender o caminho inteiro de uma imagem publicada até o pod, e o que fazer quando nada promove, veja [rollout de imagens](../arquitetura/rollout-de-imagens.md).

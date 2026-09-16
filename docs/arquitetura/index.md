@@ -19,7 +19,7 @@ flowchart TB
     end
     subgraph gitops["GitOps (ArgoCD, contínuo)"]
         C --> E["root sincroniza\nargocd/applications"]
-        E --> F["cert-manager, CNPG,\nsops-secrets-operator, Image Updater"]
+        E --> F["cert-manager, CNPG,\nsops-secrets-operator, Kargo"]
         E --> G["satélites de outros\nrepositórios"]
     end
 ```
@@ -49,7 +49,7 @@ flowchart TB
         firewall["firewalld"]
         k3s["k3s: API server, kubelet, containerd"]
         cilium["Cilium (CNI, kube-proxy, Hubble)"]
-        argocd["ArgoCD + Image Updater"]
+        argocd["ArgoCD + Kargo"]
         certmanager["cert-manager"]
         cnpg["CloudNativePG"]
         sops["sops-secrets-operator"]

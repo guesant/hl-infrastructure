@@ -2,7 +2,7 @@
 
 A rotina de quem já conhece o repositório: implantar mudanças, manter o cluster e resolver tarefas específicas do dia a dia. Cada página aqui resolve uma tarefa concreta e assume familiaridade básica com Ansible, Helm e kubectl; para aprender os conceitos do zero, veja [Aprender](../aprender/index.md), e para entender por que uma peça funciona do jeito que funciona, veja a [arquitetura](../arquitetura/index.md).
 
-- [Primeiro bootstrap](primeiro-bootstrap.md): provisiona um Raspberry Pi do zero até um cluster k3s funcionando, com Cilium, cert-manager, CloudNativePG, ArgoCD, sops-secrets-operator e o Argo CD Image Updater instalados.
+- [Primeiro bootstrap](primeiro-bootstrap.md): provisiona um Raspberry Pi do zero até um cluster k3s funcionando, com Cilium, cert-manager, CloudNativePG, ArgoCD, sops-secrets-operator e o Kargo instalados.
 - [Mapa do bootstrap e das credenciais](mapa-do-bootstrap-e-das-credenciais.md): as camadas, quem depende de quem, onde vive cada credencial, o que cada módulo do OpenTofu lê e o que separa bootstrap de manutenção.
 - [Metodologia de mudança](metodologia-de-mudanca.md): as oito etapas de toda mudança no node ou no cluster.
 - [Checklist operacional](checklist.md): o que conferir, e quando foi conferido pela última vez, a cada bootstrap ou upgrade.
