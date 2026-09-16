@@ -1,0 +1,21 @@
+reloader:
+  fullnameOverride: reloader
+  image:
+    tag: v1.4.22@sha256:def2480040adc164b3a57340e77674eadfd88fb7f0593df25e93297f29c7fd7c
+  reloader:
+    reloadOnCreate: true
+    readOnlyRootFileSystem: true
+    deployment:
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop: [ALL]
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          memory: 96Mi
+    serviceMonitor:
+      enabled: true
