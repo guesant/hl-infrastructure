@@ -555,7 +555,6 @@ jobs:
           -strict -ignore-missing-schemas -summary -n 2 -cache .kubeconform-cache
           -schema-location default
           -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
-          -skip ImageUpdater
           rendered argocd/root argocd/applications
 
       - name: Every image has a tag or digest

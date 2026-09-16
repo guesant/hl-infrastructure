@@ -46,10 +46,6 @@ helm template argocd "$charts_dir/argo-cd-$argocd_chart_version.tgz" \
   --values "$repo_root/ansible/roles/argocd/files/values.yaml" \
   --include-crds >"$out_dir/argocd.yaml"
 
-helm template argocd-image-updater "$repo_root/argocd/apps/platform/argocd-image-updater" \
-  --namespace argocd \
-  --include-crds >"$out_dir/argocd-image-updater.yaml"
-
 helm template cnpg "$repo_root/argocd/apps/operators/cnpg" \
   --namespace cnpg-system \
   --include-crds >"$out_dir/cnpg.yaml"

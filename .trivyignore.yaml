@@ -16,6 +16,3 @@ vulnerabilities:
   - id: CVE-2026-33186
     statement: grpc in the upstream dex image; waiting for the Argo CD chart to ship a rebuilt dex
     expired_at: 2026-10-15
-  - id: CVE-2026-60002
-    statement: openssh client in the upstream argocd-image-updater image; waiting for a rebuilt release
-    expired_at: 2026-10-15
