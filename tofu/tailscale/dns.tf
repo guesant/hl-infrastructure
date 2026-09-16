@@ -11,7 +11,3 @@ resource "tailscale_dns_split_nameservers" "internal" {
   domain      = var.internal_domain
   nameservers = local.node_ipv4
 }
-
-resource "tailscale_dns_search_paths" "internal" {
-  search_paths = [var.internal_domain]
-}
