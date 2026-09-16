@@ -1,0 +1,4 @@
+apiVersion: v2
+name: portainer
+description: Portainer CE as a cluster UI reachable only through the tailnet ingress, declared as plain manifests so the pod can satisfy the hardened admission policies
+version: 0.1.0

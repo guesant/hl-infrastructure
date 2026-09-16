@@ -42,7 +42,7 @@ spec:
         + (has(object.spec.ephemeralContainers) ? object.spec.ephemeralContainers : [])
     - name: allowed
       expression: >-
-        ['quay.io/', 'registry.k8s.io/', 'ghcr.io/', 'docker.io/aquasec/', 'docker.io/cloudflare/', 'cloudflare/', 'ecr-public.aws.com/docker/library/']
+        ['quay.io/', 'registry.k8s.io/', 'ghcr.io/', 'docker.io/aquasec/', 'docker.io/cloudflare/', 'cloudflare/', 'docker.io/portainer/', 'ecr-public.aws.com/docker/library/']
   validations:
     - expression: variables.containers.all(c, variables.allowed.exists(p, c.image.startsWith(p)))
       messageExpression: >-
