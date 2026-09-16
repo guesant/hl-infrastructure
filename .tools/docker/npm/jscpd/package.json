@@ -1,0 +1,7 @@
+{
+  "name": "hl-infra-jscpd",
+  "private": true,
+  "dependencies": {
+    "jscpd": "5.2.0"
+  }
+}

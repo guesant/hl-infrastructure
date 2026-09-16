@@ -94,9 +94,9 @@ _build target:
         docker build --target {{target}} -t hl-infra/{{target}}:{{tools_hash}} {{justfile_directory()}}/.tools/docker
 
 _build-helm:
-    test -n "{{helm_version}}" || (echo "could not extract helm_version from ansible/group_vars/all/versions.yml" >&2 && exit 1)
+    test "{{helm_image_version}}" = "{{helm_version}}" || (echo "alpine/helm in .tools/docker/Dockerfile ({{helm_image_version}}) must match helm_version in versions.yml ({{helm_version}})" >&2 && exit 1)
     docker image inspect {{helm_image}} >/dev/null 2>&1 || \
-        docker build --target helm --build-arg HELM_VERSION={{helm_version}} -t {{helm_image}} {{justfile_directory()}}/.tools/docker
+        docker build --target helm -t {{helm_image}} {{justfile_directory()}}/.tools/docker
 
 _build-ops:
     test -n "{{k3s_version}}" || (echo "could not extract k3s_version from ansible/group_vars/all/versions.yml" >&2 && exit 1)
@@ -321,12 +321,12 @@ infra-trivy-config: infra-render-charts (_build "trivy")
 [doc("Build the MkDocs site in strict mode")]
 docs-build:
     {{run}} python:3.12-slim \
-        sh -c "pip install --quiet -r docs/requirements.txt && mkdocs build --strict --config-file .config/mkdocs.yml"
+        sh -c "pip install --quiet --require-hashes -r docs/requirements.txt && mkdocs build --strict --config-file .config/mkdocs.yml"
 
 [doc("Serve the MkDocs site on port 8000")]
 docs-serve:
     {{run}} -p 8000:8000 python:3.12-slim \
-        sh -c "pip install --quiet -r docs/requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000 --config-file .config/mkdocs.yml"
+        sh -c "pip install --quiet --require-hashes -r docs/requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000 --config-file .config/mkdocs.yml"
 
 [doc("Every check the CI runs, in order")]
 check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-placeholders lint-secret-age lint-docs lint-pod-security lint-spelling security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-conftest infra-kubescape security-trivy-images lint-commits infra-helm-lint docs-build

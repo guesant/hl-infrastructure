@@ -1,0 +1,7 @@
+{
+  "name": "hl-infra-ast-grep",
+  "private": true,
+  "dependencies": {
+    "@ast-grep/cli": "0.45.3"
+  }
+}
