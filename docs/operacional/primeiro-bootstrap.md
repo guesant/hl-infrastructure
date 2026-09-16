@@ -98,14 +98,14 @@ O `plan` só pode criar recursos, nunca alterar nem destruir: o túnel, a config
 
 ## Ligue o node à tailnet
 
-O bootstrap já instalou o Tailscale e o `dnsmasq`, mas pulou o passo de entrar na tailnet, porque `tailscale_auth_key` ainda era o valor de exemplo. No console de administração do Tailscale, em Settings, Keys, gere uma auth key reutilizável, de preferência com uma tag (`tag:homelab`) se a sua ACL tiver `tagOwners` para ela, porque um node com tag não tem chave que expira. Grave a chave e as rotas que o node vai anunciar (o CIDR da sua rede local, que é endereço interno e por isso fica cifrado):
+O bootstrap já instalou o Tailscale e o `dnsmasq`, mas pulou o passo de entrar na tailnet, porque `tailscale_auth_key` ainda era o valor de exemplo. No console de administração do Tailscale, em Settings, Keys, gere uma auth key reutilizável, de preferência com uma tag (`tag:homelab`) se a sua ACL tiver `tagOwners` para ela, porque um node com tag não tem chave que expira. Grave a chave:
 
 ```bash
 just sops-edit ansible/group_vars/all/secrets.sops.yaml
 just bootstrap
 ```
 
-Na saída da role `tailscale`, o node entra na tailnet e o `dnsmasq` passa a responder `*.guesant.internal` com o endereço dele. Ainda no console, em Machines, aprove a rota que o node anunciou e desligue a expiração da chave dele, se ele não tiver tag. Depois crie um OAuth client em Settings, OAuth clients, com os escopos `dns:write` e `devices:core:read`, e grave o ID e o secret:
+Na saída da role `tailscale`, o node entra na tailnet e o `dnsmasq` passa a responder `*.guesant.internal` com o endereço dele. Ainda no console, em Machines, desligue a expiração da chave do node, se ele não tiver tag. Depois crie um OAuth client em Settings, OAuth clients, com os escopos `dns:write` e `devices:core:read`, e grave o ID e o secret:
 
 ```bash
 just sops-edit tofu/tailscale/tailscale.sops.env

@@ -70,14 +70,6 @@
       register: firewall_api_port
       changed_when: "'ALREADY_ENABLED' not in firewall_api_port.stderr"
 
-    - name: Masquerade the tailnet sources that the node routes into the LAN
-      ansible.builtin.command: >-
-        firewall-cmd --permanent --zone=public --add-rich-rule='rule family="ipv4"
-        source address="{{ item }}" masquerade'
-      loop: "{{ firewall_masquerade_sources }}"
-      register: firewall_masquerade
-      changed_when: "'ALREADY_ENABLED' not in firewall_masquerade.stderr"
-
     - name: Read the permanent zones and policies that exist
       ansible.builtin.command: "firewall-cmd --permanent {{ item }}"
       loop:
@@ -104,32 +96,11 @@
       register: firewall_tailscale_services_added
       changed_when: "'ALREADY_ENABLED' not in firewall_tailscale_services_added.stderr"
 
-    - name: Create the policy that lets the tailnet reach the LAN through the node
-      ansible.builtin.command: "firewall-cmd --permanent --new-policy={{ firewall_tailscale_policy }}"
-      register: firewall_tailscale_policy_created
+    - name: Remove every forwarding policy, since the node routes nothing between zones
+      ansible.builtin.command: "firewall-cmd --permanent --delete-policy={{ item }}"
+      loop: "{{ firewall_objects.results[1].stdout.split() }}"
+      register: firewall_removed_policies
       changed_when: true
-      when: firewall_tailscale_policy not in firewall_objects.results[1].stdout.split()
-
-    - name: Point the policy from the tailnet zone to the public zone
-      ansible.builtin.command: "firewall-cmd --permanent --policy={{ firewall_tailscale_policy }} {{ item }}"
-      loop:
-        - "--add-ingress-zone={{ firewall_tailscale_zone }}"
-        - --add-egress-zone=public
-      register: firewall_tailscale_policy_zones
-      changed_when: "'ALREADY_ENABLED' not in firewall_tailscale_policy_zones.stderr"
-
-    - name: Read the policy target
-      ansible.builtin.command: "firewall-cmd --permanent --policy={{ firewall_tailscale_policy }} --get-target"
-      register: firewall_tailscale_policy_target
-      changed_when: false
-      failed_when: false
-      check_mode: false
-
-    - name: Accept forwarded traffic under the policy
-      ansible.builtin.command: "firewall-cmd --permanent --policy={{ firewall_tailscale_policy }} --set-target=ACCEPT"
-      register: firewall_tailscale_policy_accept
-      changed_when: true
-      when: firewall_tailscale_policy_target.rc != 0 or firewall_tailscale_policy_target.stdout | trim != 'ACCEPT'
 
     - name: Read the permanent public and trusted zones
       ansible.builtin.command: "firewall-cmd --permanent --zone={{ item.zone }} {{ item.flag }}"
@@ -164,12 +135,9 @@
       vars:
         firewall_current_by_key: "{{ dict(firewall_current.results | map(attribute='item.key') | zip(firewall_current.results | map(attribute='stdout'))) }}"
         firewall_declared_rich_rules: >-
-          {{ (k3s_api_allowed_cidrs
-              | map('regex_replace', '^(.*)$', 'rule family="ipv4" source address="\1" port port="6443" protocol="tcp" accept')
-              | list)
-             + (firewall_masquerade_sources
-                | map('regex_replace', '^(.*)$', 'rule family="ipv4" source address="\1" masquerade')
-                | list) }}
+          {{ k3s_api_allowed_cidrs
+             | map('regex_replace', '^(.*)$', 'rule family="ipv4" source address="\1" port port="6443" protocol="tcp" accept')
+             | list }}
 
     - name: Refuse to remove more undeclared entries than the safety cap allows
       ansible.builtin.assert:
@@ -239,10 +207,9 @@
       ansible.builtin.command: firewall-cmd --reload
       when: >-
         firewall_ssh.changed or firewall_services.changed or firewall_trust.changed
-        or firewall_api_port.changed or firewall_masquerade.changed
+        or firewall_api_port.changed
         or firewall_tailscale_zone_created.changed or firewall_tailscale_interface_bound.changed
-        or firewall_tailscale_services_added.changed or firewall_tailscale_policy_created.changed
-        or firewall_tailscale_policy_zones.changed or firewall_tailscale_policy_accept.changed
+        or firewall_tailscale_services_added.changed or firewall_removed_policies.changed
         or firewall_removed_services.changed or firewall_removed_ports.changed
         or firewall_removed_rich_rules.changed or firewall_removed_sources.changed
         or firewall_removed_tailscale_services.changed

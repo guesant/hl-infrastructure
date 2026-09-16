@@ -4,11 +4,8 @@
     that:
       - tailscale_hostname is match('^[a-z0-9]([a-z0-9-]*[a-z0-9])?$')
       - tailscale_internal_domain is match('^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$')
-      - tailscale_advertise_routes is iterable
-      - tailscale_advertise_routes | reject('match', '^[0-9]{1,3}(\.[0-9]{1,3}){3}/[0-9]{1,2}$') | list | length == 0
     fail_msg: >-
-      tailscale_hostname must be a bare hostname, tailscale_internal_domain a DNS zone,
-      and tailscale_advertise_routes a list of IPv4 CIDRs
+      tailscale_hostname must be a bare hostname and tailscale_internal_domain a DNS zone
 
 - name: Install the Tailscale apt signing key
   ansible.builtin.get_url:
@@ -80,7 +77,6 @@
           {{ ['tailscale', 'up',
               '--auth-key=file:' + tailscale_auth_key_file,
               '--hostname=' + tailscale_hostname,
-              '--advertise-routes=' + (tailscale_advertise_routes | join(',')),
               '--accept-dns=false',
               '--accept-routes=false']
              + (['--advertise-tags=' + (tailscale_advertise_tags | join(','))] if tailscale_advertise_tags | length > 0 else []) }}
@@ -115,7 +111,6 @@
           - tailscale
           - set
           - "--hostname={{ tailscale_hostname }}"
-          - "--advertise-routes={{ tailscale_advertise_routes | join(',') }}"
           - --accept-dns=false
           - --accept-routes=false
       changed_when: false

@@ -31,7 +31,6 @@ O cert-manager, o operador CloudNativePG, o sops-secrets-operator e o Argo CD Im
 | `bootstrap_app_repo_url` | Opcional; URL do repositório que a `Application` root sincroniza, por padrão este repositório | role `bootstrap_app` |
 | `argocd_github_webhook_secret` | Segredo compartilhado usado para validar o webhook do GitHub que acelera a sincronização do Argo | role `argocd` |
 | `tailscale_auth_key` | Chave de autorização com que o node entra na tailnet; só é lida enquanto o node ainda não entrou, e a role pula tudo o que depende da tailnet enquanto ela for o valor de exemplo | role `tailscale` |
-| `tailscale_advertise_routes` | CIDRs da rede local que o node anuncia para a tailnet como subnet router | role `tailscale`, e a role `firewall` pela policy de encaminhamento |
 
 ## authorized_keys.yml
 
