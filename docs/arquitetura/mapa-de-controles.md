@@ -5,7 +5,7 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | Componente | Tema | Controle | Evidência |
 | --- | --- | --- | --- |
 | Repositório | Segredos | Nenhum segredo no git; valores reais só cifrados, em `SopsSecret`, em `tofu/**/*.sops.env` e `ansible/group_vars/all/secrets.sops.yaml` | `.gitignore`, job `gitleaks` sobre todo o histórico, `trivy-fs`, job `sopssecrets` |
-| Repositório | Integridade de dependências | Toda action, imagem, chart e binário pinado por versão ou SHA | `.github/workflows/*.yml` (SHA em todo `uses`), `.tools/docker/Dockerfile`, `versions.yml`, check `check-images-pinned.sh` |
+| Repositório | Integridade de dependências | Toda action, imagem, chart, binário, pacote pip e npm pinado por digest, checksum ou lockfile com hash; imagem só com tag falha a CI | `.github/workflows/*.yml` (SHA em todo `uses`), `.tools/docker/Dockerfile` e `.tools/docker/{pip,npm}`, `versions.yml` (`*_sha256`), `check-images-pinned.sh`, `render-charts.sh` |
 | Repositório | Atualização | Renovate abre PR para toda dependência, com sete dias de carência | `.github/renovate.json`, dependency dashboard |
 | CI | Privilégio | `contents: read` por padrão; escrita só no `renovate`, isolado num environment | `permissions:` em cada workflow, `zizmor` a cada push |
 | CI | Supply chain de workflows | Sem `persist-credentials`, sem injeção via template | `zizmor`, `actionlint` |

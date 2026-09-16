@@ -15,10 +15,13 @@ Esta página não rastreia `versions.yml` para o gate de deriva de documentaçã
 | Variável | Controla | Consumida por |
 | --- | --- | --- |
 | `k3s_version` | Versão do k3s instalada pelo script oficial | role `k3s` |
+| `k3s_install_script_sha256` | SHA-256 do `install.sh` do k3s na tag declarada, baixado do repositório do projeto em vez de `get.k3s.io`; muda junto com `k3s_version` | role `k3s` |
 | `helm_version` | Versão do binário Helm usado tanto pelo Ansible quanto pela renderização local de charts | roles `cilium`, `argocd`; `.tools/render-charts.sh` |
 | `cilium_version` | Versão do chart Helm do Cilium | role `cilium` |
+| `cilium_chart_sha256` | SHA-256 do `.tgz` do chart do Cilium nessa versão, conferido pela role e pelo `render-charts.sh` antes de renderizar | role `cilium`, `.tools/render-charts.sh` |
 | `cilium_cli_version` | Versão do binário `cilium-cli`, usado só para inspeção (`cilium status`), nunca para instalar | role `cilium` |
 | `argocd_chart_version` | Versão do chart Helm do ArgoCD | role `argocd` |
+| `argocd_chart_sha256` | SHA-256 do `.tgz` do chart do Argo CD nessa versão, conferido da mesma forma | role `argocd`, `.tools/render-charts.sh` |
 
 O cert-manager, o operador CloudNativePG, o sops-secrets-operator e o Argo CD Image Updater não têm entrada aqui: desde que passaram a ser `Application` do ArgoCD em vez de uma role, a versão de cada um vive na própria dependency do `Chart.yaml` local ([cert-manager](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/cert-manager/Chart.yaml), [cnpg](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/cnpg/Chart.yaml), [sops-secrets-operator](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/sops-secrets-operator/Chart.yaml), [argocd-image-updater](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/platform/argocd-image-updater/Chart.yaml)), e o Renovate atualiza cada uma pelo gerenciador nativo de chart Helm, sem precisar do regex customizado que os dois restantes usam.
 
