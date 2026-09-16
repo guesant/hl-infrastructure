@@ -61,6 +61,13 @@ helm template keycloak-postgres "$repo_root/argocd/apps/data/keycloak-postgres" 
 helm template keycloak "$repo_root/argocd/apps/platform/keycloak" \
   --namespace keycloak >"$out_dir/keycloak.yaml"
 
+helm template reloader "$repo_root/argocd/apps/platform/reloader" \
+  --namespace reloader \
+  --api-versions monitoring.coreos.com/v1 >"$out_dir/reloader.yaml"
+
+helm template sso "$repo_root/argocd/apps/platform/sso" \
+  --namespace argocd >"$out_dir/sso.yaml"
+
 helm template dashy "$repo_root/argocd/apps/platform/dashy" \
   --namespace dashy >"$out_dir/dashy.yaml"
 
