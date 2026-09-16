@@ -61,6 +61,11 @@ helm template keycloak-postgres "$repo_root/argocd/apps/data/keycloak-postgres" 
 helm template keycloak "$repo_root/argocd/apps/platform/keycloak" \
   --namespace keycloak >"$out_dir/keycloak.yaml"
 
+helm template ingress "$repo_root/argocd/apps/platform/ingress" \
+  --namespace ingress \
+  --api-versions monitoring.coreos.com/v1 \
+  --include-crds >"$out_dir/ingress.yaml"
+
 sed 's/{{ ansible_host }}/10.0.0.1/' "$repo_root/ansible/roles/cilium/templates/values.yaml.j2" >"$out_dir/.cilium-values.yaml"
 helm template cilium cilium/cilium \
   --version "$cilium_version" \
@@ -69,4 +74,4 @@ helm template cilium cilium/cilium \
   --include-crds >"$out_dir/cilium.yaml"
 rm "$out_dir/.cilium-values.yaml"
 
-echo "rendered 10 charts into $out_dir"
+echo "rendered $(find "$out_dir" -name '*.yaml' | wc -l | tr -d ' ') charts into $out_dir"

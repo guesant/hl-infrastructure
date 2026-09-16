@@ -58,6 +58,10 @@ status:
     kubectl --kubeconfig {{kubeconfig}} get nodes
     kubectl --kubeconfig {{kubeconfig}} -n argocd get applications
 
+[doc("Print the internal CA certificate (public) to trust on a device that uses the tailnet names")]
+internal-ca:
+    kubectl --kubeconfig {{kubeconfig}} -n cert-manager get secret internal-ca -o jsonpath='{.data.ca\.crt}' | base64 -d
+
 [doc("actionlint and zizmor over the GitHub Actions workflows")]
 lint-actions:
     test -n "{{actionlint_image}}" || (echo "could not extract the actionlint image from ci.yml" >&2 && exit 1)

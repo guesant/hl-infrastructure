@@ -35,6 +35,10 @@ spec:
       kind: ValidatingAdmissionPolicyBinding
     - group: cilium.io
       kind: CiliumClusterwideNetworkPolicy
+    - group: cert-manager.io
+      kind: ClusterIssuer
+    - group: gateway.networking.k8s.io
+      kind: GatewayClass
   namespaceResourceWhitelist:
     - group: "*"
       kind: "*"

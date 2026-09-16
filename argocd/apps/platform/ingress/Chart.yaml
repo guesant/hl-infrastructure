@@ -1,0 +1,11 @@
+apiVersion: v2
+name: ingress
+description: Traefik as the Gateway API implementation for the internal names, listening on the node so the tailnet firewall zone decides who reaches it, with an internal CA for their certificates
+version: 0.1.0
+dependencies:
+  - name: traefik-crds
+    version: 1.18.0
+    repository: oci://ghcr.io/traefik/helm
+  - name: traefik
+    version: 41.5.0
+    repository: oci://ghcr.io/traefik/helm

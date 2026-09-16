@@ -1,0 +1,9 @@
+dependencies:
+- name: traefik-crds
+  repository: oci://ghcr.io/traefik/helm
+  version: 1.18.0
+- name: traefik
+  repository: oci://ghcr.io/traefik/helm
+  version: 41.5.0
+digest: sha256:140543935aea0bf3b4dbcef0e2921eed3a4bf0c88eef40e6199613b307029082
+generated: "2026-09-16T01:48:41.989238411Z"

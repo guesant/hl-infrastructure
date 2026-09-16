@@ -1,0 +1,85 @@
+traefik-crds:
+  traefik: false
+  gatewayAPI: true
+
+traefik:
+  fullnameOverride: traefik
+  image:
+    registry: ghcr.io
+    repository: traefik/traefik
+    tag: v3.7.13
+    digest: sha256:f86a2cab1b5c649070c49f883c743dd32d8485a56e3368c5f93b9e91f1e91259
+  deployment:
+    annotations:
+      ignore-check.kube-linter.io/host-network: traefik listens on the node itself so the firewalld zone of the tailnet interface is what admits a client
+      checkov.io/skip1: CKV_K8S_19=traefik listens on the node itself so the firewalld zone of the tailnet interface is what admits a client
+  hostNetwork: true
+  global:
+    checkNewVersion: false
+    sendAnonymousUsage: false
+  service:
+    enabled: false
+  ingressClass:
+    enabled: false
+  ingressRoute:
+    dashboard:
+      enabled: false
+    healthcheck:
+      enabled: false
+  api:
+    dashboard: false
+  providers:
+    kubernetesCRD:
+      enabled: false
+    kubernetesIngress:
+      enabled: false
+    kubernetesGateway:
+      enabled: true
+  gateway:
+    name: internal
+    listeners:
+      web:
+        port: 80
+        protocol: HTTP
+        namespacePolicy:
+          from: All
+      websecure:
+        port: 443
+        protocol: HTTPS
+        namespacePolicy:
+          from: All
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: internal-domain-tls
+  gatewayClass:
+    name: traefik
+  ports:
+    traefik:
+      port: 9000
+    web:
+      port: 80
+      http:
+        redirections:
+          entryPoint:
+            to: websecure
+            scheme: https
+            permanent: true
+    websecure:
+      port: 443
+    metrics:
+      port: 9110
+  metrics:
+    prometheus:
+      service:
+        enabled: true
+      serviceMonitor:
+        enabled: true
+  accessLog:
+    enabled: true
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      memory: 128Mi

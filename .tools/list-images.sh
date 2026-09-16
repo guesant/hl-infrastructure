@@ -12,12 +12,13 @@ cd "$repo_root"
 
   while IFS= read -r values; do
     awk '
-      /^[[:space:]]*image:[[:space:]]*$/ { in_image = 1; repo = ""; tag = ""; digest = ""; next }
+      /^[[:space:]]*image:[[:space:]]*$/ { in_image = 1; registry = ""; repo = ""; tag = ""; digest = ""; next }
+      in_image && /^[[:space:]]*registry:/ { registry = $2 "/" }
       in_image && /^[[:space:]]*repository:/ { repo = $2 }
       in_image && /^[[:space:]]*tag:/ { tag = $2 }
       in_image && /^[[:space:]]*digest:/ { digest = $2 }
       in_image && repo != "" && tag != "" && (digest != "" || /^[[:space:]]*[a-z]+:[[:space:]]*$/) {
-        print repo ":" tag (digest != "" ? "@" digest : ""); in_image = 0
+        print registry repo ":" tag (digest != "" ? "@" digest : ""); in_image = 0
       }
     ' "$values" | tr -d '"'
   done < <(find argocd/apps -name 'values*.yaml' -not -path '*/charts/*')
