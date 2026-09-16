@@ -116,6 +116,18 @@ just tofu-apply tailscale
 
 O `plan` deve criar só o split DNS de `guesant.internal` apontando para o endereço do node; se esse split DNS já existir no console, importe-o antes com `just tofu tailscale import tailscale_dns_split_nameservers.internal guesant.internal`. Se ele reclamar que o dispositivo não foi encontrado, o node ainda não entrou na tailnet com o hostname declarado em `tofu/tailscale/terraform.tfvars`. Commite o state cifrado. Para conferir de um dispositivo da tailnet, `ssh root@<endereço do node na tailnet>` deve entrar e `dig grafana.guesant.internal` deve devolver esse mesmo endereço; de fora da tailnet, o nome não resolve. Veja [Tailscale: acesso remoto e DNS interno](../arquitetura/tailscale.md) para o que cada peça faz.
 
+## Assuma o realm do Keycloak com o OpenTofu
+
+O operator criou o realm `homelab` a partir do `KeycloakRealmImport`, mas quem o mantém é o módulo `tofu/keycloak`. Ele fala com o Keycloak por `keycloak.guesant.internal`, então precisa da tailnet e da CA interna, que já está commitada ao lado do módulo. O `keycloak.sops.env` já traz as credenciais do administrador e os segredos do realm cifrados; confira com `just placeholders` e rode:
+
+```bash
+just tofu keycloak init
+just tofu keycloak plan
+just tofu-apply keycloak
+```
+
+O primeiro `plan` mostra os blocos `import` assumindo o realm, o grupo, o usuário, o escopo, os três clients, o fluxo e o provedor do Google, e em seguida as correções: os redirects dos clients nos nomes internos e os escopos padrão que a importação original não aplicou. Nada deve aparecer como destruição; se aparecer, os IDs em `imports.tf` não batem com o cluster e o `apply` não deve seguir. Commite o state cifrado. Depois de um `apply` limpo, os blocos `import` podem ser removidos num commit seguinte, porque o state já conhece cada objeto.
+
 ## Confie na CA interna
 
 O Argo sobe o ingress sozinho depois do push, e com ele o cert-manager emite uma CA interna e o certificado de `*.guesant.internal`. Os nomes internos passam a responder por HTTPS pela tailnet, mas o seu navegador ainda não confia no emissor. Imprima o certificado público da CA e instale-o como autoridade confiável no sistema de cada dispositivo que vai usar os nomes:

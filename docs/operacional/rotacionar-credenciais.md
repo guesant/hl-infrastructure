@@ -78,6 +78,10 @@ just tofu-state-passphrase --finish-rotation
 
 Remova o `fallback` e a variável de cada módulo e commite os states regravados junto com o arquivo cifrado.
 
+## Segredos do realm do Keycloak
+
+Um client secret (`argocd`, `grafana`, `blog`) ou as credenciais do Google vivem em dois lugares que precisam mudar juntos: o `SopsSecret` que o consumidor monta e o `tofu/keycloak/keycloak.sops.env` que o OpenTofu aplica no Keycloak. Gere o valor novo, grave-o nos dois com `just sops-edit`, rode `just tofu-apply keycloak` e faça push; o consumidor recebe o `Secret` novo pelo sops-secrets-operator e o Keycloak passa a aceitar o novo valor no mesmo `apply`. A senha do administrador que o módulo usa é a do `Secret` `keycloak-initial-admin`; se ela mudar, atualize só o `.sops.env`.
+
 ## Segredo do webhook do GitHub
 
 O segredo que o GitHub usa para assinar os eventos de push enviados ao Argo CD mora cifrado em `ansible/group_vars/all/secrets.sops.yaml`, em `argocd_github_webhook_secret`, e existe em mais dois lugares: no `argocd-secret`, na chave `webhook.github.secret`, e na configuração do webhook do repositório no GitHub. Os três precisam bater. Enquanto não batem, o Argo recusa a assinatura e volta a descobrir commits só pelo polling de três minutos, sem quebrar nada.
