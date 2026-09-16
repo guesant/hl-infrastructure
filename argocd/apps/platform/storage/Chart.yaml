@@ -1,0 +1,4 @@
+apiVersion: v2
+name: storage
+description: local-path provisioner vendored from rancher/local-path-provisioner with a single retain default class
+version: 0.1.0

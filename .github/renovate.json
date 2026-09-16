@@ -59,6 +59,13 @@
         "alpine/helm",
         "helm/helm"
       ]
+    },
+    {
+      "description": "Vendored Kubernetes manifests (local-path provisioner, keycloak operator) keep tag and digest together",
+      "matchManagers": [
+        "kubernetes"
+      ],
+      "pinDigests": true
     }
   ],
   "customManagers": [
@@ -153,5 +160,10 @@
       "datasourceTemplate": "github-releases",
       "extractVersionTemplate": "^v(?<version>.+)$"
     }
-  ]
+  ],
+  "kubernetes": {
+    "managerFilePatterns": [
+      "/^argocd/apps/.+/templates/.+\\.yaml$/"
+    ]
+  }
 }

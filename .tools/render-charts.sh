@@ -89,6 +89,9 @@ helm template blog-delivery "$repo_root/argocd/apps/satellites/blog/delivery" \
   --values "$repo_root/argocd/apps/satellites/blog/delivery/values.yaml" \
   --namespace blog-delivery >"$out_dir/blog-delivery.yaml"
 
+helm template storage "$repo_root/argocd/apps/platform/storage" \
+  --namespace kube-system >"$out_dir/storage.yaml"
+
 helm template kargo "$repo_root/argocd/apps/platform/kargo" \
   --namespace kargo \
   --values "$repo_root/argocd/apps/platform/kargo/values.yaml" \
