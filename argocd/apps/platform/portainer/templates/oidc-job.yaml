@@ -50,7 +50,7 @@ data:
             "ResourceURI": issuer + "/protocol/openid-connect/userinfo",
             "RedirectURI": public_url,
             "LogoutURI": issuer + "/protocol/openid-connect/logout?post_logout_redirect_uri=" + urllib.parse.quote(public_url, safe=""),
-            "UserIdentifier": "email",
+            "UserIdentifier": "preferred_username",
             "Scopes": "openid email profile",
             "OAuthAutoCreateUsers": False,
             "DefaultTeamID": 0,
@@ -60,11 +60,11 @@ data:
         },
     }, token)
 
-    email = os.environ["ADMIN_EMAIL"]
+    operator = os.environ["OPERATOR_USERNAME"]
     users = call("GET", "/users", token=token)
-    existing = [u for u in users if u["Username"] == email]
+    existing = [u for u in users if u["Username"] == operator]
     if not existing:
-        call("POST", "/users", {"Username": email, "Password": "", "Role": 1}, token)
+        call("POST", "/users", {"Username": operator, "Password": "", "Role": 1}, token)
         print("created the operator as a Portainer administrator")
     elif existing[0]["Role"] != 1:
         call("PUT", "/users/%d" % existing[0]["Id"], {"Role": 1}, token)
@@ -114,8 +114,8 @@ spec:
                 secretKeyRef:
                   name: portainer-oidc
                   key: client-secret
-            - name: ADMIN_EMAIL
-              value: gabriel@guesant.internal
+            - name: OPERATOR_USERNAME
+              value: gabriel
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

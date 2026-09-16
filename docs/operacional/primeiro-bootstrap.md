@@ -126,13 +126,13 @@ just tofu keycloak-management init && just tofu keycloak-management plan && just
 just tofu keycloak-homelab init && just tofu keycloak-homelab plan && just tofu-apply keycloak-homelab
 ```
 
-O `master` entra com o administrador temporário do `Secret` `keycloak-initial-admin` e cria os dois realms, o administrador permanente e as contas de serviço; os outros dois entram com a sua conta de serviço e criam o conteúdo do realm, inclusive o usuário do operador com uma senha temporária. Commite os três states cifrados. O administrador temporário que o operator gerou já cumpriu o papel dele no `apply` do `master`; um único comando o aposenta:
+O `master` entra com o administrador temporário do `Secret` `keycloak-initial-admin` e cria os dois realms, o administrador permanente e as contas de serviço; os outros dois entram com a sua conta de serviço e criam o conteúdo do realm. Commite os três states cifrados. O administrador temporário que o operator gerou já cumpriu o papel dele no `apply` do `master`; um único comando o aposenta:
 
 ```bash
 just keycloak-bootstrap-admin
 ```
 
-Ele entra como o `admin` permanente que o Tofu criou, apaga o `temp-admin` do realm `master` pela API, grava `admin` e a senha permanente como a credencial do módulo em `keycloak-master.sops.env` (com `sops set`, nada passa em claro pelo disco) e confere que o `plan` do `master` ficou vazio. Commite o `.sops.env`. Depois abra `https://auth.guesant.net/realms/management/account` (e o mesmo em `homelab`), entre com o usuário de `terraform.tfvars` e a senha inicial de `keycloak-master.sops.env`, e o Keycloak obriga a trocar a senha e a cadastrar um TOTP; a partir daí a credencial vive só nele.
+Ele entra como o `admin` permanente que o Tofu criou, apaga o `temp-admin` do realm `master` pela API, grava `admin` e a senha permanente como a credencial do módulo em `keycloak-master.sops.env` (com `sops set`, nada passa em claro pelo disco) e confere que o `plan` do `master` ficou vazio. Commite o `.sops.env`. Os usuários não estão no git: entre no console (`https://keycloak.guesant.internal`, realm `master`) como `admin`, com a senha de `TF_VAR_operator_admin_password` do `keycloak-master.sops.env`, e crie o seu usuário nos realms `management` e `homelab`: nome de usuário (o Job do Portainer espera `gabriel`, ou troque `OPERATOR_USERNAME` no manifesto dele), um e-mail preenchido (Grafana e oauth2-proxy exigem o claim), senha, e o grupo `admins`. No primeiro login o Keycloak pede o TOTP. Sem o grupo, o usuário autentica e é recusado por todas as aplicações.
 
 ## Confie na CA interna
 

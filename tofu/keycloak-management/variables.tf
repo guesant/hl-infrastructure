@@ -25,25 +25,6 @@ variable "service_secret" {
   }
 }
 
-variable "operator_username" {
-  type = string
-
-  validation {
-    condition     = can(regex("^[a-z][a-z0-9._-]{1,30}$", var.operator_username))
-    error_message = "operator_username must be a short lowercase login name."
-  }
-}
-
-variable "operator_initial_password" {
-  type      = string
-  sensitive = true
-
-  validation {
-    condition     = length(var.operator_initial_password) >= 20
-    error_message = "operator_initial_password must have at least 20 characters; it is temporary and replaced on the first login."
-  }
-}
-
 variable "state_passphrase" {
   type      = string
   sensitive = true

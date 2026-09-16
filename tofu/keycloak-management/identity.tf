@@ -7,24 +7,6 @@ resource "keycloak_group" "admins" {
   name     = "admins"
 }
 
-resource "keycloak_user" "operator" {
-  realm_id = data.keycloak_realm.realm.id
-  username = var.operator_username
-  email    = "${var.operator_username}@${var.internal_domain}"
-  enabled  = true
-
-  initial_password {
-    value     = var.operator_initial_password
-    temporary = true
-  }
-}
-
-resource "keycloak_user_groups" "operator" {
-  realm_id  = data.keycloak_realm.realm.id
-  user_id   = keycloak_user.operator.id
-  group_ids = [keycloak_group.admins.id]
-}
-
 resource "keycloak_required_action" "configure_totp" {
   realm_id       = data.keycloak_realm.realm.id
   alias          = "CONFIGURE_TOTP"
