@@ -61,7 +61,7 @@ status:
 [doc("Turn the Keycloak bootstrap administrator into the permanent one: apply keycloak-master, delete temp-admin, point the module at admin")]
 [confirm("This deletes the temp-admin user from the Keycloak master realm once the permanent admin exists. Continue?")]
 keycloak-bootstrap-admin: _require-host-sops
-    SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} KUBECONFIG={{justfile_directory()}}/{{kubeconfig}} .tools/keycloak-bootstrap-admin.sh
+    SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} .tools/keycloak-bootstrap-admin.sh
 
 [doc("Create (or reset) a human user in a Keycloak realm with a temporary password, in the group admins (or the role admin in master); nothing is stored in the repository")]
 keycloak-user realm username email="": _require-host-sops

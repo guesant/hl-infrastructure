@@ -8,7 +8,7 @@ env_file="tofu/keycloak-master/keycloak-master.sops.env"
 ca_file="tofu/keycloak-master/internal-ca.crt"
 keycloak_url="$(grep -oE 'keycloak_url += "[^"]+"' tofu/keycloak-master/terraform.tfvars | grep -oE 'https://[^"]+')"
 
-for name in SOPS_AGE_KEY_FILE TOFU_IMAGE KUBECONFIG; do
+for name in SOPS_AGE_KEY_FILE TOFU_IMAGE; do
   if [ -z "${!name:-}" ]; then
     echo "$name is not set; run this through: just keycloak-bootstrap-admin" >&2
     exit 2
@@ -37,21 +37,19 @@ fi
 echo "logging in as the permanent administrator"
 token="$(token_for "$operator_user" "$operator_password")"
 
-temp_user="$(kubectl -n keycloak get secret keycloak-initial-admin -o jsonpath='{.data.username}' 2>/dev/null | base64 -d || true)"
-if [ -z "$temp_user" ]; then
+if [ "$module_user" != "$operator_user" ]; then
+  temp_user="$module_user"
+else
   temp_user="temp-admin"
-  echo "kubectl could not read keycloak-initial-admin; assuming the operator's default bootstrap user, $temp_user"
 fi
-if [ "$temp_user" != "$operator_user" ]; then
-  temp_id="$(curl -fsS --cacert "$ca_file" -H "Authorization: Bearer $token" \
-    "$keycloak_url/admin/realms/master/users?username=$temp_user&exact=true" |
-    python3 -c 'import json, sys; users = json.load(sys.stdin); print(users[0]["id"] if users else "")')"
-  if [ -n "$temp_id" ]; then
-    curl -fsS --cacert "$ca_file" -H "Authorization: Bearer $token" -X DELETE "$keycloak_url/admin/realms/master/users/$temp_id"
-    echo "deleted the bootstrap administrator $temp_user from the master realm"
-  else
-    echo "the bootstrap administrator $temp_user is already gone"
-  fi
+temp_id="$(curl -fsS --cacert "$ca_file" -H "Authorization: Bearer $token" \
+  "$keycloak_url/admin/realms/master/users?username=$temp_user&exact=true" |
+  python3 -c 'import json, sys; users = json.load(sys.stdin); print(users[0]["id"] if users else "")')"
+if [ -n "$temp_id" ]; then
+  curl -fsS --cacert "$ca_file" -H "Authorization: Bearer $token" -X DELETE "$keycloak_url/admin/realms/master/users/$temp_id"
+  echo "deleted the bootstrap administrator $temp_user from the master realm"
+else
+  echo "the bootstrap administrator $temp_user is already gone"
 fi
 
 if [ "$module_user" != "$operator_user" ]; then
