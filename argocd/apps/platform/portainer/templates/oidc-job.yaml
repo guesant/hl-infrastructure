@@ -115,10 +115,7 @@ spec:
                   name: portainer-oidc
                   key: client-secret
             - name: ADMIN_EMAIL
-              valueFrom:
-                secretKeyRef:
-                  name: portainer-oidc
-                  key: admin-email
+              value: gabriel@guesant.internal
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

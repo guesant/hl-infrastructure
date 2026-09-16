@@ -25,24 +25,23 @@ variable "service_secret" {
   }
 }
 
-variable "admin_email" {
+variable "operator_username" {
+  type = string
+
+  validation {
+    condition     = can(regex("^[a-z][a-z0-9._-]{1,30}$", var.operator_username))
+    error_message = "operator_username must be a short lowercase login name."
+  }
+}
+
+variable "operator_initial_password" {
   type      = string
   sensitive = true
 
   validation {
-    condition     = can(regex("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", var.admin_email))
-    error_message = "admin_email must be the operator's e-mail, the only user allowed to log in."
+    condition     = length(var.operator_initial_password) >= 20
+    error_message = "operator_initial_password must have at least 20 characters; it is temporary and replaced on the first login."
   }
-}
-
-variable "google_client_id" {
-  type      = string
-  sensitive = true
-}
-
-variable "google_client_secret" {
-  type      = string
-  sensitive = true
 }
 
 variable "state_passphrase" {

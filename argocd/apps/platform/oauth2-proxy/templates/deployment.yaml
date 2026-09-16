@@ -38,7 +38,7 @@ spec:
             - --scope=openid profile email groups
             - --oidc-groups-claim=groups
             - --allowed-group=admins
-            - --email-domain=*
+            - --email-domain=guesant.internal
             - --redirect-url=https://auth.guesant.internal/oauth2/callback
             - --cookie-domain=.guesant.internal
             - --whitelist-domain=.guesant.internal

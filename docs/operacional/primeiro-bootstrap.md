@@ -118,7 +118,7 @@ O `plan` deve criar só o split DNS de `guesant.internal` apontando para o ender
 
 ## Crie os realms do Keycloak com o OpenTofu
 
-Os realms são criados e mantidos pelos três módulos `tofu/keycloak-*`, na ordem `master`, `management`, `homelab`. Eles falam com o Keycloak por `keycloak.guesant.internal`, então precisam da tailnet e da CA interna, já commitada ao lado de cada módulo. O `keycloak-master.sops.env` já traz o administrador e as contas de serviço cifrados, e os outros dois módulos leem seus segredos dos `SopsSecret` pelo `secrets.map`; confira com `just placeholders`. Antes, adicione no console do Google, no client OAuth do Keycloak, um redirect por realm: `https://auth.guesant.net/realms/<realm>/broker/google/endpoint` para `homelab` e `management`.
+Os realms são criados e mantidos pelos três módulos `tofu/keycloak-*`, na ordem `master`, `management`, `homelab`. Eles falam com o Keycloak por `keycloak.guesant.internal`, então precisam da tailnet e da CA interna, já commitada ao lado de cada módulo. O `keycloak-master.sops.env` já traz o administrador e as contas de serviço cifrados, e os outros dois módulos leem seus segredos dos `SopsSecret` pelo `secrets.map`; confira com `just placeholders`.
 
 ```bash
 just tofu keycloak-master init && just tofu keycloak-master plan && just tofu-apply keycloak-master
@@ -126,7 +126,7 @@ just tofu keycloak-management init && just tofu keycloak-management plan && just
 just tofu keycloak-homelab init && just tofu keycloak-homelab plan && just tofu-apply keycloak-homelab
 ```
 
-O `master` entra com o administrador temporário do `Secret` `keycloak-initial-admin` e cria os dois realms, o administrador permanente e as contas de serviço; os outros dois entram com a sua conta de serviço e criam o conteúdo do realm. Commite os três states cifrados. Depois, apague o `temp-admin` no console (realm `master`, Users) e troque, no `keycloak-master.sops.env`, `keycloak_admin_user` e `keycloak_admin_password` pelos valores do administrador permanente.
+O `master` entra com o administrador temporário do `Secret` `keycloak-initial-admin` e cria os dois realms, o administrador permanente e as contas de serviço; os outros dois entram com a sua conta de serviço e criam o conteúdo do realm, inclusive o usuário do operador com uma senha temporária. Commite os três states cifrados. Depois abra `https://auth.guesant.net/realms/management/account` (e o mesmo em `homelab`), entre com o usuário de `terraform.tfvars` e a senha inicial de `keycloak-master.sops.env`, e o Keycloak obriga a trocar a senha e a cadastrar um TOTP; a partir daí a credencial vive só nele. Depois, apague o `temp-admin` no console (realm `master`, Users) e troque, no `keycloak-master.sops.env`, `keycloak_admin_user` e `keycloak_admin_password` pelos valores do administrador permanente.
 
 ## Confie na CA interna
 

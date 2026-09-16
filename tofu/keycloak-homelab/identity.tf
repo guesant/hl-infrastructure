@@ -8,11 +8,15 @@ resource "keycloak_group" "admins" {
 }
 
 resource "keycloak_user" "operator" {
-  realm_id       = data.keycloak_realm.realm.id
-  username       = var.admin_email
-  email          = var.admin_email
-  email_verified = true
-  enabled        = true
+  realm_id = data.keycloak_realm.realm.id
+  username = var.operator_username
+  email    = "${var.operator_username}@${var.internal_domain}"
+  enabled  = true
+
+  initial_password {
+    value     = var.operator_initial_password
+    temporary = true
+  }
 }
 
 resource "keycloak_user_groups" "operator" {
@@ -21,40 +25,12 @@ resource "keycloak_user_groups" "operator" {
   group_ids = [keycloak_group.admins.id]
 }
 
-resource "keycloak_authentication_flow" "existing_users_only" {
-  realm_id    = data.keycloak_realm.realm.id
-  alias       = "existing-users-only"
-  description = "Links a Google sign-in to a user that already exists in the realm and refuses everyone else"
-  provider_id = "basic-flow"
-}
-
-resource "keycloak_authentication_execution" "detect_existing_user" {
-  realm_id          = data.keycloak_realm.realm.id
-  parent_flow_alias = keycloak_authentication_flow.existing_users_only.alias
-  authenticator     = "idp-detect-existing-broker-user"
-  requirement       = "REQUIRED"
-}
-
-resource "keycloak_authentication_execution" "auto_link" {
-  realm_id          = data.keycloak_realm.realm.id
-  parent_flow_alias = keycloak_authentication_flow.existing_users_only.alias
-  authenticator     = "idp-auto-link"
-  requirement       = "REQUIRED"
-
-  depends_on = [keycloak_authentication_execution.detect_existing_user]
-}
-
-resource "keycloak_oidc_google_identity_provider" "google" {
-  realm         = data.keycloak_realm.realm.id
-  client_id     = var.google_client_id
-  client_secret = var.google_client_secret
-  enabled       = true
-  trust_email   = true
-  store_token   = false
-  sync_mode     = "IMPORT"
-
-  default_scopes                = "openid email profile"
-  first_broker_login_flow_alias = keycloak_authentication_flow.existing_users_only.alias
+resource "keycloak_required_action" "configure_totp" {
+  realm_id       = data.keycloak_realm.realm.id
+  alias          = "CONFIGURE_TOTP"
+  name           = "Configure OTP"
+  enabled        = true
+  default_action = true
 }
 
 resource "keycloak_openid_client_scope" "groups" {
