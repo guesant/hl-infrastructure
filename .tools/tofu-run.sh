@@ -58,6 +58,30 @@ for secrets in "$state_secrets" "$module_secrets"; do
   done < <(grep -oE '^[A-Za-z_][A-Za-z0-9_]*=' "$secrets" | grep -v '^sops_' | tr -d '=')
 done
 
+secrets_map="$module_dir/secrets.map"
+if [ -f "$secrets_map" ]; then
+  while IFS= read -r line; do
+    [[ -z "$line" || "$line" == \#* ]] && continue
+    if [[ ! "$line" =~ ^([A-Za-z_][A-Za-z0-9_]*)=([^#]+)#(.+)$ ]]; then
+      echo "$secrets_map: malformed line, expected NAME=path/to/file.sops#[\"json\"][\"path\"]: $line" >&2
+      exit 2
+    fi
+    name="${BASH_REMATCH[1]}"
+    source_file="${BASH_REMATCH[2]}"
+    source_path="${BASH_REMATCH[3]}"
+    if [ ! -f "$source_file" ]; then
+      echo "$secrets_map: $source_file does not exist" >&2
+      exit 2
+    fi
+    if ! value="$(sops --decrypt --extract "$source_path" "$source_file")"; then
+      echo "$secrets_map: could not read $source_path from $source_file" >&2
+      exit 1
+    fi
+    export "$name=$value"
+    names+=("$name")
+  done <"$secrets_map"
+fi
+
 placeholders=()
 env_args=()
 for name in "${names[@]}"; do
