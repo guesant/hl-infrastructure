@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: blog
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/sync-wave: "2"
     kargo.akuity.io/authorized-stage: blog-delivery:prod

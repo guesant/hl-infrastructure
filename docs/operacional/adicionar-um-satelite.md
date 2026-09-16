@@ -10,6 +10,8 @@ kind: Application
 metadata:
   name: nome-do-satelite
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/sync-wave: "10"
 spec:
@@ -44,7 +46,7 @@ spec:
 
 O `project: satellites` é obrigatório: esse projeto do Argo está restrito a recursos de namespace, com três exceções liberadas: `Namespace` (para o Argo criar e rotular o namespace de cada satélite), `StorageClass` e o `Project` do Kargo, que é de escopo de cluster porque um projeto dele é também um namespace. Um satélite não pode criar `ClusterRole`, `CustomResourceDefinition` ou qualquer outro recurso de escopo de cluster; se o outro repositório precisar disso, esse recurso pertence a este repositório, não a um satélite.
 
-A onda `10` e o bloco `syncPolicy` são os mesmos de todo `Application` daqui, e [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) explica o que cada opção resolve. Copie o bloco inteiro; um satélite sem `retry`, por exemplo, fica travado em erro na primeira vez que uma CRD demorar a subir.
+O `finalizers` com `resources-finalizer.argocd.argoproj.io` também é obrigatório: é ele que faz a remoção do arquivo do git remover do cluster o que a `Application` criou, em vez de deixar recursos órfãos; o que precisa sobreviver a isso (banco, volume) leva `Delete=false`, descrito adiante. A onda `10` e o bloco `syncPolicy` são os mesmos de todo `Application` daqui, e [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) explica o que cada opção resolve. Copie o bloco inteiro; um satélite sem `retry`, por exemplo, fica travado em erro na primeira vez que uma CRD demorar a subir.
 
 O caminho em `source.path` deve apontar para uma pasta que contenha só os objetos de controle do Argo (`Application` e afins) daquele outro repositório, não os manifestos da aplicação em si; quem interpreta esses objetos de controle e sincroniza os manifestos de verdade é o Argo, recursivamente, a partir dali.
 
@@ -137,7 +139,7 @@ metadata:
   name: postgres
   namespace: nome-do-namespace
   annotations:
-    argocd.argoproj.io/sync-options: Prune=false
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
 spec:
   instances: 1
   storage:
@@ -148,7 +150,7 @@ spec:
       owner: app
 ```
 
-`Prune=false` no `Cluster` protege os dados de um erro de GitOps: o Argo se recusa a apagá-lo, mesmo que o arquivo suma do repositório; o volume só vai embora por uma remoção manual e deliberada.
+`Prune=false,Delete=false` no `Cluster` protege os dados de um erro de GitOps em dois momentos distintos: `Prune=false` faz o Argo se recusar a apagá-lo quando o arquivo some do repositório, e `Delete=false` o preserva quando a própria `Application` é apagada, porque toda `Application` daqui carrega o finalizer `resources-finalizer.argocd.argoproj.io`, que faz um `git rm` do arquivo dela levar junto tudo o que ela criou. Sem a segunda opção, remover o satélite do git apagaria o banco. O volume só vai embora por uma remoção manual e deliberada.
 
 Este `Cluster` não tem backup contínuo em object storage: o operador `cnpg-barman-plugin` que fornecia isso foi removido do cluster de propósito. Sem ele, a perda do volume é perda total dos dados do satélite; veja [estado fora do git](estado-fora-do-git.md). Reinstalar o plugin é um pré-requisito antes de qualquer satélite novo poder declarar `spec.plugins` com `barman-cloud.cloudnative-pg.io`.
 
