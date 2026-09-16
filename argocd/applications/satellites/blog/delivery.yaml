@@ -1,26 +1,26 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: blog
+  name: blog-delivery
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
-    kargo.akuity.io/authorized-stage: blog-delivery:prod
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   project: satellites
   source:
     repoURL: https://github.com/guesant/hl-infrastructure.git
     targetRevision: main
-    path: argocd/apps/satellites/blog/blog
-    helm:
-      releaseName: blog
-      parameters:
-        - name: application.deployment.image.tag
-          value: main@sha256:706f1a66b2a2c2bf3eab9ae8f08754ae2afa4426a3c3dee6654c18f8a27d1927
+    path: argocd/apps/satellites/blog/delivery
   destination:
     server: https://kubernetes.default.svc
-    namespace: blog
+    namespace: blog-delivery
   syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        kargo.akuity.io/project: "true"
+        pod-security.kubernetes.io/enforce: restricted
+        pod-security.kubernetes.io/warn: restricted
+        pod-security.kubernetes.io/audit: restricted
     automated:
       selfHeal: true
       prune: true

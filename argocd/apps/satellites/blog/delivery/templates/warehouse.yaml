@@ -1,0 +1,16 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: blog
+  namespace: blog-delivery
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  interval: 2m0s
+  freightCreationPolicy: Automatic
+  subscriptions:
+    - image:
+        repoURL: ghcr.io/guesant/blog
+        imageSelectionStrategy: Digest
+        constraint: main
+        discoveryLimit: 5

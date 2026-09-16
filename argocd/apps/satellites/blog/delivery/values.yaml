@@ -1,0 +1,1 @@
+imageTagValue: main@${{ imageFrom("ghcr.io/guesant/blog").Digest }}
