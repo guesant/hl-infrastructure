@@ -50,7 +50,8 @@ traefik:
           from: All
         mode: Terminate
         certificateRefs:
-          - kind: Secret
+          - group: ""
+            kind: Secret
             name: internal-domain-tls
   gatewayClass:
     name: traefik

@@ -29,7 +29,7 @@ Dentro de `argocd/applications`, cada subpasta corresponde a uma camada, e a cam
 | Pasta | Onda | O que vive ali |
 | --- | --- | --- |
 | `operators/` | `0` | Controllers que gerenciam CRD ou recurso de outro componente: cert-manager (certificados), CNPG (`Cluster` do Postgres) e o sops-secrets-operator (`SopsSecret`); todos no projeto `infra` |
-| `platform/` | `0` | Ferramentas de plataforma de uso direto, que não existem para gerenciar CRD de outra coisa: o Argo CD Image Updater, que edita a própria `Application` do Argo, os namespaces, as políticas de rede, o kube-bench, as políticas de admissão e o [ingress](ingress.md) (Traefik com Gateway API e a CA interna); também no projeto `infra` |
+| `platform/` | `0` | Ferramentas de plataforma de uso direto, que não existem para gerenciar CRD de outra coisa: o Argo CD Image Updater, que edita a própria `Application` do Argo, os namespaces, as políticas de rede, o kube-bench, as políticas de admissão e o [ingress](ingress.md) (Traefik com Gateway API, as `HTTPRoute` dos nomes internos e a CA interna); também no projeto `infra` |
 | `data/` | `1` | Dado com estado, dedicado a um único satélite ou compartilhado entre vários, mantido fora da pasta do satélite que o usa; hoje só `blog-postgres`, o `Cluster` do CNPG do blog, no projeto `satellites` porque é dado exclusivo dele, não infraestrutura de plataforma |
 | `satellites/<nome>/` | `0` a `3` | As `Application` de um satélite consolidado neste repositório, no projeto `satellites`; hoje só `satellites/blog/`, com onda própria por peça (rede na onda `0`, antes do app na `2`, antes do túnel na `3`) |
 
