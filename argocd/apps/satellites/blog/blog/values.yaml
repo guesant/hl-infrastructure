@@ -10,7 +10,7 @@ application:
     reloadOnChange: false
     image:
       repository: ghcr.io/guesant/blog
-      tag: sha-bf56a5992fe6cd70c58164ce3291685ad9197e83
+      tag: sha-bf56a5992fe6cd70c58164ce3291685ad9197e83@sha256:7e449d25c2652bf9cf9d1cc47793ec9787795f0c41f2fe672e5018224ac56534
     command:
       - /bin/sh
       - -c
