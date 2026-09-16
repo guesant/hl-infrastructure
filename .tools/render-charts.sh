@@ -82,7 +82,7 @@ helm template ingress "$repo_root/argocd/apps/platform/ingress" \
   --api-versions monitoring.coreos.com/v1 \
   --include-crds >"$out_dir/ingress.yaml"
 
-sed 's/{{ ansible_host }}/10.0.0.1/' "$repo_root/ansible/roles/cilium/templates/values.yaml.j2" >"$out_dir/.cilium-values.yaml"
+cp "$repo_root/ansible/roles/cilium/templates/values.yaml.j2" "$out_dir/.cilium-values.yaml"
 helm template cilium cilium/cilium \
   --version "$cilium_version" \
   --namespace kube-system \
