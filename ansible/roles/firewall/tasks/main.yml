@@ -96,9 +96,15 @@
       register: firewall_tailscale_services_added
       changed_when: "'ALREADY_ENABLED' not in firewall_tailscale_services_added.stderr"
 
-    - name: Remove every forwarding policy, since the node routes nothing between zones
-      ansible.builtin.command: "firewall-cmd --permanent --delete-policy={{ item }}"
-      loop: "{{ firewall_objects.results[1].stdout.split() }}"
+    - name: Find the policies someone declared on this node
+      ansible.builtin.find:
+        paths: /etc/firewalld/policies
+        patterns: "*.xml"
+      register: firewall_user_policies
+
+    - name: Remove every declared forwarding policy, since the node routes nothing between zones
+      ansible.builtin.command: "firewall-cmd --permanent --delete-policy={{ item | basename | regex_replace('\\.xml$', '') }}"
+      loop: "{{ firewall_user_policies.files | map(attribute='path') | list }}"
       register: firewall_removed_policies
       changed_when: true
 
