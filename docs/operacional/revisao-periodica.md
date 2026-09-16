@@ -12,6 +12,8 @@ A revisão é uma leitura, não uma mudança. Cada achado vira uma linha no [che
 4. RBAC do cluster: as `ClusterRole` com curinga em verbos, recursos ou grupos de API, comparadas com as justificadas no checklist; qualquer uma nova precisa de justificativa ou de correção.
 5. Tokens externos: as permissões do API token da Cloudflare, do token do Renovate e das chaves age em `.sops.yaml`, conferidas contra o que cada uma precisa.
 6. Resultado do kube-bench e do kubescape: as falhas novas desde a última revisão.
+7. Deriva do que vive fora do cluster: `just tofu <módulo> plan` para `cloudflare`, `tailscale`, `keycloak-master`, `keycloak-homelab` e `keycloak-management`; qualquer mudança que apareça foi feita à mão no console e precisa voltar ao git ou ser desfeita pelo `apply`. No mesmo espírito, `just bootstrap --check -e chart_reconcile=true` força as roles `cilium` e `argocd` a comparar o chart com o cluster, o que o atalho por hash não faz.
+8. Usuários do Keycloak: no console, os usuários de cada realm e os papéis do `master`; quem não deveria mais entrar sai dali, e o `admin` do módulo é rotacionado com `just keycloak-rotate-admin` se a data do `keycloak-master.sops.env` passou do prazo em `.config/secret-max-age.conf`.
 
 ## Registrar a revisão
 

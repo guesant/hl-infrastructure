@@ -13,6 +13,9 @@ Lista curta para marcar a cada bootstrap, upgrade de versão ou mudança de rede
 | Nenhum placeholder pendente | `just placeholders` termina com `nothing pending`, antes do push que leva segredo ou configuração nova ao cluster | pendente |
 | Todo `Application` `Synced` e `Healthy` | `kubectl -n argocd get applications` | pendente, `cloudflared` do blog em `Degraded` até existir o token real do túnel |
 | Timer de manutenção armado | `systemctl list-timers hl-gc.timer` mostra a próxima execução | 2026-09-13 |
+| Módulos do OpenTofu sem deriva | `just tofu <módulo> plan` termina em `No changes` para os cinco módulos | pendente |
+| Login pelo Keycloak em cada aplicação | Dashy, Grafana, Portainer, Argo CD e `guesant.net/admin` entram com o usuário do realm e recusam um usuário fora do grupo `admins` | pendente |
+| Nenhum login local sobrando | O formulário do Grafana e o `admin` do Argo CD desligados; o Portainer com a autenticação interna escondida | pendente |
 | Kubeconfig local atualizado | `kubectl get nodes` com `ansible/kubeconfig` depois de rotação de certificados | pendente |
 
 Um item marcado como `pendente` ainda não foi conferido num node real desde que a rotina correspondente entrou no repositório.

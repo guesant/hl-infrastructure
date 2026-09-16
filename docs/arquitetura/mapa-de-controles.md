@@ -49,6 +49,11 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | Node | Recuperação | Token do k3s declarado no git, cifrado, e imposto pela role a cada bootstrap | `ansible/group_vars/all/secrets.sops.yaml` (`k3s_join_token`), role `k3s` |
 | Node | Acesso SSH | Chaves autorizadas declaradas no git, reconciliadas contra o node com teto de remoção | `ansible/group_vars/all/authorized_keys.yml`, role `ssh_hardening` |
 | Pods | Recursos | `requests` e limite de memória em todo componente de plataforma declarado aqui | values do Argo CD na role `argocd`, values dos operadores, values do Cilium |
+| Identidade | Login único | Toda aplicação interna autentica no Keycloak (realm `management`) e o blog no realm `homelab`; nenhuma tem provedor externo nem login por Google | `tofu/keycloak-*`, values do Grafana e do Argo CD, Job do Portainer, `oauth2-proxy` |
+| Identidade | Autorização | Só o grupo `admins` do realm entra em cada aplicação, conferido pelo claim `groups` em cada consumidor; TOTP obrigatório a todo usuário | `keycloak_required_action` e `keycloak_group` nos módulos de realm, `role_attribute_path`, `policy.csv`, `--allowed-group`, `OnTicketReceived` do blog |
+| Identidade | Credenciais do Keycloak | O administrador do `master` é só do OpenTofu, cifrado no git, rotacionado por recipe; os humanos são criados por recipe sem deixar rastro no repositório; o administrador temporário do operator é aposentado por recipe | `keycloak-master.sops.env`, `just keycloak-rotate-admin`, `just keycloak-user`, `just keycloak-bootstrap-admin` |
+| Segredos | Fonte única | Um client secret existe num só arquivo cifrado, ao lado do consumidor; o OpenTofu o lê dali pelo `secrets.map` em vez de guardar cópia | `tofu/*/secrets.map`, `.tools/tofu-run.sh` |
+| OpenTofu | Integridade do provider | O provider do Keycloak, que o registro não verifica, é baixado da release e conferido contra o `SHA256SUMS` e o lock file | `.tools/tofu-mirror.sh`, `.terraform.lock.hcl` |
 | Documentação | Fidelidade | Página cuja fonte mudou sem revisão falha a CI | `.tools/check-doc-drift.sh`, marcadores `source-of-trust` |
 
 ## O que este mapa não cobre
