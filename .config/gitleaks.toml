@@ -4,9 +4,11 @@ title = "gitleaks config for hl-infrastructure"
 useDefault = true
 
 [allowlist]
+regexTarget = "line"
 regexes = [
   '''changeme-generate-a-real-secret''', # placeholder-lint: ignore
   '''changeme@example\.invalid''', # placeholder-lint: ignore
+  '''_sha256:\s*"?[0-9a-f]{64}"?''',
 ]
 
 [[rules]]
