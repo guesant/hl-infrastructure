@@ -132,7 +132,15 @@ O `master` entra com o administrador temporário do `Secret` `keycloak-initial-a
 just keycloak-bootstrap-admin
 ```
 
-Ele entra como o `admin` permanente que o Tofu criou, apaga o `temp-admin` do realm `master` pela API, grava `admin` e a senha permanente como a credencial do módulo em `keycloak-master.sops.env` (com `sops set`, nada passa em claro pelo disco) e confere que o `plan` do `master` ficou vazio. Commite o `.sops.env`. Os usuários não estão no git: entre no console (`https://keycloak.guesant.internal`, realm `master`) como `admin`, com a senha de `TF_VAR_operator_admin_password` do `keycloak-master.sops.env`, e crie o seu usuário nos realms `management` e `homelab`: nome de usuário (o Job do Portainer espera `gabriel`, ou troque `OPERATOR_USERNAME` no manifesto dele), um e-mail preenchido (Grafana e oauth2-proxy exigem o claim), senha, e o grupo `admins`. No primeiro login o Keycloak pede o TOTP. Sem o grupo, o usuário autentica e é recusado por todas as aplicações.
+Ele entra como o `admin` permanente que o Tofu criou, apaga o `temp-admin` do realm `master` pela API, grava `admin` e a senha permanente como a credencial do módulo em `keycloak-master.sops.env` (com `sops set`, nada passa em claro pelo disco) e confere que o `plan` do `master` ficou vazio. Commite o `.sops.env`. Os usuários não estão no git, e o `admin` do `master` fica só para o OpenTofu. Crie o seu usuário com a recipe, que usa a credencial do módulo para falar com a API e pede a senha temporária no terminal, sem eco:
+
+```bash
+just keycloak-user master gabriel
+just keycloak-user management gabriel gabriel@example.com
+just keycloak-user homelab gabriel gabriel@example.com
+```
+
+No `master` o usuário recebe o papel `admin` (é com ele que você entra no console daí em diante); nos outros realms entra no grupo `admins`, sem o qual autentica e é recusado por todas as aplicações. O e-mail é obrigatório nesses dois porque Grafana e oauth2-proxy exigem o claim, e o nome precisa bater com `OPERATOR_USERNAME` no Job do Portainer (`gabriel`). No primeiro login o Keycloak obriga a trocar a senha e a cadastrar o TOTP. Nada sobre esses usuários fica no repositório; a senha do `admin` do módulo se rotaciona com `just keycloak-rotate-admin`, que a troca no Keycloak e recifra o `.sops.env` de uma vez.
 
 ## Confie na CA interna
 

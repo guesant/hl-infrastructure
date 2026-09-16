@@ -63,6 +63,15 @@ status:
 keycloak-bootstrap-admin: _require-host-sops
     SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} KUBECONFIG={{justfile_directory()}}/{{kubeconfig}} .tools/keycloak-bootstrap-admin.sh
 
+[doc("Create (or reset) a human user in a Keycloak realm with a temporary password, in the group admins (or the role admin in master); nothing is stored in the repository")]
+keycloak-user realm username email="": _require-host-sops
+    SOPS_AGE_KEY_FILE={{sops_identity}} .tools/keycloak-user.sh {{realm}} {{username}} {{email}}
+
+[doc("Rotate the password of the permanent Keycloak administrator that tofu/keycloak-master logs in with, and re-encrypt it")]
+[confirm("This changes the password of the Keycloak master admin and rewrites keycloak-master.sops.env. Continue?")]
+keycloak-rotate-admin: _require-host-sops
+    SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} .tools/keycloak-rotate-admin.sh
+
 [doc("Print the internal CA certificate (public) to trust on a device that uses the tailnet names")]
 internal-ca:
     kubectl --kubeconfig {{kubeconfig}} -n cert-manager get secret internal-ca -o jsonpath='{.data.ca\.crt}' | base64 -d
