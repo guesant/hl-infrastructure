@@ -4,6 +4,8 @@ application:
     serviceAccount:
       create: true
   deployment:
+    annotations:
+      reloader.stakater.com/auto: "true"
     replicas: 1
     reloadOnChange: false
     image:
@@ -89,4 +91,7 @@ application:
     files:
       config:
         PUBLIC_SITE_BASE_URL: https://guesant.net
+        PORTFOLIO_ADMIN_OIDC_AUTHORITY: https://auth.guesant.net/realms/homelab
+        PORTFOLIO_ADMIN_OIDC_CLIENT_ID: blog
+        PORTFOLIO_ADMIN_OIDC_GROUP: admins
         TECTONIC_BUNDLE: https://data1.fullyjustified.net/tlextras-2022.0r0.tar

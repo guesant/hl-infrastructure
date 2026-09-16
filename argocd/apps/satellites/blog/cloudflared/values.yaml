@@ -4,6 +4,8 @@ application:
     serviceAccount:
       create: true
   deployment:
+    annotations:
+      reloader.stakater.com/auto: "true"
     replicas: 1
     reloadOnChange: false
     image:
