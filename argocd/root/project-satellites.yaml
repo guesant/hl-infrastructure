@@ -13,6 +13,8 @@ spec:
     - server: https://kubernetes.default.svc
       namespace: "*"
   clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
     - group: storage.k8s.io
       kind: StorageClass
     - group: kargo.akuity.io

@@ -42,7 +42,7 @@ spec:
         maxDuration: 3m
 ```
 
-O `project: satellites` é obrigatório: esse projeto do Argo está restrito a recursos de namespace, com duas exceções liberadas: o tipo `StorageClass` e o `Project` do Kargo, que é de escopo de cluster porque é ele que cria o namespace do projeto de entrega. Um satélite não pode criar `ClusterRole`, `CustomResourceDefinition` ou qualquer outro recurso de escopo de cluster; se o outro repositório precisar disso, esse recurso pertence a este repositório, não a um satélite.
+O `project: satellites` é obrigatório: esse projeto do Argo está restrito a recursos de namespace, com três exceções liberadas: `Namespace` (para o Argo criar e rotular o namespace de cada satélite), `StorageClass` e o `Project` do Kargo, que é de escopo de cluster porque um projeto dele é também um namespace. Um satélite não pode criar `ClusterRole`, `CustomResourceDefinition` ou qualquer outro recurso de escopo de cluster; se o outro repositório precisar disso, esse recurso pertence a este repositório, não a um satélite.
 
 A onda `10` e o bloco `syncPolicy` são os mesmos de todo `Application` daqui, e [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) explica o que cada opção resolve. Copie o bloco inteiro; um satélite sem `retry`, por exemplo, fica travado em erro na primeira vez que uma CRD demorar a subir.
 
