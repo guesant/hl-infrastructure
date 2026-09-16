@@ -1,11 +1,16 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:recommended"
+  ],
   "timezone": "America/Sao_Paulo",
   "minimumReleaseAge": "7 days",
   "platformCommit": "enabled",
   "pip-compile": {
-    "managerFilePatterns": ["/^docs/requirements\\.txt$/"]
+    "managerFilePatterns": [
+      "/^docs/requirements\\.txt$/",
+      "/^\\.tools/docker/pip/.*\\.txt$/"
+    ]
   },
   "pip_requirements": {
     "enabled": false
@@ -13,127 +18,140 @@
   "packageRules": [
     {
       "description": "Keep every Dockerfile base image pinned by digest next to its tag",
-      "matchManagers": ["dockerfile"],
+      "matchManagers": [
+        "dockerfile"
+      ],
       "pinDigests": true
     },
     {
       "description": "Chart values that pin an image as tag@digest keep the digest in step with the tag",
-      "matchManagers": ["helm-values"],
+      "matchManagers": [
+        "helm-values"
+      ],
       "pinDigests": true
     },
     {
       "description": "Rolling base image tags are rebuilt weekly, so their release age never reaches 7 days",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["node", "python", "alpine"],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "node",
+        "python",
+        "alpine"
+      ],
       "minimumReleaseAge": null
     },
     {
-      "description": "The Helm image version always comes from helm_version in group_vars via --build-arg",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["alpine/helm"],
+      "description": "required_version constrains OpenTofu, not Terraform, so it must not be bumped against Terraform releases",
+      "matchManagers": [
+        "terraform"
+      ],
+      "matchDepTypes": [
+        "required_version"
+      ],
       "enabled": false
     },
     {
-      "description": "required_version constrains OpenTofu, not Terraform, so it must not be bumped against Terraform releases",
-      "matchManagers": ["terraform"],
-      "matchDepTypes": ["required_version"],
-      "enabled": false
+      "description": "The Helm image and the Helm binary the node downloads move together",
+      "groupName": "helm",
+      "matchPackageNames": [
+        "alpine/helm",
+        "helm/helm"
+      ]
     }
   ],
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^justfile$/"],
-      "matchStrings": ["opentofu_version := \"(?<currentValue>[\\d.]+)\""],
-      "depNameTemplate": "opentofu/opentofu",
-      "datasourceTemplate": "github-releases",
-      "extractVersionTemplate": "^v(?<version>.+)$"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/^ansible/group_vars/all/versions\\.yml$/"],
-      "matchStrings": ["k3s_version:\\s*(?<currentValue>v[\\w.+-]+)"],
+      "managerFilePatterns": [
+        "/^ansible/group_vars/all/versions\\.yml$/"
+      ],
+      "matchStrings": [
+        "k3s_version:\\s*(?<currentValue>v[\\w.+-]+)"
+      ],
       "depNameTemplate": "k3s-io/k3s",
       "datasourceTemplate": "github-releases"
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^ansible/group_vars/all/versions\\.yml$/"],
-      "matchStrings": ["helm_version:\\s*(?<currentValue>v[\\w.-]+)"],
+      "managerFilePatterns": [
+        "/^ansible/group_vars/all/versions\\.yml$/"
+      ],
+      "matchStrings": [
+        "helm_version:\\s*(?<currentValue>v[\\w.-]+)"
+      ],
       "depNameTemplate": "helm/helm",
       "datasourceTemplate": "github-releases"
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^ansible/group_vars/all/versions\\.yml$/"],
-      "matchStrings": ["cilium_version:\\s*(?<currentValue>[\\w.-]+)"],
+      "managerFilePatterns": [
+        "/^ansible/group_vars/all/versions\\.yml$/"
+      ],
+      "matchStrings": [
+        "cilium_version:\\s*(?<currentValue>[\\w.-]+)"
+      ],
       "depNameTemplate": "cilium/cilium",
       "datasourceTemplate": "github-releases",
       "extractVersionTemplate": "^v(?<version>.+)$"
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^ansible/group_vars/all/versions\\.yml$/"],
-      "matchStrings": ["cilium_cli_version:\\s*(?<currentValue>v[\\w.-]+)"],
+      "managerFilePatterns": [
+        "/^ansible/group_vars/all/versions\\.yml$/"
+      ],
+      "matchStrings": [
+        "cilium_cli_version:\\s*(?<currentValue>v[\\w.-]+)"
+      ],
       "depNameTemplate": "cilium/cilium-cli",
       "datasourceTemplate": "github-releases"
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^ansible/group_vars/all/versions\\.yml$/"],
-      "matchStrings": ["argocd_chart_version:\\s*(?<currentValue>[\\w.-]+)"],
+      "managerFilePatterns": [
+        "/^ansible/group_vars/all/versions\\.yml$/"
+      ],
+      "matchStrings": [
+        "argocd_chart_version:\\s*(?<currentValue>[\\w.-]+)"
+      ],
       "depNameTemplate": "argo-cd",
       "datasourceTemplate": "helm",
       "registryUrlTemplate": "https://argoproj.github.io/argo-helm"
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^\\.tools/docker/Dockerfile$/"],
-      "matchStrings": ["@ast-grep/cli@(?<currentValue>[\\w.]+)"],
-      "depNameTemplate": "@ast-grep/cli",
-      "datasourceTemplate": "npm"
+      "managerFilePatterns": [
+        "/^justfile$/"
+      ],
+      "matchStrings": [
+        "tofu_image := \"ghcr.io/opentofu/opentofu:(?<currentValue>[\\d.]+)@(?<currentDigest>sha256:[a-f0-9]+)\""
+      ],
+      "depNameTemplate": "ghcr.io/opentofu/opentofu",
+      "datasourceTemplate": "docker"
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^\\.tools/docker/Dockerfile$/"],
-      "matchStrings": ["jscpd@(?<currentValue>[\\w.]+)"],
-      "depNameTemplate": "jscpd",
-      "datasourceTemplate": "npm"
+      "managerFilePatterns": [
+        "/^\\.github/workflows/ci\\.yml$/"
+      ],
+      "matchStrings": [
+        "rhysd/actionlint:(?<currentValue>[\\d.]+)@(?<currentDigest>sha256:[a-f0-9]+)"
+      ],
+      "depNameTemplate": "rhysd/actionlint",
+      "datasourceTemplate": "docker"
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^\\.tools/docker/Dockerfile$/"],
-      "matchStrings": ["\\scspell@(?<currentValue>[\\w.]+)"],
-      "depNameTemplate": "cspell",
-      "datasourceTemplate": "npm"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/^\\.tools/docker/Dockerfile$/"],
-      "matchStrings": ["@cspell/dict-pt-br@(?<currentValue>[\\w.]+)"],
-      "depNameTemplate": "@cspell/dict-pt-br",
-      "datasourceTemplate": "npm"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/^\\.tools/docker/Dockerfile$/"],
-      "matchStrings": ["markdownlint-cli2@(?<currentValue>[\\w.]+)"],
-      "depNameTemplate": "markdownlint-cli2",
-      "datasourceTemplate": "npm"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/^\\.tools/docker/Dockerfile$/"],
-      "matchStrings": ["yamllint==(?<currentValue>[\\w.]+)"],
-      "depNameTemplate": "yamllint",
-      "datasourceTemplate": "pypi"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/^\\.tools/docker/Dockerfile$/"],
-      "matchStrings": ["ansible-lint==(?<currentValue>[\\w.]+)"],
-      "depNameTemplate": "ansible-lint",
-      "datasourceTemplate": "pypi"
+      "managerFilePatterns": [
+        "/^\\.tools/docker/Dockerfile$/"
+      ],
+      "matchStrings": [
+        "AGE_PLUGIN_SE_VERSION=(?<currentValue>[\\d.]+)"
+      ],
+      "depNameTemplate": "remko/age-plugin-se",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.+)$"
     }
   ]
 }
