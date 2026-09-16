@@ -59,7 +59,7 @@ resource "keycloak_openid_client" "clients" {
   implicit_flow_enabled        = false
   direct_access_grants_enabled = false
   service_accounts_enabled     = false
-  pkce_code_challenge_method   = "S256"
+  pkce_code_challenge_method   = lookup(each.value, "pkce", "S256")
 
   valid_redirect_uris             = each.value.redirect_uris
   valid_post_logout_redirect_uris = [each.value.logout_redirect_uri]

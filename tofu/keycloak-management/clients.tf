@@ -16,6 +16,7 @@ locals {
     }
     portainer = {
       name                = "Portainer"
+      pkce                = ""
       base_url            = "https://portainer.${var.internal_domain}"
       redirect_uris       = ["https://portainer.${var.internal_domain}", "https://portainer.${var.internal_domain}/"]
       logout_redirect_uri = "https://portainer.${var.internal_domain}/*"

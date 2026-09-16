@@ -23,6 +23,7 @@ configs:
       issuer: https://auth.guesant.net/realms/management
       clientID: argocd
       clientSecret: $argocd-oidc:clientSecret
+      enablePKCEAuthentication: true
       requestedScopes:
         - openid
         - profile

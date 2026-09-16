@@ -35,8 +35,11 @@ kube-prometheus-stack:
       users:
         allow_sign_up: false
         auto_assign_org_role: Viewer
+      auth:
+        disable_login_form: true
       auth.generic_oauth:
         enabled: true
+        auto_login: true
         name: Keycloak
         allow_sign_up: true
         use_pkce: true
