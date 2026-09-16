@@ -53,6 +53,7 @@ nav:
       - Supply chain e SBOM: aprender/supply-chain-e-sbom.md
       - Threat modeling: aprender/threat-modeling.md
       - OWASP: aprender/owasp.md
+      - MITRE ATT&CK: aprender/mitre-attack.md
       - Zero trust: aprender/zero-trust.md
   - Arquitetura:
       - arquitetura/index.md
