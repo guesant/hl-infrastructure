@@ -1,10 +1,5 @@
 import {
-  to = keycloak_realm.homelab
-  id = "homelab"
-}
-
-import {
-  to = keycloak_group.homelab_admins
+  to = keycloak_group.admins
   id = "homelab/17676ec3-f942-42f8-af4d-20dc24cf8f30"
 }
 
@@ -24,6 +19,11 @@ import {
 }
 
 import {
+  to = keycloak_openid_client.clients["blog"]
+  id = "homelab/ebb38900-1214-4936-9ac0-6e0b09b9ee46"
+}
+
+import {
   to = keycloak_openid_client.clients["argocd"]
   id = "homelab/bf35f0f7-5e86-4ac6-bd37-3beba5fa77fd"
 }
@@ -31,11 +31,6 @@ import {
 import {
   to = keycloak_openid_client.clients["grafana"]
   id = "homelab/78599700-f6bc-46f5-aaac-24855edc0188"
-}
-
-import {
-  to = keycloak_openid_client.clients["blog"]
-  id = "homelab/ebb38900-1214-4936-9ac0-6e0b09b9ee46"
 }
 
 import {

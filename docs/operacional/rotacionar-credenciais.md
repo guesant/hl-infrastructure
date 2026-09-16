@@ -80,7 +80,7 @@ Remova o `fallback` e a variável de cada módulo e commite os states regravados
 
 ## Segredos do realm do Keycloak
 
-Um client secret (`argocd`, `grafana`, `blog`) ou as credenciais do Google vivem em dois lugares que precisam mudar juntos: o `SopsSecret` que o consumidor monta e o `tofu/keycloak/keycloak.sops.env` que o OpenTofu aplica no Keycloak. Gere o valor novo, grave-o nos dois com `just sops-edit`, rode `just tofu-apply keycloak` e faça push; o consumidor recebe o `Secret` novo pelo sops-secrets-operator e o Keycloak passa a aceitar o novo valor no mesmo `apply`. A senha do administrador que o módulo usa é a do `Secret` `keycloak-initial-admin`; se ela mudar, atualize só o `.sops.env`.
+Um client secret vive num lugar só: o `SopsSecret` que o consumidor monta (`sso` para `argocd` e `grafana`, o próprio chart para `oauth2-proxy`, `keycloak-realm` para `blog` e para as credenciais do Google). O módulo do realm o lê dali pelo `secrets.map`, então a rotação é `just sops-edit` nesse arquivo, `just tofu-apply` do módulo (`keycloak-management` ou `keycloak-homelab`) e push; o consumidor recebe o `Secret` novo pelo sops-secrets-operator, o Reloader reinicia quem lê por variável de ambiente, e o Keycloak passa a aceitar o novo valor no mesmo `apply`. As contas de serviço `tofu-homelab` e `tofu-management` são declaradas em `keycloak-master.sops.env` e lidas de lá pelos outros dois módulos: rotacioná-las é mudar o valor ali e aplicar o `master` antes dos outros. A senha do administrador permanente do `master` vive só em `keycloak-master.sops.env`; mudá-la ali e aplicar é a rotação.
 
 ## Segredo do webhook do GitHub
 
