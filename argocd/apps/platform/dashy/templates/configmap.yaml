@@ -51,6 +51,21 @@ data:
             description: Alertas ativos e silêncios
             url: https://alertmanager.guesant.internal
             icon: hl-alertmanager
+      - name: Repositórios
+        icon: fab fa-github
+        items:
+          - title: hl-infrastructure
+            description: Ansible, Argo CD e OpenTofu deste node
+            url: https://github.com/guesant/hl-infrastructure
+            icon: fab fa-github
+          - title: blog
+            description: O código de guesant.net
+            url: https://github.com/guesant/blog
+            icon: fab fa-github
+          - title: Actions
+            description: CI dos dois repositórios
+            url: https://github.com/guesant?tab=repositories
+            icon: fas fa-play-circle
       - name: Fora do node
         icon: fas fa-cloud
         items:
