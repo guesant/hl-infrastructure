@@ -35,17 +35,6 @@
       changed_when: "'not labeled' not in argocd_namespace_labels.stdout"
       when: not ansible_check_mode
 
-    - name: Add the Argo Helm repository
-      ansible.builtin.command: helm repo add argo https://argoproj.github.io/argo-helm
-      register: argocd_repo_add
-      changed_when: "'already exists' not in argocd_repo_add.stdout"
-      check_mode: false
-
-    - name: Update the Argo Helm repository index
-      ansible.builtin.command: helm repo update argo
-      changed_when: false
-      check_mode: false
-
     - name: Install the declared ArgoCD chart values
       ansible.builtin.copy:
         src: values.yaml
@@ -54,6 +43,43 @@
         group: root
         mode: "0600"
       check_mode: false
+
+    - name: Read the hash of the ArgoCD inputs applied by the last run
+      ansible.builtin.slurp:
+        path: /etc/rancher/argocd-applied.sha256
+      register: argocd_applied_hash
+      failed_when: false
+
+    - name: Compute the hash of the ArgoCD inputs
+      ansible.builtin.set_fact:
+        argocd_inputs_hash: "{{ (argocd_chart_version ~ lookup('ansible.builtin.file', 'values.yaml')) | hash('sha256') }}"
+
+    - name: Decide whether the ArgoCD chart must be diffed against the cluster
+      ansible.builtin.set_fact:
+        argocd_reconcile: >-
+          {{ chart_reconcile | default(false) | bool
+             or argocd_applied_hash.content is not defined
+             or (argocd_applied_hash.content | b64decode | trim) != argocd_inputs_hash }}
+
+    - name: Report that the ArgoCD inputs did not change since the last apply
+      ansible.builtin.debug:
+        msg: >-
+          argo-cd {{ argocd_chart_version }} and its values match the hash applied by the last run;
+          pass -e chart_reconcile=true to diff against the cluster anyway
+      when: not argocd_reconcile
+
+    - name: Add the Argo Helm repository
+      ansible.builtin.command: helm repo add argo https://argoproj.github.io/argo-helm
+      register: argocd_repo_add
+      changed_when: "'already exists' not in argocd_repo_add.stdout"
+      check_mode: false
+      when: argocd_reconcile
+
+    - name: Update the Argo Helm repository index
+      ansible.builtin.command: helm repo update argo
+      changed_when: false
+      check_mode: false
+      when: argocd_reconcile
 
     - name: Probe whether the ArgoCD chart differs from the cluster
       ansible.builtin.shell: >
@@ -70,6 +96,7 @@
       changed_when: false
       failed_when: argocd_diff.rc not in [0, 1]
       check_mode: false
+      when: argocd_reconcile
 
     - name: Render and apply the ArgoCD chart
       ansible.builtin.shell: >
@@ -83,7 +110,7 @@
       args:
         executable: /bin/bash
       register: argocd_apply
-      when: argocd_diff.rc == 1 and not ansible_check_mode
+      when: argocd_reconcile and argocd_diff.rc == 1 and not ansible_check_mode
       changed_when: true
       failed_when: false
 
@@ -93,13 +120,26 @@
       vars:
         recreate_immutable_conflicts_apply: "{{ argocd_apply }}"
         recreate_immutable_conflicts_namespace: argocd
-      when: argocd_diff.rc == 1 and not ansible_check_mode and argocd_apply.rc != 0
+      when: argocd_reconcile and argocd_diff.rc == 1 and not ansible_check_mode and argocd_apply.rc != 0
 
     - name: Abort if the chart still failed to apply
       ansible.builtin.assert:
         that:
-          - argocd_diff.rc == 0 or ansible_check_mode or argocd_apply.rc == 0 or (recreate_immutable_conflicts_retry.rc | default(1)) == 0
+          - >-
+            not argocd_reconcile or argocd_diff.rc == 0 or ansible_check_mode
+            or argocd_apply.rc == 0 or (recreate_immutable_conflicts_retry.rc | default(1)) == 0
         fail_msg: "the ArgoCD chart failed to apply: {{ argocd_apply.stderr | default('') }}"
+
+    - name: Record the hash of the ArgoCD inputs now known to match the cluster
+      ansible.builtin.copy:
+        content: "{{ argocd_inputs_hash }}\n"
+        dest: /etc/rancher/argocd-applied.sha256
+        owner: root
+        group: root
+        mode: "0644"
+      when: >-
+        argocd_reconcile and (argocd_diff.rc == 0 or (argocd_apply.rc | default(1)) == 0
+        or (recreate_immutable_conflicts_retry.rc | default(1)) == 0)
 
     - name: Wait for the ArgoCD server to roll out
       ansible.builtin.command: k3s kubectl -n argocd rollout status deployment/argocd-server --timeout=180s

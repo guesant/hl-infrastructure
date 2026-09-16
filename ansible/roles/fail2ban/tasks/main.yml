@@ -6,6 +6,7 @@
       - ipset
     state: present
     update_cache: true
+    cache_valid_time: 3600
   register: fail2ban_install
 
 - name: Configure the sshd jail with the firewalld-backed banaction

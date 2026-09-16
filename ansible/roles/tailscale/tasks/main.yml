@@ -29,6 +29,7 @@
       - dnsmasq
     state: present
     update_cache: true
+    cache_valid_time: 3600
   register: tailscale_install
   when: not (ansible_check_mode and tailscale_repo.changed)
 

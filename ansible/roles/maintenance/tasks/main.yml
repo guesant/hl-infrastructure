@@ -4,6 +4,7 @@
     name: jq
     state: present
     update_cache: true
+    cache_valid_time: 3600
 
 - name: Create the journald drop-in directory
   ansible.builtin.file:

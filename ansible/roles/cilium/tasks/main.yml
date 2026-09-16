@@ -126,23 +126,49 @@
         mode: "0755"
       when: not cilium_cli_binary.stat.exists
 
-    - name: Add the Cilium Helm repository
-      ansible.builtin.command: helm repo add cilium https://helm.cilium.io/
-      register: cilium_helm_repo_add
-      changed_when: "'already exists' not in cilium_helm_repo_add.stdout"
-      check_mode: false
-
-    - name: Update the Helm repository index
-      ansible.builtin.command: helm repo update cilium
-      changed_when: false
-      check_mode: false
-
     - name: Render the declared Cilium values
       ansible.builtin.template:
         src: values.yaml.j2
         dest: /tmp/cilium-values.yaml
         mode: "0644"
       check_mode: false
+
+    - name: Read the hash of the Cilium inputs applied by the last run
+      ansible.builtin.slurp:
+        path: /etc/rancher/cilium-applied.sha256
+      register: cilium_applied_hash
+      failed_when: false
+
+    - name: Compute the hash of the Cilium inputs
+      ansible.builtin.set_fact:
+        cilium_inputs_hash: "{{ (cilium_version ~ lookup('ansible.builtin.template', 'values.yaml.j2')) | hash('sha256') }}"
+
+    - name: Decide whether the Cilium chart must be diffed against the cluster
+      ansible.builtin.set_fact:
+        cilium_reconcile: >-
+          {{ chart_reconcile | default(false) | bool
+             or cilium_applied_hash.content is not defined
+             or (cilium_applied_hash.content | b64decode | trim) != cilium_inputs_hash }}
+
+    - name: Report that the Cilium inputs did not change since the last apply
+      ansible.builtin.debug:
+        msg: >-
+          cilium {{ cilium_version }} and its values match the hash applied by the last run;
+          pass -e chart_reconcile=true to diff against the cluster anyway
+      when: not cilium_reconcile
+
+    - name: Add the Cilium Helm repository
+      ansible.builtin.command: helm repo add cilium https://helm.cilium.io/
+      register: cilium_helm_repo_add
+      changed_when: "'already exists' not in cilium_helm_repo_add.stdout"
+      check_mode: false
+      when: cilium_reconcile
+
+    - name: Update the Helm repository index
+      ansible.builtin.command: helm repo update cilium
+      changed_when: false
+      check_mode: false
+      when: cilium_reconcile
 
     - name: Probe whether the Cilium chart differs from the cluster
       ansible.builtin.shell: >
@@ -158,6 +184,7 @@
       changed_when: false
       failed_when: cilium_diff.rc not in [0, 1]
       check_mode: false
+      when: cilium_reconcile
 
     - name: Render and apply the Cilium chart from the declared values
       ansible.builtin.shell: >
@@ -170,7 +197,7 @@
       args:
         executable: /bin/bash
       register: cilium_apply
-      when: cilium_diff.rc == 1 and not ansible_check_mode
+      when: cilium_reconcile and cilium_diff.rc == 1 and not ansible_check_mode
       changed_when: true
 
     - name: Restart Cilium to pick up a changed configuration # noqa: no-handler
@@ -178,8 +205,17 @@
       loop:
         - k3s kubectl -n kube-system rollout restart daemonset/cilium
         - k3s kubectl -n kube-system rollout restart deployment/cilium-operator
-      when: cilium_diff.rc == 1 and not ansible_check_mode
+      when: cilium_reconcile and cilium_diff.rc == 1 and not ansible_check_mode
       changed_when: true
+
+    - name: Record the hash of the Cilium inputs now known to match the cluster
+      ansible.builtin.copy:
+        content: "{{ cilium_inputs_hash }}\n"
+        dest: /etc/rancher/cilium-applied.sha256
+        owner: root
+        group: root
+        mode: "0644"
+      when: cilium_reconcile and (cilium_diff.rc == 0 or (cilium_apply.rc | default(1)) == 0)
 
     - name: Wait for Cilium to report ready
       ansible.builtin.command: cilium status --wait --kubeconfig /etc/rancher/k3s/k3s.yaml

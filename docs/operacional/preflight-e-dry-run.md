@@ -10,7 +10,7 @@ just preflight
 
 Roda `ansible/preflight.yml`: ping, shell POSIX para o usuário do inventário, família Debian, arquitetura `aarch64` ou `x86_64` (as únicas para as quais k3s, Helm e cilium-cli são baixados), escalação de privilégio funcionando e um resumo da máquina (distribuição, kernel, memória, controladores de cgroup disponíveis). O inventário conecta como `root`, então a escalação nunca pede senha; se ela falhar, o preflight diz que o `ansible_user` precisa ser `root`.
 
-Todo argumento extra passado a `preflight`, `bootstrap-check` e `bootstrap` vai direto para o `ansible-playbook`, então `--limit` e `--tags` funcionam como de costume.
+Todo argumento extra passado a `preflight`, `bootstrap-check` e `bootstrap` vai direto para o `ansible-playbook`, então `--limit` e `--tags` funcionam como de costume. Cada role em `site.yml` tem uma tag com o próprio nome, então `just bootstrap --tags firewall` aplica só o firewall e `just bootstrap-check --skip-tags k3s` prevê tudo menos a role que pode reiniciar o node. As roles `cilium` e `argocd` pulam a comparação com o cluster quando a versão do chart e os values não mudaram desde o último apply; `-e chart_reconcile=true` força essa comparação, o que é o certo depois de uma mudança manual no cluster. Veja [Ansible: as roles do bootstrap](../arquitetura/ansible.md) para o que cada atalho deixa de ver.
 
 ## Dry-run
 

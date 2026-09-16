@@ -3,20 +3,37 @@
   hosts: pi
   become: true
   roles:
-    - os_prerequisites
-    - firewall
-    - tailscale
-    - unattended_upgrades
-    - sysctl_hardening
-    - umask_hardening
-    - apparmor_hardening
-    - auditd
-    - ssh_hardening
-    - fail2ban
-    - k3s
-    - cilium
-    - sops_age_key
-    - argocd
-    - bootstrap_app
-    - maintenance
-    - kube_bench
+    - role: os_prerequisites
+      tags: [os_prerequisites]
+    - role: firewall
+      tags: [firewall]
+    - role: tailscale
+      tags: [tailscale]
+    - role: unattended_upgrades
+      tags: [unattended_upgrades]
+    - role: sysctl_hardening
+      tags: [sysctl_hardening]
+    - role: umask_hardening
+      tags: [umask_hardening]
+    - role: apparmor_hardening
+      tags: [apparmor_hardening]
+    - role: auditd
+      tags: [auditd]
+    - role: ssh_hardening
+      tags: [ssh_hardening]
+    - role: fail2ban
+      tags: [fail2ban]
+    - role: k3s
+      tags: [k3s]
+    - role: cilium
+      tags: [cilium]
+    - role: sops_age_key
+      tags: [sops_age_key]
+    - role: argocd
+      tags: [argocd]
+    - role: bootstrap_app
+      tags: [bootstrap_app]
+    - role: maintenance
+      tags: [maintenance]
+    - role: kube_bench
+      tags: [kube_bench]

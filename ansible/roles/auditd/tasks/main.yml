@@ -4,6 +4,7 @@
     name: auditd
     state: present
     update_cache: true
+    cache_valid_time: 3600
   register: auditd_install
 
 - name: Configure the hardening audit rules

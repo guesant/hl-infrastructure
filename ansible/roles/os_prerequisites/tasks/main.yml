@@ -6,6 +6,7 @@
       - ca-certificates
     state: present
     update_cache: true
+    cache_valid_time: 3600
 
 - name: Check whether any NFS filesystem is mounted
   ansible.builtin.command: findmnt -rn -t nfs,nfs4
