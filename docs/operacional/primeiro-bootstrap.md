@@ -116,6 +116,16 @@ just tofu-apply tailscale
 
 O `plan` deve criar só o split DNS de `guesant.internal` apontando para o endereço do node; se esse split DNS já existir no console, importe-o antes com `just tofu tailscale import tailscale_dns_split_nameservers.internal guesant.internal`. Se ele reclamar que o dispositivo não foi encontrado, o node ainda não entrou na tailnet com o hostname declarado em `tofu/tailscale/terraform.tfvars`. Commite o state cifrado. Para conferir de um dispositivo da tailnet, `ssh root@<endereço do node na tailnet>` deve entrar e `dig grafana.guesant.internal` deve devolver esse mesmo endereço; de fora da tailnet, o nome não resolve. Veja [Tailscale: acesso remoto e DNS interno](../arquitetura/tailscale.md) para o que cada peça faz.
 
+## Confie na CA interna
+
+O Argo sobe o ingress sozinho depois do push, e com ele o cert-manager emite uma CA interna e o certificado de `*.guesant.internal`. Os nomes internos passam a responder por HTTPS pela tailnet, mas o seu navegador ainda não confia no emissor. Imprima o certificado público da CA e instale-o como autoridade confiável no sistema de cada dispositivo que vai usar os nomes:
+
+```bash
+just internal-ca
+```
+
+A saída é só o certificado público; a chave privada fica no cluster. Depois disso, `https://argocd.guesant.internal` e `https://keycloak.guesant.internal` abrem sem aviso de um dispositivo da tailnet, e o console de administração do Keycloak responde nesse segundo nome com o usuário do `Secret` `keycloak-initial-admin`. Veja [Ingress: os nomes internos pela tailnet](../arquitetura/ingress.md) para o desenho.
+
 ## Continue por aqui
 
 Se você quer expor um serviço através deste cluster, veja o guia operacional de [adicionar um satélite novo](adicionar-um-satelite.md). Se quer entender por que o repositório instala tudo via Helm em vez de manifestos vendorizados, veja [Helm e os charts](../arquitetura/helm-e-charts.md) na arquitetura. Se você quer entender os conceitos por trás de cada ferramenta que este bootstrap instala (Ansible, k3s, Cilium, TLS automático, ArgoCD, o padrão de operator), veja a seção [Aprender](../aprender/index.md).

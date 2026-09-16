@@ -10,6 +10,15 @@ just rotate-certs
 
 Para o k3s, roda `k3s certificate rotate`, sobe de novo, espera o API server responder e traz o kubeconfig novo para `ansible/kubeconfig`. O kubeconfig anterior deixa de funcionar no mesmo instante, então qualquer outra cópia dele (em outra máquina, num CI) precisa ser substituída. Os certificados do k3s valem um ano e o próprio k3s os renova ao reiniciar quando faltam menos de 90 dias; esta rotina é para rotação deliberada, como depois de um kubeconfig exposto.
 
+## CA interna
+
+```bash
+kubectl -n cert-manager delete secret internal-ca
+kubectl -n ingress delete secret internal-domain-tls
+```
+
+O cert-manager percebe o `Secret` da CA ausente, emite outra pelo `ClusterIssuer` autoassinado e, com o certificado do domínio também apagado, reemite `*.guesant.internal` assinado pela CA nova; o Traefik recarrega o certificado sozinho. O passo que não é automático fica do lado dos dispositivos: cada um precisa confiar a CA nova, com a saída de `just internal-ca`, e remover a anterior. Sem rotação deliberada, a CA vale dez anos e mantém a chave ao renovar, de propósito, para que esse passo manual aconteça uma vez só.
+
 ## Token de join
 
 ```bash

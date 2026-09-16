@@ -68,6 +68,8 @@ flowchart TB
 - [Helm e os charts](helm-e-charts.md) explica por que nenhum componente fica vendorizado como manifesto estático.
 - [GitOps: root e satélites](gitops-root-e-satelites.md) descreve o padrão de app-of-apps que o ArgoCD usa.
 - [OpenTofu: a camada da Cloudflare](opentofu.md) descreve o túnel e o DNS do blog, e por que o token do túnel nunca passa pelo OpenTofu.
+- [Tailscale: acesso remoto e DNS interno](tailscale.md) descreve como o node entra na tailnet e por que `*.guesant.internal` só resolve lá dentro.
+- [Ingress: os nomes internos pela tailnet](ingress.md) descreve o Traefik que escuta no node, a Gateway API e a CA interna que emite os certificados desses nomes.
 - [A pipeline de CI](ci.md) descreve os jobs do workflow `ci` e por que eles vivem todos no mesmo arquivo.
 - [Modelo de ameaças](modelo-de-ameacas.md) lista o que se protege, por onde um atacante entraria e o que barra cada caminho.
 - [Mapa de controles](mapa-de-controles.md) inventaria cada garantia com a evidência que a prova.
