@@ -17,7 +17,7 @@ configs:
     server.insecure: true
   cm:
     url: https://argocd.guesant.internal
-    admin.enabled: true
+    admin.enabled: "false"
     oidc.config: |
       name: Keycloak
       issuer: https://auth.guesant.net/realms/management
