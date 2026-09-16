@@ -3,7 +3,7 @@ kind: StorageClass
 metadata:
   name: local-path-retain
   annotations:
-    argocd.argoproj.io/sync-options: Prune=false
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
 provisioner: rancher.io/local-path
 reclaimPolicy: Retain
 volumeBindingMode: WaitForFirstConsumer

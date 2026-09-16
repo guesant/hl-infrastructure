@@ -3,6 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: portainer
   namespace: portainer
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
 spec:
   accessModes: [ReadWriteOnce]
   storageClassName: local-path-retain
