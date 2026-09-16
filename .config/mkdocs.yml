@@ -71,6 +71,7 @@ nav:
   - Operacional:
       - operacional/index.md
       - Primeiro bootstrap: operacional/primeiro-bootstrap.md
+      - Mapa do bootstrap e das credenciais: operacional/mapa-do-bootstrap-e-das-credenciais.md
       - Metodologia de mudança: operacional/metodologia-de-mudanca.md
       - Checklist operacional: operacional/checklist.md
       - Preflight e dry-run do bootstrap: operacional/preflight-e-dry-run.md
