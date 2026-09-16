@@ -18,10 +18,6 @@ spec:
       secret:
         name: keycloak-realm
         key: ADMIN_EMAIL
-    LAN_HOST:
-      secret:
-        name: keycloak-realm
-        key: LAN_HOST
     ARGOCD_CLIENT_SECRET:
       secret:
         name: keycloak-realm
@@ -110,12 +106,12 @@ spec:
         directAccessGrantsEnabled: false
         secret: ${ARGOCD_CLIENT_SECRET}
         redirectUris:
-          - https://${LAN_HOST}:30443/auth/callback
+          - https://argocd.guesant.internal/auth/callback
         webOrigins:
-          - https://${LAN_HOST}:30443
+          - https://argocd.guesant.internal
         attributes:
           pkce.code.challenge.method: S256
-          post.logout.redirect.uris: https://${LAN_HOST}:30443/*
+          post.logout.redirect.uris: https://argocd.guesant.internal/*
         defaultClientScopes:
           - openid
           - profile
@@ -130,12 +126,12 @@ spec:
         directAccessGrantsEnabled: false
         secret: ${GRAFANA_CLIENT_SECRET}
         redirectUris:
-          - https://${LAN_HOST}:30300/login/generic_oauth
+          - https://grafana.guesant.internal/login/generic_oauth
         webOrigins:
-          - https://${LAN_HOST}:30300
+          - https://grafana.guesant.internal
         attributes:
           pkce.code.challenge.method: S256
-          post.logout.redirect.uris: https://${LAN_HOST}:30300/*
+          post.logout.redirect.uris: https://grafana.guesant.internal/*
         defaultClientScopes:
           - openid
           - profile
