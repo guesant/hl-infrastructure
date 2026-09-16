@@ -22,6 +22,13 @@ locals {
       logout_redirect_uri = "https://portainer.${var.internal_domain}/*"
       secret              = var.portainer_client_secret
     }
+    kargo = {
+      name                = "Kargo"
+      access_type         = "PUBLIC"
+      base_url            = "https://kargo.${var.internal_domain}"
+      redirect_uris       = ["https://kargo.${var.internal_domain}/login", "http://localhost/auth/callback"]
+      logout_redirect_uri = "https://kargo.${var.internal_domain}/*"
+    }
     oauth2-proxy = {
       name                = "oauth2-proxy"
       base_url            = "https://auth.${var.internal_domain}"

@@ -53,8 +53,8 @@ resource "keycloak_openid_client" "clients" {
   name      = each.value.name
   enabled   = lookup(each.value, "enabled", true)
 
-  access_type                  = "CONFIDENTIAL"
-  client_secret                = each.value.secret
+  access_type                  = lookup(each.value, "access_type", "CONFIDENTIAL")
+  client_secret                = lookup(each.value, "secret", null)
   standard_flow_enabled        = true
   implicit_flow_enabled        = false
   direct_access_grants_enabled = false
