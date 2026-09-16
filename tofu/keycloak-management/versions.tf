@@ -15,5 +15,6 @@ provider "keycloak" {
   realm               = "master"
   client_id           = "tofu-management"
   client_secret       = var.service_secret
+  client_timeout      = 120
   root_ca_certificate = file("${path.module}/internal-ca.crt")
 }
