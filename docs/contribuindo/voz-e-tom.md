@@ -17,9 +17,9 @@ Estes dois exemplos usam o texto real deste repositório como "depois"; o "antes
 
 Antes: "É importante notar que o campo `project` deve ser configurado corretamente para `satellites`, pois isso pode ajudar a garantir que os recursos sejam devidamente restritos ao namespace."
 
-Depois, de [adicionar um satélite](../operacional/adicionar-um-satelite.md): "O `project: satellites` é obrigatório: esse projeto do Argo está restrito a recursos de namespace, com três exceções liberadas (...). Um satélite não pode criar `ClusterRole`, `CustomResourceDefinition` ou qualquer outro recurso de escopo de cluster; se o outro repositório precisar disso, esse recurso pertence a este repositório, não a um satélite."
+Depois, de [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md): "O projeto `satellites` é deliberadamente restrito: só pode criar recursos de escopo de namespace, com três exceções liberadas explicitamente no `clusterResourceWhitelist` do `AppProject`, `Namespace`, `StorageClass` e o `Project` do Kargo. Uma `Application` sob esse projeto não consegue criar uma `ClusterRole` ou uma `CustomResourceDefinition`, mesmo que o operador do Argo quisesse; a permissão simplesmente não existe no projeto."
 
-A diferença não é só de tamanho. A versão hedgeada não diz o que acontece se o campo estiver errado nem por que a regra existe; a versão real nomeia a consequência (recusa de um recurso de escopo de cluster) e a regra por trás dela (onde esse recurso deveria viver em vez disso).
+A diferença não é só de tamanho. A versão hedgeada não diz o que aconteceria se o campo estivesse errado nem por que a restrição existe; a versão real nomeia o mecanismo (a permissão não existe no projeto, não é uma convenção que alguém possa violar por descuido) e deixa explícito que as exceções liberadas são uma lista fechada e deliberada, não uma lacuna.
 
 Antes: "Nós decidimos usar o OpenTofu ao invés de um reconciliador porque acreditamos que isso pode trazer benefícios em termos de visibilidade das mudanças, embora existam alguns tradeoffs a serem considerados."
 

@@ -12,7 +12,7 @@ Todo termo técnico introduzido pela primeira vez numa página deve ter contexto
 
 Toda página deve terminar com uma seção "Continue por aqui" com um ou dois links para onde faz sentido ir a seguir. Isso vale para toda página sem exceção, incluindo uma que pareça uma folha sem continuação óbvia; nesse caso, o link vai para a página que motivou a criação desta, ou para o índice da seção.
 
-Nomes de arquivo em minúsculo, com hífen, sem acento.
+Nomes de arquivo devem ser em minúsculo, com hífen, sem acento.
 
 ## Vocabulário de obrigatoriedade
 
