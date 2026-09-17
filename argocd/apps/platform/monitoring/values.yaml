@@ -80,6 +80,21 @@ kube-prometheus-stack:
         memory: 256Mi
       limits:
         memory: 640Mi
+  kubeApiServer:
+    serviceMonitor:
+      metricRelabelings:
+        - sourceLabels: [__name__]
+          regex: (apiserver_request_duration_seconds|apiserver_request_sli_duration_seconds|apiserver_request_body_size_bytes|apiserver_response_sizes|apiserver_watch_list_duration_seconds|apiserver_watch_cache_read_wait_seconds|apiserver_watch_events_sizes|etcd_request_duration_seconds|workqueue_work_duration_seconds|workqueue_queue_duration_seconds)_bucket
+          action: drop
+  kubelet:
+    serviceMonitor:
+      cAdvisorMetricRelabelings:
+        - sourceLabels: [__name__]
+          regex: container_(network_tcp_usage_total|network_udp_usage_total|tasks_state|memory_failures_total|blkio_device_usage_total|file_descriptors|sockets|threads_max|spec_.*|start_time_seconds|last_seen)
+          action: drop
+        - sourceLabels: [container]
+          regex: POD
+          action: drop
   kubeEtcd:
     enabled: false
   kubeControllerManager:
@@ -124,6 +139,8 @@ kube-prometheus-stack:
         sha: 50c707e96da5ade383cb1707790576480485e93de06aa60ad8802cb5f744bd0a
       retention: 15d
       retentionSize: 6GB
+      scrapeInterval: 60s
+      evaluationInterval: 60s
       serviceMonitorSelectorNilUsesHelmValues: false
       podMonitorSelectorNilUsesHelmValues: false
       probeSelectorNilUsesHelmValues: false
