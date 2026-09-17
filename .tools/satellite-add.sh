@@ -44,6 +44,6 @@ echo "added $name to $values_file" >&2
 echo >&2
 echo "next:" >&2
 echo "  1. confirm the other repository's own Application objects repeat the same syncPolicy block" >&2
-echo "  2. just render-charts, to see the new Application rendered" >&2
+echo "  2. just infra-render-charts, to see the new Application rendered" >&2
 echo "  3. git add $values_file && git commit && git push" >&2
 echo "  4. just status, to confirm the application appears and syncs" >&2

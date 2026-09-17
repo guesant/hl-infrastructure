@@ -77,4 +77,4 @@ cat >&2 <<EOF
        - /spec/source/helm/parameters
 EOF
 echo >&2
-echo "then: just render-charts (confirm the chart renders), git add, commit, push, just status" >&2
+echo "then: just infra-render-charts (confirm the chart renders), git add, commit, push, just status" >&2
