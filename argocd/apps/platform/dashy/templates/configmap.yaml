@@ -39,7 +39,7 @@ data:
           - title: Kargo
             description: Promoção de imagens dos satélites
             url: https://kargo.guesant.internal
-            icon: fas fa-truck-ramp-box
+            icon: fas fa-truck
           - title: Keycloak
             description: Console de administração (realm master)
             url: https://keycloak.guesant.internal/admin/
@@ -51,7 +51,7 @@ data:
           - title: Sair
             description: Encerra a sessão do oauth2-proxy nos nomes internos
             url: https://auth.guesant.internal/oauth2/sign_out
-            icon: fas fa-right-from-bracket
+            icon: fas fa-sign-out-alt
       - name: Observabilidade
         icon: fas fa-chart-line
         items:
@@ -82,9 +82,13 @@ data:
             description: O código de guesant.net
             url: https://github.com/guesant/blog
             icon: fab fa-github
-          - title: Actions
-            description: CI dos dois repositórios
-            url: https://github.com/guesant?tab=repositories
+          - title: Actions do hl-infrastructure
+            description: CI e workflows deste repositório
+            url: https://github.com/guesant/hl-infrastructure/actions
+            icon: fas fa-play-circle
+          - title: Actions do blog
+            description: CI e workflows do blog
+            url: https://github.com/guesant/blog/actions
             icon: fas fa-play-circle
       - name: Fora do node
         icon: fas fa-cloud
