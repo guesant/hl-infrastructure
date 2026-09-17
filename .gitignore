@@ -18,3 +18,5 @@ images.txt
 ansible/known_hosts
 .ansible/
 .tofu/
+.ansible-collections/
+.trivy-cache/

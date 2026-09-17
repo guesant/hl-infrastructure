@@ -11,7 +11,54 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      all: ${{ github.event_name != 'pull_request' }}
+      ansible: ${{ steps.filter.outputs.ansible }}
+      charts: ${{ steps.filter.outputs.charts }}
+      tofu: ${{ steps.filter.outputs.tofu }}
+      docs: ${{ steps.filter.outputs.docs }}
+      tools: ${{ steps.filter.outputs.tools }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Detect which areas changed
+        id: filter
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        with:
+          filters: |
+            ansible:
+              - ansible/**
+              - .config/ansible-lint.yml
+            charts:
+              - argocd/**
+              - ansible/**
+              - .tools/**
+              - .config/**
+              - .trivyignore.yaml
+              - justfile
+            tofu:
+              - tofu/**
+              - .tools/tofu-*.sh
+              - .config/conftest/**
+              - justfile
+            docs:
+              - docs/**
+              - "**/*.md"
+              - .config/**
+            tools:
+              - .tools/**
+              - .config/**
+
   actionlint:
     runs-on: ubuntu-24.04
     steps:
@@ -61,6 +108,8 @@ jobs:
 
   ansible-lint:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.ansible == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -73,14 +122,24 @@ jobs:
           target: ansible-lint
           smoke: --version
 
+      - name: Restore the Galaxy collections
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .ansible-collections
+          key: ansible-collections-${{ hashFiles('ansible/requirements.yml') }}
+
       - name: ansible-lint
         run: >-
+          mkdir -p .ansible-collections &&
           docker run --rm -v "$PWD":/repo -w /repo -e ANSIBLE_COLLECTIONS_PATH=/tmp/collections
+          -v "$PWD/.ansible-collections":/tmp/collections
           --entrypoint sh hl-infra/ansible-lint
           -c "ansible-galaxy collection install -r ansible/requirements.yml -p /tmp/collections >/dev/null && ansible-lint -c .config/ansible-lint.yml"
 
   shellcheck:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.tools == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -98,6 +157,8 @@ jobs:
 
   hadolint:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.tools == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -117,6 +178,8 @@ jobs:
 
   markdownlint:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.docs == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -137,6 +200,8 @@ jobs:
 
   helm-lint:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.charts == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -196,6 +261,8 @@ jobs:
 
   pod-security:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.charts == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -267,6 +334,8 @@ jobs:
 
   spelling:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.docs == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -346,13 +415,23 @@ jobs:
           target: trivy
           smoke: --version
 
+      - name: Restore the trivy vulnerability database
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .trivy-cache
+          key: trivy-db-${{ github.run_id }}
+          restore-keys: trivy-db-
+
       - name: trivy fs
         run: >-
-          docker run --rm -v "$PWD":/repo -w /repo hl-infra/trivy
+          mkdir -p .trivy-cache &&
+          docker run --rm -v "$PWD":/repo -w /repo -v "$PWD/.trivy-cache":/root/.cache/trivy hl-infra/trivy
           fs --scanners vuln,secret --skip-dirs rendered /repo
 
   sopssecrets:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.charts == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -429,6 +508,8 @@ jobs:
 
   kube-linter:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.charts == 'true'
     permissions:
       contents: read
       security-events: write
@@ -472,6 +553,8 @@ jobs:
 
   checkov:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.charts == 'true'
     permissions:
       contents: read
       security-events: write
@@ -516,6 +599,8 @@ jobs:
 
   kubeconform:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.charts == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -525,6 +610,13 @@ jobs:
       - name: Read helm_version
         id: helm
         run: echo "version=$(grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE '[0-9.]+')" >> "$GITHUB_OUTPUT"
+
+      - name: Restore the kubeconform schema cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .kubeconform-cache
+          key: kubeconform-${{ hashFiles('ansible/group_vars/all/versions.yml', 'argocd/**/Chart.yaml') }}
+          restore-keys: kubeconform-
 
       - name: Build helm image
         uses: ./.github/actions/tool-image
@@ -562,6 +654,8 @@ jobs:
 
   trivy-config:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.charts == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -588,13 +682,23 @@ jobs:
       - name: Render charts
         run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
 
+      - name: Restore the trivy vulnerability database
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .trivy-cache
+          key: trivy-db-${{ github.run_id }}
+          restore-keys: trivy-db-
+
       - name: trivy config
         run: >-
-          docker run --rm -v "$PWD":/repo -w /repo hl-infra/trivy
+          mkdir -p .trivy-cache &&
+          docker run --rm -v "$PWD":/repo -w /repo -v "$PWD/.trivy-cache":/root/.cache/trivy hl-infra/trivy
           config --misconfig-scanners kubernetes,terraform --skip-files rendered/cilium.yaml .
 
   tofu:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.tofu == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -609,6 +713,12 @@ jobs:
         env:
           TOFU_IMAGE: ${{ steps.tofu.outputs.image }}
         run: docker run --rm -v "$PWD":/repo -w /repo "$TOFU_IMAGE" fmt -check -recursive tofu
+
+      - name: Restore the provider mirror
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .tofu/mirror
+          key: tofu-mirror-${{ hashFiles('tofu/*/versions.tf', '.tools/tofu-mirror.sh') }}
 
       - name: Mirror the providers the registry cannot verify
         run: .tools/tofu-mirror.sh
@@ -631,6 +741,8 @@ jobs:
 
   kubescape:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.charts == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -665,6 +777,8 @@ jobs:
 
   trivy-images:
     runs-on: ubuntu-24.04
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.charts == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -839,7 +953,7 @@ jobs:
         env:
           NEEDS: ${{ toJSON(needs) }}
         run: |
-          if echo "$NEEDS" | jq -e '[.[].result] | any(. != "success")' >/dev/null; then
-            echo "at least one required job did not succeed" >&2
+          if echo "$NEEDS" | jq -e '[.[].result] | any(. != "success" and . != "skipped")' >/dev/null; then
+            echo "at least one required job failed or was cancelled" >&2
             exit 1
           fi
