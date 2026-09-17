@@ -101,3 +101,5 @@ Freight
 Warehouse
 Akuity
 finalizer
+banaction
+resetar
