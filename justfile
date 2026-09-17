@@ -60,6 +60,11 @@ kubeconfig:
 satellite-add nome repo_url path sync_wave="10":
     .tools/satellite-add.sh {{nome}} {{repo_url}} {{path}} {{sync_wave}}
 
+[doc("Reattach a Released PV to a new PVC: just pv-relink pv namespace pvc-name tamanho [cluster-cnpg]")]
+[confirm("This patches a live PersistentVolume and applies a new PVC on the cluster. Continue?")]
+pv-relink pv namespace pvc_name size cnpg_cluster="":
+    .tools/pv-relink.sh {{pv}} {{namespace}} {{pvc_name}} {{size}} {{cnpg_cluster}}
+
 [doc("Run kubectl on the node over SSH; the API server is not reachable from anywhere else")]
 kubectl *args:
     {{node_ssh}} k3s kubectl {{args}}
