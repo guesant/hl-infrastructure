@@ -93,8 +93,8 @@ application:
         image:
           repository: ghcr.io/guesant/blog
           tag: "{{ .Values.deployment.image.tag }}"
-        command:
-          - /bin/sh
+        command: [/bin/sh]
+        args:
           - -c
           - |
             export PORTFOLIO_DB_CONNECTION="Host=$(cat /secrets/db/host);Database=$(cat /secrets/db/dbname);Username=$(cat /secrets/db/user);Password=$(cat /secrets/db/password)"
