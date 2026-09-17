@@ -40,6 +40,20 @@
   loop: "{{ os_prerequisites_disabled_units }}"
   when: (item + ' ') in os_prerequisites_unit_files.stdout
 
+- name: Read the Wi-Fi radio's rfkill state
+  ansible.builtin.command: rfkill list wifi
+  register: os_prerequisites_wifi_rfkill
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Block the Wi-Fi radio, since the node only depends on the wired link
+  ansible.builtin.command: rfkill block wifi
+  when: >-
+    os_prerequisites_wifi_rfkill.rc == 0
+    and 'Soft blocked: yes' not in os_prerequisites_wifi_rfkill.stdout
+  changed_when: true
+
 - name: Create the tmp.mount drop-in directory
   ansible.builtin.file:
     path: /etc/systemd/system/tmp.mount.d
