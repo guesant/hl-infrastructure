@@ -57,7 +57,7 @@ A regra que organiza a tabela: um segredo vive ao lado de quem o consome no clus
 - `keycloak-homelab`: `state.sops.env`; pelo `secrets.map`, o segredo de `tofu-homelab` do `keycloak-master.sops.env` e o segredo do client `blog` do `SopsSecret` `app-secret` do próprio blog. Não tem `.sops.env` próprio.
 - `keycloak-management`: `state.sops.env`; pelo `secrets.map`, o segredo de `tofu-management` do `keycloak-master.sops.env` e os client secrets dos `SopsSecret` de `sso`, `oauth2-proxy` e `portainer`. Também sem `.sops.env` próprio.
 
-Os `terraform.tfstate` dos cinco módulos são commitados cifrados com a passphrase de `state.sops.env`; perder essa passphrase não derruba nada, só obriga a reimportar os recursos.
+Os `terraform.tfstate` de cada módulo em `tofu/` são commitados cifrados com a passphrase de `state.sops.env`; perder essa passphrase não derruba nada, só obriga a reimportar os recursos.
 
 ## O que acontece quando um segredo muda no git
 
