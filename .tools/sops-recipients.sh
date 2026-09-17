@@ -76,7 +76,7 @@ sync-node)
   label="${1:-node}"
   require_valid_label "$label"
   node_public_key="$(
-    kubectl --kubeconfig ansible/kubeconfig -n sops get secret sops-age-key-file \
+    kubectl --kubeconfig .local/operator/kubeconfig -n sops get secret sops-age-key-file \
       -o jsonpath='{.data.keys\.txt}' \
       | base64 -d \
       | grep '^# public key:' \

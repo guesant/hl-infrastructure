@@ -11,13 +11,13 @@ Você precisa de acesso SSH por chave ao Pi como root, e do [Ansible](https://do
 Copie o inventário de exemplo e crie o arquivo de segredos cifrado a partir do modelo:
 
 ```bash
-cp ansible/inventory.example.ini ansible/inventory.ini
+cp .local/operator/inventory.example.ini .local/operator/inventory.ini
 cp ansible/group_vars/all/secrets.example.yml ansible/group_vars/all/secrets.sops.yaml
 just sops-sync ansible/group_vars/all/secrets.sops.yaml
 just sops-edit ansible/group_vars/all/secrets.sops.yaml
 ```
 
-O `sops-sync` cifra o arquivo no lugar, ainda com os valores de exemplo, e o `sops-edit` o abre decifrado só em memória. Edite `ansible/inventory.ini` com o IP real do Pi, o usuário SSH e o caminho da chave privada. No `secrets.sops.yaml`, preencha `argocd_github_webhook_secret` com um segredo gerado por você (não o valor de exemplo). A chave SSH não entra aqui: ela já precisa estar autorizada no Pi para o Ansible conseguir entrar, e o bootstrap aborta antes de desligar login por senha se o `authorized_keys` do usuário do inventário estiver vazio.
+O `sops-sync` cifra o arquivo no lugar, ainda com os valores de exemplo, e o `sops-edit` o abre decifrado só em memória. Edite `.local/operator/inventory.ini` com o IP real do Pi, o usuário SSH e o caminho da chave privada. No `secrets.sops.yaml`, preencha `argocd_github_webhook_secret` com um segredo gerado por você (não o valor de exemplo). A chave SSH não entra aqui: ela já precisa estar autorizada no Pi para o Ansible conseguir entrar, e o bootstrap aborta antes de desligar login por senha se o `authorized_keys` do usuário do inventário estiver vazio.
 
 O inventário real não é rastreado pelo git; o `secrets.sops.yaml` é, mas só cifrado, e o job `sopssecrets` da CI falha se algum valor dele estiver em claro. As versões de k3s, Helm e de cada chart não precisam de nada: elas vivem em `ansible/group_vars/all/versions.yml`, que é versionado e mantido pelo Renovate, e o Ansible mescla os dois arquivos sozinho.
 
@@ -26,7 +26,7 @@ O inventário real não é rastreado pelo git; o `secrets.sops.yaml` é, mas só
 Antes do primeiro contato, fixe a host key do Pi. Confira as impressões digitais que o `ssh-keyscan` mostra contra as que o próprio Pi imprime no console (`ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub`) e só então grave o arquivo; o Ansible usa `StrictHostKeyChecking=yes` contra ele e recusa conectar sem ele:
 
 ```bash
-ssh-keyscan <IP do Pi> | tee ansible/known_hosts | ssh-keygen -lf -
+ssh-keyscan <IP do Pi> | tee .local/operator/known_hosts | ssh-keygen -lf -
 ```
 
 ```bash

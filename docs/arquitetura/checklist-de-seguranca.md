@@ -179,7 +179,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Política de senha, bloqueio por falhas e expiração | Não se aplica | Não há login por senha em nenhum usuário | TS, PS |
 | Relógio sincronizado | Atende | NTP ligado e sincronizado | AC |
 | Logs enviados para fora do node | Não atende | Journal local, sem coletor remoto | TS, AC, LU |
-| Inventário documentado do host | Atende | `ansible/inventory.ini` e o [estado fora do git](../operacional/estado-fora-do-git.md) | PS, AC |
+| Inventário documentado do host | Atende | `.local/operator/inventory.ini` e o [estado fora do git](../operacional/estado-fora-do-git.md) | PS, AC |
 
 ## Observabilidade, backup e resposta
 

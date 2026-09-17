@@ -3,7 +3,7 @@ extends: default
 ignore:
   - rendered/
   - site/
-  - .kubeconform-cache/
+  - .cache/
   - ansible/group_vars/all/secrets.sops.yaml
   - ansible/group_vars/all/authorized_keys.yml
   - "**/*.sops-secret.yaml"

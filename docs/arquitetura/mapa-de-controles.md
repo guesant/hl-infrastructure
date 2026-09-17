@@ -45,7 +45,7 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 | Domínio | Expiração | O registro de `guesant.net` não vence sem aviso | job `domain-expiry` |
 | Node | Endurecimento de host | sysctls de kernel e rede, `/tmp` com `noexec`, SSH com `AllowGroups root` e validação antes de gravar, auditd ampliado, serviços de desktop desligados, journald persistente com teto | roles `sysctl_hardening`, `os_prerequisites`, `ssh_hardening`, `auditd`, `maintenance` |
 | Node | Saúde e drift | smartd vigiando o SSD, relatório de pacotes instalados à mão fora da linha de base | role `os_prerequisites`, `files/apt-manual-baseline.txt` |
-| Ansible | Identidade do node | Host key do Pi fixada, conexão recusada se divergir | `ansible/group_vars/all/connection.yml`, `ansible/known_hosts` |
+| Ansible | Identidade do node | Host key do Pi fixada, conexão recusada se divergir | `ansible/group_vars/all/connection.yml`, `.local/operator/known_hosts` |
 | Node | Recuperação | Token do k3s declarado no git, cifrado, e imposto pela role a cada bootstrap | `ansible/group_vars/all/secrets.sops.yaml` (`k3s_join_token`), role `k3s` |
 | Node | Acesso SSH | Chaves autorizadas declaradas no git, reconciliadas contra o node com teto de remoção | `ansible/group_vars/all/authorized_keys.yml`, role `ssh_hardening` |
 | Pods | Recursos | `requests` e limite de memória em todo componente de plataforma declarado aqui | values do Argo CD na role `argocd`, values dos operadores, values do Cilium |

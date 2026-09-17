@@ -125,14 +125,14 @@ jobs:
       - name: Restore the Galaxy collections
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: .ansible-collections
+          path: .cache/ansible-collections
           key: ansible-collections-${{ hashFiles('ansible/requirements.yml') }}
 
       - name: ansible-lint
         run: >-
-          mkdir -p .ansible-collections &&
+          mkdir -p .cache/ansible-collections &&
           docker run --rm -v "$PWD":/repo -w /repo -e ANSIBLE_COLLECTIONS_PATH=/tmp/collections
-          -v "$PWD/.ansible-collections":/tmp/collections
+          -v "$PWD/.cache/ansible-collections":/tmp/collections
           --entrypoint sh hl-infra/ansible-lint
           -c "ansible-galaxy collection install -r ansible/requirements.yml -p /tmp/collections >/dev/null && ansible-lint -c .config/ansible-lint.yml"
 
@@ -418,14 +418,14 @@ jobs:
       - name: Restore the trivy vulnerability database
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: .trivy-cache
+          path: .cache/trivy
           key: trivy-db-${{ github.run_id }}
           restore-keys: trivy-db-
 
       - name: trivy fs
         run: >-
-          mkdir -p .trivy-cache &&
-          docker run --rm -v "$PWD":/repo -w /repo -v "$PWD/.trivy-cache":/root/.cache/trivy hl-infra/trivy
+          mkdir -p .cache/trivy &&
+          docker run --rm -v "$PWD":/repo -w /repo -v "$PWD/.cache/trivy":/root/.cache/trivy hl-infra/trivy
           fs --scanners vuln,secret --skip-dirs rendered /repo
 
   sopssecrets:
@@ -614,7 +614,7 @@ jobs:
       - name: Restore the kubeconform schema cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: .kubeconform-cache
+          path: .cache/kubeconform
           key: kubeconform-${{ hashFiles('ansible/group_vars/all/versions.yml', 'argocd/**/Chart.yaml') }}
           restore-keys: kubeconform-
 
@@ -642,9 +642,9 @@ jobs:
 
       - name: kubeconform
         run: >-
-          mkdir -p .kubeconform-cache &&
+          mkdir -p .cache/kubeconform &&
           docker run --rm -v "$PWD":/repo -w /repo hl-infra/kubeconform
-          -strict -ignore-missing-schemas -summary -n 2 -cache .kubeconform-cache
+          -strict -ignore-missing-schemas -summary -n 2 -cache .cache/kubeconform
           -schema-location default
           -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
           rendered argocd/root argocd/applications
@@ -685,14 +685,14 @@ jobs:
       - name: Restore the trivy vulnerability database
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: .trivy-cache
+          path: .cache/trivy
           key: trivy-db-${{ github.run_id }}
           restore-keys: trivy-db-
 
       - name: trivy config
         run: >-
-          mkdir -p .trivy-cache &&
-          docker run --rm -v "$PWD":/repo -w /repo -v "$PWD/.trivy-cache":/root/.cache/trivy hl-infra/trivy
+          mkdir -p .cache/trivy &&
+          docker run --rm -v "$PWD":/repo -w /repo -v "$PWD/.cache/trivy":/root/.cache/trivy hl-infra/trivy
           config --misconfig-scanners kubernetes,terraform --skip-files rendered/cilium.yaml .
 
   tofu:
@@ -717,7 +717,7 @@ jobs:
       - name: Restore the provider mirror
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: .tofu/mirror
+          path: .cache/tofu/mirror
           key: tofu-mirror-${{ hashFiles('tofu/*/versions.tf', '.tools/tofu-mirror.sh') }}
 
       - name: Mirror the providers the registry cannot verify

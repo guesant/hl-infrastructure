@@ -1,9 +1,9 @@
 set shell := ["bash", "-uc"]
 
-kubeconfig := "ansible/kubeconfig"
-node_host := `grep -oE 'ansible_host=[^ ]+' ansible/inventory.ini | cut -d= -f2`
-node_key := `grep -oE 'ansible_ssh_private_key_file=[^ ]+' ansible/inventory.ini | cut -d= -f2`
-node_ssh := "ssh -o StrictHostKeyChecking=yes -o UserKnownHostsFile=" + quote(justfile_directory() / "ansible/known_hosts") + " -i " + node_key + " root@" + node_host
+kubeconfig := ".local/operator/kubeconfig"
+node_host := `grep -oE 'ansible_host=[^ ]+' .local/operator/inventory.ini | cut -d= -f2`
+node_key := `grep -oE 'ansible_ssh_private_key_file=[^ ]+' .local/operator/inventory.ini | cut -d= -f2`
+node_ssh := "ssh -o StrictHostKeyChecking=yes -o UserKnownHostsFile=" + quote(justfile_directory() / ".local/operator/known_hosts") + " -i " + node_key + " root@" + node_host
 actionlint_image := `grep -oE "rhysd/actionlint:[0-9.]+@sha256:[0-9a-f]+" .github/workflows/ci.yml | head -1`
 zizmor_version := `grep -oE 'version: "[0-9.]+"' .github/workflows/ci.yml | grep -oE "[0-9.]+" | head -1`
 helm_version := `grep -oE 'helm_version:\s*v[0-9.]+' ansible/group_vars/all/versions.yml | grep -oE "[0-9.]+"`
@@ -17,6 +17,7 @@ helm_image := "hl-infra/helm:" + tools_hash + "-" + helm_image_version
 ops_image := "hl-infra/ops:" + tools_hash + "-" + k3s_version
 crd_schema_location := 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
 run := "docker run --rm -v " + quote(justfile_directory()) + ":/repo -w /repo"
+cleanup_excludes := "-e .local/operator/ -e PENDENCIAS.local.md -e *.agekey -e keys.txt -e sops-age-key.txt -e operator-se.txt"
 
 [doc("List every recipe")]
 default:
@@ -24,33 +25,33 @@ default:
 
 [doc("Check access to the node and the assumptions the roles make")]
 preflight *args: _require-host-sops
-    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/preflight.yml {{args}}
+    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i .local/operator/inventory.ini ansible/preflight.yml {{args}}
 
 [doc("Dry-run the whole bootstrap with --check --diff, applying charts as server dry-runs")]
 bootstrap-check *args: (preflight args)
     ansible-galaxy collection install -r ansible/requirements.yml
-    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/site.yml --check --diff {{args}}
+    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i .local/operator/inventory.ini ansible/site.yml --check --diff {{args}}
 
 [doc("Run the whole Ansible bootstrap against the inventory")]
-[confirm("This applies every role to the node in ansible/inventory.ini. Continue?")]
+[confirm("This applies every role to the node in .local/operator/inventory.ini. Continue?")]
 bootstrap *args: (preflight args)
     ansible-galaxy collection install -r ansible/requirements.yml
-    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/site.yml {{args}}
+    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i .local/operator/inventory.ini ansible/site.yml {{args}}
 
 [doc("Rotate every k3s certificate and refresh the local kubeconfig")]
 [confirm("This stops k3s for a few seconds and invalidates the current kubeconfig. Continue?")]
 rotate-certs *args: _require-host-sops
-    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/rotate-certs.yml {{args}}
+    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i .local/operator/inventory.ini ansible/rotate-certs.yml {{args}}
 
 [doc("Rotate the k3s node join token and restart k3s")]
 [confirm("This restarts k3s. Continue?")]
 rotate-token *args: _require-host-sops
-    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/rotate-token.yml {{args}}
+    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i .local/operator/inventory.ini ansible/rotate-token.yml {{args}}
 
 [doc("Add a new age identity on the node and restart the operator; pass -e sops_age_key_prune=true to drop old ones")]
 [confirm("This changes the node's age identities and restarts sops-secrets-operator. Continue?")]
 rotate-age-key *args: _require-host-sops
-    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i ansible/inventory.ini ansible/rotate-age-key.yml {{args}}
+    {{ansible_env}} SOPS_AGE_KEY_FILE="${SOPS_AGE_KEY_FILE:-{{sops_identity}}}" ansible-playbook -i .local/operator/inventory.ini ansible/rotate-age-key.yml {{args}}
 
 [doc("Print the KUBECONFIG export for the fetched kubeconfig")]
 kubeconfig:
@@ -303,6 +304,15 @@ lint-commits from="origin/main" to="HEAD": (_build "commitlint")
 hooks:
     git config core.hooksPath .config/githooks
 
+[doc("List what cleanup would delete (caches, rendered output), without deleting anything")]
+cleanup-dry-run:
+    git clean -ndx {{cleanup_excludes}}
+
+[doc("Delete untracked build artifacts (caches, rendered charts, tofu mirrors); keeps inventory, kubeconfig, known_hosts, key material and PENDENCIAS.local.md")]
+[confirm("This deletes every untracked file outside git except the ones this repo keeps deliberately (inventory, kubeconfig, known_hosts, key material, PENDENCIAS.local.md). Continue?")]
+cleanup:
+    git clean -fdx {{cleanup_excludes}}
+
 [doc("Report how many days are left before the domain registration expires")]
 lint-domain-expiry: (_build-ops)
     {{run}} --entrypoint bash {{ops_image}} .tools/check-domain-expiry.sh
@@ -332,9 +342,9 @@ infra-checkov: infra-render-charts (_build "checkov")
 
 [doc("kubeconform schema validation plus the pinned-image check")]
 infra-kubeconform: infra-render-charts (_build "kubeconform") (_build "shell")
-    mkdir -p {{justfile_directory()}}/.kubeconform-cache
+    mkdir -p {{justfile_directory()}}/.cache/kubeconform
     {{run}} hl-infra/kubeconform:{{tools_hash}} \
-        -strict -ignore-missing-schemas -summary -n 2 -cache .kubeconform-cache \
+        -strict -ignore-missing-schemas -summary -n 2 -cache .cache/kubeconform \
         -schema-location default -schema-location '{{crd_schema_location}}' \
         rendered argocd/root argocd/applications
     {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-images-pinned.sh

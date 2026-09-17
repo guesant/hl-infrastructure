@@ -4,7 +4,7 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
-mirror="$repo_root/.tofu/mirror"
+mirror="$repo_root/.cache/tofu/mirror"
 platforms=(linux_arm64 linux_amd64)
 
 version="$(grep -hoE 'version = "[0-9.]+"' tofu/keycloak-master/versions.tf | grep -oE '[0-9.]+' | tail -1)"
@@ -34,4 +34,4 @@ for platform in "${platforms[@]}"; do
   }
 done
 
-echo "keycloak/keycloak $version mirrored for ${platforms[*]} in .tofu/mirror"
+echo "keycloak/keycloak $version mirrored for ${platforms[*]} in .cache/tofu/mirror"

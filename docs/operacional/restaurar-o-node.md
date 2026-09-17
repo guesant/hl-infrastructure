@@ -6,12 +6,12 @@ Este runbook cobre a perda total do node: cartão SD corrompido, hardware trocad
 
 ## 1. Reconstruir o cluster
 
-Na máquina do operador, `ansible/inventory.ini` continua válido se a máquina do operador sobreviveu; se não, recrie-o a partir do exemplo. `ansible/group_vars/all/secrets.sops.yaml` vem do próprio repositório, cifrado, e decifra com a identidade da Secure Enclave ou com a chave de recuperação.
+Na máquina do operador, `.local/operator/inventory.ini` continua válido se a máquina do operador sobreviveu; se não, recrie-o a partir do exemplo. `ansible/group_vars/all/secrets.sops.yaml` vem do próprio repositório, cifrado, e decifra com a identidade da Secure Enclave ou com a chave de recuperação.
 
-Um node reinstalado tem host keys novas, e o `ansible/known_hosts` antigo faz o Ansible recusar a conexão, de propósito. Confira as impressões digitais novas no console do Pi e grave o arquivo de novo, como no [primeiro bootstrap](primeiro-bootstrap.md), antes de seguir:
+Um node reinstalado tem host keys novas, e o `.local/operator/known_hosts` antigo faz o Ansible recusar a conexão, de propósito. Confira as impressões digitais novas no console do Pi e grave o arquivo de novo, como no [primeiro bootstrap](primeiro-bootstrap.md), antes de seguir:
 
 ```bash
-ssh-keyscan <IP do Pi> | tee ansible/known_hosts | ssh-keygen -lf -
+ssh-keyscan <IP do Pi> | tee .local/operator/known_hosts | ssh-keygen -lf -
 ```
 
 ```bash
@@ -20,7 +20,7 @@ just bootstrap-check
 just bootstrap
 ```
 
-Ao fim, `ansible/kubeconfig` aponta para o cluster novo e `kubectl -n argocd get applications` mostra o `root` sincronizando os satélites. O k3s reinstalado recebe o token declarado em `k3s_join_token`, o mesmo que o node antigo usava, então nada precisa ser recuperado nem regravado: o valor nunca deixou de existir, porque sempre foi o git quem o guardava.
+Ao fim, `.local/operator/kubeconfig` aponta para o cluster novo e `kubectl -n argocd get applications` mostra o `root` sincronizando os satélites. O k3s reinstalado recebe o token declarado em `k3s_join_token`, o mesmo que o node antigo usava, então nada precisa ser recuperado nem regravado: o valor nunca deixou de existir, porque sempre foi o git quem o guardava.
 
 A imagem do Raspberry Pi OS cria de novo o usuário padrão (`user`, uid 1000), com senha, grupo `sudo`, chave SSH e login automático tanto no desktop gráfico quanto no console `tty1`. Nada do cluster usa esse usuário, e o Ansible não o remove, então o passo é manual, por SSH como root, depois de confirmar que o `authorized_keys` do root tem a chave do operador:
 

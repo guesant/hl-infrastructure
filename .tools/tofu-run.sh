@@ -27,11 +27,11 @@ if [ ! -d "$module_dir" ]; then
 fi
 
 "$repo_root/.tools/tofu-mirror.sh" >/dev/null
-mkdir -p "$repo_root/.tofu"
-cat >"$repo_root/.tofu/tofurc" <<'RC'
+mkdir -p "$repo_root/.cache/tofu"
+cat >"$repo_root/.cache/tofu/tofurc" <<'RC'
 provider_installation {
   filesystem_mirror {
-    path    = "/repo/.tofu/mirror"
+    path    = "/repo/.cache/tofu/mirror"
     include = ["registry.opentofu.org/keycloak/*"]
   }
   direct {
@@ -122,4 +122,4 @@ case "${1:-} ${2:-}" in
 esac
 unset CLOUDFLARE_API_TOKEN_READ
 
-exec docker run --rm -i -v "$repo_root":/repo -w /repo -e TF_CLI_CONFIG_FILE=/repo/.tofu/tofurc "${env_args[@]}" "$TOFU_IMAGE" -chdir="$module_dir" "$@"
+exec docker run --rm -i -v "$repo_root":/repo -w /repo -e TF_CLI_CONFIG_FILE=/repo/.cache/tofu/tofurc "${env_args[@]}" "$TOFU_IMAGE" -chdir="$module_dir" "$@"
