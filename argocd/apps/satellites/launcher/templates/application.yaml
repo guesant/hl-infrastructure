@@ -1,0 +1,40 @@
+{{- range .Values.satellites }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .name }}
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .syncWave | default "10" | quote }}
+spec:
+  project: satellites
+  source:
+    repoURL: {{ .repoURL | quote }}
+    targetRevision: main
+    path: {{ .path | quote }}
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  revisionHistoryLimit: 3
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+      allowEmpty: false
+    syncOptions:
+      - ServerSideApply=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+      - PrunePropagationPolicy=foreground
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+{{- end }}

@@ -1,0 +1,4 @@
+apiVersion: v2
+name: satellites-launcher
+description: Emits one Application per satellite declared in values.yaml
+version: 0.1.0

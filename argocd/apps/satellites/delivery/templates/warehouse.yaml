@@ -1,0 +1,20 @@
+{{- range .Values.satellites }}
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: {{ .name }}
+  namespace: {{ .name }}-delivery
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  interval: 2m0s
+  freightCreationPolicy: Automatic
+  subscriptions:
+    - image:
+        repoURL: {{ .imageRepo | quote }}
+        imageSelectionStrategy: {{ .imageSelectionStrategy | default "Digest" | quote }}
+        constraint: {{ .constraint | default "main" | quote }}
+        strictSemvers: {{ .strictSemvers | default true }}
+        discoveryLimit: {{ .discoveryLimit | default 5 }}
+{{- end }}

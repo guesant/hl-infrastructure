@@ -112,3 +112,4 @@ Linke
 commitou
 hedgeado
 hedgeada
+templável

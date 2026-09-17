@@ -57,6 +57,7 @@ nav:
       - MITRE ATT&CK: aprender/mitre-attack.md
       - Zero trust: aprender/zero-trust.md
       - Diátaxis: aprender/diataxis.md
+      - "Gerar várias instâncias com Helm": aprender/helm-templating-de-lista.md
   - Arquitetura:
       - arquitetura/index.md
       - "Ansible: as roles do bootstrap": arquitetura/ansible.md

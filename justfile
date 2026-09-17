@@ -57,8 +57,8 @@ kubeconfig:
     echo "export KUBECONFIG={{justfile_directory()}}/{{kubeconfig}}"
 
 [doc("Scaffold an Application for a satellite in another repository: just satellite-add nome https://github.com/org/repo.git caminho/gitops")]
-satellite-add nome repo_url path sync_wave="10":
-    .tools/satellite-add.sh {{nome}} {{repo_url}} {{path}} {{sync_wave}}
+satellite-add nome repo_url path sync_wave="10": (_build-ops)
+    {{run}} --entrypoint bash {{ops_image}} .tools/satellite-add.sh {{nome}} {{repo_url}} {{path}} {{sync_wave}}
 
 [doc("Reattach a Released PV to a new PVC: just pv-relink pv namespace pvc-name tamanho [cluster-cnpg]")]
 [confirm("This patches a live PersistentVolume and applies a new PVC on the cluster. Continue?")]
@@ -66,8 +66,8 @@ pv-relink pv namespace pvc_name size cnpg_cluster="":
     .tools/pv-relink.sh {{pv}} {{namespace}} {{pvc_name}} {{size}} {{cnpg_cluster}}
 
 [doc("Scaffold Kargo delivery for a satellite: just satellite-delivery-add nome ghcr.io/org/imagem application-filha caminho.do.values")]
-satellite-delivery-add nome repo_imagem app_filha caminho_values:
-    .tools/satellite-delivery-add.sh {{nome}} {{repo_imagem}} {{app_filha}} {{caminho_values}}
+satellite-delivery-add nome repo_imagem app_filha caminho_values: (_build-ops)
+    {{run}} --entrypoint bash {{ops_image}} .tools/satellite-delivery-add.sh {{nome}} {{repo_imagem}} {{app_filha}} {{caminho_values}}
 
 [doc("Run kubectl on the node over SSH; the API server is not reachable from anywhere else")]
 kubectl *args:

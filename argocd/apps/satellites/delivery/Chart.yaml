@@ -1,0 +1,4 @@
+apiVersion: v2
+name: satellites-delivery
+description: Kargo delivery objects for every satellite declared in values.yaml
+version: 0.1.0

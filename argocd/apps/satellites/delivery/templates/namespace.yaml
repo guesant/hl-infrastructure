@@ -1,0 +1,12 @@
+{{- range .Values.satellites }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .name }}-delivery
+  labels:
+    kargo.akuity.io/project: "true"
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+{{- end }}

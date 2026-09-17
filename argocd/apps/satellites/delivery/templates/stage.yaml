@@ -1,0 +1,31 @@
+{{- range .Values.satellites }}
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: prod
+  namespace: {{ .name }}-delivery
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  requestedFreight:
+    - origin:
+        kind: Warehouse
+        name: {{ .name }}
+      sources:
+        direct: true
+  promotionTemplate:
+    spec:
+      steps:
+        - uses: argocd-update
+          config:
+            apps:
+              - name: {{ .childApp }}
+                namespace: argocd
+                sources:
+                  - repoURL: https://github.com/guesant/hl-infrastructure.git
+                    helm:
+                      images:
+                        - key: {{ .valuesPath }}
+                          value: {{ .imageTagValue | quote }}
+{{- end }}

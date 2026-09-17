@@ -30,147 +30,37 @@ if [[ ! "$name" =~ ^[a-z][a-z0-9-]*$ ]]; then
   exit 2
 fi
 
-delivery_ns="${name}-delivery"
-chart_dir="argocd/apps/satellites/$name/delivery"
-app_file="argocd/applications/satellites/$name/delivery.yaml"
+values_file="argocd/apps/satellites/delivery/values.yaml"
+image_tag_value="main@\${{ imageFrom(\"$image_repo\").Digest }}"
 
-if [ -e "$chart_dir" ] || [ -e "$app_file" ]; then
-  echo "$chart_dir or $app_file already exists; edit directly instead" >&2
+if yq -e ".satellites[] | select(.name == \"$name\")" "$values_file" >/dev/null 2>&1; then
+  echo "$name already exists in $values_file; edit it directly or pick a different name" >&2
   exit 1
 fi
 
-mkdir -p "$chart_dir/templates"
+new_entry="$(jq -n \
+  --arg name "$name" \
+  --arg imageRepo "$image_repo" \
+  --arg childApp "$child_app" \
+  --arg valuesPath "$values_path" \
+  --arg imageTagValue "$image_tag_value" \
+  '{
+    name: $name,
+    imageRepo: $imageRepo,
+    childApp: $childApp,
+    valuesPath: $valuesPath,
+    imageTagValue: $imageTagValue,
+    imageSelectionStrategy: "Digest",
+    constraint: "main",
+    strictSemvers: true,
+    discoveryLimit: 5
+  }')"
 
-cat >"$chart_dir/Chart.yaml" <<EOF
-apiVersion: v2
-name: $delivery_ns
-description: Kargo project that promotes the $name image into the Argo CD Application
-version: 0.1.0
-EOF
+yq -i ".satellites += [$new_entry]" "$values_file"
 
-cat >"$chart_dir/values.yaml" <<EOF
-imageTagValue: main@\${{ imageFrom("$image_repo").Digest }}
-EOF
+delivery_ns="${name}-delivery"
 
-cat >"$chart_dir/templates/project.yaml" <<EOF
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Project
-metadata:
-  name: $delivery_ns
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
-EOF
-
-cat >"$chart_dir/templates/project-config.yaml" <<EOF
-apiVersion: kargo.akuity.io/v1alpha1
-kind: ProjectConfig
-metadata:
-  name: $delivery_ns
-  namespace: $delivery_ns
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
-spec:
-  promotionPolicies:
-    - stage: prod
-      autoPromotionEnabled: true
-EOF
-
-cat >"$chart_dir/templates/warehouse.yaml" <<EOF
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Warehouse
-metadata:
-  name: $name
-  namespace: $delivery_ns
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
-spec:
-  interval: 2m0s
-  freightCreationPolicy: Automatic
-  subscriptions:
-    - image:
-        repoURL: $image_repo
-        imageSelectionStrategy: Digest
-        constraint: main
-        strictSemvers: true
-        discoveryLimit: 5
-EOF
-
-cat >"$chart_dir/templates/stage.yaml" <<EOF
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Stage
-metadata:
-  name: prod
-  namespace: $delivery_ns
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
-spec:
-  requestedFreight:
-    - origin:
-        kind: Warehouse
-        name: $name
-      sources:
-        direct: true
-  promotionTemplate:
-    spec:
-      steps:
-        - uses: argocd-update
-          config:
-            apps:
-              - name: $child_app
-                namespace: argocd
-                sources:
-                  - repoURL: https://github.com/guesant/hl-infrastructure.git
-                    helm:
-                      images:
-                        - key: $values_path
-                          value: {{ .Values.imageTagValue | quote }}
-EOF
-
-mkdir -p "$(dirname "$app_file")"
-cat >"$app_file" <<EOF
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: $delivery_ns
-  namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
-spec:
-  project: satellites
-  source:
-    repoURL: https://github.com/guesant/hl-infrastructure.git
-    targetRevision: main
-    path: $chart_dir
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: $delivery_ns
-  syncPolicy:
-    managedNamespaceMetadata:
-      labels:
-        kargo.akuity.io/project: "true"
-        pod-security.kubernetes.io/enforce: restricted
-        pod-security.kubernetes.io/warn: restricted
-        pod-security.kubernetes.io/audit: restricted
-    automated:
-      selfHeal: true
-      prune: true
-    syncOptions:
-      - CreateNamespace=true
-      - ServerSideApply=true
-      - FailOnSharedResource=true
-      - PruneLast=true
-      - PrunePropagationPolicy=foreground
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m
-EOF
-
-echo "wrote $chart_dir/ and $app_file" >&2
+echo "added $name to $values_file" >&2
 echo >&2
 echo "two hand-reviewed edits still needed:" >&2
 echo >&2

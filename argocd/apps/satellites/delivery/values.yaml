@@ -1,0 +1,10 @@
+satellites:
+  - name: blog
+    imageRepo: ghcr.io/guesant/blog
+    childApp: blog
+    valuesPath: application.deployment.image.tag
+    imageTagValue: main@${{ imageFrom("ghcr.io/guesant/blog").Digest }}
+    imageSelectionStrategy: Digest
+    constraint: main
+    strictSemvers: true
+    discoveryLimit: 5

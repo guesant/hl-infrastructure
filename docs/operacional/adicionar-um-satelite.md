@@ -1,128 +1,49 @@
 # Adicionar um satélite novo
 
-Um satélite é uma `Application` do ArgoCD que aponta para a pasta de GitOps de outro repositório, dentro do projeto `satellites`. A aplicação raiz em [argocd/root](https://github.com/guesant/hl-infrastructure/tree/main/argocd/root) sincroniza sozinha tudo que existir dentro de [argocd/applications](https://github.com/guesant/hl-infrastructure/tree/main/argocd/applications), então registrar um satélite novo é só adicionar um arquivo em `argocd/applications/satellites/`; nenhum passo manual no cluster é necessário.
+Um satélite é uma `Application` do ArgoCD que aponta para a pasta de GitOps de outro repositório, dentro do projeto `satellites`. A aplicação raiz em [argocd/root](https://github.com/guesant/hl-infrastructure/tree/main/argocd/root) sincroniza sozinha tudo que existir dentro de [argocd/applications](https://github.com/guesant/hl-infrastructure/tree/main/argocd/applications); a `Application` de um satélite novo, porém, não é mais um arquivo próprio, é um item numa lista, gerado pelo chart `argocd/apps/satellites/launcher` a partir de `values.yaml`. Nenhum passo manual no cluster é necessário para essa parte.
 
-Este formato existe para um satélite que vive num repositório de terceiro; o único satélite deste cluster, o blog, vive direto neste repositório (veja "Por que o blog não é um satélite de verdade" em [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md)) e não segue esse formato. Um satélite novo, de um repositório separado, se cria com `just satellite-add nome https://github.com/org/repo.git caminho/gitops/applications`, que escreve o arquivo abaixo em `argocd/applications/satellites/` e imprime os passos seguintes (commitar, dar push, conferir com `just status`); o modelo existe aqui só para quem quiser entender o que a recipe escreve ou editar um satélite depois de criado:
+Este formato existe para um satélite que vive num repositório de terceiro; o único satélite deste cluster, o blog, vive direto neste repositório (veja "Por que o blog não é um satélite de verdade" em [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md)) e não segue esse formato. Um satélite novo, de um repositório separado, se cria com:
 
-```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: nome-do-satelite
-  namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-  annotations:
-    argocd.argoproj.io/sync-wave: "10"
-spec:
-  project: satellites
-  source:
-    repoURL: https://github.com/guesant/outro-repositorio.git
-    targetRevision: main
-    path: caminho/para/gitops/applications
-    directory:
-      recurse: true
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: argocd
-  revisionHistoryLimit: 3
-  syncPolicy:
-    automated:
-      selfHeal: true
-      prune: true
-      allowEmpty: false
-    syncOptions:
-      - ServerSideApply=true
-      - FailOnSharedResource=true
-      - PruneLast=true
-      - PrunePropagationPolicy=foreground
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m
+```bash
+just satellite-add nome https://github.com/org/repo.git caminho/gitops/applications
 ```
 
-O `project: satellites` é obrigatório: esse projeto do Argo está restrito a recursos de namespace, com três exceções liberadas: `Namespace` (para o Argo criar e rotular o namespace de cada satélite), `StorageClass` e o `Project` do Kargo, que é de escopo de cluster porque um projeto dele é também um namespace. Um satélite não pode criar `ClusterRole`, `CustomResourceDefinition` ou qualquer outro recurso de escopo de cluster; se o outro repositório precisar disso, esse recurso pertence a este repositório, não a um satélite.
+A recipe acrescenta um item à lista `satellites` de `argocd/apps/satellites/launcher/values.yaml` e recusa um nome já existente. `argocd/apps/satellites/launcher/templates/application.yaml` itera essa lista com `{{- range .Values.satellites }}` e emite, para cada item, a mesma `Application` que antes era escrita à mão por arquivo; [gerar várias instâncias de um recurso com Helm](../aprender/helm-templating-de-lista.md) explica o mecanismo geral, e [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md#satelites-e-entrega-do-kargo-um-chart-com-array-nao-um-arquivo-por-instancia) explica por que esse desenho venceu a alternativa nativa do ArgoCD, o `ApplicationSet`.
 
-O `finalizers` com `resources-finalizer.argocd.argoproj.io` também é obrigatório: é ele que faz a remoção do arquivo do git remover do cluster o que a `Application` criou, em vez de deixar recursos órfãos; o que precisa sobreviver a isso (banco, volume) leva `Delete=false`, descrito adiante. A onda `10` e o bloco `syncPolicy` são os mesmos de todo `Application` daqui, e [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) explica o que cada opção resolve. Copie o bloco inteiro; um satélite sem `retry`, por exemplo, fica travado em erro na primeira vez que uma CRD demorar a subir.
+O item da lista tem quatro campos: `name`, `repoURL`, `path` (a pasta, dentro do outro repositório, que contém só os objetos de controle do Argo daquele satélite, não os manifestos da aplicação em si) e `syncWave` (opcional, `10` por padrão). O `project: satellites` e o bloco de `syncPolicy` que o template emite são os mesmos de todo `Application` deste repositório; [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) explica o que cada opção de `syncPolicy` resolve e por que o projeto `satellites` é restrito a recursos de namespace, com `Namespace`, `StorageClass` e o `Project` do Kargo como as três exceções de escopo de cluster liberadas.
 
-O caminho em `source.path` deve apontar para uma pasta que contenha só os objetos de controle do Argo (`Application` e afins) daquele outro repositório, não os manifestos da aplicação em si; quem interpreta esses objetos de controle e sincroniza os manifestos de verdade é o Argo, recursivamente, a partir dali.
+Depois de rodar a recipe:
 
-Depois de commitar o arquivo novo e dar push em `main` deste repositório, o Argo detecta a mudança sozinho no próximo ciclo de sincronização (por padrão, a cada três minutos) e cria a aplicação. Confirme com `just status`.
+```bash
+just render-charts
+git add argocd/apps/satellites/launcher/values.yaml
+git commit
+git push
+just status
+```
+
+O Argo detecta a mudança sozinho no próximo ciclo de sincronização (por padrão, a cada três minutos), porque a `Application` `satellites-launcher` já sincroniza automaticamente. `just status` confirma que a `Application` nova apareceu e está `Synced`/`Healthy`.
 
 ## O que o outro repositório precisa declarar
 
-Os `Application` filhos, dentro da pasta de GitOps do outro repositório, devem repetir o mesmo bloco de `syncPolicy` acima. A onda neles é livre, porque o Argo só compara ondas entre irmãos da mesma `Application` pai.
+Os `Application` filhos, dentro da pasta de GitOps do outro repositório, devem repetir o mesmo bloco de `syncPolicy` que `argocd/apps/satellites/launcher/templates/application.yaml` declara. A onda neles é livre, porque o Argo só compara ondas entre irmãos da mesma `Application` pai.
 
 ### Atualização automática de imagem
 
-O Kargo já roda no cluster, e a promoção de imagem de um satélite é declarada num projeto de entrega próprio, separado do namespace da aplicação: uma pasta como `argocd/apps/satellites/<nome>/delivery`, sincronizada por uma `Application` do projeto `satellites` que cria o namespace `<nome>-delivery` já com o label `kargo.akuity.io/project: "true"`, para o Kargo adotá-lo em vez de tentar criar um segundo. O nome não pode ser o mesmo do namespace da aplicação, porque um `Project` do Kargo é também um namespace. `just satellite-delivery-add nome ghcr.io/org/imagem application-filha caminho.do.values` escreve essa pasta inteira e a `Application` de entrega, e termina imprimindo as duas edições que continuam manuais por precisarem de revisão humana (a anotação `authorized-stage` e o `ignoreDifferences` do `root`, ambas descritas adiante). O modelo que a recipe segue é o do blog em [argocd/apps/satellites/blog/delivery](https://github.com/guesant/hl-infrastructure/tree/main/argocd/apps/satellites/blog/delivery):
+O Kargo já roda no cluster, e a promoção de imagem de um satélite é declarada num projeto de entrega, com o mesmo tratamento em lista: `argocd/apps/satellites/delivery/values.yaml` tem uma lista `satellites`, e os templates desse chart (`namespace.yaml`, `project.yaml`, `project-config.yaml`, `warehouse.yaml`, `stage.yaml`) emitem, por item, o namespace `<nome>-delivery` já com o label `kargo.akuity.io/project: "true"` e as labels de Pod Security, mais os quatro objetos do Kargo. O nome do satélite não pode coincidir com o namespace da própria aplicação, porque um `Project` do Kargo é também um namespace.
 
-```yaml
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Project
-metadata:
-  name: nome-do-satelite-delivery
----
-apiVersion: kargo.akuity.io/v1alpha1
-kind: ProjectConfig
-metadata:
-  name: nome-do-satelite-delivery
-  namespace: nome-do-satelite-delivery
-spec:
-  promotionPolicies:
-    - stage: prod
-      autoPromotionEnabled: true
----
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Warehouse
-metadata:
-  name: app
-  namespace: nome-do-satelite-delivery
-spec:
-  interval: 2m0s
-  subscriptions:
-    - image:
-        repoURL: ghcr.io/guesant/nome-da-imagem
-        imageSelectionStrategy: Digest
-        constraint: main
-        strictSemvers: true
----
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Stage
-metadata:
-  name: prod
-  namespace: nome-do-satelite-delivery
-spec:
-  requestedFreight:
-    - origin:
-        kind: Warehouse
-        name: app
-      sources:
-        direct: true
-  promotionTemplate:
-    spec:
-      steps:
-        - uses: argocd-update
-          config:
-            apps:
-              - name: nome-da-application-filha
-                namespace: argocd
-                sources:
-                  - repoURL: https://github.com/guesant/hl-infrastructure.git
-                    helm:
-                      images:
-                        - key: caminho.do.values.para.a.tag
-                          value: main@${{ imageFrom("ghcr.io/guesant/nome-da-imagem").Digest }}
+```bash
+just satellite-delivery-add nome ghcr.io/org/imagem application-filha caminho.do.values
 ```
 
-O `Warehouse` acompanha a tag `main` pela estratégia `Digest`: cada vez que a pipeline do outro repositório publica e o digest atrás da tag muda, nasce um `Freight` novo, e a política de promoção automática o leva ao `Stage` `prod`. O passo `argocd-update` grava `main@sha256:...` como parâmetro Helm da própria `Application`, sem commit em nenhum repositório; o git continua declarando a tag base como ponto de partida, e o digest corrente fica visível em `kubectl -n argocd get application nome -o yaml` e na UI do Kargo. Se o satélite renderiza a imagem a partir de um chart, o `value` precisa produzir o formato que o campo do chart espera; renderize e confira antes de ligar.
+O item que a recipe acrescenta tem estes campos: `name`, `imageRepo` (o repositório da imagem publicada), `childApp` (o nome da `Application` que a promoção atualiza), `valuesPath` (o caminho do values Helm que recebe a tag, por exemplo `application.deployment.image.tag`), `imageTagValue` (a expressão `main@${{ imageFrom("...").Digest }}` já montada com o repositório certo) e os campos do `Warehouse` (`imageSelectionStrategy`, `constraint`, `strictSemvers`, `discoveryLimit`, todos com um valor padrão sensato). O `Warehouse` acompanha a tag `main` pela estratégia `Digest`: cada vez que a pipeline do outro repositório publica e o digest atrás da tag muda, nasce um `Freight` novo, e a política de promoção automática o leva ao `Stage` `prod`. O passo `argocd-update` grava `main@sha256:...` como parâmetro Helm da própria `Application`, sem commit em nenhum repositório; o git continua declarando a tag base como ponto de partida, e o digest corrente fica visível em `kubectl -n argocd get application nome -o yaml` e na UI do Kargo. Se o satélite renderiza a imagem a partir de um chart, o valor precisa produzir o formato que o campo do chart espera; renderize e confira antes de ligar. Quando a imagem for publicada só com tags imutáveis `sha-<commit>` e sem tag móvel, edite `imageSelectionStrategy` para `NewestBuild`, acrescente `allowTagsRegexes: ["^sha-[0-9a-f]{40}$"]` e troque `imageTagValue` para usar `imageFrom(...).Tag`.
 
-Duas coisas acompanham esse bloco. A `Application` filha precisa carregar a anotação `kargo.akuity.io/authorized-stage: nome-do-satelite-delivery:prod`, que é a prova de que quem pode editar aquela `Application` consentiu com aquele `Stage` a editar; sem ela a promoção falha com erro explícito. E a `Application` `root` deste repositório precisa de um `ignoreDifferences` para `/spec/source/helm/parameters` dessa `Application`, como já existe para o blog em `argocd/root/application.yaml`, senão o `selfHeal` do root devolve a tag do git a cada reconciliação. Se a expressão `${{ ... }}` for escrita dentro de um template Helm deste repositório, ela precisa ser protegida como texto literal, porque o Helm tentaria interpretá-la.
+A recipe recusa um nome já existente e termina imprimindo duas edições que continuam manuais, porque tocam arquivos fora da lista:
 
-Quando a imagem for publicada só com tags imutáveis `sha-<commit>` e sem tag móvel, troque a estratégia por `NewestBuild` com `allowTagsRegexes: ["^sha-[0-9a-f]{40}$"]` e use `imageFrom(...).Tag` no `value`.
+1. A `Application` filha (a que a recipe chamou de `childApp`) precisa carregar a anotação `kargo.akuity.io/authorized-stage: <nome>-delivery:prod`, a prova de que quem pode editar aquela `Application` consentiu com aquele `Stage` a editar; sem ela a promoção falha com erro explícito.
+2. A `Application` `root` deste repositório precisa de um `ignoreDifferences` para `/spec/source/helm/parameters` dessa `Application`, como já existe para o blog em `argocd/root/application.yaml`, senão o `selfHeal` do root devolve a tag do git a cada reconciliação.
+
+Depois das duas edições, o fluxo de commit é o mesmo do satélite: `just render-charts` para conferir, `git add`/`commit`/`push`, `just status`.
 
 ### Um banco Postgres
 
@@ -146,7 +67,7 @@ spec:
       owner: app
 ```
 
-O `Cluster` não declara `storageClass`: a classe padrão do cluster é a única que existe, `local-path` com `Retain`, e a política de admissão não é necessária porque não há outra classe a escolher. `Prune=false,Delete=false` no `Cluster` protege os dados de um erro de GitOps em dois momentos distintos: `Prune=false` faz o Argo se recusar a apagá-lo quando o arquivo some do repositório, e `Delete=false` o preserva quando a própria `Application` é apagada, porque toda `Application` daqui carrega o finalizer `resources-finalizer.argocd.argoproj.io`, que faz um `git rm` do arquivo dela levar junto tudo o que ela criou. Sem a segunda opção, remover o satélite do git apagaria o banco. O volume só vai embora por uma remoção manual e deliberada.
+O `Cluster` não declara `storageClass`: a classe padrão do cluster é a única que existe, `local-path` com `Retain`, e a política de admissão não é necessária porque não há outra classe a escolher. `Prune=false,Delete=false` no `Cluster` protege os dados de um erro de GitOps em dois momentos distintos: `Prune=false` faz o Argo se recusar a apagá-lo quando o arquivo some do repositório, e `Delete=false` o preserva quando a própria `Application` é apagada, porque toda `Application` daqui carrega o finalizer `resources-finalizer.argocd.argoproj.io`, que faz um `git rm` do arquivo dela levar junto tudo o que ela criou. Sem a segunda opção, remover o satélite do git apagaria o banco. O volume só vai embora por uma remoção manual e deliberada. Este objeto não faz parte do array das duas seções anteriores, porque um banco é dado com estado dedicado, não estrutura repetível sem variação; cada satélite que precisar de um declara o `Cluster` acima diretamente.
 
 Este `Cluster` não tem backup contínuo em object storage: o operador `cnpg-barman-plugin` que fornecia isso foi removido do cluster de propósito. Sem ele, a perda do volume é perda total dos dados do satélite; veja [estado fora do git](estado-fora-do-git.md). Reinstalar o plugin é um pré-requisito antes de qualquer satélite novo poder declarar `spec.plugins` com `barman-cloud.cloudnative-pg.io`.
 
@@ -154,4 +75,4 @@ A senha do role criado por `bootstrap.initdb.owner` fica de fora do git de prop�
 
 ## Continue por aqui
 
-Para entender a razão de existir dessa separação entre a aplicação raiz e os satélites, e o que cada opção de `syncPolicy` resolve, veja [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) na arquitetura. Para entender o caminho inteiro de uma imagem publicada até o pod, e o que fazer quando nada promove, veja [rollout de imagens](../arquitetura/rollout-de-imagens.md).
+Para entender a razão de existir dessa separação entre a aplicação raiz e os satélites, o mecanismo de array por trás de `satellite-add`/`satellite-delivery-add`, e o que cada opção de `syncPolicy` resolve, veja [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) na arquitetura. Para entender o caminho inteiro de uma imagem publicada até o pod, e o que fazer quando nada promove, veja [rollout de imagens](../arquitetura/rollout-de-imagens.md).
