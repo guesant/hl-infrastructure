@@ -12,6 +12,7 @@ exclude_docs: |
 
 theme:
   name: material
+  custom_dir: ../overrides
   language: pt-BR
   palette:
     - media: "(prefers-color-scheme: light)"
@@ -55,6 +56,7 @@ nav:
       - OWASP: aprender/owasp.md
       - MITRE ATT&CK: aprender/mitre-attack.md
       - Zero trust: aprender/zero-trust.md
+      - Diátaxis: aprender/diataxis.md
   - Arquitetura:
       - arquitetura/index.md
       - "Ansible: as roles do bootstrap": arquitetura/ansible.md
@@ -88,6 +90,9 @@ nav:
   - Contribuindo:
       - contribuindo/index.md
       - Convenções de escrita: contribuindo/convencoes-de-escrita.md
+      - Normas de redação técnica: contribuindo/normas-de-redacao-tecnica.md
+      - Voz e tom: contribuindo/voz-e-tom.md
+      - Aviso sobre conteúdo assistido por IA: contribuindo/aviso-sobre-ia.md
 
 markdown_extensions:
   - admonition
