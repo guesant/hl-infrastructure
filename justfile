@@ -270,11 +270,11 @@ security-gitleaks: (_build "gitleaks")
 [doc("osv-scanner over every dependency manifest")]
 security-osv-scanner: (_build "osv-scanner")
     {{run}} hl-infra/osv-scanner:{{tools_hash}} \
-        scan source --recursive --experimental-exclude rendered --experimental-exclude .tofu --allow-no-lockfiles /repo
+        scan source --recursive --experimental-exclude .build --experimental-exclude .cache --allow-no-lockfiles /repo
 
 [doc("trivy filesystem scan for vulnerabilities and secrets")]
 security-trivy-fs: (_build "trivy")
-    {{run}} hl-infra/trivy:{{tools_hash}} fs --scanners vuln,secret --skip-dirs rendered --skip-dirs .tofu /repo
+    {{run}} hl-infra/trivy:{{tools_hash}} fs --scanners vuln,secret --skip-dirs .build --skip-dirs .cache /repo
 
 [doc("ast-grep structural rules from .config/ast-grep")]
 quality-ast-grep: (_build "ast-grep") (_build "shell")
@@ -286,15 +286,15 @@ quality-ast-grep: (_build "ast-grep") (_build "shell")
 infra-conftest: (_build "conftest")
     {{run}} hl-infra/conftest:{{tools_hash}} test --no-color --parser hcl2 --policy .config/conftest/tofu tofu/*/*.tf
 
-[doc("kubescape NSA and MITRE frameworks over the rendered charts and argocd/, failing below the recorded score")]
+[doc("kubescape NSA and MITRE frameworks over the .build/rendered charts and argocd/, failing below the recorded score")]
 infra-kubescape: infra-render-charts (_build "kubescape")
-    {{run}} hl-infra/kubescape:{{tools_hash}} scan framework nsa,mitre rendered argocd --compliance-threshold 78 --logger warning
+    {{run}} hl-infra/kubescape:{{tools_hash}} scan framework nsa,mitre .build/rendered argocd --compliance-threshold 78 --logger warning
 
-[doc("trivy over every deployed image: fail on a fixable critical CVE, write a CycloneDX SBOM per image to sbom/")]
+[doc("trivy over every deployed image: fail on a fixable critical CVE, write a CycloneDX SBOM per image to .build/sbom/")]
 security-trivy-images: infra-render-charts (_build "shell") (_build "trivy")
-    {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/list-images.sh > images.txt
-    TRIVY_IMAGE=hl-infra/trivy:{{tools_hash}} .tools/trivy-images.sh images.txt sbom
-    rm -f images.txt
+    {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/list-images.sh > .build/images.txt
+    TRIVY_IMAGE=hl-infra/trivy:{{tools_hash}} .tools/trivy-images.sh .build/images.txt .build/sbom
+    rm -f .build/images.txt
 
 [doc("commitlint over the commits between two refs, by default the unpushed ones")]
 lint-commits from="origin/main" to="HEAD": (_build "commitlint")
@@ -304,11 +304,11 @@ lint-commits from="origin/main" to="HEAD": (_build "commitlint")
 hooks:
     git config core.hooksPath .config/githooks
 
-[doc("List what cleanup would delete (caches, rendered output), without deleting anything")]
+[doc("List what cleanup would delete (caches, build output), without deleting anything")]
 cleanup-dry-run:
     git clean -ndx {{cleanup_excludes}}
 
-[doc("Delete untracked build artifacts (caches, rendered charts, tofu mirrors); keeps inventory, kubeconfig, known_hosts, key material and PENDENCIAS.local.md")]
+[doc("Delete untracked build artifacts (caches, rendered charts, tofu mirrors, build reports); keeps inventory, kubeconfig, known_hosts, key material and PENDENCIAS.local.md")]
 [confirm("This deletes every untracked file outside git except the ones this repo keeps deliberately (inventory, kubeconfig, known_hosts, key material, PENDENCIAS.local.md). Continue?")]
 cleanup:
     git clean -fdx {{cleanup_excludes}}
@@ -321,7 +321,7 @@ lint-domain-expiry: (_build-ops)
 quality-jscpd: (_build "jscpd")
     {{run}} hl-infra/jscpd:{{tools_hash}} jscpd --config .config/jscpd.json
 
-[doc("Render the six Helm charts into rendered/")]
+[doc("Render the six Helm charts into .build/rendered/")]
 infra-render-charts: _build-helm
     {{run}} --entrypoint bash {{helm_image}} .tools/render-charts.sh
 
@@ -329,16 +329,16 @@ infra-render-charts: _build-helm
 infra-helm-lint: _build-helm
     {{run}} --entrypoint bash {{helm_image}} .tools/lint-charts.sh
 
-[doc("kube-linter over the rendered charts and argocd/")]
+[doc("kube-linter over the .build/rendered charts and argocd/")]
 infra-kube-linter: infra-render-charts (_build "kube-linter")
     {{run}} hl-infra/kube-linter:{{tools_hash}} \
-        lint --config .config/kube-linter.yaml --ignore-paths rendered/cilium.yaml rendered argocd/root argocd/applications
+        lint --config .config/kube-linter.yaml --ignore-paths .build/rendered/cilium.yaml .build/rendered argocd/root argocd/applications
 
-[doc("checkov over the rendered charts and argocd/")]
+[doc("checkov over the .build/rendered charts and argocd/")]
 infra-checkov: infra-render-charts (_build "checkov")
     {{run}} hl-infra/checkov:{{tools_hash}} \
-        --directory rendered --directory argocd/root --directory argocd/applications --framework kubernetes \
-        --check CKV_K8S_16,CKV_K8S_18,CKV_K8S_19 --skip-path rendered/cilium.yaml --compact
+        --directory .build/rendered --directory argocd/root --directory argocd/applications --framework kubernetes \
+        --check CKV_K8S_16,CKV_K8S_18,CKV_K8S_19 --skip-path .build/rendered/cilium.yaml --compact
 
 [doc("kubeconform schema validation plus the pinned-image check")]
 infra-kubeconform: infra-render-charts (_build "kubeconform") (_build "shell")
@@ -346,12 +346,12 @@ infra-kubeconform: infra-render-charts (_build "kubeconform") (_build "shell")
     {{run}} hl-infra/kubeconform:{{tools_hash}} \
         -strict -ignore-missing-schemas -summary -n 2 -cache .cache/kubeconform \
         -schema-location default -schema-location '{{crd_schema_location}}' \
-        rendered argocd/root argocd/applications
+        .build/rendered argocd/root argocd/applications
     {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-images-pinned.sh
 
-[doc("trivy misconfiguration scan over the rendered charts and tofu/")]
+[doc("trivy misconfiguration scan over the .build/rendered charts and tofu/")]
 infra-trivy-config: infra-render-charts (_build "trivy")
-    {{run}} hl-infra/trivy:{{tools_hash}} config --misconfig-scanners kubernetes,terraform --skip-files rendered/cilium.yaml .
+    {{run}} hl-infra/trivy:{{tools_hash}} config --misconfig-scanners kubernetes,terraform --skip-files .build/rendered/cilium.yaml .
 
 [doc("Build the MkDocs site in strict mode")]
 docs-build:

@@ -7,8 +7,7 @@ exclude_paths:
   - .claude/
   - argocd/
   - docs/
-  - rendered/
-  - site/
+  - .build/
   - .cache/
   - ansible/group_vars/all/secrets.sops.yaml
   - ansible/group_vars/all/authorized_keys.yml

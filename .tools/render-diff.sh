@@ -7,7 +7,7 @@ out="$(mktemp)"
 trap 'rm -f "$out"' EXIT
 
 status=0
-for part in rendered argocd; do
+for part in .build/rendered argocd; do
   diff -ruN --label "base/$part" --label "head/$part" "$before/$part" "$after/$part" >>"$out" || status=$?
   [ "$status" -le 1 ] || exit "$status"
 done

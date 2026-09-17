@@ -3,12 +3,9 @@
 tofu/**/.terraform/
 tofu/**/*.tfstate.backup
 tofu/**/*.tfplan
-rendered/
-site/
 *.agekey
 keys.txt
 sops-age-key.txt
 operator-se.txt
-sbom/
-images.txt
 .cache/
+.build/

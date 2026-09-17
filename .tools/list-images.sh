@@ -4,10 +4,10 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
-[ -d rendered ] || { echo "rendered/ is missing; render the charts first" >&2; exit 2; }
+[ -d .build/rendered ] || { echo ".build/rendered/ is missing; render the charts first" >&2; exit 2; }
 
 {
-  grep -rhoE '^[[:space:]]*(-[[:space:]]*)?(image|imageName):[[:space:]]*"?[^"{}[:space:]]+' rendered argocd \
+  grep -rhoE '^[[:space:]]*(-[[:space:]]*)?(image|imageName):[[:space:]]*"?[^"{}[:space:]]+' .build/rendered argocd \
     | sed -E 's/^[[:space:]]*(-[[:space:]]*)?(image|imageName):[[:space:]]*"?//'
 
   while IFS= read -r values; do

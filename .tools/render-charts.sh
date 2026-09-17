@@ -3,7 +3,7 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 vars_file="$repo_root/ansible/group_vars/all/versions.yml"
-out_dir="$repo_root/rendered"
+out_dir="$repo_root/.build/rendered"
 
 argocd_chart_version="$(grep -oE 'argocd_chart_version:\s*[0-9.]+' "$vars_file" | grep -oE '[0-9.]+')"
 argocd_chart_sha256="$(grep -oE 'argocd_chart_sha256:\s*[0-9a-f]+' "$vars_file" | grep -oE '[0-9a-f]{64}')"

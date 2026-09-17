@@ -399,7 +399,7 @@ jobs:
       - name: osv-scanner
         run: >-
           docker run --rm -v "$PWD":/repo -w /repo hl-infra/osv-scanner
-          scan source --recursive --experimental-exclude rendered --allow-no-lockfiles /repo
+          scan source --recursive --experimental-exclude .build --experimental-exclude .cache --allow-no-lockfiles /repo
 
   trivy-fs:
     runs-on: ubuntu-24.04
@@ -426,7 +426,7 @@ jobs:
         run: >-
           mkdir -p .cache/trivy &&
           docker run --rm -v "$PWD":/repo -w /repo -v "$PWD/.cache/trivy":/root/.cache/trivy hl-infra/trivy
-          fs --scanners vuln,secret --skip-dirs rendered /repo
+          fs --scanners vuln,secret --skip-dirs .build --skip-dirs .cache /repo
 
   sopssecrets:
     runs-on: ubuntu-24.04
@@ -542,8 +542,8 @@ jobs:
       - name: kube-linter
         run: >-
           docker run --rm -v "$PWD":/repo -w /repo hl-infra/kube-linter
-          lint --config .config/kube-linter.yaml --ignore-paths rendered/cilium.yaml
-          --format sarif --output kube-linter.sarif rendered argocd
+          lint --config .config/kube-linter.yaml --ignore-paths .build/rendered/cilium.yaml
+          --format sarif --output kube-linter.sarif .build/rendered argocd
 
       - name: Upload SARIF
         if: always()
@@ -587,8 +587,8 @@ jobs:
       - name: checkov
         run: >-
           docker run --rm -v "$PWD":/repo -w /repo hl-infra/checkov
-          --directory rendered --directory argocd --framework kubernetes
-          --check CKV_K8S_16,CKV_K8S_18,CKV_K8S_19 --skip-path rendered/cilium.yaml
+          --directory .build/rendered --directory argocd --framework kubernetes
+          --check CKV_K8S_16,CKV_K8S_18,CKV_K8S_19 --skip-path .build/rendered/cilium.yaml
           --output sarif --output-file-path results --soft-fail
 
       - name: Upload SARIF
@@ -647,7 +647,7 @@ jobs:
           -strict -ignore-missing-schemas -summary -n 2 -cache .cache/kubeconform
           -schema-location default
           -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
-          rendered argocd/root argocd/applications
+          .build/rendered argocd/root argocd/applications
 
       - name: Every image has a tag or digest
         run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/shell .tools/check-images-pinned.sh
@@ -693,7 +693,7 @@ jobs:
         run: >-
           mkdir -p .cache/trivy &&
           docker run --rm -v "$PWD":/repo -w /repo -v "$PWD/.cache/trivy":/root/.cache/trivy hl-infra/trivy
-          config --misconfig-scanners kubernetes,terraform --skip-files rendered/cilium.yaml .
+          config --misconfig-scanners kubernetes,terraform --skip-files .build/rendered/cilium.yaml .
 
   tofu:
     runs-on: ubuntu-24.04
@@ -772,7 +772,7 @@ jobs:
       - name: kubescape NSA and MITRE frameworks
         run: >-
           docker run --rm -v "$PWD":/repo -w /repo hl-infra/kubescape
-          scan framework nsa,mitre rendered argocd
+          scan framework nsa,mitre .build/rendered argocd
           --compliance-threshold 78 --logger warning
 
   trivy-images:
@@ -812,14 +812,14 @@ jobs:
         run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
 
       - name: No fixable critical vulnerability in a deployed image, and an SBOM for each
-        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/shell .tools/list-images.sh > images.txt && .tools/trivy-images.sh images.txt sbom
+        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/shell .tools/list-images.sh > .build/images.txt && .tools/trivy-images.sh .build/images.txt .build/sbom
 
       - name: Upload SBOMs
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: sbom-cyclonedx
-          path: sbom/
+          path: .build/sbom/
           if-no-files-found: ignore
           retention-days: 30
 

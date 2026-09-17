@@ -6,5 +6,5 @@
   "minLines": 8,
   "minTokens": 70,
   "reporters": ["console", "json"],
-  "output": "./.cache/jscpd-report"
+  "output": "./.build/jscpd-report"
 }
