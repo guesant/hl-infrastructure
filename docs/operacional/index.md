@@ -12,7 +12,10 @@ A rotina de quem já conhece o repositório: implantar mudanças, manter o clust
 - [Rodar os quality gates localmente](rodar-quality-gates-localmente.md): executa o mesmo conjunto de checks que a CI roda, antes de abrir uma pull request.
 - [Adicionar um satélite novo](adicionar-um-satelite.md): registra uma nova aplicação no padrão de app-of-apps do ArgoCD.
 - [Estado fora do git](estado-fora-do-git.md): tudo o que o cluster precisa e não está versionado, onde vive e como se regenera.
-- [Restaurar o node do zero](restaurar-o-node.md): reconstruir o cluster, confirmar a chave age e recuperar o Postgres do backup.
+- [Restaurar um volume retido](restaurar-um-volume-retido.md): reconectar um `PersistentVolume` que ficou `Released` a um `PersistentVolumeClaim` novo, sem perder o dado.
+- [Restaurar o node do zero](restaurar-o-node.md): reconstruir o cluster, confirmar a chave age e o que se perde de fato, incluindo o Postgres sem backup hoje.
+- [Resposta a incidente](resposta-a-incidente.md): conter, investigar e recuperar quando algo além do operador leu, mudou ou controla o cluster.
+- [Revisão periódica](revisao-periodica.md): a checagem recorrente de permissão e exposição que a CI não enxerga sozinha.
 
 ## Continue por aqui
 

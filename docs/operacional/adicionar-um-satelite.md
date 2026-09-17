@@ -10,12 +10,12 @@ just satellite-add nome https://github.com/org/repo.git caminho/gitops/applicati
 
 A recipe acrescenta um item à lista `satellites` de `argocd/apps/satellites/launcher/values.yaml` e recusa um nome já existente. `argocd/apps/satellites/launcher/templates/application.yaml` itera essa lista com `{{- range .Values.satellites }}` e emite, para cada item, a mesma `Application` que antes era escrita à mão por arquivo; [gerar várias instâncias de um recurso com Helm](../aprender/helm-templating-de-lista.md) explica o mecanismo geral, e [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md#satelites-e-entrega-do-kargo-um-chart-com-array-nao-um-arquivo-por-instancia) explica por que esse desenho venceu a alternativa nativa do ArgoCD, o `ApplicationSet`.
 
-O item da lista tem quatro campos: `name`, `repoURL`, `path` (a pasta, dentro do outro repositório, que contém só os objetos de controle do Argo daquele satélite, não os manifestos da aplicação em si) e `syncWave` (opcional, `10` por padrão). O `project: satellites` e o bloco de `syncPolicy` que o template emite são os mesmos de todo `Application` deste repositório; [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) explica o que cada opção de `syncPolicy` resolve e por que o projeto `satellites` é restrito a recursos de namespace, com `Namespace`, `StorageClass` e o `Project` do Kargo como as três exceções de escopo de cluster liberadas.
+O item da lista tem os campos `name`, `repoURL`, `path` (a pasta, dentro do outro repositório, que contém só os objetos de controle do Argo daquele satélite, não os manifestos da aplicação em si) e `syncWave` (opcional, `10` por padrão). O `project: satellites` e o bloco de `syncPolicy` que o template emite são os mesmos de todo `Application` deste repositório; [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) explica o que cada opção de `syncPolicy` resolve e por que o projeto `satellites` é restrito a recursos de namespace, com `Namespace`, `StorageClass` e o `Project` do Kargo como exceções de escopo de cluster liberadas.
 
 Depois de rodar a recipe:
 
 ```bash
-just render-charts
+just infra-render-charts
 git add argocd/apps/satellites/launcher/values.yaml
 git commit
 git push
@@ -30,7 +30,7 @@ Os `Application` filhos, dentro da pasta de GitOps do outro repositório, devem 
 
 ### Atualização automática de imagem
 
-O Kargo já roda no cluster, e a promoção de imagem de um satélite é declarada num projeto de entrega, com o mesmo tratamento em lista: `argocd/apps/satellites/delivery/values.yaml` tem uma lista `satellites`, e os templates desse chart (`namespace.yaml`, `project.yaml`, `project-config.yaml`, `warehouse.yaml`, `stage.yaml`) emitem, por item, o namespace `<nome>-delivery` já com o label `kargo.akuity.io/project: "true"` e as labels de Pod Security, mais os quatro objetos do Kargo. O nome do satélite não pode coincidir com o namespace da própria aplicação, porque um `Project` do Kargo é também um namespace.
+O Kargo já roda no cluster, e a promoção de imagem de um satélite é declarada num projeto de entrega, com o mesmo tratamento em lista: `argocd/apps/satellites/delivery/values.yaml` tem uma lista `satellites`, e os templates desse chart (`namespace.yaml`, `project.yaml`, `project-config.yaml`, `warehouse.yaml`, `stage.yaml`) emitem, por item, o namespace `<nome>-delivery` já com o label `kargo.akuity.io/project: "true"` e as labels de Pod Security, mais os demais objetos do Kargo que esses templates declaram. O nome do satélite não pode coincidir com o namespace da própria aplicação, porque um `Project` do Kargo é também um namespace.
 
 ```bash
 just satellite-delivery-add nome ghcr.io/org/imagem application-filha caminho.do.values
@@ -43,7 +43,7 @@ A recipe recusa um nome já existente e termina imprimindo duas edições que co
 1. A `Application` filha (a que a recipe chamou de `childApp`) precisa carregar a anotação `kargo.akuity.io/authorized-stage: <nome>-delivery:prod`, a prova de que quem pode editar aquela `Application` consentiu com aquele `Stage` a editar; sem ela a promoção falha com erro explícito.
 2. A `Application` `root` deste repositório precisa de um `ignoreDifferences` para `/spec/source/helm/parameters` dessa `Application`, como já existe para o blog em `argocd/root/application.yaml`, senão o `selfHeal` do root devolve a tag do git a cada reconciliação.
 
-Depois das duas edições, o fluxo de commit é o mesmo do satélite: `just render-charts` para conferir, `git add`/`commit`/`push`, `just status`.
+Depois das duas edições, o fluxo de commit é o mesmo do satélite: `just infra-render-charts` para conferir, `git add`/`commit`/`push`, `just status`.
 
 ### Um banco Postgres
 

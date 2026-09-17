@@ -6,7 +6,7 @@ Toda mudança que toca o node ou o cluster segue as mesmas oito etapas, na ordem
 
 2. **Delimite o raio de explosão.** Escreva em uma frase o que para de funcionar se a mudança der errado: só o componente, o namespace de um satélite, o acesso SSH ao node, ou tudo. Mudanças em `firewall`, `ssh_hardening`, `k3s` e `cilium` estão sempre na última categoria e exigem estar na frente do console do hipervisor.
 
-3. **Garanta o caminho de volta.** Para o Postgres, confirme que o último backup do CNPG é recente (`kubectl -n blog get cluster postgres -o jsonpath='{.status.lastSuccessfulBackup}'`). Para o node, saiba qual `git revert` desfaz a mudança e se um `just bootstrap` com o revert basta ou se o componente guarda estado fora do git ([estado fora do git](estado-fora-do-git.md)).
+3. **Garanta o caminho de volta.** Para o Postgres, lembre que não há backup contínuo em object storage hoje, de propósito ([estado fora do git](estado-fora-do-git.md)); a única proteção contra uma mudança que mexa no volume é o `PersistentVolume` em `Retain` e o `Prune=false,Delete=false` do `Cluster`, então uma mudança que toque `storage` ou reinstale o satélite merece a cautela extra de conferir esses dois antes de aplicar. Para o node, saiba qual `git revert` desfaz a mudança e se um `just bootstrap` com o revert basta ou se o componente guarda estado fora do git.
 
 4. **Faça o dry-run.** `just bootstrap-check` para o Ansible; `argocd app diff` ou `kubectl diff` para manifestos do Argo; `just infra-render-charts` seguido dos gates para versão de chart. O dry-run precisa mostrar exatamente a mudança esperada e nada mais; qualquer linha inesperada volta para a etapa 1.
 
