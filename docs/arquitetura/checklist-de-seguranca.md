@@ -58,7 +58,7 @@ Cada linha junta recomendações equivalentes de fontes diferentes numa frase s�
 | Varredura de segredo no push | Atende | Secret scanning e push protection do GitHub ligados, mais o job `gitleaks` sobre o histórico | PL, AC |
 | Selo OpenSSF Best Practices (CII) | Recusado | Programa pensado para projetos com comunidade externa e mantenedores múltiplos; o esforço de preencher o questionário não compra proteção real para um homelab de um operador só | AC |
 | Idade mínima do repositório antes de confiar nele | Não se aplica | O Scorecard zera essa nota para todo repositório com menos de noventa dias de criado, sem olhar o conteúdo; é um sinal para quem avalia dependência de terceiros, não para o dono do próprio repositório | AC |
-| Fuzzing do código | Não se aplica | Sem código de aplicação para fuzzar; o blog tem os próprios gates no repositório dele | AC |
+| Fuzzing do código | Não se aplica | Sem código de aplicação para submeter a fuzzing; o blog tem os próprios gates no repositório dele | AC |
 | Verificação de proteção de branch pela API clássica | Não atende | O Scorecard só lê a API antiga de proteção de branch, que devolve "not protected" neste repositório porque a proteção real vive nos rulesets (`preservacao`, `protecao`, `qualidade`, linhas acima); a ferramenta não enxerga o que já está em vigor | AC |
 
 ## CI/CD e supply chain
@@ -194,7 +194,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | Monitoramento de expiração de certificado e de domínio | Atende | O TLS público é da Cloudflare e renova sozinho, e o job `domain-expiry` consulta o RDAP e falha na execução agendada a trinta dias do vencimento | AC |
 | Backup de tudo que é crítico, com restauração testada | Não atende | O Postgres do blog não tem backup desde a remoção do barman; só `.sops.yaml` e o state têm cópia, no git | AC, CP |
 | Plano de resposta a incidente e revisão pós-incidente | Atende | [Resposta a incidente](../operacional/resposta-a-incidente.md) com conter, preservar evidência, erradicar e recuperar, e um exercício trimestral junto da revisão periódica | LU, AC |
-| Proteção contra DDoS e WAF na frente do serviço público | Atende | Proxy da Cloudflare com a proteção de DDoS do plano gratuito, regras customizadas de WAF em `tofu/cloudflare/waf.tf` (varreduras por software que a zona não roda e o hostname operacional restrito ao webhook) e rate limit nos fluxos de login do Keycloak | CP, OW |
+| Proteção contra DDoS e WAF na frente do serviço público | Parcial | Proxy da Cloudflare com a proteção de DDoS do plano gratuito e rate limit nos fluxos de login do Keycloak, ambos em `tofu/cloudflare/waf.tf`; a regra customizada de WAF que também restringia varreduras por software e o hostname operacional foi retirada porque a fase que ela precisa (`http_request_firewall_custom`) não está disponível no plano gratuito da zona, e o próprio túnel Cloudflare já restringe o hostname operacional de forma independente na regra de ingress | CP, OW |
 
 ## Governança
 

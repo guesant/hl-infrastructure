@@ -22,6 +22,7 @@ Esta página não rastreia `versions.yml` para o gate de deriva de documentaçã
 | `cilium_cli_version` | Versão do binário `cilium-cli`, usado só para inspeção (`cilium status`), nunca para instalar | role `cilium` |
 | `argocd_chart_version` | Versão do chart Helm do ArgoCD | role `argocd` |
 | `argocd_chart_sha256` | SHA-256 do `.tgz` do chart do Argo CD nessa versão, conferido da mesma forma | role `argocd`, `.tools/render-charts.sh` |
+| `kube_bench_version` | Versão do binário `kube-bench` que o Ansible instala no node para inspeção manual | role `kube_bench` |
 
 O cert-manager, o operador CloudNativePG, o sops-secrets-operator e o Kargo não têm entrada aqui: desde que passaram a ser `Application` do ArgoCD em vez de uma role, a versão de cada um vive na própria dependency do `Chart.yaml` local ([cert-manager](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/cert-manager/Chart.yaml), [cnpg](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/cnpg/Chart.yaml), [sops-secrets-operator](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/sops-secrets-operator/Chart.yaml), [kargo](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/platform/kargo/Chart.yaml)), e o Renovate atualiza cada uma pelo gerenciador nativo de chart Helm, sem precisar do regex customizado que os dois restantes usam.
 
