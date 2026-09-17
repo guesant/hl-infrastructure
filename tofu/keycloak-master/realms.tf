@@ -42,4 +42,10 @@ resource "keycloak_realm" "realms" {
       failure_reset_time_seconds = 43200
     }
   }
+
+  web_authn_passwordless_policy {
+    passwordless_passkeys_enabled = true
+    discoverable_credential       = "required"
+    user_verification_requirement = "required"
+  }
 }

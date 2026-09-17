@@ -15,6 +15,14 @@ resource "keycloak_required_action" "configure_totp" {
   default_action = true
 }
 
+resource "keycloak_required_action" "webauthn_register_passwordless" {
+  realm_id       = data.keycloak_realm.realm.id
+  alias          = "webauthn-register-passwordless"
+  name           = "Webauthn Register Passwordless"
+  enabled        = true
+  default_action = false
+}
+
 resource "keycloak_openid_client_scope" "groups" {
   realm_id               = data.keycloak_realm.realm.id
   name                   = "groups"
