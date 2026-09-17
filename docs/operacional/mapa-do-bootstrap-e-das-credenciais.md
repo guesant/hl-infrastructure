@@ -4,9 +4,9 @@
 
 Esta página responde, num lugar só, o que precisa existir para o node funcionar do zero, em que ordem, quem depende de quem, onde vive cada credencial e o que muda entre o primeiro bootstrap e a manutenção. Ela não substitui o passo a passo do [primeiro bootstrap](primeiro-bootstrap.md); ela explica o porquê de cada passo estar onde está, para que uma mudança futura seja feita no lugar certo.
 
-## As cinco camadas, e a ordem entre elas
+## As camadas, e a ordem entre elas
 
-Tudo o que o repositório declara cabe em cinco camadas, e cada uma só faz sentido depois da anterior.
+Tudo o que o repositório declara cabe em camadas bem definidas, e cada uma só faz sentido depois da anterior.
 
 A primeira é o host: o Raspberry Pi com Debian, SSH e um usuário com chave. Ela não está no repositório; é o único pré-requisito humano, descrito em [restaurar o node](restaurar-o-node.md). O que o repositório exige dela é pouco: um IP alcançável, um usuário que consegue `sudo` e a chave pública do operador já em `authorized_keys`, porque a role `ssh_hardening` reconcilia esse arquivo e recusa aplicar uma lista que não contenha a chave da própria conexão.
 

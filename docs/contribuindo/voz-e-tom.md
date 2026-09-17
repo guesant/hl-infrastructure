@@ -9,7 +9,7 @@ As [convenções de escrita](convencoes-de-escrita.md) tratam de mecânica: quan
 | Operacional | Direto, imperativo, sem rodeio antes do comando | Quem está aqui já decidiu o que fazer; a página só precisa dizer como |
 | Avisos e riscos | Direto ao ponto de ser seco | Um aviso hedgeado ("pode ser que em alguns casos isso cause um problema") é fácil de ignorar; um aviso direto não é |
 
-O fio comum entre as quatro é evitar linguagem hedgeada, que soa cautelosa mas não diz nada: "pode ajudar a garantir", "em geral costuma ser uma boa prática considerar", "é importante notar que". Se uma frase é verdadeira, ela pode ser escrita como afirmação; se não é sempre verdadeira, a exceção merece ser nomeada, não escondida atrás de um advérbio de cautela.
+O fio comum entre essas seções é evitar linguagem hedgeada, que soa cautelosa mas não diz nada: "pode ajudar a garantir", "em geral costuma ser uma boa prática considerar", "é importante notar que". Se uma frase é verdadeira, ela pode ser escrita como afirmação; se não é sempre verdadeira, a exceção merece ser nomeada, não escondida atrás de um advérbio de cautela.
 
 ## Antes e depois
 

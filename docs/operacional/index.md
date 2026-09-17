@@ -4,7 +4,7 @@ A rotina de quem já conhece o repositório: implantar mudanças, manter o clust
 
 - [Primeiro bootstrap](primeiro-bootstrap.md): provisiona um Raspberry Pi do zero até um cluster k3s funcionando, com Cilium, cert-manager, CloudNativePG, ArgoCD, sops-secrets-operator e o Kargo instalados.
 - [Mapa do bootstrap e das credenciais](mapa-do-bootstrap-e-das-credenciais.md): as camadas, quem depende de quem, onde vive cada credencial, o que cada módulo do OpenTofu lê e o que separa bootstrap de manutenção.
-- [Metodologia de mudança](metodologia-de-mudanca.md): as oito etapas de toda mudança no node ou no cluster.
+- [Metodologia de mudança](metodologia-de-mudanca.md): as etapas de toda mudança no node ou no cluster.
 - [Checklist operacional](checklist.md): o que conferir, e quando foi conferido pela última vez, a cada bootstrap ou upgrade.
 - [Preflight e dry-run do bootstrap](preflight-e-dry-run.md): confere o acesso ao node e mostra o que um bootstrap mudaria, sem aplicar nada.
 - [Rotacionar credenciais](rotacionar-credenciais.md): certificados e token de join do k3s, e a chave age do sops-secrets-operator, cada um num playbook próprio.

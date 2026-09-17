@@ -6,7 +6,7 @@ O blog é público, mas tudo o mais que roda no node (o Argo CD, o Grafana, o co
 
 ## O que fica de cada lado
 
-Três peças, em três ferramentas, e cada uma só faz o que a outra não consegue.
+Cada peça mora numa ferramenta diferente, e cada uma só faz o que a outra não consegue.
 
 O Ansible, pela role `tailscale`, instala o cliente e o `dnsmasq` no node pelo apt (com a chave do repositório conferida contra um SHA-256 declarado em `defaults/main.yml` da role, reaproveitando o índice atualizado por uma role anterior na mesma hora) e liga o node à tailnet; a role `firewall` abre a zona `tailscale`, com SSH, DNS e as duas portas HTTP do ingress. Isso é estado do host, e o host é território do Ansible, como o k3s e o firewalld. A descrição task a task está em [Ansible: as roles do bootstrap](ansible.md).
 

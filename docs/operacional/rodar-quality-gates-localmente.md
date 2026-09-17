@@ -75,7 +75,7 @@ just infra-kubescape
 just infra-helm-lint
 ```
 
-Os cinco primeiros recebem esses manifestos já renderizados em `.build/rendered/`, que a própria receita gera antes de rodar; `infra-helm-lint` é diferente, roda `helm lint` direto sobre o código-fonte dos charts wrapper locais, sem depender de renderização nenhuma.
+Os primeiros recebem esses manifestos já renderizados em `.build/rendered/`, que a própria receita gera antes de rodar; `infra-helm-lint` é diferente, roda `helm lint` direto sobre o código-fonte dos charts wrapper locais, sem depender de renderização nenhuma.
 
 Para conferir que o site de documentação constrói sem aviso, o mesmo que a CI publica:
 

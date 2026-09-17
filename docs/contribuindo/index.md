@@ -1,6 +1,6 @@
 # Contribuindo
 
-Esta documentação é dividida em três partes, cada uma respondendo a uma pergunta diferente que quem lê pode estar fazendo.
+Esta documentação é dividida em partes, cada uma respondendo a uma pergunta diferente que quem lê pode estar fazendo.
 
 O [Aprender](../aprender/index.md) responde "o que é essa ferramenta ou esse conceito", independente deste repositório. Uma página aqui deve continuar fazendo sentido para alguém que nunca ouviu falar do hl-infrastructure; ela explica o conceito, não a decisão deste projeto sobre ele.
 

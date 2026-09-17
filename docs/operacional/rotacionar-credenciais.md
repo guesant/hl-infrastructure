@@ -1,6 +1,6 @@
 # Rotacionar credenciais
 
-Cada credencial abaixo tem rotina de rotação própria. Três vivem no node, cada uma num playbook separado de `site.yml`: duas do k3s, que interrompem o cluster por alguns segundos, e a chave age do sops-secrets-operator, que não interrompe nada mas precisa do passo extra de resincronizar `.sops.yaml`. Duas vivem na Cloudflare: o token do túnel do blog e o API token que o OpenTofu usa. Nenhuma delas deve mudar como efeito colateral de um bootstrap ou de um `apply`.
+Cada credencial abaixo tem rotina de rotação própria. Os certificados e o token de join do k3s vivem no node, cada um num playbook separado de `site.yml`, e interrompem o cluster por alguns segundos; a chave age do sops-secrets-operator também vive lá, mas não interrompe nada, embora precise do passo extra de resincronizar `.sops.yaml`. O token do túnel do blog e o API token que o OpenTofu usa vivem na Cloudflare. Nenhuma delas deve mudar como efeito colateral de um bootstrap ou de um `apply`.
 
 ## Certificados
 
