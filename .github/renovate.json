@@ -66,6 +66,16 @@
         "kubernetes"
       ],
       "pinDigests": true
+    },
+    {
+      "description": "The blog image tag in the chart values is written by Kargo, not by Renovate",
+      "matchManagers": [
+        "helm-values"
+      ],
+      "matchPackageNames": [
+        "ghcr.io/guesant/blog"
+      ],
+      "enabled": false
     }
   ],
   "customManagers": [
