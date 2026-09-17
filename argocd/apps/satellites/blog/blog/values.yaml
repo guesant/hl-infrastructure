@@ -34,7 +34,8 @@ application:
       public-assets:
         emptyDir: {}
       resume-cache:
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: resume-cache
       tmp:
         emptyDir: {}
     volumeMounts:
@@ -148,3 +149,4 @@ application:
         PORTFOLIO_ADMIN_OIDC_CLIENT_ID: blog
         PORTFOLIO_ADMIN_OIDC_GROUP: admins
         TECTONIC_BUNDLE: https://data1.fullyjustified.net/tlextras-2022.0r0.tar
+        TECTONIC_ONLY_CACHED: "false"
