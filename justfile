@@ -208,6 +208,19 @@ tofu module *args: _require-host-sops
 tofu-apply module: _require-host-sops
     SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} .tools/tofu-run.sh {{module}} apply
 
+[doc("List every OpenTofu module under tofu/")]
+tofu-list:
+    @for dir in tofu/*/; do basename "$dir"; done
+
+[doc("Run tofu plan for every module in tofu/, one after another")]
+tofu-plan-all: _require-host-sops
+    SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} .tools/tofu-run-all.sh plan
+
+[doc("Apply every OpenTofu module in tofu/, one after another; each apply still confirms interactively")]
+[confirm("This changes real infrastructure outside the cluster, for every module. Continue?")]
+tofu-apply-all: _require-host-sops
+    SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} .tools/tofu-run-all.sh apply
+
 [doc("Generate the OpenTofu state passphrase into tofu/state.sops.env without printing it; --rotate or --finish-rotation to change it")]
 tofu-state-passphrase *args: _require-host-sops
     SOPS_AGE_KEY_FILE={{sops_identity}} .tools/tofu-state-passphrase.sh {{args}}
