@@ -1,6 +1,6 @@
 # Checklist de segurança
 
-Esta página compila as recomendações de dezoito guias públicos sobre segurança de GitOps, DevOps, Linux, Terraform e Kubernetes, e confronta cada uma com o que este repositório e o cluster fazem hoje. Ela complementa o [mapa de controles](mapa-de-controles.md), que parte do que o repositório garante e mostra a evidência; aqui o ponto de partida é o que a literatura pede, então aparecem também as lacunas, as recomendações que não se aplicam a um cluster de um nó só e as que foram recusadas de propósito.
+Esta página compila as recomendações de guias públicos sobre segurança de GitOps, DevOps, Linux, Terraform e Kubernetes, e confronta cada uma com o que este repositório e o cluster fazem hoje. Ela complementa o [mapa de controles](mapa-de-controles.md), que parte do que o repositório garante e mostra a evidência; aqui o ponto de partida é o que a literatura pede, então aparecem também as lacunas, as recomendações que não se aplicam a um cluster de um nó só e as que foram recusadas de propósito.
 
 A avaliação foi feita em 15 de setembro de 2026, lendo o repositório, o cluster e o node, sem alterar nada. Ela não tem marcador de deriva, porque depende de estado vivo que nenhum gate enxerga, então vale reler a tabela depois de uma mudança grande de infraestrutura e atualizar a data.
 
@@ -47,7 +47,7 @@ Cada linha junta recomendações equivalentes de fontes diferentes numa frase s�
 | Merge só por pull request com checks obrigatórios | Parcial | O ruleset exige PR e o job `gate`, mas o dono está isento e hoje empurra direto em `main`; cada push aparece como bypass | CP, PL, CY, TG |
 | Revisão por outra pessoa antes do merge | Não se aplica | Um operador só; `required_approving_review_count` é zero, e o `ci` substitui o segundo par de olhos no que é automatizável | CP, PL |
 | Aprovação extra para mudanças sensíveis (RBAC, políticas de rede, projetos do Argo) | Parcial | `CODEOWNERS` cobre `argocd/root/`, os workflows e o `justfile`, mas sem segunda pessoa a revisão é só formal | CP, PL, CY |
-| Commits assinados e assinatura verificada na CI | Não atende | Nenhum dos últimos cinquenta commits de `main` é assinado, e o ruleset não exige assinatura | CP, PL |
+| Commits assinados e assinatura verificada na CI | Não atende | Nenhum commit recente de `main` é assinado, e o ruleset não exige assinatura | CP, PL |
 | Chave de assinatura em hardware | Não atende | Depende de haver assinatura; a identidade SOPS do operador já vive na Secure Enclave, mas a do git não | CP |
 | MFA na conta do Git | Atende | Declarado no [modelo de ameaças](modelo-de-ameacas.md) como a proteção real de `main`; a API não expõe esse dado para conferência automática | CP, PL, LU, AC |
 | Repositório de configuração privado | Recusado | O repositório é público de propósito, como portfólio; por isso nenhum valor sensível fica em texto claro, os IDs da Cloudflare ficam cifrados e o `gitleaks` varre o histórico | PL |
