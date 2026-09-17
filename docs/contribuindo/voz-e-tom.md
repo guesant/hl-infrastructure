@@ -17,7 +17,7 @@ Estes dois exemplos usam o texto real deste repositório como "depois"; o "antes
 
 Antes: "É importante notar que o campo `project` deve ser configurado corretamente para `satellites`, pois isso pode ajudar a garantir que os recursos sejam devidamente restritos ao namespace."
 
-Depois, de [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md): "O projeto `satellites` é deliberadamente restrito: só pode criar recursos de escopo de namespace, com três exceções liberadas explicitamente no `clusterResourceWhitelist` do `AppProject`, `Namespace`, `StorageClass` e o `Project` do Kargo. Uma `Application` sob esse projeto não consegue criar uma `ClusterRole` ou uma `CustomResourceDefinition`, mesmo que o operador do Argo quisesse; a permissão simplesmente não existe no projeto."
+Depois, de [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md): "O projeto `satellites` é deliberadamente restrito: só pode criar recursos de escopo de namespace, com exceções liberadas explicitamente no `clusterResourceWhitelist` do `AppProject`: `Namespace`, `StorageClass` e o `Project` do Kargo. Uma `Application` sob esse projeto não consegue criar uma `ClusterRole` ou uma `CustomResourceDefinition`, mesmo que o operador do Argo quisesse; a permissão simplesmente não existe no projeto."
 
 A diferença não é só de tamanho. A versão hedgeada não diz o que aconteceria se o campo estivesse errado nem por que a restrição existe; a versão real nomeia o mecanismo (a permissão não existe no projeto, não é uma convenção que alguém possa violar por descuido) e deixa explícito que as exceções liberadas são uma lista fechada e deliberada, não uma lacuna.
 
