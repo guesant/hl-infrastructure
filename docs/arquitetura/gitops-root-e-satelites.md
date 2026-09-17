@@ -71,3 +71,7 @@ O `Cluster` do CNPG do blog apresentou, por um tempo, uma pista falsa: `kubectl 
 ## Por que dois projetos, e não um só
 
 A alternativa mais simples seria um único `AppProject` com permissão ampla para tudo. O problema é que isso apagaria justamente a garantia que se quer: que um repositório de aplicação (potencialmente escrito e mantido com menos rigor de revisão do que este repositório de infraestrutura) não consiga, por acidente ou não, tocar em nada além do próprio namespace. Separar os dois projetos torna essa garantia parte da configuração do próprio ArgoCD, não uma convenção que depende de disciplina humana para se manter.
+
+## Continue por aqui
+
+[Adicionar um satélite novo](../operacional/adicionar-um-satelite.md) aplica essa separação na prática, com o `just` que escreve a `Application`.

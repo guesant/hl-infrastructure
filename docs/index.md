@@ -7,3 +7,7 @@ A documentação está dividida em três partes, cada uma respondendo a uma perg
 Se você está mexendo pela primeira vez neste repositório, comece pelo [primeiro bootstrap](operacional/primeiro-bootstrap.md); se alguma ferramenta que ele instala for nova para você, veja o conceito correspondente em [Aprender](aprender/index.md) antes. Se você já tem o ambiente rodando e só precisa lembrar como fazer algo específico, vá direto ao [operacional](operacional/index.md). Se você quer entender por que uma peça é do jeito que é antes de mexer nela, comece pela [arquitetura](arquitetura/index.md).
 
 A seção [contribuindo](contribuindo/index.md) explica como esta documentação em si é organizada e escrita, para quem for adicionar ou editar uma página.
+
+## Continue por aqui
+
+[Primeiro bootstrap](operacional/primeiro-bootstrap.md) é o ponto de partida prático; [contribuindo](contribuindo/index.md) explica como esta documentação em si é escrita.

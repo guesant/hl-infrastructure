@@ -15,3 +15,7 @@ Como nenhuma dessas roles usa `helm upgrade`, também não existe um release de 
 ## Versões pinadas
 
 Cada chart instalado pelo Ansible tem sua versão declarada como uma variável própria em `ansible/group_vars/all/versions.yml` (`argocd_chart_version`, `cilium_version`), acompanhada do SHA-256 do `.tgz` (`argocd_chart_sha256`, `cilium_chart_sha256`): a role puxa o chart para `/etc/rancher/charts`, confere o digest e renderiza a partir do arquivo, nunca direto do índice do repositório, e o `render-charts.sh` faz a mesma conferência na CI. O Renovate rastreia cada uma dessas variáveis contra o índice Helm real do respectivo repositório, com um período de carência de sete dias antes de propor qualquer bump. A versão dos componentes locais (`operators/` e `platform/`) sincronizados pelo Argo foge a essa regra de propósito: ela vive na `dependency` do `Chart.yaml` local de cada um, e o Renovate a atualiza pelo gerenciador nativo de chart Helm, sem regex customizado. Esse arquivo é o real, não um exemplo: o que o Renovate mergeia em `main` é o que o próximo `bootstrap` instala. Veja [Variáveis](variaveis.md) para a lista completa.
+
+## Continue por aqui
+
+[A pipeline de CI](ci.md) mostra onde o digest de cada chart é conferido antes de renderizar; [variáveis](variaveis.md) lista cada versão declarada.

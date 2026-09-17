@@ -13,3 +13,7 @@ A rotina de quem já conhece o repositório: implantar mudanças, manter o clust
 - [Adicionar um satélite novo](adicionar-um-satelite.md): registra uma nova aplicação no padrão de app-of-apps do ArgoCD.
 - [Estado fora do git](estado-fora-do-git.md): tudo o que o cluster precisa e não está versionado, onde vive e como se regenera.
 - [Restaurar o node do zero](restaurar-o-node.md): reconstruir o cluster, confirmar a chave age e recuperar o Postgres do backup.
+
+## Continue por aqui
+
+Se uma tarefa daqui depende de entender por que o repositório é montado desse jeito, a [arquitetura](../arquitetura/index.md) explica.

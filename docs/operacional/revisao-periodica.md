@@ -18,3 +18,7 @@ A revisão é uma leitura, não uma mudança. Cada achado vira uma linha no [che
 ## Registrar a revisão
 
 Depois de conferir, atualize `last_review` em `.config/security-review.conf` com a data do dia e commite junto com o que a revisão tiver mudado.
+
+## Continue por aqui
+
+[Checklist de segurança](../arquitetura/checklist-de-seguranca.md) é onde cada achado desta revisão vira uma linha permanente.

@@ -75,3 +75,7 @@ flowchart TB
 - [Mapa de controles](mapa-de-controles.md) inventaria cada garantia com a evidência que a prova.
 - [Checklist de segurança](checklist-de-seguranca.md) confronta o repositório e o cluster com as recomendações de guias públicos de GitOps, DevOps, Linux, Terraform e Kubernetes, com as fontes e as lacunas.
 - [Variáveis](variaveis.md) lista toda variável de `ansible/group_vars/all/`, separando versões de segredos.
+
+## Continue por aqui
+
+O [operacional](../operacional/index.md) aplica essas decisões na prática, com o passo a passo de cada tarefa.

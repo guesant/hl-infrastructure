@@ -23,3 +23,7 @@ Registre o que aconteceu, a causa e o que mudou numa linha do [checklist de segu
 ## Exercício periódico
 
 Uma vez por trimestre, junto com a [revisão periódica](revisao-periodica.md), simule um cenário sem executar as ações destrutivas: escolha um passo deste plano, confirme que os comandos e os links ainda funcionam e que os runbooks citados continuam corretos, e registre a data em `.config/security-review.conf`. Um plano que ninguém exercita envelhece junto com o repositório.
+
+## Continue por aqui
+
+[Restaurar o node do zero](restaurar-o-node.md) cobre o cenário mais severo deste plano, a reconstrução completa; [revisão periódica](revisao-periodica.md) é onde o exercício trimestral fica registrado.
