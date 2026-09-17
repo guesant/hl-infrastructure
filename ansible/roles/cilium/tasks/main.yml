@@ -178,6 +178,7 @@
         owner: root
         group: root
         mode: "0755"
+      check_mode: false
 
     - name: Pull the declared Cilium chart
       ansible.builtin.command: >-
