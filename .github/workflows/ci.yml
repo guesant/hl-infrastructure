@@ -809,7 +809,9 @@ jobs:
           smoke: --version
 
       - name: Render charts
-        run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
+        run: |
+          mkdir -p .build
+          docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/helm .tools/render-charts.sh
 
       - name: No fixable critical vulnerability in a deployed image, and an SBOM for each
         run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/shell .tools/list-images.sh > .build/images.txt && .tools/trivy-images.sh .build/images.txt .build/sbom

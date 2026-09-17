@@ -323,6 +323,7 @@ quality-jscpd: (_build "jscpd")
 
 [doc("Render the six Helm charts into .build/rendered/")]
 infra-render-charts: _build-helm
+    mkdir -p {{justfile_directory()}}/.build
     {{run}} --entrypoint bash {{helm_image}} .tools/render-charts.sh
 
 [doc("helm lint over every local wrapper chart in argocd/apps")]
