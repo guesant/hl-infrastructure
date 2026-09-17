@@ -1,5 +1,4 @@
 
-# IMPORTANT: kubectl must stay within one minor of k3s_version, or the ops image applies manifests the API server rejects.
 ARG KUBECTL_VERSION=v1.36.4
 ARG AGE_PLUGIN_SE_VERSION=0.2.1
 ARG AGE_PLUGIN_SE_SHA256_AARCH64=08b7ae6cc8e62a467dfc90e515339571b5872ca8a952b5dde5186dcad41fbad2

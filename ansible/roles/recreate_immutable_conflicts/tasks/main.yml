@@ -1,5 +1,4 @@
 ---
-# IMPORTANT: kubectl prints this conflict several different ways; match the whole stderr blob, not individual lines.
 - name: Extract the objects a chart upgrade cannot apply in place
   ansible.builtin.set_fact:
     recreate_immutable_conflicts_targets: >-

@@ -23,7 +23,6 @@ provider_installation {
 }
 RC
 
-# IMPORTANT: validate a copy without terraform.tfstate; init reads the committed encrypted state even with -backend=false and fails on the fake passphrase.
 for dir in tofu/*/; do
     name=$(basename "$dir")
     mkdir -p "$work/$name"
