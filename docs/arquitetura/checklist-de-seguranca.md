@@ -2,7 +2,7 @@
 
 Esta página compila as recomendações de guias públicos sobre segurança de GitOps, DevOps, Linux, Terraform e Kubernetes, e confronta cada uma com o que este repositório e o cluster fazem hoje. Ela complementa o [mapa de controles](mapa-de-controles.md), que parte do que o repositório garante e mostra a evidência; aqui o ponto de partida é o que a literatura pede, então aparecem também as lacunas, as recomendações que não se aplicam a um cluster de um nó só e as que foram recusadas de propósito.
 
-A avaliação foi feita em 15 de setembro de 2026, lendo o repositório, o cluster e o node, sem alterar nada. Ela não tem marcador de deriva, porque depende de estado vivo que nenhum gate enxerga, então vale reler a tabela depois de uma mudança grande de infraestrutura e atualizar a data.
+A avaliação foi feita em 17 de setembro de 2026, lendo o repositório, o cluster e o node, sem alterar nada. Ela não tem marcador de deriva, porque depende de estado vivo que nenhum gate enxerga, então vale reler a tabela depois de uma mudança grande de infraestrutura e atualizar a data.
 
 ## As fontes
 
@@ -56,6 +56,10 @@ Cada linha junta recomendações equivalentes de fontes diferentes numa frase s�
 | Log de auditoria do GitHub enviado para fora | Não atende | Sem SIEM; o histórico de bypass do ruleset fica só no GitHub | CP, PL |
 | Política de divulgação de vulnerabilidade | Atende | `SECURITY.md` e o relato privado de vulnerabilidade do GitHub ligado | AC |
 | Varredura de segredo no push | Atende | Secret scanning e push protection do GitHub ligados, mais o job `gitleaks` sobre o histórico | PL, AC |
+| Selo OpenSSF Best Practices (CII) | Recusado | Programa pensado para projetos com comunidade externa e mantenedores múltiplos; o esforço de preencher o questionário não compra proteção real para um homelab de um operador só | AC |
+| Idade mínima do repositório antes de confiar nele | Não se aplica | O Scorecard zera essa nota para todo repositório com menos de noventa dias de criado, sem olhar o conteúdo; é um sinal para quem avalia dependência de terceiros, não para o dono do próprio repositório | AC |
+| Fuzzing do código | Não se aplica | Sem código de aplicação para fuzzar; o blog tem os próprios gates no repositório dele | AC |
+| Verificação de proteção de branch pela API clássica | Não atende | O Scorecard só lê a API antiga de proteção de branch, que devolve "not protected" neste repositório porque a proteção real vive nos rulesets (`preservacao`, `protecao`, `qualidade`, linhas acima); a ferramenta não enxerga o que já está em vigor | AC |
 
 ## CI/CD e supply chain
 
