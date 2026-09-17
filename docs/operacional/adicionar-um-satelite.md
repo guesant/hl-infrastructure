@@ -2,7 +2,7 @@
 
 Um satélite é uma `Application` do ArgoCD que aponta para a pasta de GitOps de outro repositório, dentro do projeto `satellites`. A aplicação raiz em [argocd/root](https://github.com/guesant/hl-infrastructure/tree/main/argocd/root) sincroniza sozinha tudo que existir dentro de [argocd/applications](https://github.com/guesant/hl-infrastructure/tree/main/argocd/applications), então registrar um satélite novo é só adicionar um arquivo em `argocd/applications/satellites/`; nenhum passo manual no cluster é necessário.
 
-Este formato existe para um satélite que vive num repositório de terceiro; o único satélite deste cluster, o blog, vive direto neste repositório (veja "Por que o blog não é um satélite de verdade" em [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md)) e não segue esse formato. Um satélite novo, de um repositório separado, segue o modelo abaixo:
+Este formato existe para um satélite que vive num repositório de terceiro; o único satélite deste cluster, o blog, vive direto neste repositório (veja "Por que o blog não é um satélite de verdade" em [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md)) e não segue esse formato. Um satélite novo, de um repositório separado, se cria com `just satellite-add nome https://github.com/org/repo.git caminho/gitops/applications`, que escreve o arquivo abaixo em `argocd/applications/satellites/` e imprime os passos seguintes (commitar, dar push, conferir com `just status`); o modelo existe aqui só para quem quiser entender o que a recipe escreve ou editar um satélite depois de criado:
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1

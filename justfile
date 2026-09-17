@@ -56,6 +56,10 @@ rotate-age-key *args: _require-host-sops
 kubeconfig:
     echo "export KUBECONFIG={{justfile_directory()}}/{{kubeconfig}}"
 
+[doc("Scaffold an Application for a satellite in another repository: just satellite-add nome https://github.com/org/repo.git caminho/gitops")]
+satellite-add nome repo_url path sync_wave="10":
+    .tools/satellite-add.sh {{nome}} {{repo_url}} {{path}} {{sync_wave}}
+
 [doc("Run kubectl on the node over SSH; the API server is not reachable from anywhere else")]
 kubectl *args:
     {{node_ssh}} k3s kubectl {{args}}
