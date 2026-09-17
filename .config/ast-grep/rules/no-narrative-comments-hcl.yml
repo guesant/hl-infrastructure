@@ -1,0 +1,10 @@
+id: no-narrative-comments-hcl
+language: hcl
+severity: error
+message: "narrative comment not allowed; only tool-directive comments are permitted"
+ignores:
+  - "**/.terraform.lock.hcl"
+rule:
+  kind: comment
+  not:
+    regex: "^#\\s*(tflint-ignore|checkov:skip)"
