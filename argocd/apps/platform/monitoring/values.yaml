@@ -84,13 +84,22 @@ kube-prometheus-stack:
     serviceMonitor:
       metricRelabelings:
         - sourceLabels: [__name__]
-          regex: (apiserver_request_duration_seconds|apiserver_request_sli_duration_seconds|apiserver_request_body_size_bytes|apiserver_response_sizes|apiserver_watch_list_duration_seconds|apiserver_watch_cache_read_wait_seconds|apiserver_watch_events_sizes|etcd_request_duration_seconds|workqueue_work_duration_seconds|workqueue_queue_duration_seconds)_bucket
+          regex: (apiserver_request_duration_seconds|apiserver_request_sli_duration_seconds|apiserver_request_body_size_bytes|apiserver_response_sizes)_bucket
+          action: drop
+        - sourceLabels: [__name__]
+          regex: (apiserver_watch_list_duration_seconds|apiserver_watch_cache_read_wait_seconds|apiserver_watch_events_sizes|etcd_request_duration_seconds)_bucket
+          action: drop
+        - sourceLabels: [__name__]
+          regex: (workqueue_work_duration_seconds|workqueue_queue_duration_seconds)_bucket
           action: drop
   kubelet:
     serviceMonitor:
       cAdvisorMetricRelabelings:
         - sourceLabels: [__name__]
-          regex: container_(network_tcp_usage_total|network_udp_usage_total|tasks_state|memory_failures_total|blkio_device_usage_total|file_descriptors|sockets|threads_max|spec_.*|start_time_seconds|last_seen)
+          regex: container_(network_tcp_usage_total|network_udp_usage_total|tasks_state|memory_failures_total|blkio_device_usage_total)
+          action: drop
+        - sourceLabels: [__name__]
+          regex: container_(file_descriptors|sockets|threads_max|spec_.*|start_time_seconds|last_seen)
           action: drop
         - sourceLabels: [container]
           regex: POD
