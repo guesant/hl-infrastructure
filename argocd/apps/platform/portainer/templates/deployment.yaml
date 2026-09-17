@@ -6,7 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/name: portainer
 spec:
-  replicas: 0
+  replicas: 1
   strategy:
     type: Recreate
   selector:
@@ -68,7 +68,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: portainer
+            claimName: portainer-v2
         - name: tmp
           emptyDir: {}
         - name: admin
