@@ -4,7 +4,7 @@
 
 As variáveis do Ansible vivem em alguns arquivos dentro de [ansible/group_vars/all/](https://github.com/guesant/hl-infrastructure/tree/main/ansible/group_vars/all), que o Ansible mescla como se fossem um só. A separação segue quem escreve cada um e se o conteúdo pode ficar em texto claro: versão de software, hostname e chave pública podem; endereço de rede interna e credencial não, e por isso vão para o arquivo cifrado mesmo quando não são segredo no sentido estrito.
 
-`versions.yml` é versionado e é o arquivo real, sem cópia: toda versão de binário e de chart fica nele, o Renovate abre PR contra ele, e o Ansible, o `render-charts.sh` e a CI leem dele. Uma versão mergeada em `main` é a versão que o próximo `bootstrap` instala, sem passo manual entre os dois.
+`versions.yml` é versionado e é o arquivo real, sem cópia: toda versão de binário e de chart fica nele, o Renovate abre PR contra ele, e o Ansible, o `render-charts.sh` e a CI leem dele. Uma versão mergeada em `main` é a versão que o próximo `bootstrap` instala, sem passo manual no meio.
 
 `secrets.sops.yaml` guarda o que é de cada instalação, rede e segredo, cifrado com SOPS para os mesmos destinatários de `.sops.yaml` e commitado. O Ansible o decifra sozinho ao carregar as variáveis, pelo vars plugin da coleção `community.sops` ligado em `ansible.cfg`, usando a identidade da Secure Enclave do operador; o valor em claro só existe na memória do processo. `secrets.example.yml` é o modelo versionado com placeholders, e o [primeiro bootstrap](../operacional/primeiro-bootstrap.md) é o único lugar que pede para partir dele.
 
@@ -24,7 +24,7 @@ Esta página não rastreia `versions.yml` para o gate de deriva de documentaçã
 | `argocd_chart_sha256` | SHA-256 do `.tgz` do chart do Argo CD nessa versão, conferido da mesma forma | role `argocd`, `.tools/render-charts.sh` |
 | `kube_bench_version` | Versão do binário `kube-bench` que o Ansible instala no node para inspeção manual | role `kube_bench` |
 
-O cert-manager, o operador CloudNativePG, o sops-secrets-operator e o Kargo não têm entrada aqui: desde que passaram a ser `Application` do ArgoCD em vez de uma role, a versão de cada um vive na própria dependency do `Chart.yaml` local ([cert-manager](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/cert-manager/Chart.yaml), [cnpg](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/cnpg/Chart.yaml), [sops-secrets-operator](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/sops-secrets-operator/Chart.yaml), [kargo](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/platform/kargo/Chart.yaml)), e o Renovate atualiza cada uma pelo gerenciador nativo de chart Helm, sem precisar do regex customizado que os dois restantes usam.
+O cert-manager, o operador CloudNativePG, o sops-secrets-operator e o Kargo não têm entrada aqui: desde que passaram a ser `Application` do ArgoCD em vez de uma role, a versão de cada um vive na própria dependency do `Chart.yaml` local ([cert-manager](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/cert-manager/Chart.yaml), [cnpg](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/cnpg/Chart.yaml), [sops-secrets-operator](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/operators/sops-secrets-operator/Chart.yaml), [kargo](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/platform/kargo/Chart.yaml)), e o Renovate atualiza cada uma pelo gerenciador nativo de chart Helm, sem precisar do regex customizado que os demais usam.
 
 ## secrets.sops.yaml
 
@@ -51,7 +51,7 @@ O arquivo é commitado em texto claro porque chave pública não é segredo. A c
 | `tailscale_internal_domain` | Zona DNS que o `dnsmasq` responde só dentro da tailnet, apontando todo nome para o endereço do node | role `tailscale`, `tofu/tailscale/terraform.tfvars` |
 | `tailscale_advertise_tags` | Opcional; tags que o node pede ao entrar na tailnet, só válidas se a ACL da tailnet tiver `tagOwners` para elas | role `tailscale` |
 
-Os dois valores que aparecem também em `tofu/tailscale/terraform.tfvars` precisam bater nos dois lugares, como o hostname do blog precisa bater entre o OpenTofu e o `values.yaml` do blog.
+Os valores que aparecem também em `tofu/tailscale/terraform.tfvars` precisam bater nos lugares correspondentes, como o hostname do blog precisa bater entre o OpenTofu e o `values.yaml` do blog.
 
 A role `sops_age_key` não consome nenhuma variável daqui: ela gera o próprio par de chaves com `age-keygen` direto no node, na primeira execução, em vez de receber um valor pronto de `secrets.sops.yaml`. Veja [Ansible: as roles do bootstrap](ansible.md) para o porquê.
 

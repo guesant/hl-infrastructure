@@ -1,6 +1,6 @@
 # Preflight e dry-run do bootstrap
 
-Antes de aplicar qualquer coisa no node, duas receitas respondem, na ordem, "consigo falar com a máquina certa" e "o que mudaria se eu rodasse agora". Nenhuma das duas altera o node.
+Antes de aplicar qualquer coisa no node, as recipes de verificação respondem, na ordem, "consigo falar com a máquina certa" e "o que mudaria se eu rodasse agora". Nenhuma delas altera o node.
 
 ## Preflight
 

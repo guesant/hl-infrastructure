@@ -13,7 +13,7 @@ O fio comum entre essas seções é evitar linguagem hedgeada, que soa cautelosa
 
 ## Antes e depois
 
-Estes dois exemplos usam o texto real deste repositório como "depois"; o "antes" é uma reescrita hipotética no tom que evitamos, para deixar o contraste concreto.
+Estes exemplos usam o texto real deste repositório como "depois"; o "antes" é uma reescrita hipotética no tom que evitamos, para deixar o contraste concreto.
 
 Antes: "É importante notar que o campo `project` deve ser configurado corretamente para `satellites`, pois isso pode ajudar a garantir que os recursos sejam devidamente restritos ao namespace."
 

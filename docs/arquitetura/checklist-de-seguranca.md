@@ -57,7 +57,7 @@ Cada linha junta recomendações equivalentes de fontes diferentes numa frase s�
 | Política de divulgação de vulnerabilidade | Atende | `SECURITY.md` e o relato privado de vulnerabilidade do GitHub ligado | AC |
 | Varredura de segredo no push | Atende | Secret scanning e push protection do GitHub ligados, mais o job `gitleaks` sobre o histórico | PL, AC |
 | Selo OpenSSF Best Practices (CII) | Recusado | Programa pensado para projetos com comunidade externa e mantenedores múltiplos; o esforço de preencher o questionário não compra proteção real para um homelab de um operador só | AC |
-| Idade mínima do repositório antes de confiar nele | Não se aplica | O Scorecard zera essa nota para todo repositório com menos de noventa dias de criado, sem olhar o conteúdo; é um sinal para quem avalia dependência de terceiros, não para o dono do próprio repositório | AC |
+| Idade mínima do repositório antes de confiar nele | Não se aplica | O Scorecard zera essa nota para todo repositório recém-criado, sem olhar o conteúdo; é um sinal para quem avalia dependência de terceiros, não para o dono do próprio repositório | AC |
 | Fuzzing do código | Não se aplica | Sem código de aplicação para submeter a fuzzing; o blog tem os próprios gates no repositório dele | AC |
 | Verificação de proteção de branch pela API clássica | Não atende | O Scorecard só lê a API antiga de proteção de branch, que devolve "not protected" neste repositório porque a proteção real vive nos rulesets (`preservacao`, `protecao`, `qualidade`, linhas acima); a ferramenta não enxerga o que já está em vigor | AC |
 
@@ -67,7 +67,7 @@ Cada linha junta recomendações equivalentes de fontes diferentes numa frase s�
 | --- | --- | --- | --- |
 | Pipeline versionada e tratada com o mesmo cuidado do produto | Atende | Workflows no git, `permissions` mínimas, sem `persist-credentials`, auditados por `actionlint` e `zizmor` | AC, CP |
 | Actions, imagens e binários pinados | Atende | Actions por SHA, charts e binários por versão com checksum, `FROM` do Dockerfile de ferramentas por digest mantido pelo Renovate, e `pip install --require-hashes` no workflow `docs` a partir de `docs/requirements.in` | HC, PL |
-| Atualização contínua de dependências vulneráveis | Atende | Renovate com sete dias de carência e `osv-scanner` na CI | AC, LU, PL |
+| Atualização contínua de dependências vulneráveis | Atende | Renovate com carência configurada e `osv-scanner` na CI | AC, LU, PL |
 | Varredura de dependências e imagens, bloqueando achados graves | Atende | `osv-scanner`, `trivy-fs` e `trivy config` no `gate` | PL, LU, AC |
 | Lint e análise estática dos manifestos e da IaC | Atende | `kubeconform`, `kube-linter`, `checkov`, `trivy config`, `ansible-lint`, `tofu validate` | PL, CP |
 | SAST no código | Não se aplica | Este repositório não tem código de aplicação; o blog tem os próprios gates no repositório dele | LU, AC |
@@ -104,12 +104,12 @@ Cada linha junta recomendações equivalentes de fontes diferentes numa frase s�
 
 ## Kubernetes
 
-A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022, que ainda fala em PodSecurityPolicy; a recomendação equivalente hoje é o Pod Security Admission, e é assim que a tabela a registra. A fonte MD descreve o que uma equipe implantou, com boa parte dedicada a custo e desempenho; só os itens de segurança entraram. As duas foram lidas por um leitor intermediário, sem acesso ao texto cru.
+A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, que ainda fala em PodSecurityPolicy; a recomendação equivalente hoje é o Pod Security Admission, e é assim que a tabela a registra. A fonte MD descreve o que uma equipe implantou, com boa parte dedicada a custo e desempenho; só os itens de segurança entraram. Ambas foram lidas por um leitor intermediário, sem acesso ao texto cru.
 
 | Recomendação | Status | Situação aqui | Fontes |
 | --- | --- | --- | --- |
 | API server fora da internet, só de redes confiáveis | Atende | Porta 6443 fechada em todas as zonas do firewalld; o único acesso à API é `kubectl` no próprio node, por SSH com chave | K8, SR, SE |
-| Autenticação anônima desligada no API server e no kubelet | Atende | `anonymous-auth=false` no API server; os dois respondem 401 sem credencial, e a porta read-only 10255 está fechada | SR, SE |
+| Autenticação anônima desligada no API server e no kubelet | Atende | `anonymous-auth=false` no API server; ambos respondem 401 sem credencial, e a porta read-only 10255 está fechada | SR, SE |
 | Nenhum binding para `system:unauthenticated` além do mínimo | Atende | Só o `system:public-info-viewer` padrão, que expõe versão e saúde | KA |
 | RBAC com privilégio mínimo e sem conceder criação de roles | Parcial | Revisado, com uma exceção de curinga em cada um dos seguintes: `argocd-application-controller` (aplica qualquer recurso, por desenho do GitOps), `argocd-server` (ações da interface), sops-secrets-operator (cria `Secret` em qualquer namespace) e os componentes do k3s; o kube-bench roda com ClusterRole só de leitura; o Portainer é a exceção maior do lote, com uma `ClusterRoleBinding` para `cluster-admin`, risco aceito porque o próprio propósito dele é gerenciar qualquer recurso do cluster pela interface, sem uma lista fixa de namespaces ou tipos de recurso para restringir; a revisão periódica confere se aparece curinga novo | K8, KA, SR, SE |
 | `system:masters` só no bootstrap | Parcial | O kubeconfig do operador é o de administrador do k3s; não há usuário nominal com permissão menor | K8 |
@@ -191,7 +191,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, de 2022
 | --- | --- | --- | --- |
 | Logs centralizados e alertas de atividade anômala | Parcial | Prometheus e Alertmanager com alertas de host, de cluster e dos endpoints públicos por blackbox; faltam logs centralizados e a entrega dos alertas, que espera o webhook do Discord | LU, AC, PL, CP |
 | Detecção de intrusão ou de comportamento em runtime | Não atende | Hubble observa o tráfego, mas nada alerta sobre ele | LU, SR |
-| Monitoramento de expiração de certificado e de domínio | Atende | O TLS público é da Cloudflare e renova sozinho, e o job `domain-expiry` consulta o RDAP e falha na execução agendada a trinta dias do vencimento | AC |
+| Monitoramento de expiração de certificado e de domínio | Atende | O TLS público é da Cloudflare e renova sozinho, e o job `domain-expiry` consulta o RDAP e falha na execução agendada perto do vencimento | AC |
 | Backup de tudo que é crítico, com restauração testada | Não atende | O Postgres do blog não tem backup desde a remoção do barman; só `.sops.yaml` e o state têm cópia, no git | AC, CP |
 | Plano de resposta a incidente e revisão pós-incidente | Atende | [Resposta a incidente](../operacional/resposta-a-incidente.md) com conter, preservar evidência, erradicar e recuperar, e um exercício trimestral junto da revisão periódica | LU, AC |
 | Proteção contra DDoS e WAF na frente do serviço público | Parcial | Proxy da Cloudflare com a proteção de DDoS do plano gratuito e rate limit nos fluxos de login do Keycloak, ambos em `tofu/cloudflare/waf.tf`; a regra customizada de WAF que também restringia varreduras por software e o hostname operacional foi retirada porque a fase que ela precisa (`http_request_firewall_custom`) não está disponível no plano gratuito da zona, e o próprio túnel Cloudflare já restringe o hostname operacional de forma independente na regra de ingress | CP, OW |

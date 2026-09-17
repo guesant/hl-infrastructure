@@ -17,7 +17,7 @@ kubectl -n cert-manager delete secret internal-ca
 kubectl -n ingress delete secret internal-domain-tls
 ```
 
-O cert-manager percebe o `Secret` da CA ausente, emite outra pelo `ClusterIssuer` autoassinado e, com o certificado do domínio também apagado, reemite `*.guesant.internal` assinado pela CA nova; o Traefik recarrega o certificado sozinho. O passo que não é automático fica do lado dos dispositivos: cada um precisa confiar a CA nova, com a saída de `just internal-ca`, e remover a anterior. Sem rotação deliberada, a CA vale dez anos e mantém a chave ao renovar, de propósito, para que esse passo manual aconteça uma vez só.
+O cert-manager percebe o `Secret` da CA ausente, emite outra pelo `ClusterIssuer` autoassinado e, com o certificado do domínio também apagado, reemite `*.guesant.internal` assinado pela CA nova; o Traefik recarrega o certificado sozinho. O passo que não é automático fica do lado dos dispositivos: cada um precisa confiar a CA nova, com a saída de `just internal-ca`, e remover a anterior. Sem rotação deliberada, a CA tem validade longa e mantém a chave ao renovar, de propósito, para que esse passo manual aconteça uma vez só.
 
 ## Token de join
 
@@ -29,7 +29,7 @@ O git é a fonte do valor, não o node: `k3s_join_token`, cifrado em `ansible/gr
 
 ## Chave age do node
 
-Rotacionar essa chave é em duas fases, porque `.sops.yaml` e o `Secret` do node precisam ficar consistentes o tempo todo, nunca um sem o outro:
+Rotacionar essa chave passa por etapas, porque `.sops.yaml` e o `Secret` do node precisam ficar consistentes o tempo todo, nunca um sem o outro:
 
 ```bash
 just rotate-age-key
@@ -62,7 +62,7 @@ Commite e faça push. O cloudflared que já está rodando continua conectado com
 
 ## API token da Cloudflare e passphrase do state
 
-O API token não tem rotina automática. Crie um token novo no dashboard com as mesmas duas permissões, troque o valor com `just sops-edit tofu/cloudflare/cloudflare.sops.env`, confirme com `just tofu cloudflare plan` que nada muda, e só então revogue o antigo no dashboard.
+O API token não tem rotina automática. Crie um token novo no dashboard com as mesmas permissões, troque o valor com `just sops-edit tofu/cloudflare/cloudflare.sops.env`, confirme com `just tofu cloudflare plan` que nada muda, e só então revogue o antigo no dashboard.
 
 A passphrase do state é comum a todo módulo, então a troca passa por todos eles:
 
@@ -70,7 +70,7 @@ A passphrase do state é comum a todo módulo, então a troca passa por todos el
 just tofu-state-passphrase --rotate
 ```
 
-Isso gera uma passphrase nova e guarda a atual como `TF_VAR_state_passphrase_previous`, no mesmo arquivo cifrado, sem nenhuma das duas passar pelo terminal. Em cada módulo, declare `variable "state_passphrase_previous"` e acrescente ao `encryption.tf` um segundo `key_provider "pbkdf2"` e um `method` com ela, referenciados num bloco `fallback` dentro de `state` e de `plan`. Rode `just tofu-apply <módulo>` em cada um, sem mudança de recurso: o OpenTofu lê o state com a antiga e o grava com a nova. Por fim:
+Isso gera uma passphrase nova e guarda a atual como `TF_VAR_state_passphrase_previous`, no mesmo arquivo cifrado, sem nenhuma delas passar pelo terminal. Em cada módulo, declare `variable "state_passphrase_previous"` e acrescente ao `encryption.tf` mais um `key_provider "pbkdf2"` e um `method` com ela, referenciados num bloco `fallback` dentro de `state` e de `plan`. Rode `just tofu-apply <módulo>` em cada um, sem mudança de recurso: o OpenTofu lê o state com a antiga e o grava com a nova. Por fim:
 
 ```bash
 just tofu-state-passphrase --finish-rotation
@@ -80,11 +80,11 @@ Remova o `fallback` e a variável de cada módulo e commite os states regravados
 
 ## Segredos do realm do Keycloak
 
-A senha e o TOTP dos usuários dos realms vivem só no Keycloak e são trocados na conta de cada um (`/realms/<realm>/account`) ou, se perdidos, redefinidos com `just keycloak-user <realm> <usuário>`, que reaplica uma senha temporária e as pertenças sem criar nada duplicado. A senha do `admin` do `master`, a única credencial humana do Keycloak que vive no repositório e que só o OpenTofu usa, se rotaciona com `just keycloak-rotate-admin`: gera uma senha nova, aplica pela API, confirma o login com ela, recifra as duas chaves do `keycloak-master.sops.env` e confere que o `plan` continua vazio; commite o arquivo em seguida. Um client secret vive num lugar só: o `SopsSecret` que o consumidor monta (`sso` para `argocd` e `grafana`, o próprio chart para `oauth2-proxy`, `portainer` e `blog`). O módulo do realm o lê dali pelo `secrets.map`, então a rotação é `just sops-edit` nesse arquivo, `just tofu-apply` do módulo (`keycloak-management` ou `keycloak-homelab`) e push; o consumidor recebe o `Secret` novo pelo sops-secrets-operator, o Reloader reinicia quem lê por variável de ambiente, e o Keycloak passa a aceitar o novo valor no mesmo `apply`. As contas de serviço `tofu-homelab` e `tofu-management` são declaradas em `keycloak-master.sops.env` e lidas de lá pelos outros dois módulos: rotacioná-las é mudar o valor ali e aplicar o `master` antes dos outros. A senha do administrador permanente do `master` vive só em `keycloak-master.sops.env`; mudá-la ali e aplicar é a rotação.
+A senha e o TOTP dos usuários dos realms vivem só no Keycloak e são trocados na conta de cada um (`/realms/<realm>/account`) ou, se perdidos, redefinidos com `just keycloak-user <realm> <usuário>`, que reaplica uma senha temporária e as pertenças sem criar nada duplicado. A senha do `admin` do `master`, a única credencial humana do Keycloak que vive no repositório e que só o OpenTofu usa, se rotaciona com `just keycloak-rotate-admin`: gera uma senha nova, aplica pela API, confirma o login com ela, recifra as chaves do `keycloak-master.sops.env` e confere que o `plan` continua vazio; commite o arquivo em seguida. Um client secret vive num lugar só: o `SopsSecret` que o consumidor monta (`sso` para `argocd` e `grafana`, o próprio chart para `oauth2-proxy`, `portainer` e `blog`). O módulo do realm o lê dali pelo `secrets.map`, então a rotação é `just sops-edit` nesse arquivo, `just tofu-apply` do módulo (`keycloak-management` ou `keycloak-homelab`) e push; o consumidor recebe o `Secret` novo pelo sops-secrets-operator, o Reloader reinicia quem lê por variável de ambiente, e o Keycloak passa a aceitar o novo valor no mesmo `apply`. As contas de serviço `tofu-homelab` e `tofu-management` são declaradas em `keycloak-master.sops.env` e lidas de lá pelos outros módulos: rotacioná-las é mudar o valor ali e aplicar o `master` antes dos outros. A senha do administrador permanente do `master` vive só em `keycloak-master.sops.env`; mudá-la ali e aplicar é a rotação.
 
 ## Segredo do webhook do GitHub
 
-O segredo que o GitHub usa para assinar os eventos de push enviados ao Argo CD mora cifrado em `ansible/group_vars/all/secrets.sops.yaml`, em `argocd_github_webhook_secret`, e existe em mais dois lugares: no `argocd-secret`, na chave `webhook.github.secret`, e na configuração do webhook do repositório no GitHub. Os três precisam bater. Enquanto não batem, o Argo recusa a assinatura e volta a descobrir commits só pelo polling de três minutos, sem quebrar nada.
+O segredo que o GitHub usa para assinar os eventos de push enviados ao Argo CD mora cifrado em `ansible/group_vars/all/secrets.sops.yaml`, em `argocd_github_webhook_secret`, e existe em mais lugares: no `argocd-secret`, na chave `webhook.github.secret`, e na configuração do webhook do repositório no GitHub. Todos precisam bater. Enquanto não batem, o Argo recusa a assinatura e volta a descobrir commits só pelo polling periódico, sem quebrar nada.
 
 Gere o valor e grave-o sem que ele passe pela tela nem pela linha de comando:
 
@@ -95,7 +95,7 @@ printf '{"config":{"url":"https://ops.guesant.net/api/webhook","content_type":"j
 unset new
 ```
 
-O id do webhook sai de `gh api repos/guesant/hl-infrastructure/hooks`. Para configurar o webhook à mão pela interface do GitHub, em vez do `gh api`, `just webhook-secret | pbcopy` copia o valor atual decifrado para a área de transferência sem mostrá-lo na tela; sem o `pbcopy`, a recipe o imprime. Depois, `just bootstrap` grava o valor novo no `argocd-secret`: a role `argocd` compara o que está no cluster com o valor cifrado e só reaplica quando os dois diferem, e o `argocd-server` lê a mudança sem reiniciar. Por fim, confira em `gh api repos/guesant/hl-infrastructure/hooks/<id>/deliveries` que a entrega seguinte de `push` voltou com status 200. Commite o `secrets.sops.yaml`.
+O id do webhook sai de `gh api repos/guesant/hl-infrastructure/hooks`. Para configurar o webhook à mão pela interface do GitHub, em vez do `gh api`, `just webhook-secret | pbcopy` copia o valor atual decifrado para a área de transferência sem mostrá-lo na tela; sem o `pbcopy`, a recipe o imprime. Depois, `just bootstrap` grava o valor novo no `argocd-secret`: a role `argocd` compara o que está no cluster com o valor cifrado e só reaplica quando eles diferem, e o `argocd-server` lê a mudança sem reiniciar. Por fim, confira em `gh api repos/guesant/hl-infrastructure/hooks/<id>/deliveries` que a entrega seguinte de `push` voltou com status 200. Commite o `secrets.sops.yaml`.
 
 ## Rotação pela CI
 
@@ -109,7 +109,7 @@ O que não cabe na CI de propósito: o segredo do webhook, os client secrets do 
 
 O job `secret-age` da CI e `just lint-secret-age` leem a data `lastmodified` que o SOPS grava em cada arquivo cifrado e comparam com os prazos declarados arquivo por arquivo em `.config/secret-max-age.conf`: o prazo mais curto vale para `tofu/cloudflare/cloudflare.sops.env`, o mais longo para os arquivos que guardam segredo de infraestrutura mais sensível, como a passphrase do state, `ansible/group_vars/all/secrets.sops.yaml` e o módulo `keycloak-master`, e um prazo intermediário para o restante dos arquivos com regra própria, como o token do túnel; qualquer arquivo cifrado novo, sem linha própria nesse arquivo, cai no prazo padrão da linha `*`, o mesmo prazo intermediário. Num push o job só anota um aviso; na execução agendada ele falha, o que deixa o workflow vermelho e faz o GitHub avisar por e-mail. A recipe local só relata, nunca falha.
 
-Dois limites vêm dessa escolha. O prazo é por arquivo, não por valor: trocar só o API token da Cloudflare zera também o relógio dos dois IDs, que moram no mesmo arquivo. E a data mede a última vez que o arquivo foi recifrado, não a última troca de valor: `just sops-rotate`, que troca só a chave de dados, zera a contagem sem o segredo ter mudado, enquanto `just sops-sync` sobre um arquivo já cifrado, que só atualiza destinatários, não mexe nela. Segredos fora do git, como o segredo do webhook, o PAT do Renovate e os certificados do k3s, não entram nessa conta.
+Limites reais vêm dessa escolha. O prazo é por arquivo, não por valor: trocar só o API token da Cloudflare zera também o relógio dos IDs, que moram no mesmo arquivo. E a data mede a última vez que o arquivo foi recifrado, não a última troca de valor: `just sops-rotate`, que troca só a chave de dados, zera a contagem sem o segredo ter mudado, enquanto `just sops-sync` sobre um arquivo já cifrado, que só atualiza destinatários, não mexe nela. Segredos fora do git, como o segredo do webhook, o PAT do Renovate e os certificados do k3s, não entram nessa conta.
 
 ## Continue por aqui
 

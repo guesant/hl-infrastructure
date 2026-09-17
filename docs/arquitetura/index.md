@@ -4,7 +4,7 @@ Esta seção explica como o repositório inteiro se encaixa e como cada peça in
 
 ## Visão geral
 
-O repositório resolve dois problemas de naturezas diferentes, com duas ferramentas diferentes.
+O repositório resolve problemas de naturezas diferentes, cada um com sua própria ferramenta.
 
 O primeiro é o bootstrap: transformar um Raspberry Pi limpo num nó k3s com todos os componentes de plataforma instalados. Isso acontece uma única vez (ou uma vez por nó novo), via Ansible, direto por SSH. Depois que o Ansible termina, ele não precisa rodar de novo a menos que uma versão de componente mude ou um nó novo entre no cluster.
 

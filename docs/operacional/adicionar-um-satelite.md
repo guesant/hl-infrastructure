@@ -22,7 +22,7 @@ git push
 just status
 ```
 
-O Argo detecta a mudança sozinho no próximo ciclo de sincronização (por padrão, a cada três minutos), porque a `Application` `satellites-launcher` já sincroniza automaticamente. `just status` confirma que a `Application` nova apareceu e está `Synced`/`Healthy`.
+O Argo detecta a mudança sozinho no próximo ciclo de sincronização periódica, porque a `Application` `satellites-launcher` já sincroniza automaticamente. `just status` confirma que a `Application` nova apareceu e está `Synced`/`Healthy`.
 
 ## O que o outro repositório precisa declarar
 
@@ -38,12 +38,12 @@ just satellite-delivery-add nome ghcr.io/org/imagem application-filha caminho.do
 
 O item que a recipe acrescenta tem estes campos: `name`, `imageRepo` (o repositório da imagem publicada), `childApp` (o nome da `Application` que a promoção atualiza), `valuesPath` (o caminho do values Helm que recebe a tag, por exemplo `application.deployment.image.tag`), `imageTagValue` (a expressão `main@${{ imageFrom("...").Digest }}` já montada com o repositório certo) e os campos do `Warehouse` (`imageSelectionStrategy`, `constraint`, `strictSemvers`, `discoveryLimit`, todos com um valor padrão sensato). O `Warehouse` acompanha a tag `main` pela estratégia `Digest`: cada vez que a pipeline do outro repositório publica e o digest atrás da tag muda, nasce um `Freight` novo, e a política de promoção automática o leva ao `Stage` `prod`. O passo `argocd-update` grava `main@sha256:...` como parâmetro Helm da própria `Application`, sem commit em nenhum repositório; o git continua declarando a tag base como ponto de partida, e o digest corrente fica visível em `kubectl -n argocd get application nome -o yaml` e na UI do Kargo. Se o satélite renderiza a imagem a partir de um chart, o valor precisa produzir o formato que o campo do chart espera; renderize e confira antes de ligar. Quando a imagem for publicada só com tags imutáveis `sha-<commit>` e sem tag móvel, edite `imageSelectionStrategy` para `NewestBuild`, acrescente `allowTagsRegexes: ["^sha-[0-9a-f]{40}$"]` e troque `imageTagValue` para usar `imageFrom(...).Tag`.
 
-A recipe recusa um nome já existente e termina imprimindo duas edições que continuam manuais, porque tocam arquivos fora da lista:
+A recipe recusa um nome já existente e termina imprimindo as edições que continuam manuais, porque tocam arquivos fora da lista:
 
 1. A `Application` filha (a que a recipe chamou de `childApp`) precisa carregar a anotação `kargo.akuity.io/authorized-stage: <nome>-delivery:prod`, a prova de que quem pode editar aquela `Application` consentiu com aquele `Stage` a editar; sem ela a promoção falha com erro explícito.
 2. A `Application` `root` deste repositório precisa de um `ignoreDifferences` para `/spec/source/helm/parameters` dessa `Application`, como já existe para o blog em `argocd/root/application.yaml`, senão o `selfHeal` do root devolve a tag do git a cada reconciliação.
 
-Depois das duas edições, o fluxo de commit é o mesmo do satélite: `just infra-render-charts` para conferir, `git add`/`commit`/`push`, `just status`.
+Depois dessas edições, o fluxo de commit é o mesmo do satélite: `just infra-render-charts` para conferir, `git add`/`commit`/`push`, `just status`.
 
 ### Um banco Postgres
 
@@ -67,7 +67,7 @@ spec:
       owner: app
 ```
 
-O `Cluster` não declara `storageClass`: a classe padrão do cluster é a única que existe, `local-path` com `Retain`, e a política de admissão não é necessária porque não há outra classe a escolher. `Prune=false,Delete=false` no `Cluster` protege os dados de um erro de GitOps em dois momentos distintos: `Prune=false` faz o Argo se recusar a apagá-lo quando o arquivo some do repositório, e `Delete=false` o preserva quando a própria `Application` é apagada, porque toda `Application` daqui carrega o finalizer `resources-finalizer.argocd.argoproj.io`, que faz um `git rm` do arquivo dela levar junto tudo o que ela criou. Sem a segunda opção, remover o satélite do git apagaria o banco. O volume só vai embora por uma remoção manual e deliberada. Este objeto não faz parte do array das duas seções anteriores, porque um banco é dado com estado dedicado, não estrutura repetível sem variação; cada satélite que precisar de um declara o `Cluster` acima diretamente.
+O `Cluster` não declara `storageClass`: a classe padrão do cluster é a única que existe, `local-path` com `Retain`, e a política de admissão não é necessária porque não há outra classe a escolher. `Prune=false,Delete=false` no `Cluster` protege os dados de um erro de GitOps em momentos distintos: `Prune=false` faz o Argo se recusar a apagá-lo quando o arquivo some do repositório, e `Delete=false` o preserva quando a própria `Application` é apagada, porque toda `Application` daqui carrega o finalizer `resources-finalizer.argocd.argoproj.io`, que faz um `git rm` do arquivo dela levar junto tudo o que ela criou. Sem a segunda opção, remover o satélite do git apagaria o banco. O volume só vai embora por uma remoção manual e deliberada. Este objeto não faz parte do array das seções anteriores, porque um banco é dado com estado dedicado, não estrutura repetível sem variação; cada satélite que precisar de um declara o `Cluster` acima diretamente.
 
 Este `Cluster` não tem backup contínuo em object storage: o operador `cnpg-barman-plugin` que fornecia isso foi removido do cluster de propósito. Sem ele, a perda do volume é perda total dos dados do satélite; veja [estado fora do git](estado-fora-do-git.md). Reinstalar o plugin é um pré-requisito antes de qualquer satélite novo poder declarar `spec.plugins` com `barman-cloud.cloudnative-pg.io`.
 

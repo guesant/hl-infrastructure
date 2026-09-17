@@ -19,7 +19,7 @@ just sops-edit ansible/group_vars/all/secrets.sops.yaml
 
 O `sops-sync` cifra o arquivo no lugar, ainda com os valores de exemplo, e o `sops-edit` o abre decifrado só em memória. Edite `.local/operator/inventory.ini` com o IP real do Pi, o usuário SSH e o caminho da chave privada. No `secrets.sops.yaml`, preencha `argocd_github_webhook_secret` com um segredo gerado por você (não o valor de exemplo). A chave SSH não entra aqui: ela já precisa estar autorizada no Pi para o Ansible conseguir entrar, e o bootstrap aborta antes de desligar login por senha se o `authorized_keys` do usuário do inventário estiver vazio.
 
-O inventário real não é rastreado pelo git; o `secrets.sops.yaml` é, mas só cifrado, e o job `sopssecrets` da CI falha se algum valor dele estiver em claro. As versões de k3s, Helm e de cada chart não precisam de nada: elas vivem em `ansible/group_vars/all/versions.yml`, que é versionado e mantido pelo Renovate, e o Ansible mescla os dois arquivos sozinho.
+O inventário real não é rastreado pelo git; o `secrets.sops.yaml` é, mas só cifrado, e o job `sopssecrets` da CI falha se algum valor dele estiver em claro. As versões de k3s, Helm e de cada chart não precisam de nada: elas vivem em `ansible/group_vars/all/versions.yml`, que é versionado e mantido pelo Renovate, e o Ansible mescla os arquivos de variáveis sozinho.
 
 ## Confira o acesso e veja o que vai mudar
 
@@ -54,7 +54,7 @@ kubectl get nodes
 kubectl -n argocd get applications
 ```
 
-O comando `just kubeconfig` imprime a variável `KUBECONFIG` que aponta para o arquivo que o Ansible copiou do Pi; exporte-a antes dos dois comandos seguintes. Você deve ver o nó do Pi como `Ready` e a aplicação `root` do Argo como `Synced` e `Healthy`.
+O comando `just kubeconfig` imprime a variável `KUBECONFIG` que aponta para o arquivo que o Ansible copiou do Pi; exporte-a antes dos comandos seguintes. Você deve ver o nó do Pi como `Ready` e a aplicação `root` do Argo como `Synced` e `Healthy`.
 
 ## Registre os destinatários do SOPS
 
@@ -65,7 +65,7 @@ just age-se-keygen
 just age-keygen
 ```
 
-O primeiro gera a identidade de rotina do operador, presa à Secure Enclave da sua máquina; guarde o conteúdo do arquivo impresso como nota segura no seu gerenciador de senhas. O segundo gera a chave de desastre; guarde a privada (a linha `AGE-SECRET-KEY-1...`) no mesmo lugar, nunca em disco. Com as duas públicas em mãos:
+`just age-se-keygen` gera a identidade de rotina do operador, presa à Secure Enclave da sua máquina; guarde o conteúdo do arquivo impresso como nota segura no seu gerenciador de senhas. `just age-keygen` gera a chave de desastre; guarde a privada (a linha `AGE-SECRET-KEY-1...`) no mesmo lugar, nunca em disco. Com as chaves públicas em mãos:
 
 ```bash
 just sops-recipients sync-node
@@ -77,14 +77,14 @@ Revise o diff de `.sops.yaml` e commite. A partir daqui, `just sops-sync <arquiv
 
 ## Crie o túnel e o DNS na Cloudflare
 
-O blog só fica acessível de fora depois que o túnel existe. No dashboard da Cloudflare, crie um API token com duas permissões e nada além delas: Cloudflare Tunnel, de edição, restrita à sua conta, e DNS, de edição, restrita à zona do blog. Depois preencha os arquivos que o OpenTofu usa:
+O blog só fica acessível de fora depois que o túnel existe. No dashboard da Cloudflare, crie um API token com estas permissões e nada além delas: Cloudflare Tunnel, de edição, restrita à sua conta, e DNS, de edição, restrita à zona do blog. Depois preencha os arquivos que o OpenTofu usa:
 
 ```bash
 just tofu-state-passphrase
 just sops-edit tofu/cloudflare/cloudflare.sops.env
 ```
 
-O primeiro gera uma passphrase aleatória com `openssl rand -base64 48` e a grava cifrada em `tofu/state.sops.env`, sem imprimi-la em lugar nenhum; ela cifra o state de todo módulo OpenTofu, não só o da Cloudflare. No segundo, coloque o API token, o ID da conta e o ID da zona; os dois IDs não são credencial, mas ficam cifrados para este repositório público não apontar para a sua conta. Os hostnames ficam em texto claro. O do blog aparece em dois lugares, que precisam bater: `blog_hostname` em `tofu/cloudflare/terraform.tfvars` e `PUBLIC_SITE_BASE_URL` no `values.yaml` do blog. O de operação, que recebe o webhook, é `ops_hostname` no mesmo `terraform.tfvars`. Então:
+`just tofu-state-passphrase` gera uma passphrase aleatória com `openssl rand -base64 48` e a grava cifrada em `tofu/state.sops.env`, sem imprimi-la em lugar nenhum; ela cifra o state de todo módulo OpenTofu, não só o da Cloudflare. Em `just sops-edit tofu/cloudflare/cloudflare.sops.env`, coloque o API token, o ID da conta e o ID da zona; esses IDs não são credencial, mas ficam cifrados para este repositório público não apontar para a sua conta. Os hostnames ficam em texto claro. O do blog aparece em mais de um lugar, e precisam bater: `blog_hostname` em `tofu/cloudflare/terraform.tfvars` e `PUBLIC_SITE_BASE_URL` no `values.yaml` do blog. O de operação, que recebe o webhook, é `ops_hostname` no mesmo `terraform.tfvars`. Então:
 
 ```bash
 just tofu cloudflare init
@@ -94,7 +94,7 @@ just cloudflare-tunnel-token
 just placeholders
 ```
 
-O `plan` só pode criar recursos, nunca alterar nem destruir: o túnel, a configuração de ingress e os registros DNS declarados em `tofu/cloudflare/dns.tf`. Se o domínio já tiver registros nesses nomes, como um CNAME antigo no apex, importe-os com `just tofu cloudflare import` antes do `plan`, senão o apply falha ao tentar criar um nome que já existe. Se algum valor de exemplo sobrou, ele nem chega a rodar: o `just tofu` recusa segredo que ainda começa com `REPLACE_WITH_`, e as validações das variáveis recusam ID fora do formato e hostname terminado em `.invalid`. `cloudflare-tunnel-token` busca o token do túnel recém-criado e o grava cifrado no `SopsSecret` do cloudflared. `placeholders` decifra em memória todo arquivo SOPS e só pode terminar dizendo que não há nada pendente; ele mostra os nomes das chaves que ainda têm valor de exemplo, nunca os valores, e confere que o hostname bate nos dois lugares. Commite os dois arquivos `.sops.env`, `terraform.tfstate` (cifrado), `.terraform.lock.hcl`, `terraform.tfvars` e o `SopsSecret` juntos e faça push; o Argo sobe o cloudflared com o token novo. Por fim, em Settings, Webhooks do repositório no GitHub, aponte o webhook para `https://ops.guesant.net/api/webhook`, com content type `application/json` e o mesmo valor de `argocd_github_webhook_secret` como secret. Veja [OpenTofu: a camada da Cloudflare](../arquitetura/opentofu.md) para o porquê de cada peça.
+O `plan` só pode criar recursos, nunca alterar nem destruir: o túnel, a configuração de ingress e os registros DNS declarados em `tofu/cloudflare/dns.tf`. Se o domínio já tiver registros nesses nomes, como um CNAME antigo no apex, importe-os com `just tofu cloudflare import` antes do `plan`, senão o apply falha ao tentar criar um nome que já existe. Se algum valor de exemplo sobrou, ele nem chega a rodar: o `just tofu` recusa segredo que ainda começa com `REPLACE_WITH_`, e as validações das variáveis recusam ID fora do formato e hostname terminado em `.invalid`. `cloudflare-tunnel-token` busca o token do túnel recém-criado e o grava cifrado no `SopsSecret` do cloudflared. `placeholders` decifra em memória todo arquivo SOPS e só pode terminar dizendo que não há nada pendente; ele mostra os nomes das chaves que ainda têm valor de exemplo, nunca os valores, e confere que o hostname bate nos lugares esperados. Commite os arquivos `.sops.env`, `terraform.tfstate` (cifrado), `.terraform.lock.hcl`, `terraform.tfvars` e o `SopsSecret` juntos e faça push; o Argo sobe o cloudflared com o token novo. Por fim, em Settings, Webhooks do repositório no GitHub, aponte o webhook para `https://ops.guesant.net/api/webhook`, com content type `application/json` e o mesmo valor de `argocd_github_webhook_secret` como secret. Veja [OpenTofu: a camada da Cloudflare](../arquitetura/opentofu.md) para o porquê de cada peça.
 
 ## Ligue o node à tailnet
 
@@ -118,7 +118,7 @@ O `plan` deve criar só o split DNS de `guesant.internal` apontando para o ender
 
 ## Crie os realms do Keycloak com o OpenTofu
 
-Os realms são criados e mantidos pelos três módulos `tofu/keycloak-*`, na ordem `master`, `management`, `homelab`. Eles falam com o Keycloak por `keycloak.guesant.internal`, então precisam da tailnet e da CA interna, já commitada ao lado de cada módulo. O `keycloak-master.sops.env` já traz o administrador e as contas de serviço cifrados, e os outros dois módulos leem seus segredos dos `SopsSecret` pelo `secrets.map`; confira com `just placeholders`.
+Os realms são criados e mantidos pelos módulos `tofu/keycloak-*`, na ordem `master`, `management`, `homelab`. Eles falam com o Keycloak por `keycloak.guesant.internal`, então precisam da tailnet e da CA interna, já commitada ao lado de cada módulo. O `keycloak-master.sops.env` já traz o administrador e as contas de serviço cifrados, e os outros módulos leem seus segredos dos `SopsSecret` pelo `secrets.map`; confira com `just placeholders`.
 
 ```bash
 just tofu keycloak-master init && just tofu keycloak-master plan && just tofu-apply keycloak-master
@@ -126,7 +126,7 @@ just tofu keycloak-management init && just tofu keycloak-management plan && just
 just tofu keycloak-homelab init && just tofu keycloak-homelab plan && just tofu-apply keycloak-homelab
 ```
 
-O `master` entra com o administrador temporário do `Secret` `keycloak-initial-admin` e cria os dois realms, o administrador permanente e as contas de serviço; os outros dois entram com a sua conta de serviço e criam o conteúdo do realm. Commite os três states cifrados. O administrador temporário que o operator gerou já cumpriu o papel dele no `apply` do `master`; um único comando o aposenta:
+O `master` entra com o administrador temporário do `Secret` `keycloak-initial-admin` e cria os outros realms, o administrador permanente e as contas de serviço; os outros módulos entram com a sua conta de serviço e criam o conteúdo do realm. Commite os states cifrados. O administrador temporário que o operator gerou já cumpriu o papel dele no `apply` do `master`; um único comando o aposenta:
 
 ```bash
 just keycloak-bootstrap-admin
@@ -140,7 +140,7 @@ just keycloak-user management gabriel gabriel@example.com
 just keycloak-user homelab gabriel gabriel@example.com
 ```
 
-No `master` o usuário recebe o papel `admin` (é com ele que você entra no console daí em diante); nos outros realms entra no grupo `admins`, sem o qual autentica e é recusado por todas as aplicações. O e-mail é obrigatório nesses dois porque Grafana e oauth2-proxy exigem o claim, e o nome precisa bater com `OPERATOR_USERNAME` no Job do Portainer (`gabriel`). No primeiro login o Keycloak obriga a trocar a senha e a cadastrar o TOTP. Nada sobre esses usuários fica no repositório; a senha do `admin` do módulo se rotaciona com `just keycloak-rotate-admin`, que a troca no Keycloak e recifra o `.sops.env` de uma vez.
+No `master` o usuário recebe o papel `admin` (é com ele que você entra no console daí em diante); nos outros realms entra no grupo `admins`, sem o qual autentica e é recusado por todas as aplicações. O e-mail é obrigatório porque Grafana e oauth2-proxy exigem o claim, e o nome precisa bater com `OPERATOR_USERNAME` no Job do Portainer (`gabriel`). No login inicial o Keycloak obriga a trocar a senha e a cadastrar o TOTP. Nada sobre esses usuários fica no repositório; a senha do `admin` do módulo se rotaciona com `just keycloak-rotate-admin`, que a troca no Keycloak e recifra o `.sops.env` de uma vez.
 
 ## Confie na CA interna
 

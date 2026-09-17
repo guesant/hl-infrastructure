@@ -23,7 +23,7 @@ A camada do Keycloak, também pelo OpenTofu, é os realms e tudo dentro deles. E
 Lendo de baixo para cima, com o que cada peça exige da anterior:
 
 - `ansible/site.yml` exige o host com SSH e a identidade age do operador para decifrar `secrets.sops.yaml`. Nada mais.
-- A `Application` `root` exige o Argo CD instalado pela role `argocd` e o repositório público no GitHub. O webhook do GitHub, cujo segredo a role grava em `argocd-secret`, só acelera; sem ele o Argo consulta o repositório a cada três minutos.
+- A `Application` `root` exige o Argo CD instalado pela role `argocd` e o repositório público no GitHub. O webhook do GitHub, cujo segredo a role grava em `argocd-secret`, só acelera; sem ele o Argo consulta o repositório no ciclo periódico normal.
 - Todo `SopsSecret` exige o sops-secrets-operator com a chave privada do node, gerada pela role `sops_age_key` e registrada como destinatário em `.sops.yaml`. Um `SopsSecret` cifrado antes de a chave do node existir não abre; `just sops-sync` recifra tudo para os destinatários atuais.
 - O ingress exige o cert-manager (a CA interna é um `ClusterIssuer`), a zona `tailscale` do firewall com `http` e `https`, e o sysctl que deixa o Traefik escutar em portas baixas sem root; todos vêm do Ansible.
 - O login em qualquer serviço exige o Keycloak no ar (Argo), o realm aplicado (Tofu) e um usuário criado no console pelo `admin` do `master`, com e-mail e no grupo `admins`; não há provedor externo, e senha e TOTP vivem só no Keycloak.
@@ -73,10 +73,10 @@ Declarar um segredo no git só vale alguma coisa se a mudança chegar ao serviç
 | `CLOUDFLARE_API_TOKEN` e IDs | `cloudflare.sops.env` | lidos em todo `plan` e `apply` | nada no cluster os consome; um token novo vale no próximo comando |
 | OAuth client da tailnet | `tailscale.sops.env` | lido em todo `plan` e `apply` | idem |
 | `TF_VAR_keycloak_admin_user` e `_password` | `keycloak-master.sops.env` | credencial de login do módulo | precisa refletir a senha real no Keycloak; mudar aqui não muda a senha lá, só como o módulo entra. `just keycloak-bootstrap-admin` a troca do `temp-admin` para o `admin` permanente |
-| `TF_VAR_operator_admin_password` | `keycloak-master.sops.env` | vivo por recipe | o provider só grava a senha ao criar o `admin`; `just keycloak-rotate-admin` gera uma nova, aplica pela API e recifra as duas chaves do arquivo, sem recriar o usuário |
+| `TF_VAR_operator_admin_password` | `keycloak-master.sops.env` | vivo por recipe | o provider só grava a senha ao criar o `admin`; `just keycloak-rotate-admin` gera uma nova, aplica pela API e recifra as chaves do arquivo, sem recriar o usuário |
 | `TF_VAR_homelab_service_secret`, `TF_VAR_management_service_secret` | `keycloak-master.sops.env` | vivo por `apply` | `just tofu-apply keycloak-master` regrava o segredo do client no Keycloak; os módulos de realm o leem dali pelo `secrets.map` na execução seguinte |
 | `PORTFOLIO_ADMIN_OIDC_CLIENT_SECRET` | `SopsSecret` `app-secret` (blog) | reinicia sozinho no blog; vivo por `apply` no Keycloak | o blog lê o arquivo em `/secrets/app` no start e o `Deployment` tem a anotação do Reloader; `just tofu-apply keycloak-homelab` grava o mesmo valor no client `blog` |
-| `clientSecret` | `SopsSecret` `argocd-oidc` | vivo nos dois lados | o Argo relê os `Secret` com o label `part-of: argocd` sem restart; `just tofu-apply keycloak-management` grava o mesmo valor no client |
+| `clientSecret` | `SopsSecret` `argocd-oidc` | vivo em ambos os lados | o Argo relê os `Secret` com o label `part-of: argocd` sem restart; `just tofu-apply keycloak-management` grava o mesmo valor no client |
 | `client_secret` | `SopsSecret` `grafana-oidc` | reinicia sozinho | vai por variável de ambiente; o `Deployment` do Grafana tem a anotação do Reloader; o Keycloak recebe pelo `apply` do `management` |
 | `client-secret` e `cookie-secret` | `SopsSecret` `oauth2-proxy` | reinicia sozinho | variáveis de ambiente com Reloader; trocar o `cookie-secret` invalida todas as sessões abertas, o que é o efeito desejado numa rotação |
 | `client-secret` | `SopsSecret` `portainer-oidc` | vivo por Job | o Job de `PostSync` regrava as configurações de OAuth pela API a cada sync; o Portainer as lê do banco a cada login |
