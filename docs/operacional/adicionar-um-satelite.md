@@ -50,11 +50,7 @@ O `finalizers` com `resources-finalizer.argocd.argoproj.io` também é obrigató
 
 O caminho em `source.path` deve apontar para uma pasta que contenha só os objetos de controle do Argo (`Application` e afins) daquele outro repositório, não os manifestos da aplicação em si; quem interpreta esses objetos de controle e sincroniza os manifestos de verdade é o Argo, recursivamente, a partir dali.
 
-Depois de commitar o arquivo novo e dar push em `main` deste repositório, o Argo detecta a mudança sozinho no próximo ciclo de sincronização (por padrão, a cada três minutos) e cria a aplicação. Confirme com:
-
-```bash
-kubectl -n argocd get applications
-```
+Depois de commitar o arquivo novo e dar push em `main` deste repositório, o Argo detecta a mudança sozinho no próximo ciclo de sincronização (por padrão, a cada três minutos) e cria a aplicação. Confirme com `just status`.
 
 ## O que o outro repositório precisa declarar
 

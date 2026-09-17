@@ -44,10 +44,10 @@ Os arquivos SOPS não moram numa pasta única, e isso é deliberado: cada um fic
 
 ## Capturar uma mudança manual de volta para o git
 
-Se uma mudança acabou aplicada direto no cluster, fora do fluxo normal de GitOps (por exemplo, um `kubectl edit` de emergência), ela não deveria ficar assim: uma `Application` com sincronização automática reverte esse tipo de mudança na próxima reconciliação, e mesmo sem `selfHeal` ligado a mudança vive só na memória de quem a aplicou, sem sobreviver a uma reconstrução do node. `.tools/freeze-manifest.sh` existe para esse resgate: ele roda `kubectl get <kind> <nome> -o json`, remove os campos que só fazem sentido num objeto vivo (`resourceVersion`, `generation`, `managedFields`, `uid`, `.status`, entre outros) e produz um YAML limpo, pronto para commitar no lugar certo do repositório ou do satélite.
+Se uma mudança acabou aplicada direto no cluster, fora do fluxo normal de GitOps (por exemplo, um `kubectl edit` de emergência), ela não deveria ficar assim: uma `Application` com sincronização automática reverte esse tipo de mudança na próxima reconciliação, e mesmo sem `selfHeal` ligado a mudança vive só na memória de quem a aplicou, sem sobreviver a uma reconstrução do node. A recipe `just freeze` existe para esse resgate: ela roda `kubectl get <kind> <nome> -o json`, remove os campos que só fazem sentido num objeto vivo (`resourceVersion`, `generation`, `managedFields`, `uid`, `.status`, entre outros) e produz um YAML limpo, pronto para commitar no lugar certo do repositório ou do satélite.
 
 ```bash
-.tools/freeze-manifest.sh <kind> <nome> -n <namespace> > caminho/do/manifesto.yaml
+just freeze <kind> <nome> -n <namespace> > caminho/do/manifesto.yaml
 ```
 
 Depois de commitado, o Argo passa a rastrear esse objeto como qualquer outro: a mudança que antes só existia no cluster agora tem uma origem no git, e uma reconstrução do node a partir do zero a recria sem depender de ninguém lembrar que ela existia.
