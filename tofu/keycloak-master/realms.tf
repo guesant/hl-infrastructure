@@ -11,8 +11,8 @@ locals {
     sso_session_max_lifespan = "24h"
   }
   realms = {
-    homelab    = "Users of ${var.blog_hostname}"
-    management = "Operators of the internal tools on ${var.internal_domain}"
+    homelab    = "homelab@auth.guesant.internal"
+    management = "management@auth.guesant.internal"
   }
 }
 
