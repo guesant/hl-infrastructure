@@ -80,6 +80,59 @@ application:
           - ALL
       seccompProfile:
         type: RuntimeDefault
+  job:
+    enabled: true
+    jobs:
+      migrate:
+        annotations:
+          argocd.argoproj.io/hook: PreSync
+          argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+        backoffLimit: 3
+        activeDeadlineSeconds: 600
+        restartPolicy: OnFailure
+        image:
+          repository: ghcr.io/guesant/blog
+          tag: "{{ .Values.deployment.image.tag }}"
+        command:
+          - /bin/sh
+          - -c
+          - |
+            export PORTFOLIO_DB_CONNECTION="Host=$(cat /secrets/db/host);Database=$(cat /secrets/db/dbname);Username=$(cat /secrets/db/user);Password=$(cat /secrets/db/password)"
+            exec /app/migrate
+        env:
+          DOTNET_CLI_TELEMETRY_OPTOUT:
+            value: "1"
+        volumes:
+          - name: db-credentials
+            secret:
+              secretName: postgres-app
+          - name: tmp
+            emptyDir: {}
+        volumeMounts:
+          - name: db-credentials
+            mountPath: /secrets/db
+            readOnly: true
+          - name: tmp
+            mountPath: /tmp
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            memory: 256Mi
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1654
+          fsGroup: 1654
+          seccompProfile:
+            type: RuntimeDefault
+        containerSecurityContext:
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
   service:
     ports:
       - port: 80
