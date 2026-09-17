@@ -65,6 +65,10 @@ satellite-add nome repo_url path sync_wave="10":
 pv-relink pv namespace pvc_name size cnpg_cluster="":
     .tools/pv-relink.sh {{pv}} {{namespace}} {{pvc_name}} {{size}} {{cnpg_cluster}}
 
+[doc("Scaffold Kargo delivery for a satellite: just satellite-delivery-add nome ghcr.io/org/imagem application-filha caminho.do.values")]
+satellite-delivery-add nome repo_imagem app_filha caminho_values:
+    .tools/satellite-delivery-add.sh {{nome}} {{repo_imagem}} {{app_filha}} {{caminho_values}}
+
 [doc("Run kubectl on the node over SSH; the API server is not reachable from anywhere else")]
 kubectl *args:
     {{node_ssh}} k3s kubectl {{args}}
