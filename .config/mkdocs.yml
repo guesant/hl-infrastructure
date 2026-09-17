@@ -49,6 +49,7 @@ nav:
       - TLS automático: aprender/tls-automatico.md
       - "ArgoCD e GitOps": aprender/argocd.md
       - Operators do Kubernetes: aprender/kubernetes-operators.md
+      - Helm e charts: aprender/helm-e-charts.md
       - "CI/CD": aprender/ci-cd.md
       - Scanning de vulnerabilidade: aprender/vulnerability-scanning.md
       - Supply chain e SBOM: aprender/supply-chain-e-sbom.md
