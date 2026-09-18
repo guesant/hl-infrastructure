@@ -197,3 +197,6 @@ YubiKey
 Burstable
 evictado
 setuid
+tagueadas
+inodes
+scriptability

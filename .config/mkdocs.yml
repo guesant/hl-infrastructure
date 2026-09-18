@@ -141,6 +141,16 @@ nav:
       - Restaurar o node do zero: operacional/restaurar-o-node.md
       - Resposta a incidente: operacional/resposta-a-incidente.md
       - Revisão periódica: operacional/revisao-periodica.md
+  - Referência:
+      - referencia/index.md
+      - Comandos de rede e DNS: referencia/comandos-de-rede-e-dns.md
+      - Comandos de processos, disco e arquivos: referencia/comandos-de-processos-disco-e-arquivos.md
+      - Comandos de containers e Kubernetes: referencia/comandos-de-containers-e-kubernetes.md
+      - Comandos de firewall, logs e valores aleatórios: referencia/comandos-de-firewall-logs-e-valores-aleatorios.md
+      - Comandos de certificado e chave SSH: referencia/comandos-de-certificado-e-chave-ssh.md
+      - Comandos de Git: referencia/comandos-de-git.md
+      - tmux e systemd: referencia/tmux-e-systemd.md
+      - Comandos de shell e troubleshooting genérico: referencia/comandos-de-shell-e-troubleshooting.md
   - Contribuindo:
       - contribuindo/index.md
       - Convenções de escrita: contribuindo/convencoes-de-escrita.md
