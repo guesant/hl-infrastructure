@@ -96,6 +96,8 @@ nav:
       - Scanning de vulnerabilidade: aprender/vulnerability-scanning.md
       - Supply chain e SBOM: aprender/supply-chain-e-sbom.md
       - Threat modeling: aprender/threat-modeling.md
+      - CodeQL e zizmor: aprender/codeql-e-zizmor.md
+      - kubeconform e conftest: aprender/kubeconform-e-conftest.md
       - Criptografia de segredos no Git: aprender/criptografia-de-segredos-no-git.md
       - Bootstrap e rotação de segredos: aprender/bootstrap-e-rotacao-de-segredos.md
       - Secret store externo: aprender/secret-store-externo.md
@@ -104,6 +106,9 @@ nav:
       - Zero trust: aprender/zero-trust.md
       - Padrões e governança da internet: aprender/padroes-e-governanca-da-internet.md
       - Fundações do software livre e aberto: aprender/fundacoes-do-software-livre-e-aberto.md
+      - Linters de qualidade de artefato: aprender/linters-de-qualidade-de-artefato.md
+      - "commitlint, lychee e Renovate": aprender/commitlint-lychee-e-renovate.md
+      - "jq e yq: consulta estruturada de JSON e YAML": aprender/jq-e-yq.md
       - Diátaxis: aprender/diataxis.md
       - "Gerar várias instâncias com Helm": aprender/helm-templating-de-lista.md
       - "Requests, limits e QoS de um Pod": aprender/requests-limits-e-qos-de-um-pod.md
