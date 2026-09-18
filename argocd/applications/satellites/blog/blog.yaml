@@ -18,11 +18,16 @@ spec:
       releaseName: blog
       parameters:
         - name: application.deployment.image.tag
-          value: main@sha256:2108397c16ccd3a301977f861f64236dab85ceeb1920c85dbf5efdad1fc09ee1
+          value: main@sha256:3d59a74935dd961bf2e1f83c4eb589315a4b3d7e74bb68ceae3e0c6daefd0e1c
+        - name: laravel.image.tag
+          value: main@sha256:693e74dabd1f22317472b8a7c50adf476c1dc93bfbd7786022ae18c6307d6dd1
   destination:
     server: https://kubernetes.default.svc
     namespace: blog
   syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true

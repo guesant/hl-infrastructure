@@ -24,5 +24,7 @@ spec:
                   - repoURL: https://github.com/guesant/hl-infrastructure.git
                     helm:
                       images:
-                        - key: application.deployment.image.tag
-                          value: {{ .Values.imageTagValue | quote }}
+                        {{- range .Values.images }}
+                        - key: {{ .valuesPath }}
+                          value: {{ .imageTagValue | quote }}
+                        {{- end }}

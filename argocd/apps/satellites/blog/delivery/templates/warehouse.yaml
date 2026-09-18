@@ -9,9 +9,11 @@ spec:
   interval: 2m0s
   freightCreationPolicy: Automatic
   subscriptions:
+    {{- range .Values.images }}
     - image:
-        repoURL: ghcr.io/guesant/blog
+        repoURL: {{ .imageRepo }}
         imageSelectionStrategy: Digest
         constraint: main
         strictSemvers: true
         discoveryLimit: 5
+    {{- end }}
