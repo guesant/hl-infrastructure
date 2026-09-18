@@ -75,6 +75,7 @@ nav:
       - "Orquestradores de containers: Compose, Swarm e Kubernetes": aprender/orquestradores-de-containers.md
       - Quorum, etcd e datastore do K3s: aprender/quorum-etcd-e-datastore-do-k3s.md
       - Kubernetes gerenciado e HA avançada: aprender/kubernetes-gerenciado-e-ha-avancada.md
+      - Topologias, rede e falhas num K3s multinó: aprender/topologias-rede-e-falhas-em-k3s-multino.md
       - Modelo de armazenamento do Kubernetes: aprender/modelo-de-armazenamento-do-kubernetes.md
       - Armazenamento local, distribuído e Longhorn: aprender/armazenamento-local-distribuido-e-longhorn.md
       - Policy enforcement e Kubescape: aprender/policy-enforcement-e-kubescape.md
