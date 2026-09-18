@@ -32,7 +32,7 @@ Lendo de baixo para cima, com o que cada peça exige da anterior:
 
 ## Onde vive cada credencial
 
-Toda credencial que o repositório conhece está cifrada com SOPS para os destinatários de `.sops.yaml`: a identidade da Secure Enclave do operador, a chave do node e a chave de desastre. O que muda de um arquivo para outro é quem o lê e quando. O conjunto de destinatários é declarado uma vez no topo de `.sops.yaml` e reaproveitado por todas as regras de caminho, então acrescentar ou trocar um destinatário é uma edição só, seguida de `just sops-sync` para recifrar o que já estava commitado. Um arquivo cifrado antes dessa edição continua legível apenas para os destinatários antigos até o sync passar por ele.
+Toda credencial que o repositório conhece está cifrada com SOPS para os destinatários de `.sops.yaml`: a identidade da Secure Enclave do operador, a chave do node e a chave de desastre, hoje três entradas com os rótulos `operator-se`, `node` e `dr`. O que muda de um arquivo para outro é quem o lê e quando. O conjunto de destinatários é declarado uma vez no topo de `.sops.yaml` e reaproveitado por todas as regras de caminho, então acrescentar ou trocar um destinatário é uma edição só, seguida de `just sops-sync` para recifrar o que já estava commitado. Um arquivo cifrado antes dessa edição continua legível apenas para os destinatários antigos até o sync passar por ele.
 
 | Arquivo | Formato | Quem lê | Quando | Conteúdo (chaves, não valores) |
 | --- | --- | --- | --- | --- |
