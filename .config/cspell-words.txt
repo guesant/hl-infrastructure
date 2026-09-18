@@ -200,3 +200,10 @@ setuid
 tagueadas
 inodes
 scriptability
+KCNA
+KCSA
+CKAD
+CGOA
+NACL
+Karpenter
+Codecon

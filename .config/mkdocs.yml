@@ -151,6 +151,10 @@ nav:
       - Comandos de Git: referencia/comandos-de-git.md
       - tmux e systemd: referencia/tmux-e-systemd.md
       - Comandos de shell e troubleshooting genérico: referencia/comandos-de-shell-e-troubleshooting.md
+      - Blogs de engenharia: referencia/blogs-de-engenharia.md
+      - Eventos e conferências: referencia/eventos-e-conferencias.md
+      - Trilha de estudo e materiais: referencia/trilha-de-estudo-e-materiais.md
+      - Detalhes por certificadora: referencia/detalhes-por-certificadora.md
   - Contribuindo:
       - contribuindo/index.md
       - Convenções de escrita: contribuindo/convencoes-de-escrita.md
