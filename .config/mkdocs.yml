@@ -95,6 +95,7 @@ nav:
       - "CI/CD": aprender/ci-cd.md
       - Scanning de vulnerabilidade: aprender/vulnerability-scanning.md
       - Supply chain e SBOM: aprender/supply-chain-e-sbom.md
+      - Pinagem por digest e hash em cada ecossistema: aprender/pinagem-por-digest-e-hash.md
       - Threat modeling: aprender/threat-modeling.md
       - CodeQL e zizmor: aprender/codeql-e-zizmor.md
       - kubeconform e conftest: aprender/kubeconform-e-conftest.md
@@ -107,7 +108,8 @@ nav:
       - Padrões e governança da internet: aprender/padroes-e-governanca-da-internet.md
       - Fundações do software livre e aberto: aprender/fundacoes-do-software-livre-e-aberto.md
       - Linters de qualidade de artefato: aprender/linters-de-qualidade-de-artefato.md
-      - "commitlint, lychee e Renovate": aprender/commitlint-lychee-e-renovate.md
+      - commitlint e lychee: aprender/commitlint-lychee-e-renovate.md
+      - "Renovate: atualização automática de dependência": aprender/renovate-atualizacao-automatica-de-dependencia.md
       - "jq e yq: consulta estruturada de JSON e YAML": aprender/jq-e-yq.md
       - Diátaxis: aprender/diataxis.md
       - "Gerar várias instâncias com Helm": aprender/helm-templating-de-lista.md
