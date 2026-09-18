@@ -8,6 +8,7 @@ application:
       reloader.stakater.com/auto: "true"
     strategy:
       type: Recreate
+      rollingUpdate: null
     replicas: 1
     reloadOnChange: false
     image:
