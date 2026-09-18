@@ -60,6 +60,7 @@ nav:
       - DNSSEC, mDNS e registro de domínio: aprender/dnssec-mdns-e-registro-de-dominio.md
       - Servidores DNS e conectividade WAN: aprender/servidores-dns-e-conectividade-wan.md
       - UFW e portas publicadas pelo Docker: aprender/ufw-e-portas-publicadas-pelo-docker.md
+      - "Fail2ban, atualizações automáticas e journal": aprender/fail2ban-atualizacoes-automaticas-e-journal.md
       - Cilium e Calico como CNI: aprender/cilium-e-calico-como-cni.md
       - Reverse proxy e split-horizon DNS: aprender/reverse-proxy-e-split-horizon-dns.md
       - "Service mesh: Istio e Linkerd": aprender/service-mesh-istio-e-linkerd.md
