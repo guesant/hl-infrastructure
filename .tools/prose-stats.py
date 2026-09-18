@@ -96,13 +96,13 @@ def main() -> int:
     parser.add_argument(
         "--min-sentences",
         type=int,
-        default=2,
+        default=3,
         help="paragraphs at or below this sentence count are listed as short",
     )
     parser.add_argument(
         "--max-sentences",
         type=int,
-        default=6,
+        default=5,
         help="paragraphs at or above this sentence count are listed as long",
     )
     parser.add_argument(
