@@ -194,3 +194,5 @@ evictar
 keyserver
 Yubi
 YubiKey
+Burstable
+evictado
