@@ -71,7 +71,7 @@ nav:
       - SSH: aprender/ssh.md
       - firewalld: aprender/firewalld.md
       - "just: executor de tarefas": aprender/just-executor-de-tarefas.md
-      - rsync e sshfs: aprender/rsync-e-sshfs.md
+      - "Transferência de arquivo: rsync, sshfs, sftp e rclone": aprender/rsync-e-sshfs.md
       - "systemd: units, timers e dependências": aprender/systemd-units-timers-e-dependencias.md
       - "Podman Quadlets: containers como unidades systemd": aprender/podman-quadlets.md
       - "GitOps para Podman: orches e materia": aprender/gitops-para-podman-orches-e-materia.md
@@ -89,6 +89,7 @@ nav:
       - TLS automático: aprender/tls-automatico.md
       - step-ca e trust-manager: aprender/step-ca-e-trust-manager.md
       - "ArgoCD e GitOps": aprender/argocd.md
+      - "Entrega progressiva: canary, blue-green e Argo Rollouts": aprender/entrega-progressiva-canary-blue-green-e-argo-rollouts.md
       - Operators do Kubernetes: aprender/kubernetes-operators.md
       - Helm e charts: aprender/helm-e-charts.md
       - "CI/CD": aprender/ci-cd.md
