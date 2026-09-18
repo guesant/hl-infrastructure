@@ -152,15 +152,17 @@ Para conferir de um dispositivo da tailnet, `ssh root@<endereço do node na tail
 
 Os realms são criados e mantidos pelos módulos `tofu/keycloak-*`, na ordem `master`, `management`, `homelab`. Eles falam com o Keycloak por `keycloak.guesant.internal`, então precisam da tailnet e da CA interna, já commitada ao lado de cada módulo. O `keycloak-master.sops.env` já traz o administrador e as contas de serviço cifrados, e os outros módulos leem seus segredos dos `SopsSecret` pelo `secrets.map`; confira com `just placeholders`.
 
+Num cluster que acabou de nascer o realm `master` não tem usuário nenhum, e o `master` precisa de alguém para entrar. Crie no chart `argocd/apps/platform/keycloak` um `SopsSecret` `keycloak-bootstrap-admin` com `KC_BOOTSTRAP_ADMIN_USERNAME=temp-admin` e, em `KC_BOOTSTRAP_ADMIN_PASSWORD`, a mesma senha que o `keycloak-master.sops.env` declara como credencial do módulo; cifre com `just sops-sync`, commite e espere o Argo reiniciar o pod. O Keycloak só lê essas variáveis enquanto o `master` está vazio, então elas não têm efeito depois.
+
 ```bash
 just tofu keycloak-master init && just tofu keycloak-master plan && just tofu-apply keycloak-master
 just tofu keycloak-management init && just tofu keycloak-management plan && just tofu-apply keycloak-management
 just tofu keycloak-homelab init && just tofu keycloak-homelab plan && just tofu-apply keycloak-homelab
 ```
 
-O `master` entra com o administrador temporário do `Secret` `keycloak-initial-admin` e cria os outros realms, o administrador permanente e as contas de serviço; os outros módulos entram com a sua conta de serviço e criam o conteúdo do realm. Commite os states cifrados.
+O `master` entra com o administrador de bootstrap e cria os outros realms, o administrador permanente e as contas de serviço; os outros módulos entram com a sua conta de serviço e criam o conteúdo do realm. Commite os states cifrados.
 
-O administrador temporário que o operator gerou já cumpriu o papel dele no `apply` do `master`, e um único comando o aposenta:
+O administrador de bootstrap já cumpriu o papel dele no `apply` do `master`, e um único comando o aposenta:
 
 ```bash
 just keycloak-bootstrap-admin
@@ -188,7 +190,7 @@ O Argo sobe o ingress sozinho depois do push, e com ele o cert-manager emite uma
 just internal-ca
 ```
 
-A saída é só o certificado público; a chave privada fica no cluster. Depois disso, `https://argocd.guesant.internal` e `https://keycloak.guesant.internal` abrem sem aviso de um dispositivo da tailnet, e o console de administração do Keycloak responde nesse segundo nome com o usuário do `Secret` `keycloak-initial-admin`. Veja [Ingress: os nomes internos pela tailnet](../arquitetura/ingress.md) para o desenho.
+A saída é só o certificado público; a chave privada fica no cluster. Depois disso, `https://argocd.guesant.internal` e `https://keycloak.guesant.internal` abrem sem aviso de um dispositivo da tailnet, e o console de administração do Keycloak responde nesse nome com o `admin` do `master`. Veja [Ingress: os nomes internos pela tailnet](../arquitetura/ingress.md) para o desenho.
 
 ## Continue por aqui
 

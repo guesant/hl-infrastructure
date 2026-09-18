@@ -20,7 +20,7 @@ A correção é `hubble.tls.auto.method: cronJob`. Nesse modo os certificados s�
 
 Nem todo chart local em `argocd/apps` embrulha um chart de terceiro. `argocd/apps/satellites/launcher` e `argocd/apps/satellites/delivery` não têm `dependencies` no `Chart.yaml` nem `Chart.lock`: são um chart Helm só de templates próprios, cujo `values.yaml` guarda uma lista (`satellites`), e cujos templates fazem `{{- range .Values.satellites }}` para emitir um objeto do Kubernetes por item da lista, um `Application` do Argo no caso do launcher e os objetos de entrega do Kargo no caso da delivery. O padrão está descrito por extenso em [GitOps: root e satélites](gitops-root-e-satelites.md) e o mecanismo geral de gerar várias instâncias assim, incluindo o cuidado necessário para não colidir com a sintaxe de expressão do próprio Kargo, está em [gerar várias instâncias de um recurso com Helm](../aprender/helm-templating-de-lista.md).
 
-O `argocd/apps/operators/keycloak-operator` é outra variante ainda, sem chart upstream nenhum: o manifesto oficial do operador vem vendorizado dentro do chart local, porque o projeto não publica um chart Helm próprio.
+O Keycloak (`argocd/apps/platform/keycloak`), o Portainer e o kube-bench são outra variante ainda, sem chart upstream nenhum: manifestos próprios e curtos, escritos porque o projeto não publica chart Helm ou porque o chart oficial não expõe o `securityContext` que as políticas de admissão exigem.
 
 ## Versões pinadas
 

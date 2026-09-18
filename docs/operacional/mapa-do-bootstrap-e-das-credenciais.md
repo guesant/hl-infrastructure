@@ -28,7 +28,7 @@ Lendo de baixo para cima, com o que cada peça exige da anterior:
 - O ingress exige o cert-manager (a CA interna é um `ClusterIssuer`), a zona `tailscale` do firewall com `http` e `https`, e o sysctl que deixa o Traefik escutar em portas baixas sem root; todos vêm do Ansible.
 - O login em qualquer serviço exige o Keycloak no ar (Argo), o realm aplicado (Tofu) e um usuário criado no console pelo `admin` do `master`, com e-mail e no grupo `admins`; não há provedor externo, e senha e TOTP vivem só no Keycloak.
 - `tofu/tailscale` exige o node na tailnet, porque lê o endereço dele com um data source. `tofu/cloudflare` não exige nada do cluster para o `apply`, mas o túnel só carrega tráfego depois que o cloudflared do blog está rodando com o token que `just cloudflare-tunnel-token` grava no `SopsSecret`.
-- `tofu/keycloak-master` exige o Keycloak alcançável por `keycloak.guesant.internal` e o `Secret` `keycloak-initial-admin` que o operator gera no primeiro boot, cuja cópia cifrada está no `keycloak-master.sops.env`. `tofu/keycloak-homelab` e `tofu/keycloak-management` exigem o `master` aplicado, porque autenticam com as contas de serviço que ele cria.
+- `tofu/keycloak-master` exige o Keycloak alcançável por `keycloak.guesant.internal` e, num cluster vazio, o administrador de bootstrap que o `SopsSecret` `keycloak-bootstrap-admin` entrega ao pod, com a mesma credencial declarada no `keycloak-master.sops.env`. `tofu/keycloak-homelab` e `tofu/keycloak-management` exigem o `master` aplicado, porque autenticam com as contas de serviço que ele cria.
 
 ## Onde vive cada credencial
 
