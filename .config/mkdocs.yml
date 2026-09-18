@@ -66,6 +66,7 @@ nav:
       - "Gateway API: GatewayClass, Gateway e HTTPRoute": aprender/gateway-api.md
       - "Service mesh: Istio e Linkerd": aprender/service-mesh-istio-e-linkerd.md
       - Kong e o catálogo de um API gateway: aprender/kong-e-o-catalogo-de-um-api-gateway.md
+      - "Rate limiting: política local e compartilhada": aprender/rate-limiting-politica-local-e-compartilhada.md
       - "DevOps, IaC e GitOps": aprender/devops-iac-gitops.md
       - Infraestrutura como código: aprender/iac-provisionamento.md
       - Ansible: aprender/ansible.md
