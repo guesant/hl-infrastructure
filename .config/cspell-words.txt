@@ -181,3 +181,6 @@ OMPI
 FIPS
 multinó
 datacenter
+backupstore
+reconstruíveis
+mutar
