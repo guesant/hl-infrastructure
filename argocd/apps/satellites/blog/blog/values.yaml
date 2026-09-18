@@ -58,8 +58,9 @@ application:
         port: 8080
     readinessProbe:
       enabled: true
+      timeoutSeconds: 3
       httpGet:
-        path: /health
+        path: /health/ready
         port: 8080
     resources:
       requests:
