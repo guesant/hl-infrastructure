@@ -65,9 +65,11 @@ nav:
       - Reverse proxy e split-horizon DNS: aprender/reverse-proxy-e-split-horizon-dns.md
       - "Gateway API: GatewayClass, Gateway e HTTPRoute": aprender/gateway-api.md
       - "Service mesh: Istio e Linkerd": aprender/service-mesh-istio-e-linkerd.md
+      - Kong e o catálogo de um API gateway: aprender/kong-e-o-catalogo-de-um-api-gateway.md
       - "DevOps, IaC e GitOps": aprender/devops-iac-gitops.md
       - Infraestrutura como código: aprender/iac-provisionamento.md
       - Ansible: aprender/ansible.md
+      - Entregar configuração a uma frota de hosts: aprender/entregar-configuracao-a-uma-frota-de-hosts.md
       - SSH: aprender/ssh.md
       - firewalld: aprender/firewalld.md
       - "just: executor de tarefas": aprender/just-executor-de-tarefas.md
@@ -102,6 +104,8 @@ nav:
       - Criptografia de segredos no Git: aprender/criptografia-de-segredos-no-git.md
       - Bootstrap e rotação de segredos: aprender/bootstrap-e-rotacao-de-segredos.md
       - Secret store externo: aprender/secret-store-externo.md
+      - Entregar segredo a um consumidor: aprender/entregar-segredo-a-um-consumidor.md
+      - Cifrar um cofre de segredos em repouso: aprender/cifrar-um-cofre-de-segredos-em-repouso.md
       - OWASP: aprender/owasp.md
       - MITRE ATT&CK: aprender/mitre-attack.md
       - Zero trust: aprender/zero-trust.md
