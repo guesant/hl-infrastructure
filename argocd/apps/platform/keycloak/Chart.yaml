@@ -1,4 +1,4 @@
 apiVersion: v2
 name: keycloak
-description: Keycloak instance and homelab realm, brokering Google sign-in for Argo CD, Grafana and the blog
+description: Keycloak server as a plain StatefulSet on the CNPG cluster; realms come from tofu/keycloak-*
 version: 0.1.0
