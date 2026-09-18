@@ -228,3 +228,6 @@ Shamir
 SPIFFE
 Konnect
 autogerenciado
+mensageria
+reentrega
+SGSI
