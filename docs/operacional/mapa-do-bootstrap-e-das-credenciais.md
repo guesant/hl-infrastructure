@@ -16,7 +16,7 @@ A camada do Argo CD, a partir da `root`, sincroniza tudo em `argocd/applications
 
 A camada dos serviços externos ao cluster é o que o OpenTofu declara: o túnel e o DNS na Cloudflare, o split DNS na tailnet. Eles rodam do Mac do operador, com Touch ID, e dependem da camada anterior só para o túnel ter para onde apontar; o DNS da tailnet depende de o node já estar nela (a camada do Ansible).
 
-A camada do Keycloak, também pelo OpenTofu, é os realms e tudo dentro deles. Ela depende de todas as anteriores, porque fala com o Keycloak pelo nome interno da tailnet (a camada do Ansible), que o ingress serve (a camada do Argo CD) com o certificado da CA interna (a camada do Argo CD), e porque os client secrets que ela aplica são os mesmos `SopsSecret` que os consumidores da camada do Argo CD montam.
+A camada do Keycloak, também pelo OpenTofu, são os realms e tudo dentro deles. Ela depende de todas as anteriores, porque fala com o Keycloak pelo nome interno da tailnet (a camada do Ansible), que o ingress serve (a camada do Argo CD) com o certificado da CA interna (a camada do Argo CD), e porque os client secrets que ela aplica são os mesmos `SopsSecret` que os consumidores da camada do Argo CD montam.
 
 ## Quem depende de quem
 
@@ -47,7 +47,9 @@ Toda credencial que o repositório conhece está cifrada com SOPS para os destin
 | `argocd/apps/satellites/blog/cloudflared/templates/tunnel-token.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator | Sync | token do túnel Cloudflare |
 | `argocd/apps/satellites/blog/blog/templates/admin-oidc.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator; `tofu/keycloak-homelab` (pelo `secrets.map`) | Sync; `plan` e `apply` do `homelab` | client secret do `blog` no realm `homelab`, montado no blog como `/secrets/app/PORTFOLIO_ADMIN_OIDC_CLIENT_SECRET` |
 
-A regra que organiza a tabela: um segredo vive ao lado de quem o consome no cluster, e quem mais precisar dele o lê dali. O OpenTofu nunca guarda cópia de um segredo de client; `secrets.map`, em cada módulo do Keycloak, diz de qual arquivo e chave o valor vem, e `tofu-run.sh` o extrai em memória na hora do `plan`. Só o `keycloak-master.sops.env` guarda segredos que não pertencem a consumidor nenhum, porque o administrador e as contas de serviço são do próprio Keycloak. O prazo de rotação de cada arquivo está em `.config/secret-max-age.conf`, e a CI avisa quando vence; a linha dedicada de `keycloak-master.sops.env` precisa vir antes da linha padrão `*` nesse arquivo, senão o padrão intercepta o arquivo primeiro e o prazo dedicado nunca é lido. `keycloak-homelab` e `keycloak-management`, sem `.sops.env` próprio, caem direto no prazo padrão, porque não têm linha dedicada nenhuma para a linha padrão competir.
+A regra que organiza a tabela: um segredo vive ao lado de quem o consome no cluster, e quem mais precisar dele o lê dali. O OpenTofu nunca guarda cópia de um segredo de client; `secrets.map`, em cada módulo do Keycloak, diz de qual arquivo e chave o valor vem, e `tofu-run.sh` o extrai em memória na hora do `plan`. Só o `keycloak-master.sops.env` guarda segredos que não pertencem a consumidor nenhum, porque o administrador e as contas de serviço são do próprio Keycloak.
+
+O prazo de rotação de cada arquivo está em `.config/secret-max-age.conf`, e a CI avisa quando vence. A ordem das linhas desse arquivo importa: a linha dedicada de `keycloak-master.sops.env` precisa vir antes da linha padrão `*`, senão o padrão intercepta o arquivo primeiro e o prazo dedicado nunca é lido. `keycloak-homelab` e `keycloak-management`, sem `.sops.env` próprio, caem direto no prazo padrão, porque não têm linha dedicada nenhuma para a linha padrão interceptar.
 
 ## O que o OpenTofu lê, módulo a módulo
 
@@ -84,15 +86,26 @@ Declarar um segredo no git só vale alguma coisa se a mudança chegar ao serviç
 | `token` | `SopsSecret` `cloudflared-secret` | reinicia sozinho | o cloudflared lê `--token-file` no start e o `Deployment` tem a anotação do Reloader; `just cloudflare-tunnel-token` e push bastam |
 | certificado de `*.guesant.internal` | `Secret` `internal-domain-tls`, emitido pelo cert-manager | vivo | o Traefik observa o `Secret` e troca o certificado sem restart; a CA que o assina só muda com a rotação descrita em [rotacionar credenciais](rotacionar-credenciais.md) e exige reinstalar a CA nos dispositivos |
 
-Duas coisas que a tabela deixa explícitas. Primeiro, a senha do admin do Portainer é o único valor em que o git e o serviço podem divergir silenciosamente, porque o Portainer não a relê; é por isso que ela só serve ao Job e a rotação dela passa pela API. Segundo, tudo o que o Keycloak recebe passa por um `apply` do operador, com Touch ID; um segredo de client mudado no git vale para o consumidor no próximo sync do Argo, mas só vale para o Keycloak depois do `apply`, e nesse intervalo o login daquele client falha.
+A senha do admin do Portainer é o único valor em que o git e o serviço podem divergir silenciosamente, porque o Portainer não a relê; é por isso que ela só serve ao Job e a rotação dela passa pela API.
+
+O outro caso que a tabela deixa explícito é o do Keycloak: tudo o que ele recebe passa por um `apply` do operador, com Touch ID. Um segredo de client mudado no git vale para o consumidor no próximo sync do Argo, mas só vale para o Keycloak depois do `apply`, e nesse intervalo o login daquele client falha.
 
 ## O que é bootstrap e o que é manutenção
 
-Bootstrap é o que só acontece quando o node ou o Keycloak nascem: o primeiro `just bootstrap`, que instala tudo e gera no node a chave age (registrada em `.sops.yaml` com `just sops-recipients` e seguida de `just sops-sync`); o primeiro `apply` de cada módulo do Tofu, que cria o que ainda não existe; ligar o node à tailnet com uma chave de autorização, que só serve para entrar; criar no console, como `admin` do `master`, o seu usuário em cada realm, com e-mail e no grupo `admins`; instalar a CA interna nos dispositivos; `just keycloak-bootstrap-admin`, que apaga o `temp-admin` e troca a credencial do módulo `master` pelo administrador permanente. Cada um desses passos deixa um rastro no repositório (state, destinatário, `SopsSecret`) e não precisa ser repetido.
+Bootstrap é o que só acontece quando o node ou o Keycloak nascem:
+
+- o primeiro `just bootstrap`, que instala tudo e gera no node a chave age, registrada em `.sops.yaml` com `just sops-recipients` e seguida de `just sops-sync`;
+- o primeiro `apply` de cada módulo do Tofu, que cria o que ainda não existe;
+- ligar o node à tailnet com uma chave de autorização, que só serve para entrar;
+- criar o seu usuário em cada realm com `just keycloak-user`, com e-mail e no grupo `admins`;
+- instalar a CA interna nos dispositivos;
+- `just keycloak-bootstrap-admin`, que apaga o `temp-admin` e troca a credencial do módulo `master` pelo administrador permanente.
+
+Cada um desses passos deixa um rastro no repositório, seja um state, um destinatário ou um `SopsSecret`, e não precisa ser repetido.
 
 Manutenção é o que se repete e é idempotente. `just bootstrap` de novo, com ou sem `--tags`, reconcilia o host contra as roles e não muda nada num node que já está como declarado; `just bootstrap-check` antes mostra o que mudaria. Um push em `main` é a manutenção do cluster: o Argo aplica e o Reloader reinicia quem lê segredo por variável. Um `plan` de cada módulo do Tofu, na [revisão periódica](revisao-periodica.md) ou depois de qualquer mudança feita à mão no console, mostra a deriva; o `apply` a corrige. As rotações estão em [rotacionar credenciais](rotacionar-credenciais.md), cada uma com o caminho que faz o valor novo chegar ao serviço. O Renovate cuida das versões, e a CI recusa o que não passa nos gates.
 
-O que não é nem um nem outro, porque vive fora do git, está listado em [estado fora do git](estado-fora-do-git.md): a ACL da tailnet, a expiração da chave do node, os usuários de cada realm, com senha e TOTP (criados e mantidos no console, só no Keycloak), as configurações do Portainer que o Job reaplica a cada sync, e as identidades privadas que decifram tudo.
+O que não é nem um nem outro, porque vive fora do git, está listado em [estado fora do git](estado-fora-do-git.md): a ACL da tailnet, a expiração da chave do node, os usuários de cada realm, com senha e TOTP, criados com `just keycloak-user` e mantidos só no Keycloak, as configurações do Portainer que o Job reaplica a cada sync, e as identidades privadas que decifram tudo.
 
 ## Continue por aqui
 

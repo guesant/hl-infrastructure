@@ -37,7 +37,9 @@ Depois disso não existe login pelo console local: o root continua com a senha b
 
 O túnel e o DNS da Cloudflare não fazem parte desta reconstrução: eles vivem na conta da Cloudflare, não no node, e continuam existindo. O cloudflared volta sozinho quando o Argo sincroniza o satélite do blog, com o token que já está no `SopsSecret`, desde que o passo 2 abaixo deixe a chave do node nova capaz de decifrá-lo. Nenhum `just tofu` é necessário aqui.
 
-O Keycloak, ao contrário, nasce vazio num node novo: o operator cria uma instância com um novo `temp-admin`, e nenhum realm existe. Os states dos módulos `tofu/keycloak-*` ainda apontam para os IDs da instância antiga, então o caminho é o do bootstrap inicial, precedido de um `state rm` ou de um novo `init` num state vazio: `just tofu keycloak-master apply` recria os realms, o `admin` e as contas de serviço, os outros módulos recriam o conteúdo, `just keycloak-bootstrap-admin` aposenta o `temp-admin` novo, e `just keycloak-user` recria os seus usuários, cujas senhas e TOTP se perderam com o banco. Os client secrets não mudam, porque vivem nos `SopsSecret`, então Grafana, Argo CD, Portainer, oauth2-proxy e o blog voltam a autenticar sem nenhuma alteração.
+O Keycloak, ao contrário, nasce vazio num node novo: o operator cria uma instância com um novo `temp-admin`, e nenhum realm existe. Os states dos módulos `tofu/keycloak-*` ainda apontam para os IDs da instância antiga, então o caminho é o do bootstrap inicial, precedido de um `state rm` ou de um novo `init` num state vazio. `just tofu-apply keycloak-master` recria os realms, o `admin` e as contas de serviço, os outros módulos recriam o conteúdo, `just keycloak-bootstrap-admin` aposenta o `temp-admin` novo, e `just keycloak-user` recria os seus usuários, cujas senhas e TOTP se perderam com o banco.
+
+Os client secrets não mudam, porque vivem nos `SopsSecret`, então Grafana, Argo CD, Portainer, oauth2-proxy e o blog voltam a autenticar sem nenhuma alteração.
 
 ## 2. Confirmar a chave age
 
@@ -47,7 +49,11 @@ Um node novo não herda a chave age do node antigo: a role `sops_age_key` só ge
 just sops-recipients sync-node
 ```
 
-O comando lê a chave pública do node vivo e reescreve só a entrada rotulada `node` em `.sops.yaml` (o rótulo é o padrão de `sync-node`; passe outro se este cluster convive com mais de um node no mesmo `.sops.yaml`), sem tocar nas outras; revise o diff e commite. Rode `just sops-sync` em seguida para recifrar todo `SopsSecret` já commitado para os destinatários atuais; ele só pede `SOPS_AGE_KEY_FILE` se algum arquivo realmente precisar decifrar pra resincronizar, então tê-lo à mão (a chave de rotina do operador ou a de desastre) só importa se esse for o caso. Sem esse passo, os SopsSecret continuam decifráveis pelas chaves que não mudaram, só não estão recifrados para a chave nova do node até a próxima vez que alguém os editar. O gate `security-sopssecrets` (`just check`, e o job de mesmo nome na CI) deixa esse atraso visível: ele falha assim que os destinatários de algum `SopsSecret` divergirem do `.sops.yaml` atual, então um push sem o `sops-sync` correspondente não passa despercebido.
+O comando lê a chave pública do node vivo e reescreve só a entrada rotulada `node` em `.sops.yaml`, sem tocar nas outras; revise o diff e commite. O rótulo `node` é o padrão de `sync-node`, e você passa outro se este cluster convive com mais de um node no mesmo `.sops.yaml`.
+
+Rode `just sops-sync` em seguida para recifrar todo `SopsSecret` já commitado para os destinatários atuais. Ele só pede `SOPS_AGE_KEY_FILE` se algum arquivo realmente precisar ser decifrado para resincronizar os destinatários, então ter a chave de rotina do operador ou a de desastre à mão só importa nesse caso.
+
+Sem esse passo, os `SopsSecret` continuam decifráveis pelas chaves que não mudaram, só não ficam recifrados para a chave nova do node até a próxima vez que alguém os editar. O gate `security-sopssecrets`, que roda em `just check` e no job de mesmo nome na CI, deixa esse atraso visível: ele falha assim que os destinatários de algum `SopsSecret` divergirem do `.sops.yaml` atual, então um push sem o `sops-sync` correspondente não passa despercebido.
 
 Se as outras chaves também se perderam junto com o Mac do operador, não há como recuperar o que já estava cifrado: gere um par novo com `just age-se-keygen` (ou um par de desastre novo com `just age-keygen`), adicione o destinatário em `.sops.yaml` com `just sops-recipients add <rótulo> <pública>` (ou `update <rótulo> <pública>` se o rótulo antigo ainda existir), e recifre cada `SopsSecret` de cada satélite a partir do valor original:
 
