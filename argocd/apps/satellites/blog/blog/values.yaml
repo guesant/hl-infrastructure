@@ -103,6 +103,15 @@ application:
           - -c
           - |
             export PORTFOLIO_DB_CONNECTION="Host=$(cat /secrets/db/host);Database=$(cat /secrets/db/dbname);Username=$(cat /secrets/db/user);Password=$(cat /secrets/db/password)"
+            export DB_CONNECTION=pgsql
+            export DB_HOST="$(cat /secrets/db/host)"
+            export DB_PORT=5432
+            export DB_DATABASE="$(cat /secrets/db/dbname)"
+            export DB_USERNAME="$(cat /secrets/db/user)"
+            export DB_PASSWORD="$(cat /secrets/db/password)"
+            if [ -f /app/artisan ]; then
+              exec php /app/artisan migrate --force
+            fi
             exec /app/migrate
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT:
