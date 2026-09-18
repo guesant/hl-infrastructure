@@ -59,10 +59,6 @@ helm template monitoring "$repo_root/argocd/apps/platform/monitoring" \
   --namespace monitoring \
   --include-crds >"$out_dir/monitoring.yaml"
 
-helm template keycloak-operator "$repo_root/argocd/apps/operators/keycloak-operator" \
-  --namespace keycloak \
-  --include-crds >"$out_dir/keycloak-operator.yaml"
-
 helm template keycloak-postgres "$repo_root/argocd/apps/data/keycloak-postgres" \
   --namespace keycloak >"$out_dir/keycloak-postgres.yaml"
 

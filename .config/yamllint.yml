@@ -6,7 +6,6 @@ ignore:
   - ansible/group_vars/all/secrets.sops.yaml
   - ansible/group_vars/all/authorized_keys.yml
   - "**/*.sops-secret.yaml"
-  - argocd/apps/operators/keycloak-operator/crds/
   - argocd/apps/satellites/launcher/templates/
   - argocd/apps/satellites/delivery/templates/
 
