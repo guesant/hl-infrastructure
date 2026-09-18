@@ -5,7 +5,7 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
-CODE_FENCE = re.compile(r"```.*?```", re.DOTALL)
+CODE_FENCE = re.compile(r"```([\w-]*)\n.*?```", re.DOTALL)
 HTML_COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
 CODE_SPAN = re.compile(r"`[^`\n]+`")
 SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
@@ -63,9 +63,12 @@ def split_sentences(block: str) -> list[Sentence]:
     return sentences
 
 
-def parse(path: Path) -> list[Paragraph]:
+def parse(path: Path) -> tuple[list[Paragraph], int]:
     text = path.read_text(encoding="utf-8")
     text = HTML_COMMENT.sub("", text)
+    diagrams = sum(
+        1 for match in CODE_FENCE.finditer(text) if match.group(1).lower() == "mermaid"
+    )
     text = CODE_FENCE.sub("", text)
 
     paragraphs = []
@@ -78,7 +81,7 @@ def parse(path: Path) -> list[Paragraph]:
         sentences = split_sentences(block)
         if sentences:
             paragraphs.append(Paragraph(line=block_start, sentences=sentences))
-    return paragraphs
+    return paragraphs, diagrams
 
 
 def format_row(*columns: object, widths: tuple[int, ...]) -> str:
@@ -87,7 +90,7 @@ def format_row(*columns: object, widths: tuple[int, ...]) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Measure paragraph, sentence and inline-code density in the docs prose."
+        description="Measure paragraph, sentence, inline-code and diagram density in the docs prose."
     )
     parser.add_argument("paths", nargs="*", default=["docs"])
     parser.add_argument(
@@ -122,7 +125,7 @@ def main() -> int:
         print("no Markdown file found", file=sys.stderr)
         return 1
 
-    widths = (46, 6, 6, 6, 6, 8, 8, 8)
+    widths = (46, 6, 6, 6, 6, 8, 8, 8, 5)
     print(
         format_row(
             "file",
@@ -133,6 +136,7 @@ def main() -> int:
             "spans",
             "sp/p",
             "sp/sen",
+            "diag",
             widths=widths,
         )
     )
@@ -140,18 +144,20 @@ def main() -> int:
     short_paragraphs: list[tuple[Path, Paragraph]] = []
     long_paragraphs: list[tuple[Path, Paragraph]] = []
     saturated_sentences: list[tuple[Path, int, Sentence]] = []
+    total_diagrams = 0
 
     for path in files:
-        paragraphs = parse(path)
-        if not paragraphs:
+        paragraphs, diagrams = parse(path)
+        total_diagrams += diagrams
+        if not paragraphs and not diagrams:
             continue
         rel = path.relative_to(path.cwd()) if path.is_absolute() else path
-        sentence_counts = [p.sentence_count for p in paragraphs]
+        sentence_counts = [p.sentence_count for p in paragraphs] or [0]
         span_counts = [p.code_spans for p in paragraphs]
-        total_sentences = sum(sentence_counts)
+        total_sentences = sum(sentence_counts) if paragraphs else 0
         total_spans = sum(span_counts)
-        avg_sentences = total_sentences / len(paragraphs)
-        avg_spans_per_paragraph = total_spans / len(paragraphs)
+        avg_sentences = total_sentences / len(paragraphs) if paragraphs else 0
+        avg_spans_per_paragraph = total_spans / len(paragraphs) if paragraphs else 0
         avg_spans_per_sentence = total_spans / total_sentences if total_sentences else 0
 
         print(
@@ -164,6 +170,7 @@ def main() -> int:
                 total_spans,
                 f"{avg_spans_per_paragraph:.1f}",
                 f"{avg_spans_per_sentence:.2f}",
+                diagrams,
                 widths=widths,
             )
         )
@@ -204,6 +211,7 @@ def main() -> int:
         ),
         lambda r: f"{r[0]}:{r[1]} ({r[2].code_spans} span(s) in {r[2].words} words): {r[2].text[:110]}",
     )
+    print(f"\ntotal mermaid diagrams: {total_diagrams}")
     return 0
 
 
