@@ -77,6 +77,7 @@ nav:
       - Modelo de armazenamento do Kubernetes: aprender/modelo-de-armazenamento-do-kubernetes.md
       - Armazenamento local, distribuído e Longhorn: aprender/armazenamento-local-distribuido-e-longhorn.md
       - Policy enforcement e Kubescape: aprender/policy-enforcement-e-kubescape.md
+      - RBAC do Kubernetes: aprender/rbac-do-kubernetes.md
       - Rede interna do cluster: aprender/rede-interna-do-cluster.md
       - TLS automático: aprender/tls-automatico.md
       - "ArgoCD e GitOps": aprender/argocd.md
