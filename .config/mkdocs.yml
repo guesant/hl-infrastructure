@@ -63,6 +63,7 @@ nav:
       - "Fail2ban, atualizações automáticas e journal": aprender/fail2ban-atualizacoes-automaticas-e-journal.md
       - Cilium e Calico como CNI: aprender/cilium-e-calico-como-cni.md
       - Reverse proxy e split-horizon DNS: aprender/reverse-proxy-e-split-horizon-dns.md
+      - "Gateway API: GatewayClass, Gateway e HTTPRoute": aprender/gateway-api.md
       - "Service mesh: Istio e Linkerd": aprender/service-mesh-istio-e-linkerd.md
       - "DevOps, IaC e GitOps": aprender/devops-iac-gitops.md
       - Infraestrutura como código: aprender/iac-provisionamento.md
