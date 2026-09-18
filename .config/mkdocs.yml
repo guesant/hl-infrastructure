@@ -106,6 +106,7 @@ nav:
       - Fundamentos de backup, RPO e RTO: aprender/fundamentos-de-backup-rpo-e-rto.md
       - Retenção, testes de restauração e Velero: aprender/retencao-testes-e-velero.md
       - Diagnóstico de Pod, nó, certificado e Argo CD: aprender/diagnostico-de-pod-no-cluster-e-do-argocd.md
+      - Smoke test e o limite da automação de checklist: aprender/smoke-test-e-o-limite-da-automacao-de-checklist.md
       - Avaliar ferramentas de operação: aprender/avaliar-ferramentas-de-operacao.md
       - Certificações de infraestrutura e nuvem: aprender/certificacoes-de-infraestrutura-e-nuvem.md
       - "Manutenção de nó: cordon, drain e disco": aprender/manutencao-de-no-cordon-drain-e-disco.md
