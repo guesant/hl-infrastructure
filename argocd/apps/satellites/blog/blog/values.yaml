@@ -6,6 +6,8 @@ application:
   deployment:
     annotations:
       reloader.stakater.com/auto: "true"
+    strategy:
+      type: Recreate
     replicas: 1
     reloadOnChange: false
     image:
