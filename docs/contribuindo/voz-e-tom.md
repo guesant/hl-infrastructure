@@ -27,6 +27,14 @@ Depois, de [OpenTofu](../arquitetura/opentofu.md): "A escolha pelo OpenTofu, e n
 
 Aqui a diferença é nomear o custo explicitamente, no lugar de "alguns tradeoffs a serem considerados", que não diz qual é o tradeoff nem convida o leitor a julgar se ele vale a pena.
 
+O exemplo seguinte é de outro tipo de problema: cada crase estava certa, e a frase mesmo assim não se lia. O "antes" aqui é o texto que estava publicado, não uma reescrita hipotética.
+
+Antes, de uma versão anterior de [Ansible: as roles do bootstrap](../arquitetura/ansible.md): "com o login pelo realm `management` do Keycloak declarado em `oidc.config` (com PKCE, que o client do realm exige) (o client secret vem do `Secret` `argocd-oidc`, entregue pela `Application` `sso`, referenciado como `$argocd-oidc:clientSecret`) e uma política RBAC em que só o grupo `admins` tem papel".
+
+Depois: "com o login pelo realm `management` do Keycloak declarado em `oidc.config`, com PKCE, que o client do realm exige; o client secret vem do `Secret` `argocd-oidc`, entregue pela `Application` `sso`, referenciado como `$argocd-oidc:clientSecret`. A mesma configuração declara uma política RBAC em que só o grupo `admins` tem papel".
+
+Nenhum identificador saiu, porque todos são literais que alguém vai procurar no arquivo. O que mudou foi a frase em volta deles: os parênteses encadeados viraram uma oração e uma frase nova, e a enumeração que continuava depois deles ganhou um sujeito próprio. A régua para esse caso está na seção sobre crases das [convenções de escrita](convencoes-de-escrita.md): a representação literal pode ser frequente, mas não pode ser ela que sustenta a frase.
+
 ## Continue por aqui
 
 [Normas de redação técnica](normas-de-redacao-tecnica.md) explica a origem das convenções que sustentam esse tom.
