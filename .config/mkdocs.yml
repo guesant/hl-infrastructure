@@ -98,6 +98,9 @@ nav:
       - Alertas acionáveis e distributed tracing: aprender/alertas-acionaveis-e-distributed-tracing.md
       - Fundamentos de backup, RPO e RTO: aprender/fundamentos-de-backup-rpo-e-rto.md
       - Retenção, testes de restauração e Velero: aprender/retencao-testes-e-velero.md
+      - Diagnóstico de Pod, nó, certificado e Argo CD: aprender/diagnostico-de-pod-no-cluster-e-do-argocd.md
+      - "Manutenção de nó: cordon, drain e disco": aprender/manutencao-de-no-cordon-drain-e-disco.md
+      - Backup do etcd, do CloudNativePG e da chave age: aprender/backup-do-etcd-cnpg-e-chave-age.md
   - Arquitetura:
       - arquitetura/index.md
       - "Ansible: as roles do bootstrap": arquitetura/ansible.md

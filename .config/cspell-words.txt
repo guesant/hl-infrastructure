@@ -189,3 +189,5 @@ Velero
 Kopia
 whitebox
 metamonitoramento
+autoscaler
+evictar
