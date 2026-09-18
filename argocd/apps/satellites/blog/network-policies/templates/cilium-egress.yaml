@@ -73,7 +73,7 @@ spec:
     - toEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: keycloak
-            app: keycloak
+            app.kubernetes.io/name: keycloak
       toPorts:
         - ports:
             - port: "8080"
