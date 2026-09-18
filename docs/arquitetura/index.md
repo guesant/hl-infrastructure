@@ -64,9 +64,12 @@ flowchart TB
     certmanager --> cnpg
 ```
 
+## As páginas desta seção
+
 - [Ansible: as roles do bootstrap](ansible.md) descreve a ordem e o papel de cada role.
 - [Helm e os charts](helm-e-charts.md) explica por que nenhum componente fica vendorizado como manifesto estático.
 - [GitOps: root e satélites](gitops-root-e-satelites.md) descreve o padrão de app-of-apps que o ArgoCD usa.
+- [Rollout de imagens](rollout-de-imagens.md) descreve como o Kargo observa o registry e escreve o digest novo na `Application` do Argo.
 - [OpenTofu: a camada da Cloudflare](opentofu.md) descreve o túnel e o DNS do blog, e por que o token do túnel nunca passa pelo OpenTofu.
 - [Tailscale: acesso remoto e DNS interno](tailscale.md) descreve como o node entra na tailnet e por que `*.guesant.internal` só resolve lá dentro.
 - [Ingress: os nomes internos pela tailnet](ingress.md) descreve o Traefik que escuta no node, a Gateway API e a CA interna que emite os certificados desses nomes.

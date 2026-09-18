@@ -93,11 +93,11 @@ Cada linha junta recomendações equivalentes de fontes diferentes numa frase s�
 | --- | --- | --- | --- |
 | Tudo declarado no git: apps, rede e configuração | Parcial | Workloads, políticas e túnel estão no git; o Argo CD em si e o k3s vêm do Ansible, também versionado, mas aplicados à mão | CN, PL |
 | Deriva detectada e corrigida automaticamente | Atende | `automated` com `selfHeal` e prune nas `Application` que já passaram pelo diff inicial | CN |
-| Escopo mínimo por projeto | Atende | Projeto `satellites` só cria recurso de namespace mais `StorageClass`; `default` esvaziado | PL, CY |
+| Escopo mínimo por projeto | Atende | Projeto `satellites` só cria recurso de namespace, mais `Namespace`, `StorageClass` e o `Project` do Kargo; `default` esvaziado | PL, CY |
 | Interface do agente de GitOps fora da internet | Atende | `argocd-server` é `ClusterIP`; o túnel só publica o caminho exato do webhook, o resto do hostname responde 404 | CY |
-| Login local de administrador desligado, identidade central com SSO | Não atende | `admin.enabled` continua `true` e não há OIDC; o acesso depende de quem tem o kubeconfig | PL |
-| RBAC do Argo CD restrito | Não atende | `policy.default` e `policy.csv` vazios; na prática só existe o admin | PL, CY |
-| Terminal nos pods pela interface desligado | Atende | `exec.enabled` é `false` | SR |
+| Login local de administrador desligado, identidade central com SSO | Atende | `admin.enabled` falso nos values da role `argocd` e login pelo realm `management` do Keycloak, com PKCE; a emergência é o `kubectl` no node | PL |
+| RBAC do Argo CD restrito | Atende | `policy.default` vazio e `policy.csv` dá `role:admin` só ao grupo `admins` do Keycloak; quem não está no grupo autentica e não vê nada | PL, CY |
+| Terminal nos pods pela interface desligado | Atende | `exec.enabled` fica no padrão do chart, desligado | SR |
 | Agente de GitOps num cluster separado do que ele gerencia | Não se aplica | Um nó só; a mitigação equivalente é o escopo por projeto e o `argocd-server` sem exposição | CY |
 | Pipeline testada em ambientes que não são produção | Não se aplica | Não há outro ambiente; o dry-run do bootstrap e o `diff` antes de ligar `automated` fazem esse papel | CN |
 | Mudança em produção só em horário comercial | Não se aplica | Homelab de uma pessoa | CP |
@@ -115,11 +115,11 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, que ain
 | `system:masters` só no bootstrap | Parcial | O kubeconfig do operador é o de administrador do k3s; não há usuário nominal com permissão menor | K8 |
 | Kubeconfig com leitura restrita | Atende | Na máquina do operador fica fora do git, com modo 600; no node, `write-kubeconfig-mode: "0600"` deixa `/etc/rancher/k3s/k3s.yaml` legível só pelo root | SR |
 | Plugins de admissão recomendados, incluindo `NodeRestriction` | Atende | `NodeRestriction` ligado, junto com os padrões do k3s | K8 |
-| Pod Security Standards aplicados em todo namespace | Atende | `enforce`, `warn` e `audit` `restricted` em `blog`, `argocd`, `cert-manager`, `cnpg-system` e `sops`, por `managedNamespaceMetadata` nos operadores, por um manifesto `Namespace` no projeto `infra` para o `blog` e pela role `argocd`; `kube-system` fica sem enforce porque o Cilium e o k3s precisam de privilégio; o job `pod-security` exige o label em todo namespace novo | K8, KA, SR, SE |
+| Pod Security Standards aplicados em todo namespace | Atende | `enforce`, `warn` e `audit` `restricted` em `blog`, `argocd`, `cert-manager`, `cnpg-system` e `sops`, por `managedNamespaceMetadata` nos operadores, por um manifesto `Namespace` no projeto `infra` para o `blog` e pela role `argocd`; `kube-system` fica sem enforce porque o Cilium e o k3s precisam de privilégio, e `monitoring` e `ingress` levam `privileged` de propósito, pelo node-exporter e pelo `hostNetwork` do Traefik; o job `pod-security` exige o label em todo namespace novo | K8, KA, SR, SE |
 | Motor de políticas na admissão (Kyverno, Gatekeeper, ValidatingAdmissionPolicy) | Atende | `ValidatingAdmissionPolicy` nativas, sem controller extra, em `argocd/apps/platform/admission-policies`: todo pod fora do `kube-system` precisa de imagem por digest, de registry na lista permitida e de `allowPrivilegeEscalation: false`, `runAsNonRoot` e `drop: ALL`, com `Deny` | SE, MD, PL, CP |
 | Contêiner sem privilégio, sem escalada, com capabilities removidas | Atende | Todos os pods de `argocd`, `blog`, `cert-manager`, `cnpg-system` e `sops` rodam `runAsNonRoot` com `drop: ALL` e sem escalada | KA, SR, SE |
 | Perfil seccomp `RuntimeDefault` | Atende | Presente em todos os pods, inclusive no sops-secrets-operator depois de ligar o `securityContext` do chart | K8, KA, SE |
-| Sistema de arquivos raiz somente leitura | Atende | Em todos os pods de `argocd`, `blog`, `cert-manager`, `cnpg-system` e `sops`; o app do blog escreve só em `emptyDir` | KA, SR, SE |
+| Sistema de arquivos raiz somente leitura | Atende | Em todos os pods de `argocd`, `blog`, `cert-manager`, `cnpg-system` e `sops`; o app do blog escreve só nos `emptyDir` declarados e no PVC do cache do currículo | KA, SR, SE |
 | AppArmor ou SELinux nos contêineres | Parcial | AppArmor ligado no node, com o perfil padrão do containerd; nenhum perfil próprio por workload | K8, KA, SE |
 | Token de ServiceAccount só onde o pod usa a API | Atende | O chart do blog e do cloudflared já renderiza `automountServiceAccountToken: false`, e os pods não têm o volume `kube-api-access` | K8, KA, SR, SE |
 | ServiceAccount própria por workload | Atende | Os operadores têm a sua, e o blog e o cloudflared passaram a criar a própria em vez de usar `default` | KA, SE |
@@ -144,7 +144,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, que ain
 | SBOM e atestados de proveniência | Parcial | O job `trivy-images` gera um SBOM CycloneDX por imagem implantada; ainda não há assinatura nem atestado de proveniência | SE |
 | Isolamento de workloads sensíveis por nó ou runtime isolado | Não se aplica | Um nó só; gVisor e Kata não compensam no Raspberry Pi | K8, SR, SE, MD |
 | Namespaces separados por função | Atende | Um por operador, um para o Argo CD e um para o blog | SR, SE, MD |
-| Benchmark CIS periódico (kube-bench) | Atende | `CronJob` semanal no cluster para as checagens de `policies` e timer semanal no host (role `kube_bench`) para master, etcd, control plane e node, com relatório JSON em `/var/lib/kube-bench`; o resumo no Discord espera o webhook | K8, KB |
+| Benchmark CIS periódico (kube-bench) | Atende | `CronJob` semanal no cluster para as checagens de `policies` e timer semanal no host (role `kube_bench`) para master, etcd, control plane e node, com relatório JSON em `/var/lib/kube-bench`; o resumo no Discord espera o webhook | K8, SR |
 | Correções de segurança aplicadas logo | Parcial | Renovate propõe versões novas de k3s e charts, mas o k3s só muda com um novo `bootstrap` manual | SR, SE |
 
 ## OpenTofu
@@ -172,7 +172,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, que ain
 | Root sem login por SSH | Recusado | `PermitRootLogin prohibit-password`: o Ansible entra como root por chave; trocar por um usuário com `sudo` é possível, mas não muda o que a chave permite | PS |
 | Limite de tentativas e banimento de quem insiste | Atende | `MaxAuthTries 3` e `fail2ban` com a jail `sshd` | PS, AC |
 | SSH fora da porta 22 e com lista de usuários permitidos | Parcial | `AllowGroups root`, `LoginGraceTime 30` e `LogLevel VERBOSE`; a porta continua 22, e o acesso só a partir de origens conhecidas fica para a fase seguinte | PS |
-| Firewall ligado, só com o necessário exposto | Atende | firewalld só libera SSH e 6443 na zona pública, e o `rpcbind`, que escutava em todas as interfaces sem uso, fica parado e mascarado pela role `os_prerequisites` | PS |
+| Firewall ligado, só com o necessário exposto | Atende | firewalld só libera SSH na zona pública e a API do k3s não tem regra em zona nenhuma; o `rpcbind`, que escutava em todas as interfaces sem uso, fica parado e mascarado pela role `os_prerequisites` | PS |
 | Atualizações de segurança automáticas | Atende | `unattended-upgrades` habilitado | AC, PS |
 | MAC aplicando perfis | Atende | AppArmor ligado com perfis em `enforce` para o que roda; os perfis em `complain` (servidor gráfico, desktop, build de pacotes, cliente de torrent, `unix-chkpwd` e `unprivileged_userns`) são de pacotes da imagem que nada no node executa, conferido na revisão periódica, e forçá-los a `enforce` não protegeria processo nenhum | TS, PS |
 | Auditoria de chamadas de sistema | Atende | `auditd` vigia identidade (`passwd`, `shadow`, `group`, `sudoers.d`), SSH, firewalld, cron, carga de módulos do kernel e as credenciais e a configuração do k3s | TS |
@@ -194,7 +194,7 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, que ain
 | Monitoramento de expiração de certificado e de domínio | Atende | O TLS público é da Cloudflare e renova sozinho, e o job `domain-expiry` consulta o RDAP e falha na execução agendada perto do vencimento | AC |
 | Backup de tudo que é crítico, com restauração testada | Não atende | O Postgres do blog não tem backup desde a remoção do barman; só `.sops.yaml` e o state têm cópia, no git | AC, CP |
 | Plano de resposta a incidente e revisão pós-incidente | Atende | [Resposta a incidente](../operacional/resposta-a-incidente.md) com conter, preservar evidência, erradicar e recuperar, e um exercício trimestral junto da revisão periódica | LU, AC |
-| Proteção contra DDoS e WAF na frente do serviço público | Parcial | Proxy da Cloudflare com a proteção de DDoS do plano gratuito e rate limit nos fluxos de login do Keycloak, ambos em `tofu/cloudflare/waf.tf`; a regra customizada de WAF que também restringia varreduras por software e o hostname operacional foi retirada porque a fase que ela precisa (`http_request_firewall_custom`) não está disponível no plano gratuito da zona, e o próprio túnel Cloudflare já restringe o hostname operacional de forma independente na regra de ingress | CP, OW |
+| Proteção contra DDoS e WAF na frente do serviço público | Parcial | Proxy da Cloudflare com a proteção de DDoS do plano gratuito e rate limit nos fluxos de login do Keycloak, ambos em `tofu/cloudflare/waf.tf`; a regra customizada de WAF que também restringia varreduras por software e o hostname operacional foi retirada porque a fase que ela precisa (`http_request_firewall_custom`) não está disponível no plano gratuito da zona, e o próprio túnel Cloudflare já restringe o hostname operacional de forma independente na regra de ingress | CP, PL |
 
 ## Governança
 
@@ -212,11 +212,11 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, que ain
 
 Nem toda lacuna pesa igual. As abaixo mudam o risco real do cluster e são baratas perto do que protegem.
 
-A política de rede já bloqueia. Cada namespace tem uma `CiliumNetworkPolicy` com o que usa, levantada a partir dos veredictos `AUDIT` que o Hubble parou de mostrar assim que essas políticas entraram (com uma exceção encontrada numa coleta feita de propósito para achar o que ainda faltava: o ping do host para o endpoint de health do próprio Cilium, liberado pela `CiliumClusterwideNetworkPolicy` `cilium-health`), e `policyAuditMode` virou `false` em `ansible/roles/cilium/templates/values.yaml.j2`: as regras agora bloqueiam de verdade, não só registram. No meio da virada apareceu um efeito colateral do padrão de reaplicar o chart sem um release de Helm de verdade (`helm template` em vez de `helm upgrade`): a função `lookup` que o chart usa pra reaproveitar a CA do Hubble sempre volta vazia nesse modo, então cada reaplicação regenerava a CA e os certificados do zero; a correção foi trocar `hubble.tls.auto.method` de `helm` para `cronJob`, que resolve isso do lado do servidor em vez de em tempo de render (ver [Helm e os charts](helm-e-charts.md)). Nenhum flow `DROPPED` inesperado apareceu na primeira observação depois da virada.
+A política de rede já bloqueia. Cada namespace tem uma `CiliumNetworkPolicy` com o que usa, levantada a partir dos veredictos `AUDIT` que o Hubble parou de mostrar assim que essas políticas entraram, e `policyAuditMode` virou `false` em `ansible/roles/cilium/templates/values.yaml.j2`: as regras agora bloqueiam de verdade, não só registram. Uma coleta feita de propósito para achar o que ainda faltava encontrou uma exceção, o ping do host para o endpoint de health do próprio Cilium, liberado pela `CiliumClusterwideNetworkPolicy` `cilium-health`. Nenhum flow `DROPPED` inesperado apareceu na primeira observação depois da virada.
+
+No meio dessa virada apareceu um efeito colateral do padrão de reaplicar o chart sem um release de Helm de verdade: a função `lookup` que o chart usa para reaproveitar a CA do Hubble sempre volta vazia dentro de `helm template`, então cada reaplicação regenerava a CA e os certificados do zero. A correção foi trocar `hubble.tls.auto.method` de `helm` para `cronJob`, que resolve isso do lado do servidor em vez de em tempo de render; ver [Helm e os charts](helm-e-charts.md).
 
 Os dados do blog não têm backup. Enquanto o banco estiver vazio isso não custa nada, mas o primeiro post publicado muda a conta, e a restauração precisa ser testada, não só configurada.
-
-O Argo CD mantém o login local de administrador. Ele não está exposto na internet, mas quem obtiver a senha inicial ou o kubeconfig administra o cluster pela interface, sem trilha de identidade própria.
 
 ## Continue por aqui
 
