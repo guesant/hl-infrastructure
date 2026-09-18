@@ -77,7 +77,7 @@ just sops-recipients add operator-se <pública da identidade SE>
 just sops-recipients add dr <pública da chave de desastre>
 ```
 
-Revise o diff de `.sops.yaml` e commite. A partir daqui, `just sops-sync <arquivo>` cifra qualquer `SopsSecret` novo sem precisar de nenhuma chave privada, já que cifrar usa só as públicas listadas ali. Quando o arquivo já está cifrado, o mesmo comando roda `updatekeys` para reajustar os destinatários, e aí ele precisa de uma identidade que decifre, a do Secure Enclave ou a de desastre; veja [adicionar um satélite novo](adicionar-um-satelite.md).
+Revise o diff de `.sops.yaml` e commite. A partir daqui, `just sops-sync <arquivo>` cifra qualquer `SopsSecret` novo sem precisar de nenhuma chave privada, já que cifrar usa só as públicas listadas ali. Quando o arquivo já está cifrado, o mesmo comando roda `updatekeys` para reajustar os destinatários, e aí ele precisa de uma identidade que decifre, a do Secure Enclave ou a de desastre; veja [adicionar um satélite novo](adicionar-um-satelite.md). Num cluster que já tem segredo cifrado, ao contrário deste bootstrap do zero, um `.sops.yaml` alterado sem recifrar deixa o `git diff` incompleto: rode `just sops-sync` sem argumento antes de commitar, para reajustar todo `SopsSecret`, `.sops.env` e `secrets.sops.yaml` de uma vez, não só o arquivo que motivou a mudança.
 
 ## Crie o túnel e o DNS na Cloudflare
 
