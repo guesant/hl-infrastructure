@@ -1,6 +1,6 @@
 # Mapa de controles
 
-Um inventário do que o repositório de fato garante, por componente, com a evidência verificável de cada garantia: o gate, o arquivo ou o comando que prova que o controle existe. Não é uma norma; é o que se pode afirmar hoje sem depender da memória de quem opera.
+Um inventário do que o repositório de fato garante, por componente, com a evidência verificável de cada garantia: o gate, o arquivo ou o comando que prova que o controle existe. Não é uma norma; é o que se pode afirmar hoje sem depender da memória de quem opera. A coluna de evidência é a que envelhece primeiro: um gate renomeado, um arquivo movido ou uma role que deixou de existir tornam a linha falsa sem que nada no cluster tenha mudado, e é por isso que ela cita o caminho exato em vez de descrever a verificação por alto.
 
 | Componente | Tema | Controle | Evidência |
 | --- | --- | --- | --- |
@@ -58,7 +58,7 @@ Um inventário do que o repositório de fato garante, por componente, com a evid
 
 ## O que este mapa não cobre
 
-Observabilidade (métricas, alertas, logs centralizados) não tem controle declarado ainda; hoje o sinal de que algo falhou é o Argo marcar `Degraded` ou o serviço parar de responder. É a lacuna mais visível da tabela e a próxima a fechar.
+Observabilidade tem métricas e regras de alerta declaradas (Prometheus, Alertmanager e o blackbox exporter, com alertas de host, de volume quase cheio e dos endpoints públicos), mas não tem entrega nem centralização de log. A entrega dos alertas ainda espera o webhook do Discord, e não há coletor de log fora do node; sem esses dois, um alerta que dispara fica só na interface do Prometheus ou do Alertmanager, e o sinal que de fato chega ao operador sem ele estar olhando continua sendo o Argo marcar `Degraded` ou o serviço parar de responder. É a lacuna mais visível da tabela e a próxima a fechar.
 
 ## Continue por aqui
 

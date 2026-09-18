@@ -1,12 +1,12 @@
 # Checklist de segurança
 
-Esta página compila as recomendações de guias públicos sobre segurança de GitOps, DevOps, Linux, Terraform e Kubernetes, e confronta cada uma com o que este repositório e o cluster fazem hoje. Ela complementa o [mapa de controles](mapa-de-controles.md), que parte do que o repositório garante e mostra a evidência; aqui o ponto de partida é o que a literatura pede, então aparecem também as lacunas, as recomendações que não se aplicam a um cluster de um nó só e as que foram recusadas de propósito.
+Esta página compila as recomendações de guias públicos sobre segurança de GitOps, DevOps, Linux, Terraform e Kubernetes, e confronta cada uma com o que este repositório e o cluster fazem hoje. Ela complementa o [mapa de controles](mapa-de-controles.md), que parte do que o repositório garante e mostra a evidência; aqui o ponto de partida é o que a literatura pede, então aparecem também as lacunas, as recomendações que não se aplicam a um cluster de um nó só e as que foram recusadas de propósito. Uma linha não é um plano: registrar que algo não atende só descreve o estado de hoje, e a escolha do que vale a pena atacar primeiro fica na última seção da página.
 
-A avaliação foi feita lendo o repositório, o cluster e o node, sem alterar nada. Ela não tem marcador de deriva, porque depende de estado vivo que nenhum gate enxerga, então vale reler a tabela depois de uma mudança grande de infraestrutura.
+A avaliação foi feita lendo o repositório, o cluster e o node, sem alterar nada. Ela não tem marcador de deriva, porque depende de estado vivo que nenhum gate enxerga, então vale reler a tabela depois de uma mudança grande de infraestrutura. A consequência é que um Atende vale na data da leitura, e não continuamente; onde existe um gate que sustenta a linha, ele aparece citado na coluna de situação, e é só nesses casos que a afirmação se renova sozinha a cada push.
 
 ## As fontes
 
-Cada recomendação da tabela cita as fontes pelo código da primeira coluna. Algumas páginas não puderam ser lidas por inteiro, e isso está registrado: um item que só aparece numa fonte lida em parte vale menos do que um que várias fontes repetem.
+Cada recomendação da tabela cita as fontes pelo código da primeira coluna. Algumas páginas não puderam ser lidas por inteiro, e isso está registrado: um item que só aparece numa fonte lida em parte vale menos do que um que várias fontes repetem. A última coluna diz em que condição cada uma foi lida, da leitura completa ao caso em que só o resumo chegou, porque a página recusa acesso automatizado.
 
 | Código | Fonte | Recorte | Leitura |
 | --- | --- | --- | --- |
@@ -210,13 +210,13 @@ A fonte SR republica o guia de hardening de Kubernetes da NSA e da CISA, que ain
 
 ## O que atacar primeiro
 
-Nem toda lacuna pesa igual. As abaixo mudam o risco real do cluster e são baratas perto do que protegem.
+Nem toda lacuna pesa igual. As abaixo mudam o risco real do cluster e são baratas perto do que protegem. O critério para entrar aqui é a lacuna mudar o que um comprometimento ou uma perda custam, e não melhorar uma nota; por isso o que foi marcado como recusado ou não aplicável na tabela não reaparece nesta seção.
 
 A política de rede já bloqueia. Cada namespace tem uma `CiliumNetworkPolicy` com o que usa, levantada a partir dos veredictos `AUDIT` que o Hubble parou de mostrar assim que essas políticas entraram, e `policyAuditMode` virou `false` em `ansible/roles/cilium/templates/values.yaml.j2`: as regras agora bloqueiam de verdade, não só registram. Uma coleta feita de propósito para achar o que ainda faltava encontrou uma exceção, o ping do host para o endpoint de health do próprio Cilium, liberado pela `CiliumClusterwideNetworkPolicy` `cilium-health`. Nenhum flow `DROPPED` inesperado apareceu na primeira observação depois da virada.
 
-No meio dessa virada apareceu um efeito colateral do padrão de reaplicar o chart sem um release de Helm de verdade: a função `lookup` que o chart usa para reaproveitar a CA do Hubble sempre volta vazia dentro de `helm template`, então cada reaplicação regenerava a CA e os certificados do zero. A correção foi trocar `hubble.tls.auto.method` de `helm` para `cronJob`, que resolve isso do lado do servidor em vez de em tempo de render; ver [Helm e os charts](helm-e-charts.md).
+No meio dessa virada apareceu um efeito colateral do padrão de reaplicar o chart sem um release de Helm de verdade: a função `lookup` que o chart usa para reaproveitar a CA do Hubble sempre volta vazia dentro de `helm template`, então cada reaplicação regenerava a CA e os certificados do zero. A correção foi trocar `hubble.tls.auto.method` de `helm` para `cronJob`, que resolve isso do lado do servidor em vez de em tempo de render; ver [Helm e os charts](helm-e-charts.md). O padrão é o mesmo para todo chart que a role instala com `helm template` e `kubectl apply`, então o problema não é do Cilium: qualquer chart que use `lookup` para preservar algo que ele próprio gerou tem o mesmo comportamento aqui.
 
-Os dados do blog não têm backup. Enquanto o banco estiver vazio isso não custa nada, mas o primeiro post publicado muda a conta, e a restauração precisa ser testada, não só configurada.
+Os dados do blog não têm backup. Enquanto o banco estiver vazio isso não custa nada, mas o primeiro post publicado muda a conta, e a restauração precisa ser testada, não só configurada. O que se perde com o volume é justamente o que existe só no cluster: o conteúdo do blog vive no Postgres, não no git, e reconstruir a partir do repositório devolve a infraestrutura inteira sem devolver um único dado.
 
 ## Continue por aqui
 

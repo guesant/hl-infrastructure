@@ -6,7 +6,7 @@ O blog é público, mas tudo o mais que roda no node (o Argo CD, o Grafana, o co
 
 ## O que fica de cada lado
 
-Cada peça mora numa ferramenta diferente, e cada uma só faz o que a outra não consegue.
+Cada peça mora numa ferramenta diferente, e cada uma só faz o que a outra não consegue. O Ansible é o único que entra no sistema operacional do node, então pacote instalado, serviço ligado e porta liberada no firewalld nascem dele. O OpenTofu é o único que fala com a API da conta do Tailscale, onde vive o split DNS, e por isso depende de o node já estar na tailnet para descobrir o endereço dele. O Argo CD não alcança nenhum dos dois lados e só cuida do que responde depois que o nome resolve.
 
 O Ansible, pela role `tailscale`, instala o cliente e o `dnsmasq` no node pelo apt e liga o node à tailnet; a role `firewall` abre a zona `tailscale`, com SSH, DNS e as portas HTTP do ingress. A chave do repositório apt do Tailscale é conferida contra o SHA-256 declarado em `tailscale_apt_key_sha256`, nos defaults da role, e o índice do apt é reaproveitado quando outra role já o atualizou na última hora, em vez de atualizado de novo. Isso é estado do host, e o host é território do Ansible, como o k3s e o firewalld. A descrição task a task está em [Ansible: as roles do bootstrap](ansible.md).
 

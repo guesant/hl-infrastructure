@@ -1,14 +1,16 @@
 # Arquitetura
 
-Esta seção explica como o repositório inteiro se encaixa e como cada peça individual funciona, com o raciocínio por trás de cada decisão. Para provisionar o cluster do zero na prática, comece pelo [primeiro bootstrap](../operacional/primeiro-bootstrap.md); para aprender o que é cada ferramenta antes de entender a decisão sobre ela, veja [Aprender](../aprender/index.md); para uma tarefa pontual do dia a dia, veja o [operacional](../operacional/index.md).
+Esta seção explica como o repositório inteiro se encaixa e como cada peça individual funciona, com o raciocínio por trás de cada decisão. O que distingue estas páginas das outras é que elas argumentam a escolha em vez de só descrevê-la: para cada peça, qual problema ela resolve, o que foi descartado no lugar dela e o que a decisão custa. Quem chega aqui normalmente já sabe o que quer fazer e quer entender por que o repositório faz daquele jeito, não repetir um passo a passo. Para provisionar o cluster do zero na prática, comece pelo [primeiro bootstrap](../operacional/primeiro-bootstrap.md); para aprender o que é cada ferramenta antes de entender a decisão sobre ela, veja [Aprender](../aprender/index.md); para uma tarefa pontual do dia a dia, veja o [operacional](../operacional/index.md).
 
 ## Visão geral
 
-O repositório resolve problemas de naturezas diferentes, cada um com sua própria ferramenta.
+O repositório resolve problemas de naturezas diferentes, cada um com sua própria ferramenta. A divisão não é de gosto: o que muda entre eles é quem detém o estado, com que frequência ele muda e o que acontece quando alguém mexe nele à mão. Um problema cujo estado vive no disco do node pede uma ferramenta que entre por SSH; um cujo estado vive na API do Kubernetes pede um reconciliador; um cujo estado vive na conta de um serviço de terceiro não tem reconciliador nenhum e pede state explícito.
 
 O primeiro é o bootstrap: transformar um Raspberry Pi limpo num nó k3s com todos os componentes de plataforma instalados. Isso acontece uma única vez (ou uma vez por nó novo), via Ansible, direto por SSH. Depois que o Ansible termina, ele não precisa rodar de novo a menos que uma versão de componente mude ou um nó novo entre no cluster.
 
-O segundo é manter o estado do cluster ao longo do tempo: quais aplicações rodam, com qual configuração, sincronizadas a partir do que está commitado no git. Isso é responsabilidade do ArgoCD, de forma contínua, sem intervenção do Ansible.
+O segundo é manter o estado do cluster ao longo do tempo: quais aplicações rodam, com qual configuração, sincronizadas a partir do que está commitado no git. Isso é responsabilidade do ArgoCD, de forma contínua, sem intervenção do Ansible. A diferença prática é que aqui ninguém precisa rodar nada: alguém faz merge, e o cluster converge sozinho para o que o git diz.
+
+O terceiro é o estado que não mora no node nem no cluster, e sim na conta de um serviço de terceiro: o túnel e o DNS da Cloudflare, o split DNS da tailnet, os realms do Keycloak. Nada disso tem um reconciliador rodando dentro do cluster para corrigir divergência, então esse estado é declarado em OpenTofu, com state próprio e cifrado. O custo é que ele só reconcilia quando o operador roda o módulo, e a contrapartida é um `plan` legível antes de cada mudança.
 
 ```mermaid
 flowchart TB
@@ -26,7 +28,7 @@ flowchart TB
 
 ## Contexto e contêineres
 
-O diagrama de contexto mostra quem interage com o sistema e por onde; o de contêineres abre o node e mostra o que roda dentro dele.
+O diagrama de contexto mostra quem interage com o sistema e por onde; o de contêineres abre o node e mostra o que roda dentro dele. Os dois juntos deixam ver uma característica que nenhuma página isolada mostra: só o visitante chega ao sistema pela internet aberta, e ainda assim pela Cloudflare, nunca direto no node. O operador entra por SSH e pela API do Kubernetes, e o node só sai para o GitHub e para a Cloudflare, nunca recebendo conexão de entrada delas.
 
 ```mermaid
 flowchart LR
