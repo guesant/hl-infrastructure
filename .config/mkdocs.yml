@@ -70,6 +70,9 @@ nav:
       - Ansible: aprender/ansible.md
       - SSH: aprender/ssh.md
       - firewalld: aprender/firewalld.md
+      - "systemd: units, timers e dependências": aprender/systemd-units-timers-e-dependencias.md
+      - "Podman Quadlets: containers como unidades systemd": aprender/podman-quadlets.md
+      - "GitOps para Podman: orches e materia": aprender/gitops-para-podman-orches-e-materia.md
       - k3s: aprender/k3s.md
       - Distribuições Kubernetes: aprender/distribuicoes-kubernetes.md
       - "Orquestradores de containers: Compose, Swarm e Kubernetes": aprender/orquestradores-de-containers.md
@@ -82,6 +85,7 @@ nav:
       - RBAC do Kubernetes: aprender/rbac-do-kubernetes.md
       - Rede interna do cluster: aprender/rede-interna-do-cluster.md
       - TLS automático: aprender/tls-automatico.md
+      - step-ca e trust-manager: aprender/step-ca-e-trust-manager.md
       - "ArgoCD e GitOps": aprender/argocd.md
       - Operators do Kubernetes: aprender/kubernetes-operators.md
       - Helm e charts: aprender/helm-e-charts.md
