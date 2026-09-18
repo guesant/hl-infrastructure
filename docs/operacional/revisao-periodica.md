@@ -4,7 +4,7 @@ Os gates de CI conferem o que está no git, mas não enxergam o que mudou fora d
 
 ## O que conferir
 
-A revisão é uma leitura, não uma mudança. Cada achado vira uma linha no [checklist de segurança](../arquitetura/checklist-de-seguranca.md) ou uma correção no repositório, e só então a data é atualizada.
+A revisão é uma leitura, não uma mudança. Cada achado vira uma linha no [checklist de segurança](../arquitetura/checklist-de-seguranca.md) ou uma correção no repositório, e só então a data é atualizada. Consertar no meio da revisão atrapalha as duas coisas, porque muda o alvo enquanto ele ainda está sendo medido e faz perder o registro do que estava errado; anotar primeiro e corrigir depois preserva as duas informações.
 
 1. Exposição do node: `firewall-cmd --permanent --list-all-zones` no Pi deve mostrar só o que a role `firewall` declara. A reconciliação da role remove o resto, mas um item novo que ela recuse remover por passar do teto aparece aqui primeiro.
 2. Serviços escutando: `ss -tulnp` no Pi, procurando qualquer processo novo fora do k3s, do Cilium e do SSH.
@@ -17,7 +17,7 @@ A revisão é uma leitura, não uma mudança. Cada achado vira uma linha no [che
 
 ## Registrar a revisão
 
-Depois de conferir, atualize `last_review` em `.config/security-review.conf` com a data do dia e commite junto com o que a revisão tiver mudado.
+Depois de conferir, atualize `last_review` em `.config/security-review.conf` com a data do dia e commite junto com o que a revisão tiver mudado. É essa data, comparada com `max_age_days` no mesmo arquivo, que o gate lê para decidir se a revisão venceu, então adiantá-la sem ter conferido desliga o aviso sem resolver nada. Commitar a data junto com os achados também deixa o histórico responder o que foi olhado em cada revisão, e não apenas quando ela aconteceu.
 
 ## Continue por aqui
 

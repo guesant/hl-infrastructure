@@ -1,6 +1,6 @@
 # Metodologia de mudança
 
-Toda mudança que toca o node ou o cluster segue as mesmas etapas, na ordem. O método existe porque o cluster tem um nó só, sem redundância que perdoe um erro, e porque quem opera é uma pessoa só, sem uma segunda que perceba um passo pulado.
+Toda mudança que toca o node ou o cluster segue as mesmas etapas, na ordem. O método existe porque o cluster tem um nó só, sem redundância que perdoe um erro, e porque quem opera é uma pessoa só, sem uma segunda que perceba um passo pulado. A ordem não é arbitrária: cada etapa produz o que a seguinte consome, e não dá para dimensionar o estrago possível sem ter lido o que muda, nem interpretar um dry-run sem saber de antemão que diferença esperar dele.
 
 1. **Pesquise antes de alterar.** Leia o changelog da versão nova, a página do componente na [arquitetura](../arquitetura/index.md) e o que o [modelo de ameaças](../arquitetura/modelo-de-ameacas.md) diz sobre aquela fronteira. Uma mudança que contradiz a arquitetura documentada muda a documentação primeiro.
 

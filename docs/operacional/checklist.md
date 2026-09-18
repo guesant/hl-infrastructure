@@ -18,7 +18,7 @@ Lista curta para marcar a cada bootstrap, upgrade de versão ou mudança de rede
 | Nenhum login local sobrando | O formulário do Grafana e o `admin` do Argo CD desligados; o Portainer CE mantém o formulário, com o `admin` protegido pela senha do `SopsSecret` | pendente até o `bootstrap --tags argocd` que desliga o `admin` |
 | Kubeconfig local atualizado | `kubectl get nodes` com `.local/operator/kubeconfig` depois de rotação de certificados | pendente |
 
-Um item marcado como `pendente` ainda não foi conferido num node real desde que a rotina correspondente entrou no repositório.
+Um item marcado como `pendente` ainda não foi conferido num node real desde que a rotina correspondente entrou no repositório. Pendente não quer dizer quebrado, quer dizer sem evidência, e a distinção importa porque um item sem evidência não sustenta a afirmação de que o cluster está no estado que a documentação descreve. Quem conferir um deles numa execução real troca o estado e registra na mesma linha a ressalva que encontrou, como já fazem as linhas do `cloudflared` e do blog.
 
 ## Continue por aqui
 
