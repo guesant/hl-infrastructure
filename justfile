@@ -364,5 +364,9 @@ docs-serve:
     {{run}} -p 8000:8000 python:3.12-slim \
         sh -c "pip install --quiet --require-hashes -r docs/requirements.txt && mkdocs serve --dev-addr 0.0.0.0:8000 --config-file .config/mkdocs.yml"
 
+[doc("Report paragraph, sentence and inline-code density per doc page; not a gate, a reading tool")]
+docs-prose-stats *args:
+    {{run}} python:3.12-slim python3 .tools/prose-stats.py {{args}}
+
 [doc("Every check the CI runs, in order")]
 check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-placeholders lint-secret-age lint-docs lint-pod-security lint-spelling security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-conftest infra-kubescape security-trivy-images lint-commits infra-helm-lint docs-build
