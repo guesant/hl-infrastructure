@@ -191,3 +191,6 @@ whitebox
 metamonitoramento
 autoscaler
 evictar
+keyserver
+Yubi
+YubiKey
