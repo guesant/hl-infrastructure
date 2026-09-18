@@ -102,6 +102,8 @@ nav:
       - OWASP: aprender/owasp.md
       - MITRE ATT&CK: aprender/mitre-attack.md
       - Zero trust: aprender/zero-trust.md
+      - Padrões e governança da internet: aprender/padroes-e-governanca-da-internet.md
+      - Fundações do software livre e aberto: aprender/fundacoes-do-software-livre-e-aberto.md
       - Diátaxis: aprender/diataxis.md
       - "Gerar várias instâncias com Helm": aprender/helm-templating-de-lista.md
       - "Requests, limits e QoS de um Pod": aprender/requests-limits-e-qos-de-um-pod.md
