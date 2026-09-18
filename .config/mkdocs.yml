@@ -39,6 +39,18 @@ nav:
   - Visão geral: index.md
   - Aprender:
       - aprender/index.md
+      - "CPU, privilégios e syscalls": aprender/cpu-privilegios-e-syscalls.md
+      - Como os SOs expõem serviços: aprender/como-os-expoe-servicos.md
+      - Famílias e padrões Unix: aprender/unix-familias-e-padroes.md
+      - Shells e scripts: aprender/shells-e-scripts.md
+      - Coreutils e documentação: aprender/coreutils-e-documentacao.md
+      - Máquinas virtuais e hipervisores: aprender/vms-e-hipervisores.md
+      - "Isolamento leve: zones, jails e microVMs": aprender/isolamento-leve-zones-jails-e-microvms.md
+      - Wine e compatibilidade: aprender/wine-e-compatibilidade.md
+      - Processo, namespaces e usuários num container: aprender/processo-namespaces-e-usuarios.md
+      - Cgroups, capabilities e isolamento de filesystem: aprender/cgroups-capabilities-e-filesystem.md
+      - Especificações OCI e a pilha de runtimes: aprender/especificacoes-oci-e-pilha-de-runtimes.md
+      - Imagens, registries e Compose: aprender/imagens-registries-e-compose.md
       - "DevOps, IaC e GitOps": aprender/devops-iac-gitops.md
       - Infraestrutura como código: aprender/iac-provisionamento.md
       - Ansible: aprender/ansible.md
@@ -54,6 +66,9 @@ nav:
       - Scanning de vulnerabilidade: aprender/vulnerability-scanning.md
       - Supply chain e SBOM: aprender/supply-chain-e-sbom.md
       - Threat modeling: aprender/threat-modeling.md
+      - Criptografia de segredos no Git: aprender/criptografia-de-segredos-no-git.md
+      - Bootstrap e rotação de segredos: aprender/bootstrap-e-rotacao-de-segredos.md
+      - Secret store externo: aprender/secret-store-externo.md
       - OWASP: aprender/owasp.md
       - MITRE ATT&CK: aprender/mitre-attack.md
       - Zero trust: aprender/zero-trust.md
