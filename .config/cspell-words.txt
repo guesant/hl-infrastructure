@@ -184,3 +184,8 @@ datacenter
 backupstore
 reconstruíveis
 mutar
+reinstrumentar
+Velero
+Kopia
+whitebox
+metamonitoramento
