@@ -69,6 +69,10 @@ nav:
       - SSH: aprender/ssh.md
       - firewalld: aprender/firewalld.md
       - k3s: aprender/k3s.md
+      - Distribuições Kubernetes: aprender/distribuicoes-kubernetes.md
+      - "Orquestradores de containers: Compose, Swarm e Kubernetes": aprender/orquestradores-de-containers.md
+      - Quorum, etcd e datastore do K3s: aprender/quorum-etcd-e-datastore-do-k3s.md
+      - Kubernetes gerenciado e HA avançada: aprender/kubernetes-gerenciado-e-ha-avancada.md
       - Rede interna do cluster: aprender/rede-interna-do-cluster.md
       - TLS automático: aprender/tls-automatico.md
       - "ArgoCD e GitOps": aprender/argocd.md

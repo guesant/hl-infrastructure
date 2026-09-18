@@ -178,3 +178,6 @@ abrível
 Mikro
 Winbox
 OMPI
+FIPS
+multinó
+datacenter
