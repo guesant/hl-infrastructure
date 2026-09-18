@@ -97,6 +97,8 @@ nav:
       - Diátaxis: aprender/diataxis.md
       - "Gerar várias instâncias com Helm": aprender/helm-templating-de-lista.md
       - "Requests, limits e QoS de um Pod": aprender/requests-limits-e-qos-de-um-pod.md
+      - "Prontidão de workload: probes, PDB e desligamento": aprender/prontidao-de-workload-probes-pdb-e-desligamento.md
+      - Jobs, CronJobs e securityContext de um Pod: aprender/jobs-cronjobs-e-securitycontext.md
       - Sinais de observabilidade e saúde de aplicação: aprender/sinais-de-observabilidade-e-saude-de-aplicacao.md
       - "Stack Prometheus, Loki e Grafana": aprender/stack-prometheus-loki-grafana.md
       - Alertas acionáveis e distributed tracing: aprender/alertas-acionaveis-e-distributed-tracing.md
