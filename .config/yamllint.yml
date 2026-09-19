@@ -8,6 +8,8 @@ ignore:
   - "**/*.sops-secret.yaml"
   - argocd/apps/satellites/launcher/templates/
   - argocd/apps/satellites/delivery/templates/
+  - argocd/apps/satellites/blog/blog/templates/
+  - argocd/apps/satellites/blog/delivery/templates/
 
 rules:
   braces:
