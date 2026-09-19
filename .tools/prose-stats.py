@@ -122,7 +122,7 @@ def main() -> int:
     parser.add_argument(
         "--max-spans-per-paragraph",
         type=int,
-        default=2,
+        default=4,
         help="paragraphs at or above this code-span count are listed as saturated",
     )
     parser.add_argument(

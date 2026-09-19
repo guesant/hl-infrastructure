@@ -70,11 +70,11 @@ A segunda é o nome de um tipo de recurso usado como substantivo comum dentro do
 
 Depois da primeira menção de um tipo de recurso numa seção, as menções seguintes devem virar prosa sem crase ("o gateway", "a rota", "o segredo"). A crase volta apenas quando a frase de fato cita o objeto por nome exato, como em `Secret` `internal-domain-tls`, ou quando cita o campo do manifesto que o declara.
 
-Um parágrafo em que o mesmo nome de tipo aparece com crase três vezes ou mais é sinal de que a segunda categoria está sendo tratada como a primeira.
+Um parágrafo em que o mesmo nome de tipo aparece com crase quatro vezes ou mais é sinal de que a segunda categoria está sendo tratada como a primeira.
 
-Um parágrafo deve ter no máximo duas crases, contando cada ocorrência, não cada identificador distinto.
+Um parágrafo deve ter no máximo três crases, contando cada ocorrência, não cada identificador distinto.
 
-Esse teto é deliberadamente apertado: a saída normal para o terceiro identificador que apareceria no mesmo parágrafo não é cortar crase, é mover o conjunto inteiro para uma tabela, apresentar a estrutura num code block, aceitar aspas comuns quando o termo não precisa bater exatamente com um identificador real, ou dividir o parágrafo para que cada metade do argumento carregue só os identificadores que lhe pertencem.
+Esse teto é deliberadamente apertado: a saída normal para o quarto identificador que apareceria no mesmo parágrafo não é cortar crase, é mover o conjunto inteiro para uma tabela, apresentar a estrutura num code block, aceitar aspas comuns quando o termo não precisa bater exatamente com um identificador real, ou dividir o parágrafo para que cada metade do argumento carregue só os identificadores que lhe pertencem.
 
 Quando o excesso vem de comparar vários identificadores do mesmo tipo lado a lado (vários nomes de job, vários campos de um manifesto, vários flags de um comando), isso é sinal de que o conteúdo pede uma tabela ou uma página de comparação própria, não uma lista de nomes na mesma frase.
 
