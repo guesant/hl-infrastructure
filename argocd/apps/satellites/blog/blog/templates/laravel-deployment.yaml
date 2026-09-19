@@ -76,16 +76,16 @@ spec:
             httpGet:
               path: /up
               port: 8000
-            initialDelaySeconds: 10
+            initialDelaySeconds: 60
             periodSeconds: 10
-            timeoutSeconds: 3
+            timeoutSeconds: 5
           readinessProbe:
             httpGet:
               path: /up
               port: 8000
-            initialDelaySeconds: 5
+            initialDelaySeconds: 15
             periodSeconds: 10
-            timeoutSeconds: 3
+            timeoutSeconds: 5
           resources:
             {{- toYaml .Values.laravel.resources | nindent 12 }}
           securityContext:

@@ -7,6 +7,7 @@ spec:
   podSelector:
     matchLabels:
       app.kubernetes.io/name: app
+      app.kubernetes.io/component: laravel
   policyTypes:
     - Ingress
   ingress:
@@ -16,4 +17,4 @@ spec:
               app.kubernetes.io/name: cloudflared
       ports:
         - protocol: TCP
-          port: 8080
+          port: 8000
