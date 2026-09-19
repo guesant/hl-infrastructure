@@ -231,3 +231,5 @@ autogerenciado
 mensageria
 reentrega
 SGSI
+escaneabilidade
+escaneável

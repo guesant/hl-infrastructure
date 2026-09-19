@@ -1,0 +1,9 @@
+extends: existence
+message: "'%s' pode estar minimizando o esforço de uma instrução; use só quando descrever um fato, não para diminuir uma tarefa (docs/contribuindo/convencoes-de-escrita.md)."
+level: error
+ignorecase: true
+tokens:
+  - basta
+  - simplesmente
+  - é só
+  - facilmente

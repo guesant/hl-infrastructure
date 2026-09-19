@@ -1,0 +1,6 @@
+extends: occurrence
+message: "Parágrafo com %d palavra(s); o máximo é oitenta (docs/contribuindo/convencoes-de-escrita.md)."
+level: error
+scope: paragraph
+max: 80
+token: '[\p{L}0-9]+'
