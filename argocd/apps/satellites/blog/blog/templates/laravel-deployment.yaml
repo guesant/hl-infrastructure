@@ -33,6 +33,11 @@ spec:
         - name: laravel
           image: "{{ .Values.laravel.image.repository }}:{{ .Values.laravel.image.tag }}"
           imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs storage/app/private storage/app/public storage/app/resume-pdf && exec /usr/local/bin/entrypoint.prod.sh
           ports:
             - containerPort: 8000
           envFrom:
