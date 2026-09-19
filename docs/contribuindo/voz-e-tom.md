@@ -4,7 +4,6 @@ As [convenções de escrita](convencoes-de-escrita.md) tratam de mecânica: quan
 
 | Seção | Tom | Por quê |
 | --- | --- | --- |
-| Tutoriais | Didático, incentivando a tentar, guiando cada passo sem pular nenhum | O leitor está aprendendo praticando; o objetivo é a experiência guiada dar certo do começo ao fim, não a eficiência do caminho |
 | Aprender | Didático, paciente com quem não conhece o conceito ainda | O leitor pode estar vendo o termo pela primeira vez; pressa aqui custa compreensão |
 | Arquitetura | Analítico, argumentando uma decisão até o fim | O objetivo é convencer, com os fatos e as alternativas descartadas, não só afirmar |
 | Operacional | Direto, imperativo, sem rodeio antes do comando | Quem está aqui já decidiu o que fazer; a página só precisa dizer como |

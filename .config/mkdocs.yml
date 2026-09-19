@@ -37,8 +37,6 @@ theme:
 
 nav:
   - Visão geral: index.md
-  - Tutoriais:
-      - tutoriais/index.md
   - Aprender:
       - aprender/index.md
       - Fundamentos e containers:
