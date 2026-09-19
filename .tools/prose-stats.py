@@ -34,6 +34,10 @@ class Paragraph:
     def code_spans(self) -> int:
         return sum(s.code_spans for s in self.sentences)
 
+    @property
+    def words(self) -> int:
+        return sum(s.words for s in self.sentences)
+
 
 def is_structural(block: str) -> bool:
     lines = [line for line in block.splitlines() if line.strip()]
@@ -69,13 +73,17 @@ def parse(path: Path) -> tuple[list[Paragraph], int]:
     diagrams = sum(
         1 for match in CODE_FENCE.finditer(text) if match.group(1).lower() == "mermaid"
     )
-    text = CODE_FENCE.sub("", text)
+    text = CODE_FENCE.sub(lambda m: "\n" * m.group(0).count("\n"), text)
 
     paragraphs = []
     line_number = 1
-    for block in re.split(r"\n\s*\n", text):
+    parts = re.split(r"(\n\s*\n)", text)
+    for index, block in enumerate(parts):
+        if index % 2 == 1:
+            line_number += block.count("\n")
+            continue
         block_start = line_number
-        line_number += block.count("\n") + 1
+        line_number += block.count("\n")
         if is_structural(block):
             continue
         sentences = split_sentences(block)
@@ -111,6 +119,18 @@ def main() -> int:
         default=1.5,
         help="sentences at or above this code-span density are listed as saturated",
     )
+    parser.add_argument(
+        "--max-spans-per-paragraph",
+        type=int,
+        default=4,
+        help="paragraphs at or above this code-span count are listed as saturated",
+    )
+    parser.add_argument(
+        "--max-words-per-paragraph",
+        type=int,
+        default=80,
+        help="paragraphs at or above this word count are listed as long",
+    )
     parser.add_argument("--top", type=int, default=15, help="rows per offender list")
     args = parser.parse_args()
 
@@ -144,6 +164,8 @@ def main() -> int:
     short_paragraphs: list[tuple[Path, Paragraph]] = []
     long_paragraphs: list[tuple[Path, Paragraph]] = []
     saturated_sentences: list[tuple[Path, int, Sentence]] = []
+    saturated_paragraphs: list[tuple[Path, Paragraph]] = []
+    wordy_paragraphs: list[tuple[Path, Paragraph]] = []
     total_diagrams = 0
 
     for path in files:
@@ -180,6 +202,10 @@ def main() -> int:
                 short_paragraphs.append((rel, paragraph))
             if paragraph.sentence_count >= args.max_sentences:
                 long_paragraphs.append((rel, paragraph))
+            if paragraph.code_spans >= args.max_spans_per_paragraph:
+                saturated_paragraphs.append((rel, paragraph))
+            if paragraph.words >= args.max_words_per_paragraph:
+                wordy_paragraphs.append((rel, paragraph))
             for sentence in paragraph.sentences:
                 if (
                     sentence.words >= 6
@@ -210,6 +236,16 @@ def main() -> int:
             key=lambda r: -(r[2].code_spans / r[2].words),
         ),
         lambda r: f"{r[0]}:{r[1]} ({r[2].code_spans} span(s) in {r[2].words} words): {r[2].text[:110]}",
+    )
+    offenders(
+        f"paragraphs with >= {args.max_spans_per_paragraph} code spans",
+        sorted(saturated_paragraphs, key=lambda r: -r[1].code_spans),
+        lambda r: f"{r[0]}:{r[1].line} ({r[1].code_spans} span(s))",
+    )
+    offenders(
+        f"paragraphs with >= {args.max_words_per_paragraph} words",
+        sorted(wordy_paragraphs, key=lambda r: -r[1].words),
+        lambda r: f"{r[0]}:{r[1].line} ({r[1].words} word(s))",
     )
     print(f"\ntotal mermaid diagrams: {total_diagrams}")
     return 0

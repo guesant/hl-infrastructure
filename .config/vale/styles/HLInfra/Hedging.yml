@@ -1,0 +1,10 @@
+extends: existence
+message: "Linguagem hedgeada: '%s'. Reescreva como afirmação ou nomeie a exceção (docs/contribuindo/convencoes-de-escrita.md)."
+level: error
+ignorecase: true
+tokens:
+  - pode ajudar a garantir
+  - em geral costuma ser uma boa prática( considerar)?
+  - é importante notar que
+  - pode ser que em alguns casos
+  - na medida do possível

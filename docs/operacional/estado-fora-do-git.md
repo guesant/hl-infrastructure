@@ -34,39 +34,94 @@ Nem tudo que o cluster precisa está versionado, e o que não está precisa ser 
 | senha do role `portfolio` do Postgres do blog | `Secret` `postgres-app` no namespace `blog` | o CloudNativePG, automaticamente, a partir de `bootstrap.initdb.owner`, nunca via `SopsSecret` | apagar o `Secret` faz o CNPG recriá-lo sozinho; nenhum outro lugar guarda essa senha, então não há nada pra resincronizar além de reiniciar a aplicação do blog depois da troca |
 | o sistema operacional do nó | instalado pelo hipervisor ou pela imagem cloud | fora deste repositório | reinstalar e rodar `just bootstrap`; as roles de SO assumem Debian |
 
-`.sops.yaml`, com os destinatários públicos age do sops-secrets-operator, não entra nesta lista de propósito: ele é commitado no repositório. Uma chave pública age só permite cifrar, nunca decifrar, então commitá-la não expõe nenhum segredo; é o que permite cifrar um segredo novo sem precisar de acesso ao cluster, só com `just sops-sync`. Quem quiser conferir quais identidades ainda decifram não precisa abrir o arquivo à mão: `just sops-recipients list` imprime os destinatários atuais com o rótulo de cada um, hoje três, `node`, `operator-se` e `dr`.
+`.sops.yaml`, com os destinatários públicos age do sops-secrets-operator, não entra nesta lista de propósito: ele é commitado no repositório. Uma chave pública age só permite cifrar, nunca decifrar, então commitá-la não expõe nenhum segredo; é o que permite cifrar um segredo novo sem precisar de acesso ao cluster, só com a recipe de sincronização.
 
-O gate `security-sopssecrets` garante que essa lista e o que está de fato cifrado em cada satélite nunca fiquem para trás um do outro. `just sops-rotate` troca a DEK (a chave de conteúdo) de um `SopsSecret` sem mudar quem consegue decifrar, útil como higiene periódica independente de qualquer rotação de destinatário. Essa rotação precisa de `SOPS_AGE_KEY_FILE` apontando para uma identidade que decifre, já que trocar a chave de conteúdo passa por abrir o arquivo, e ela deixa de lado o que ainda está em texto claro em vez de cifrar por conta própria, que é trabalho de `just sops-sync`.
+Quem quiser conferir quais identidades ainda decifram não precisa abrir o arquivo à mão: `just sops-recipients list` imprime os destinatários atuais com o rótulo de cada um, hoje três, node, operator-se e dr.
 
-O critério para algo estar nesta lista é simples: se apagar o repositório e a máquina do operador não fosse suficiente para perder o item, ele não precisa estar aqui. Tudo o que está aqui precisa de uma cópia ou de um caminho de regeneração fora do git, e a coluna da direita é esse caminho. O que nasce de um `SopsSecret` commitado fica de fora por esse mesmo critério, mesmo existindo só dentro do cluster, porque o git já é a cópia dele.
+O gate de segredos cifrados garante que essa lista e o que está de fato cifrado em cada satélite nunca fiquem para trás um do outro. A recipe de rotação troca a DEK (a chave de conteúdo) de um segredo sem mudar quem consegue decifrar, útil como higiene periódica independente de qualquer rotação de destinatário.
+
+Essa rotação precisa de `SOPS_AGE_KEY_FILE` apontando para uma identidade que decifre, já que trocar a chave de conteúdo passa por abrir o arquivo, e ela deixa de lado o que ainda está em texto claro em vez de cifrar por conta própria, que é trabalho da recipe de sincronização.
+
+O critério para algo estar nesta lista é simples: se apagar o repositório e a máquina do operador não fosse suficiente para perder o item, ele não precisa estar aqui. Tudo o que está aqui precisa de uma cópia ou de um caminho de regeneração fora do git, e a coluna da direita é esse caminho.
+
+O que nasce de um segredo cifrado commitado fica de fora por esse mesmo critério, mesmo existindo só dentro do cluster, porque o git já é a cópia dele.
 
 ## As pastas fora do git
 
 Os arquivos fora do git que sobrevivem entre execuções caem em algumas pastas, cada uma com uma regra própria. A separação não é organização pela organização: é ela que permite a `just cleanup` rodar um `git clean -fdx` sem hesitar, porque o destino de cada arquivo já está decidido pela pasta em que ele está. Um arquivo solto na raiz não teria essa garantia.
 
-`.local/operator/` guarda o que é da máquina do operador e não se regenera sozinho sem uma ação humana: `inventory.ini` (a partir de `inventory.example.ini`, o único arquivo dessa pasta que é commitado, por uma exceção no `.gitignore`), `kubeconfig`, `.kubeconfig.fetched` e `known_hosts`, os itens no topo desta tabela. É por isso que a pasta inteira é a exceção mais larga da limpeza: apagar `known_hosts` obriga a conferir as impressões digitais do node de novo antes do próximo playbook, porque o Ansible conecta com `StrictHostKeyChecking=yes` e recusa a conexão enquanto o arquivo faltar. O `kubeconfig` é o único da pasta que volta sozinho, buscado do node pela role `k3s` numa execução nova do bootstrap.
+`.local/operator/` guarda o que é da máquina do operador e não se regenera sozinho sem uma ação humana, os quatro arquivos da tabela abaixo, os mesmos itens no topo da tabela desta página.
 
-`.cache/` guarda o oposto, artefato que só acelera uma execução futura e não tem valor nenhum de ser inspecionado: o cache de schema do `kubeconform`, o espelho de provider do OpenTofu, o cache de fatos do Ansible. `.build/` guarda saída de build ou relatório feito para ser inspecionado por uma pessoa ou consumido por outra etapa de ferramenta: os manifestos renderizados dos charts Helm, os relatórios de SBOM do trivy, o relatório de duplicação do jscpd, o site estático do MkDocs. O critério entre elas é se alguém teria motivo para abrir o conteúdo depois de gerado, em vez de só deixar a ferramenta reaproveitá-lo na execução seguinte.
+| Arquivo | Origem |
+| --- | --- |
+| `inventory.ini` | copiado de `inventory.example.ini`, o único arquivo dessa pasta commitado, por exceção no `.gitignore` |
+| `kubeconfig` | buscado do node pela role `k3s` numa execução nova do bootstrap |
+| `.kubeconfig.fetched` | marcador de que o kubeconfig já foi buscado |
+| `known_hosts` | gravado pelo operador com `ssh-keyscan` |
+
+É por isso que a pasta inteira é a exceção mais larga da limpeza: apagar `known_hosts` obriga a conferir as impressões digitais do node de novo antes do próximo playbook, porque o Ansible recusa a conexão enquanto o arquivo faltar ou divergir. O kubeconfig é o único da pasta que volta sozinho.
+
+`.cache/` guarda o oposto, artefato que só acelera uma execução futura e não tem valor nenhum de ser inspecionado: o cache de schema do kubeconform, o espelho de provider do OpenTofu, o cache de fatos do Ansible.
+
+`.build/` guarda saída de build ou relatório feito para ser inspecionado por uma pessoa ou consumido por outra etapa de ferramenta: os manifestos renderizados dos charts Helm, os relatórios de SBOM do trivy, o relatório de duplicação do jscpd, o site estático do MkDocs. O critério entre elas é se alguém teria motivo para abrir o conteúdo depois de gerado, em vez de só deixar a ferramenta reaproveitá-lo na execução seguinte.
 
 Um item novo que precise sobreviver a uma limpeza entra numa dessas pastas, nunca solto na raiz do repositório. Na raiz ele dependeria de alguém lembrar de acrescentá-lo à lista de exceções antes da próxima limpeza, e esse esquecimento só se manifesta depois da perda. As três pastas já carregam a decisão tomada: a do operador sobrevive inteira, e as de cache e de build são descartáveis por definição.
 
-`just cleanup-dry-run` mostra o que uma limpeza apagaria, sem apagar nada; `just cleanup` apaga de verdade, rodando `git clean -fdx` com uma exceção para `.local/operator/` inteira, mais o material de chave que o `.gitignore` já protege à parte (`*.agekey`, `keys.txt`, `sops-age-key.txt`, `operator-se.txt`) e o `PENDENCIAS.local.md`. A lista de exceções vive na variável `cleanup_excludes` do `justfile`. A recipe destrutiva ainda pede confirmação no terminal antes de rodar, pelo atributo `[confirm]` do just, então o dry-run é conveniência para revisar a lista com calma, não a única rede de proteção.
+Duas recipes cuidam da limpeza, listadas na tabela abaixo, e a que apaga de verdade roda `git clean -fdx` com as exceções da segunda tabela.
+
+| Recipe | Faz o quê |
+| --- | --- |
+| `just cleanup-dry-run` | mostra o que seria apagado, sem apagar nada |
+| `just cleanup` | apaga de verdade |
+
+| Exceção | Onde declarada |
+| --- | --- |
+| `.local/operator/` inteira | preservada explicitamente pela recipe |
+| `*.agekey`, `keys.txt`, `sops-age-key.txt`, `operator-se.txt` | já protegidos pelo `.gitignore` |
+| `PENDENCIAS.local.md` | variável `cleanup_excludes` do `justfile` |
+
+A recipe destrutiva ainda pede confirmação no terminal antes de rodar, pelo atributo `[confirm]` do just, então o dry-run é conveniência para revisar a lista com calma, não a única rede de proteção.
 
 ## Onde ficam os arquivos cifrados
 
-Os arquivos SOPS não moram numa pasta única, e isso é deliberado: cada um fica onde a ferramenta que o consome consegue lê-lo. Os `SopsSecret` precisam estar dentro do chart que o Argo sincroniza, em `argocd/apps/**/templates/`, porque é o próprio operator no cluster que os decifra. O `secrets.sops.yaml` do Ansible precisa estar em `ansible/group_vars/all/`, porque o vars plugin da `community.sops` só carrega variáveis dessas pastas. Os `.sops.env` do OpenTofu ficam em `tofu/`, ao lado dos módulos que o `tofu-run.sh` executa. O token do k3s (`k3s_join_token`) e as chaves autorizadas (`ssh_hardening_authorized_keys`) vivem em `ansible/group_vars/all/`, porque o Ansible já carrega variáveis dali para todo o inventário; o primeiro fica cifrado, em `secrets.sops.yaml`, e o segundo em texto claro, em `authorized_keys.yml`, porque chave pública não é segredo.
+Os arquivos SOPS não moram numa pasta única, e isso é deliberado: cada um fica onde a ferramenta que o consome consegue lê-lo, listados na tabela abaixo.
 
-Uma pasta `secrets/` central obrigaria o Argo e o Ansible a ler de fora da própria árvore. O que os une é a regra de `.sops.yaml` e os scripts de sync, rotação, drill e checagem, que procuram em todos esses caminhos. Todos eles varrem os mesmos três lugares, os `SopsSecret` dentro de `argocd/`, os arquivos de ambiente do OpenTofu dentro de `tofu/` e as variáveis do Ansible dentro de `ansible/group_vars/`, de modo que um arquivo cifrado criado fora dessa varredura escaparia calado do sync, da rotação e do drill.
+| Onde vive | O quê | Por quê |
+| --- | --- | --- |
+| `argocd/apps/**/templates/` | `SopsSecret` | dentro do chart que o Argo sincroniza, porque é o operator no cluster que os decifra |
+| `ansible/group_vars/all/secrets.sops.yaml` | segredos do Ansible, cifrados | o vars plugin da `community.sops` só carrega variáveis dessas pastas |
+| `ansible/group_vars/all/authorized_keys.yml` | chaves autorizadas, texto claro | chave pública não é segredo |
+| `tofu/` | `.sops.env` do OpenTofu | ao lado dos módulos que o `tofu-run.sh` executa |
+
+O token do k3s e as chaves autorizadas vivem juntos porque o Ansible já carrega variáveis desse mesmo diretório para todo o inventário.
+
+Uma pasta `secrets/` central obrigaria o Argo e o Ansible a ler de fora da própria árvore. O que os une é a regra do arquivo de destinatários e os scripts de sync, rotação, drill e checagem, que procuram em todos esses caminhos.
+
+Todos eles varrem os mesmos três lugares, os segredos do Argo dentro de `argocd/`, os arquivos de ambiente do OpenTofu dentro de `tofu/` e as variáveis do Ansible no diretório de variáveis de grupo, de modo que um arquivo cifrado criado fora dessa varredura escaparia calado do sync, da rotação e do drill.
 
 ## Capturar uma mudança manual de volta para o git
 
-Se uma mudança acabou aplicada direto no cluster, fora do fluxo normal de GitOps (por exemplo, um `kubectl edit` de emergência), ela não deveria ficar assim: uma `Application` com sincronização automática reverte esse tipo de mudança na próxima reconciliação, e mesmo sem `selfHeal` ligado a mudança vive só na memória de quem a aplicou, sem sobreviver a uma reconstrução do node. A recipe `just freeze` existe para esse resgate: ela roda `kubectl get <kind> <nome> -o json`, remove os campos que só fazem sentido num objeto vivo (`resourceVersion`, `generation`, `managedFields`, `uid`, `.status`, entre outros) e produz um YAML limpo, pronto para commitar no lugar certo do repositório ou do satélite. Ela só lê: o `kubectl get` roda por SSH no node e a limpeza acontece num contêiner na máquina do operador, então nada é reaplicado no cluster enquanto você decide onde o arquivo mora.
+Se uma mudança acabou aplicada direto no cluster, fora do fluxo normal de GitOps (por exemplo, um `kubectl edit` de emergência), ela não deveria ficar assim: uma aplicação com sincronização automática reverte esse tipo de mudança na próxima reconciliação, e mesmo sem selfHeal ligado a mudança vive só na memória de quem a aplicou, sem sobreviver a uma reconstrução do node.
+
+A recipe `just freeze` existe para esse resgate: ela roda um `kubectl get` do objeto, remove os campos que só fazem sentido num objeto vivo, listados na tabela abaixo, e produz um YAML limpo, pronto para commitar no lugar certo do repositório ou do satélite.
+
+| Campo removido |
+| --- |
+| `resourceVersion` |
+| `generation` |
+| `managedFields` |
+| `uid` |
+| `.status` |
+
+Ela só lê: o `kubectl get` roda por SSH no node e a limpeza acontece num contêiner na máquina do operador, então nada é reaplicado no cluster enquanto você decide onde o arquivo mora.
 
 ```bash
 just freeze <kind> <nome> -n <namespace> > caminho/do/manifesto.yaml
 ```
 
-Depois de commitado, o Argo passa a rastrear esse objeto como qualquer outro: a mudança que antes só existia no cluster agora tem uma origem no git, e uma reconstrução do node a partir do zero a recria sem depender de ninguém lembrar que ela existia. O commit também devolve a mudança ao caminho normal de revisão, onde os gates de infraestrutura a enxergam. Se o objeto commitado pertence a uma `Application` com `selfHeal`, a próxima reconciliação deixa de revertê-lo, porque agora o git e o cluster concordam.
+Depois de commitado, o Argo passa a rastrear esse objeto como qualquer outro: a mudança que antes só existia no cluster agora tem uma origem no git, e uma reconstrução do node a partir do zero a recria sem depender de ninguém lembrar que ela existia. O commit também devolve a mudança ao caminho normal de revisão, onde os gates de infraestrutura a enxergam.
+
+Se o objeto commitado pertence a uma aplicação com selfHeal, a próxima reconciliação deixa de revertê-lo, porque agora o git e o cluster concordam.
 
 ## Continue por aqui
 

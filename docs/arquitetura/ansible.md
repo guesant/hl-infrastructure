@@ -2,97 +2,494 @@
 
 <!-- source-of-trust paths="ansible/site.yml ansible/roles" -->
 
-`ansible/site.yml` aplica as roles em sequência, numa única play contra o host `pi`. A ordem importa: cada role assume que a anterior já deixou o sistema num estado específico, e várias delas verificam essa suposição explicitamente antes de continuar (a role `cilium`, por exemplo, aborta se o arquivo de configuração declarativo do k3s ainda não desabilitou o kube-proxy embutido). A sequência tem três trechos, e eles não se misturam: primeiro o sistema operacional, de `os_prerequisites` a `fail2ban`; depois a plataforma Kubernetes, do `k3s` ao `argocd`, com `sops_age_key` intercalado entre os dois por um motivo de ordem explicado adiante; por último `bootstrap_app`, que entrega o cluster ao Argo, e as roles de manutenção contínua. Cada role também carrega uma tag com o próprio nome, o que permite rodar um trecho isolado sem reordenar nada.
+`ansible/site.yml` aplica as roles em sequência, numa única play contra o host `pi`. A ordem importa: cada role assume que a anterior já deixou o sistema num estado específico, e várias delas verificam essa suposição explicitamente antes de continuar.
+
+A role `cilium`, por exemplo, aborta se o arquivo de configuração declarativo do k3s ainda não desabilitou o kube-proxy embutido.
+
+A sequência tem três trechos, e eles não se misturam, resumidos na tabela abaixo.
+
+| Trecho | Da role | Até a role |
+| --- | --- | --- |
+| Sistema operacional | `os_prerequisites` | `fail2ban` |
+| Plataforma Kubernetes | `k3s` | `argocd` (com `sops_age_key` intercalado entre os dois) |
+| Entrega e manutenção | `bootstrap_app`, que entrega o cluster ao Argo | roles de manutenção contínua |
+
+Cada role também carrega uma tag com o próprio nome, o que permite rodar um trecho isolado sem reordenar nada.
 
 ## O que toda role faz antes de agir
 
-Cada role começa com um `assert` das variáveis de que depende: versão no formato esperado (`v1.36.4+k3s1`, `10.9.0`), chave SSH com prefixo válido e sem o placeholder do exemplo, segredo do webhook com tamanho mínimo, lista de CIDRs bem formada, token do k3s com o tamanho de um valor gerado. O erro aparece na primeira task, com a mensagem dizendo qual variável e qual formato, em vez de no meio de um `helm template` com uma versão vazia. O ganho não é só de mensagem: uma role que aborta no `assert` não chegou a mexer em nada no node, então não há estado pela metade para desfazer. É por isso que a verificação fica no início da role, e não junto da task que usa a variável.
+Cada role começa com um `assert` das variáveis de que depende: versão no formato esperado (`v1.36.4+k3s1, 10.9.0`), chave SSH com prefixo válido e sem o placeholder do exemplo, segredo do webhook com tamanho mínimo, lista de CIDRs bem formada, token do k3s com o tamanho de um valor gerado.
 
-Todo recipe do `justfile` que chama `ansible-playbook` ou `ansible-galaxy` define `ANSIBLE_CONFIG` apontando para `ansible/ansible.cfg` explicitamente, porque `just` sempre roda a partir da raiz do repositório, e o `ansible.cfg` só é descoberto sozinho quando está no diretório de onde o comando é executado. Sem essa variável, o vars plugin da `community.sops` declarado nesse arquivo (`vars_plugins_enabled`) nunca era carregado, e `ansible/group_vars/all/secrets.sops.yaml` era lido como um YAML comum, com cada valor cifrado passando para as roles como a string `ENC[...]` literal, em vez do segredo decifrado. O defeito ficou escondido enquanto o antigo `secrets.yml` em texto claro ainda existia ao lado do arquivo cifrado: ambos entram na mesma varredura de `group_vars/all/`, o Ansible mescla por ordem alfabética, e `secrets.yml` vem depois de `secrets.sops.yaml` nessa ordem, então seu valor real sobrescrevia silenciosamente o `ENC[...]` não decifrado. Só apareceu quando o `secrets.yml` foi apagado de vez.
+O erro aparece na primeira task, com a mensagem dizendo qual variável e qual formato, em vez de no meio de um `helm template` com uma versão vazia.
 
-As roles que falam com o cluster embrulham suas tasks num bloco condicionado ao fato `k3s_cluster_gate`, definido pela role `k3s` através da role `check_mode_gate`. Numa execução real o fato é sempre verdadeiro. Sob `--check` num node sem k3s, ele é falso: a role avisa que o binário só seria instalado numa execução real e as roles seguintes pulam o bloco inteiro, para que o dry-run termine limpo e diga a verdade sobre o que pode ser previsto. A mesma role de gate protege o firewalld, e cada serviço systemd só é iniciado em modo de verificação se o pacote já estava instalado antes. O guia [preflight e dry-run](../operacional/preflight-e-dry-run.md) mostra como usar isso.
+O ganho não é só de mensagem: uma role que aborta no assert não chegou a mexer em nada no node, então não há estado pela metade para desfazer. É por isso que a verificação fica no início da role, e não junto da task que usa a variável.
 
-Os charts `argocd` e `cilium`, e a aplicação raiz (`bootstrap_app`), seguem o mesmo padrão de sonda mais apply: primeiro uma sonda com `k3s kubectl diff --server-side`, sempre real mesmo sob `--check` (`check_mode: false`, porque um diff nunca grava nada), que sai `0` quando o cluster já bate com o manifesto e `1` quando há diferença; só então a task de `apply` roda, e só quando a sonda disse `1`. Isso substitui uma versão anterior que decidia `changed_when` procurando a palavra `unchanged` no stdout do próprio `apply`: greppar o texto de saída de um comando é frágil (uma mudança no formato do `kubectl`, ou algum recurso qualquer que não seja `unchanged`, falseava o resultado inteiro), e o `kubectl diff` é a própria ferramenta feita pra essa pergunta. Não usar `helm upgrade` nem comparar values à mão continua valendo: quem decide se há mudança é sempre o servidor, nunca uma heurística local. O `helm repo add` de cada role tinha o mesmo problema, só que pior: `changed_when` checava a string `already exists` no `stderr`, mas o Helm imprime essa mensagem no `stdout`, então a task nunca via a string onde procurava e reportava `changed` em toda execução, mesmo quando o repositório já estava lá.
+Todo recipe do `justfile` que chama `ansible-playbook/ansible-galaxy` define uma variável de ambiente própria.
 
-Algumas tasks da role `k3s`, fora desse padrão de sonda, reportavam `changed` em toda execução mesmo sem nada ter mudado de verdade: buscar o `kubeconfig` do node de volta para o operador e trocar o `127.0.0.1` do endereço da API pelo IP real do host. O `fetch` sempre via `changed`, porque comparava o checksum do arquivo remoto (sempre com `127.0.0.1`, cru, do jeito que o k3s escreve) contra o arquivo local que a execução anterior já tinha reescrito com o IP real; nunca batiam. A correção separa os arquivos: o `fetch` grava num arquivo intermediário que nenhuma outra task reescreve, então o checksum bate de execução para execução; a task seguinte lê esse arquivo intermediário, calcula a substituição do endereço e grava o resultado com `copy`, que só marca `changed` quando o conteúdo calculado realmente difere do que já está em disco.
+Essa variável, `ANSIBLE_CONFIG`, aponta para `ansible/ansible.cfg` explicitamente.
 
-O `spec.selector` de um `Deployment`, `StatefulSet`, `DaemonSet` ou `Job` é imutável no Kubernetes, e alguns charts upstream mudaram esse selector entre versões (normalmente para incluir `app.kubernetes.io/instance`), o que faz o apply falhar contra um objeto instalado antes dessa mudança, mesmo com `--force-conflicts`. A role `argocd` trata isso: quando o apply falha, a role `recreate_immutable_conflicts` lê o erro do `kubectl` (que aparece em formatos de texto diferentes) com uma expressão regular aplicada ao `stderr` inteiro, não linha a linha: o texto de um mesmo conflito pode vir quebrado em mais de uma linha dependendo do formato, e casar linha por linha perderia objetos que o `apply` de fato travou. A partir do que a extração encontra ali, a role identifica só os objetos travados, apaga cada um e reaplica o chart. É seguro porque o que é apagado é sempre o objeto de controle recriável pelo próprio chart, nunca dado; e é restrito ao objeto certo porque a extração lê o erro relatado pela API, não deleta nada às cegas. As roles `sealed_secrets` e `argocd_image_updater`, que também precisavam desse tratamento, deixaram de existir: o mesmo tipo de conflito, se acontecer numa atualização de versão futura desses componentes, agora é responsabilidade do próprio Argo resolver (ou de uma intervenção manual pontual), não mais de uma role Ansible.
+Isso é necessário porque `just` sempre roda a partir da raiz do repositório, e o arquivo de configuração só é descoberto sozinho quando está no diretório de onde o comando é executado.
 
-Nas roles (`cilium` e `bootstrap_app`) que primeiro copiam ou renderizam um arquivo para depois consumi-lo (num `helm template --values` ou num `kubectl apply -f`), a task que escreve esse arquivo carrega `check_mode: false`: sem isso, sob `--check` num node que ainda não tem o arquivo, ela não escreveria nada (correto para o próprio arquivo, que não é um recurso do cluster) e a task seguinte quebraria tentando ler um arquivo inexistente. O limite de segurança do dry-run é sempre o `--dry-run=server` do apply, nunca a ausência de um arquivo temporário em `/tmp`. Escrever esse arquivo de verdade sob `--check` não quebra a promessa do modo, porque o arquivo não é o estado que interessa: ele existe só para alimentar o comando seguinte, e o que decide se algo muda no cluster continua sendo o servidor. Confundir as duas coisas é o erro que faria um `--check` passar limpo por não conseguir nem chegar à comparação.
+Sem essa variável, o vars plugin da `community.sops` declarado nesse arquivo nunca era carregado (a chave que liga isso é `vars_plugins_enabled`).
+
+`ansible/group_vars/all/secrets.sops.yaml` era lido como um YAML comum, com cada valor cifrado passando para as roles como a string `ENC[...]` literal, em vez do segredo decifrado.
+
+O defeito ficou escondido enquanto o antigo `secrets.yml` em texto claro ainda existia ao lado do arquivo cifrado: ambos entram na mesma varredura de `group_vars/all/`, o Ansible mescla por ordem alfabética, e secrets.yml vem depois de secrets.sops.yaml nessa ordem, então seu valor real sobrescrevia silenciosamente o valor cifrado não decifrado.
+
+Só apareceu quando o `secrets.yml` foi apagado de vez.
+
+As roles que falam com o cluster embrulham suas tasks num bloco condicionado ao fato `k3s_cluster_gate`, definido pela role `k3s`.
+
+Quem de fato controla esse fato é a role `check_mode_gate`; numa execução real ele é sempre verdadeiro.
+
+Sob `--check` num node sem k3s, ele é falso: a role avisa que o binário só seria instalado numa execução real e as roles seguintes pulam o bloco inteiro, para que o dry-run termine limpo e diga a verdade sobre o que pode ser previsto.
+
+A mesma role de gate protege o firewalld, e cada serviço systemd só é iniciado em modo de verificação se o pacote já estava instalado antes. O guia [preflight e dry-run](../operacional/preflight-e-dry-run.md) mostra como usar isso.
+
+Os charts `argocd/cilium`, e a aplicação raiz (`bootstrap_app`), seguem o mesmo padrão de sonda mais apply.
+
+Primeiro uma sonda com `k3s kubectl diff --server-side` roda, sempre real mesmo sob `--check`, porque um diff nunca grava nada.
+
+Ela sai `0/1` conforme o cluster bate ou não com o manifesto; a sonda em si roda de verdade mesmo em modo de simulação, graças a `check_mode: false`, porque um diff nunca grava nada.
+
+Só então a task de `apply` roda, e só quando a sonda disse 1.
+
+Isso substitui uma versão anterior que decidia se algo mudou (`changed_when`) procurando a palavra `unchanged` no stdout do próprio apply.
+
+Greppar o texto de saída de um comando é frágil, porque uma mudança no formato do `kubectl`, ou algum recurso qualquer que não seja unchanged, falseava o resultado inteiro; o `kubectl diff` é a própria ferramenta feita pra essa pergunta.
+
+Não usar `helm upgrade` nem comparar values à mão continua valendo: quem decide se há mudança é sempre o servidor, nunca uma heurística local.
+
+O `helm repo add` de cada role tinha o mesmo problema, só que pior: a checagem de mudança buscava a string `already exists` no stderr.
+
+O Helm imprime essa mensagem no stdout, não no stderr, então a task nunca via a string onde procurava e reportava mudança em toda execução, mesmo quando o repositório já estava lá.
+
+Algumas tasks da role `k3s`, fora desse padrão de sonda, reportavam mudança em toda execução mesmo sem nada ter mudado de verdade: buscar o `kubeconfig` do node de volta para o operador e trocar o endereço da API pelo IP real do host.
+
+O `fetch` sempre via a mudança, porque comparava o checksum do arquivo remoto, sempre com `127.0.0.1` cru do jeito que o k3s escreve, contra o arquivo local que a execução anterior já tinha reescrito com o IP real; nunca batiam.
+
+A correção separa os arquivos: o `fetch` grava num arquivo intermediário que nenhuma outra task reescreve, então o checksum bate de execução para execução.
+
+A task seguinte lê esse arquivo intermediário, calcula a substituição do endereço e grava o resultado com `copy`, que só marca a mudança quando o conteúdo calculado realmente difere do que já está em disco.
+
+O `spec.selector` de um `Deployment/StatefulSet/DaemonSet/Job` é imutável no Kubernetes.
+
+Alguns charts upstream mudaram esse selector entre versões, normalmente para incluir `app.kubernetes.io/instance`, o que faz o apply falhar contra um objeto instalado antes dessa mudança, mesmo com `--force-conflicts`.
+
+A role `argocd` trata isso: quando o apply falha, a role `recreate_immutable_conflicts` lê o erro do kubectl, que aparece em formatos de texto diferentes, com uma expressão regular aplicada ao stderr inteiro, não linha a linha.
+
+O texto de um mesmo conflito pode vir quebrado em mais de uma linha dependendo do formato, e casar linha por linha perderia objetos que o `apply` de fato travou.
+
+A partir do que a extração encontra ali, a role identifica só os objetos travados, apaga cada um e reaplica o chart. É seguro porque o que é apagado é sempre o objeto de controle recriável pelo próprio chart, nunca dado; e é restrito ao objeto certo porque a extração lê o erro relatado pela API, não deleta nada às cegas.
+
+As roles `sealed_secrets` e `argocd_image_updater`, que também precisavam desse tratamento, deixaram de existir.
+
+O mesmo tipo de conflito, se acontecer numa atualização de versão futura desses componentes, agora é responsabilidade do próprio Argo resolver (ou de uma intervenção manual pontual), não mais de uma role Ansible.
+
+Nas roles `cilium/bootstrap_app`, que primeiro copiam ou renderizam um arquivo para depois consumi-lo, a task que escreve esse arquivo carrega `check_mode: false`.
+
+Esse arquivo alimenta um `helm template --values` ou um `kubectl apply -f` na sequência; sem isso, sob --check num node que ainda não tem o arquivo, a task não escreveria nada, correto para o próprio arquivo que não é um recurso do cluster, e a task seguinte quebraria tentando ler um arquivo inexistente.
+
+O limite de segurança do dry-run é sempre o `--dry-run=server` do apply, nunca a ausência de um arquivo temporário em `/tmp`.
+
+Escrever esse arquivo de verdade sob --check não quebra a promessa do modo, porque o arquivo não é o estado que interessa: ele existe só para alimentar o comando seguinte, e o que decide se algo muda no cluster continua sendo o servidor.
+
+Confundir as duas coisas é o erro que faria um --check passar limpo por não conseguir nem chegar à comparação.
 
 ## Hardening de sistema operacional
 
-As roles que vêm antes de `k3s` não instalam nada de Kubernetes; elas preparam o sistema operacional. O ponto de partida é uma imagem do Raspberry Pi OS pensada para uso de mesa, que traz serviços de desktop ligados, o `/tmp` sem restrição de montagem e o AppArmor compilado mas desativado. Boa parte dessas roles, portanto, não está adicionando proteção nova e sim desfazendo padrões que ninguém escolheu para um node de servidor. Duas delas vão além e reconciliam de fato, o `firewall` e o `ssh_hardening`: o que não está declarado e aparece no node é removido, em vez de tolerado.
+As roles que vêm antes de `k3s` não instalam nada de Kubernetes; elas preparam o sistema operacional.
 
-`os_prerequisites` instala pacotes base e ajusta os parâmetros de cgroup que o k3s e o containerd exigem, reiniciando o node quando a linha de comando do kernel muda. Ela também para e mascara o `rpcbind`, que a imagem do Raspberry Pi OS deixa escutando em todas as interfaces sem que nada deste node o use, mas só depois de confirmar que não há nenhuma montagem NFS, a única coisa que dependeria dele. A mesma role desliga os serviços de desktop e periféricos que a imagem traz e nada usa (avahi, bluetooth, cups, accounts-daemon, udisks2, wayvnc), só entre os que de fato existem no node; bloqueia o rádio Wi-Fi por `rfkill`, porque o node passou a depender só do cabo e um rádio ligado sem uso é superfície de ataque de graça, numa operação que o próprio `systemd-rfkill` já persiste entre reboots, sem exigir unidade nova; monta o `/tmp` com `noexec`, `nosuid` e `nodev` por um drop-in do `tmp.mount`, criando antes o diretório `tmp.mount.d`, que a imagem do Raspberry Pi OS não traz; instala o `smartmontools` com o `smartd` apontado para o SSD atrás da ponte USB JMS583, que precisa do tipo de dispositivo `sntjmicron` para responder ao SMART; e compara os pacotes marcados como manuais com `files/apt-manual-baseline.txt`, só avisando no output quando aparece algo instalado à mão fora da lista, sem falhar.
+O ponto de partida é uma imagem do Raspberry Pi OS pensada para uso de mesa, que traz serviços de desktop ligados, o `/tmp` sem restrição de montagem e o AppArmor compilado mas desativado.
 
-`firewall` instala e liga o firewalld, mantém SSH permitido na zona pública, confia os CIDRs internos de pod e serviço que o Cilium vai usar, deixa a porta da API do k3s fechada para toda rede (o `kubectl` roda no próprio node, por SSH, via `just kubectl`), e se recusa a recarregar uma configuração permanente que não contenha SSH: um erro nas regras nunca tranca o operador para fora. A role também reconcilia: lê o que está gravado nas zonas `public` e `trusted`, compara com o que `defaults/main.yml` declara (os serviços `ssh` e `dhcpv6-client`, nenhuma porta aberta, nenhuma rich rule e as fontes de pod e serviço) e remove o resto. Foi assim que apareceu uma `6443/tcp` aberta para qualquer origem na zona pública, que anulava a restrição por CIDR que existia à época; hoje a API não tem regra nenhuma, e a reconciliação remove qualquer uma que apareça. A remoção tem um teto por execução, declarado em `firewall_max_removals`: uma diferença maior aborta a role antes de tocar em qualquer coisa, porque quase sempre significa um erro de declaração, e não lixo acumulado.
+Boa parte dessas roles, portanto, não está adicionando proteção nova e sim desfazendo padrões que ninguém escolheu para um node de servidor. Duas delas vão além e reconciliam de fato, o `firewall` e o `ssh_hardening`: o que não está declarado e aparece no node é removido, em vez de tolerado.
 
-A mesma role é a única dona do firewalld, então é ela, e não a role `tailscale`, que declara a zona `tailscale` para a interface `tailscale0`, com `ssh`, `dns`, `http` e `https`, reconciliados como os da zona pública; as portas HTTP são do [ingress](ingress.md), que escuta direto no node, e ficam fechadas na zona pública. Ela também apaga qualquer policy de encaminhamento entre zonas que alguém tenha declarado no node (as que vivem em `/etc/firewalld/policies`, e não as embutidas do firewalld, que não podem ser apagadas): o node não roteia nada entre a tailnet e a rede local, e uma policy que sobrou de uma versão anterior, que fazia dele um subnet router, seria exatamente o tipo de estado não declarado que a reconciliação existe para remover. A distinção entre as policies declaradas em `/etc/firewalld/policies` e as embutidas do firewalld importa aqui porque tentar apagar uma embutida falharia e derrubaria a role sem motivo. O que se quer remover é sempre o que alguém criou, e só isso.
+`os_prerequisites` instala pacotes base e ajusta os parâmetros de cgroup que o k3s e o containerd exigem, reiniciando o node quando a linha de comando do kernel muda.
 
-`tailscale` vem logo depois e liga o node à tailnet, sem anunciar rota nenhuma: instala o `tailscale` pelo repositório apt oficial, com a chave de assinatura conferida contra `tailscale_apt_key_sha256` e gravada em `/usr/share/keyrings`, e o `dnsmasq`; se o node ainda não está na tailnet e `tailscale_auth_key` ainda é o valor de exemplo, ela avisa e pula o resto sem falhar, para que o bootstrap continue verde até a credencial existir. Com a chave, ela escreve o valor num arquivo em tmpfs com modo 600 e roda `tailscale up --auth-key=file:...`, para o segredo nunca aparecer na lista de processos, e apaga o arquivo mesmo se o comando falhar. Num node já ligado, `tailscale set` reaplica as preferências declaradas (hostname, `--accept-dns=false` para o tailscaled não reescrever o `resolv.conf` do node, `--accept-routes=false`) e a role só reporta mudança quando o `tailscale debug prefs` de antes e de depois diferem.
+Ela também para e mascara o `rpcbind`, que a imagem do Raspberry Pi OS deixa escutando em todas as interfaces sem que nada deste node o use, mas só depois de confirmar que não há nenhuma montagem NFS, a única coisa que dependeria dele.
 
-O `dnsmasq` é configurado em camadas: a de escuta entra sempre, mesmo antes do node estar na tailnet, e o prende a `tailscale0` sem upstream (`no-resolv`), porque o pacote da Debian sobe por padrão escutando em toda interface e encaminhando para o `resolv.conf`, um estado que ninguém declarou; a zona `*.guesant.internal`, respondida com o endereço do node na tailnet, só entra depois do login, quando esse endereço existe. Uma consulta por qualquer outro nome recebe recusa em vez de virar um resolver aberto; um drop-in do systemd faz o `dnsmasq` subir depois do `tailscaled`, e `bind-dynamic` cobre o caso em que a interface aparece depois. A separação em duas camadas existe porque as duas dependem de coisas diferentes: prender o processo à interface certa é seguro de fazer desde a instalação, enquanto responder pela zona exige um endereço que só existe depois do login na tailnet. Se as duas entrassem juntas, o bootstrap de um node ainda sem credencial ficaria com um `dnsmasq` no estado padrão do pacote, escutando em toda interface, que é justamente o que se quer evitar.
+A mesma role desliga os serviços de desktop e periféricos que a imagem traz e nada usa (avahi, bluetooth, cups, accounts-daemon, udisks2, wayvnc), só entre os que de fato existem no node, e cuida das demais ações resumidas na tabela abaixo.
 
-`unattended_upgrades` liga atualizações automáticas de segurança, com `Automatic-Reboot "true"` e `Automatic-Reboot-Time "04:00"`: se uma atualização instalada exigir reboot (um kernel novo, por exemplo), o node reinicia sozinho àquela hora, fora de qualquer execução do Ansible. É o único reboot deste repositório que nenhuma role dispara nem espera. O horário coincide com o do `hl-gc.timer` da role `maintenance`, descrita adiante, que roda aos domingos de madrugada com atraso aleatório; não há indício de que choquem de verdade, só a coincidência de janela vale ter em mente.
+| Ação de `os_prerequisites` | Detalhe |
+| --- | --- |
+| Bloqueia o rádio Wi-Fi | via `rfkill`, persistido entre reboots pelo próprio `systemd-rfkill` |
+| Monta `/tmp` restrito | `noexec/nosuid/nodev` por um drop-in do `tmp.mount`, criando antes o diretório `tmp.mount.d` |
+| Instala o `smartmontools` | com o `smartd` apontado para o SSD atrás da ponte USB JMS583, tipo de dispositivo `sntjmicron` |
+| Compara pacotes manuais | contra `files/apt-manual-baseline.txt`, só avisando no output, sem falhar |
 
-`sysctl_hardening` aplica parâmetros de kernel recomendados, verificando primeiro se cada parâmetro existe no kernel do host antes de tentar defini-lo, e configura o kernel para reiniciar sozinho depois de um oops em vez de ficar travado. A lista inclui `kernel.kptr_restrict=2` e `kernel.dmesg_restrict=1`, que escondem endereços do kernel e o `dmesg` de usuários sem privilégio, e desliga redirects e source route em IPv4 e IPv6; `ip_forward` fica de fora porque o roteamento dos pods depende dele. Os valores vão para `/etc/sysctl.d/90-hl-hardening.conf`, e não para `/etc/sysctl.conf`: a Debian 13 deixou de ler esse arquivo no boot (o link `99-sysctl.conf` em `sysctl.d` não existe mais), e foi assim que um reboot devolveu `kernel.kptr_restrict` a zero e derrubou o Traefik, que não conseguia mais abrir a porta 80; o valor vivo estava certo e o arquivo também, só o boot não os ligava. A mesma role baixa `net.ipv4.ip_unprivileged_port_start` para 80, no sentido contrário do hardening: o Traefik do [ingress](ingress.md) roda no namespace de rede do host, sem root e sem capability, e sem isso não conseguiria escutar nas portas 80 e 443. O sysctl é por namespace de rede, então só alcança processos do host; os pods comuns já recebem o valor zero do kubelet no próprio namespace.
+O rádio fica bloqueado porque o node passou a depender só do cabo, e um rádio ligado sem uso é superfície de ataque de graça; o SSD atrás da ponte USB precisa desse tipo de dispositivo específico para responder ao SMART.
 
-`umask_hardening` declara `UMASK 027` em `/etc/login.defs`, restringindo a permissão padrão de todo arquivo novo criado por um shell de login interativo; a ressalva é que isso não alcança um serviço gerenciado pelo systemd, como o próprio k3s, o containerd ou o agente do Cilium, cada um com seu próprio umask de processo. A role é uma linha em `/etc/login.defs` e nada mais, o que deixa claro o alcance dela: o que um operador cria digitando num shell, não o que um daemon escreve. Para os arquivos que de fato guardam segredo, a permissão vem declarada na própria task que os escreve, como o modo 600 do kubeconfig e do `config.yaml` do k3s, e não desta role.
+`firewall` instala e liga o firewalld, mantém SSH permitido na zona pública, confia os CIDRs internos de pod e serviço que o Cilium vai usar, e deixa a porta da API do k3s fechada para toda rede.
 
-`apparmor_hardening` garante o pacote `apparmor` instalado e liga o LSM na linha de comando do kernel (`apparmor=1 security=apparmor`), reiniciando o node quando isso muda, no mesmo padrão da `os_prerequisites` para o cgroup de memória: o kernel da Raspberry Pi Foundation vem com o AppArmor compilado, mas não o ativa por padrão como uma Debian ou Ubuntu comuns ativariam, então assumir que "o Raspberry Pi OS já vem com isso" seria falso aqui. A role não define nenhum perfil próprio, só garante que o controle de acesso obrigatório exista para ser usado depois. Ligar o LSM na linha de comando não basta como verificação, porque o arquivo editado pode nem ser o que o boot usa, então a role termina lendo `/sys/module/apparmor/parameters/enabled` e falha se o kernel não responder que está ativo. Essa checagem contra o estado vivo, e não contra o arquivo que ela mesma escreveu, é o que distingue ter declarado a intenção de ter o controle funcionando.
+O `kubectl` roda no próprio node, por SSH, via `just kubectl`, e a role se recusa a recarregar uma configuração permanente que não contenha SSH: um erro nas regras nunca tranca o operador para fora.
 
-`auditd` liga auditoria de chamadas de sistema e vigia as mudanças que indicariam um invasor se instalando: arquivos de identidade (`passwd`, `shadow`, `group`, `gshadow`, `sudoers.d`), configuração do SSH e do firewalld, cron, carga e remoção de módulos do kernel (pelos binários e pelas syscalls) e a configuração e as credenciais do k3s. Cada regra leva uma chave (`identity`, `sshd_config`, `firewall`, `cron`, `modules`, `k3s_config`, `k3s_credentials`), que é por onde se busca depois: sem elas, o registro do auditd é volume demais para ser lido. Vigiar módulo do kernel pelos binários e pelas syscalls ao mesmo tempo é redundância deliberada, porque quem carrega um módulo por chamada direta não passa por `insmod` nem por `modprobe`. O que o auditd não faz é impedir qualquer uma dessas mudanças; ele registra, e o valor está em haver rastro quando algo já aconteceu.
+A role também reconcilia: lê o que está gravado nas zonas `public/trusted`, compara com o que `defaults/main.yml` declara e remove o resto.
 
-`ssh_hardening` trata `authorized_keys` como estado declarado: a lista de chaves permitidas vive em `ansible/group_vars/all/authorized_keys.yml`, commitada em texto claro porque chave pública não é segredo, e a role reconcilia o node contra ela, removendo o que não está declarado, com o mesmo padrão de teto do `firewall`, declarado em `ssh_hardening_max_key_removals`. Antes de escrever qualquer coisa, ela extrai a chave pública correspondente à chave privada que o próprio Ansible está usando nesta conexão e confere que ela está na lista declarada; se não estiver, aborta sem tocar no arquivo, porque aplicar a mudança trancaria o operador para fora. Essa extração roda sobre uma cópia temporária da chave privada, com permissão restrita e apagada no fim, delegada à máquina do operador: o `ssh-keygen -y` recusa ler a chave original quando ela está com permissão mais aberta que `0600`, e a role não corrige isso na chave de verdade, só numa cópia descartável.
+O que `defaults/main.yml` declara são os serviços `ssh/dhcpv6-client`, nenhuma porta aberta, nenhuma rich rule e as fontes de pod e serviço.
 
-Só depois disso ela desliga login por senha e restringe `PermitRootLogin` a autenticação por chave. O drop-in também limita o login ao grupo `root` (`AllowGroups root`), reduz a janela de autenticação e liga `LogLevel VERBOSE`, que registra a impressão digital da chave usada em cada login. Antes de gravar, o `validate` do template testa o drop-in novo junto com o `sshd_config` inteiro com `sshd -t`, então uma configuração inválida nunca chega ao disco para derrubar o SSH no próximo reload. Do lado do operador, `group_vars/all/connection.yml` liga `StrictHostKeyChecking=yes` contra `.local/operator/known_hosts`, então o Ansible recusa conectar se a host key do Pi mudar. Ela não instala chave nenhuma: a chave que importa é a que o Ansible já usou para entrar.
+Foi assim que apareceu uma `6443/tcp` aberta para qualquer origem na zona pública, que anulava a restrição por CIDR que existia à época; hoje a API não tem regra nenhuma, e a reconciliação remove qualquer uma que apareça.
 
-`fail2ban` bane automaticamente origens com tentativas repetidas de login SSH inválido, com `banaction = firewallcmd-ipset` (o ban entra por um ipset que o firewalld administra, a mesma peça que a role `firewall` já governa, em vez do banaction clássico que mexe direto no iptables) e `backend = systemd`, porque a jail lê o journal do systemd, não um arquivo de log tipo `/var/log/auth.log`, que esta imagem não popula; a escolha casa com o resto do repositório, que não tem rsyslog dedicado nenhum. A jail banda cinco tentativas em dez minutos por uma hora, números modestos de propósito: com login por senha desligado pelo `ssh_hardening`, o fail2ban não é o que impede uma invasão por força bruta, e sim o que tira do journal o ruído constante de varredura. O ban também vive num ipset, e não como regra de zona, então ele fica fora do que a role `firewall` reconcilia: um endereço banido não aparece para ela como configuração não declarada a remover.
+A remoção tem um teto por execução, declarado em `firewall_max_removals`: uma diferença maior aborta a role antes de tocar em qualquer coisa, porque quase sempre significa um erro de declaração, e não lixo acumulado.
+
+A mesma role é a única dona do firewalld: é ela, não a role tailscale, que declara a zona tailscale para a interface `tailscale0`, com `ssh/dns/http/https` reconciliados como os da zona pública.
+
+As portas HTTP são do [ingress](ingress.md), que escuta direto no node, e ficam fechadas na zona pública.
+
+Ela também apaga qualquer policy de encaminhamento entre zonas que alguém tenha declarado no node, as que vivem em `/etc/firewalld/policies` e não as embutidas do firewalld, que não podem ser apagadas.
+
+O node não roteia nada entre a tailnet e a rede local, e uma policy que sobrou de uma versão anterior, que fazia dele um subnet router, seria exatamente o tipo de estado não declarado que a reconciliação existe para remover.
+
+A distinção entre as policies declaradas em `/etc/firewalld/policies` e as embutidas do firewalld importa aqui porque tentar apagar uma embutida falharia e derrubaria a role sem motivo. O que se quer remover é sempre o que alguém criou, e só isso.
+
+`tailscale` vem logo depois e liga o node à tailnet, sem anunciar rota nenhuma: instala o pacote tailscale pelo repositório apt oficial, com a chave de assinatura conferida contra `tailscale_apt_key_sha256`.
+
+A chave fica gravada em `/usr/share/keyrings`, e a role também instala o `dnsmasq`.
+
+Se o node ainda não está na tailnet e `tailscale_auth_key` ainda é o valor de exemplo, ela avisa e pula o resto sem falhar, para que o bootstrap continue verde até a credencial existir.
+
+Com a chave, ela escreve o valor num arquivo em tmpfs com modo 600 e roda `tailscale up --auth-key=file:...`, para o segredo nunca aparecer na lista de processos, e apaga o arquivo mesmo se o comando falhar.
+
+Num node já ligado, `tailscale set` reaplica as preferências declaradas: hostname e as flags `--accept-dns=false / --accept-routes=false`, a primeira para o tailscaled não reescrever o resolv.conf do node.
+
+A role só reporta mudança quando o `tailscale debug prefs` de antes e de depois diferem.
+
+O `dnsmasq` é configurado em camadas: a de escuta entra sempre, mesmo antes do node estar na tailnet, e o prende à interface `tailscale0` sem upstream.
+
+Essa restrição de upstream (`no-resolv`) existe porque o pacote da Debian sobe por padrão escutando em toda interface e encaminhando para o `resolv.conf`, um estado que ninguém declarou.
+
+A zona `*.guesant.internal`, respondida com o endereço do node na tailnet, só entra depois do login, quando esse endereço existe. Uma consulta por qualquer outro nome recebe recusa em vez de virar um resolver aberto.
+
+Um drop-in do systemd faz o dnsmasq subir depois do `tailscaled`, e `bind-dynamic` cobre o caso em que a interface aparece depois.
+
+A separação em duas camadas existe porque as duas dependem de coisas diferentes: prender o processo à interface certa é seguro de fazer desde a instalação, enquanto responder pela zona exige um endereço que só existe depois do login na tailnet.
+
+Se as duas entrassem juntas, o bootstrap de um node ainda sem credencial ficaria com um dnsmasq no estado padrão do pacote, escutando em toda interface, que é justamente o que se quer evitar.
+
+`unattended_upgrades` liga atualizações automáticas de segurança, com `Automatic-Reboot "true" / Automatic-Reboot-Time "04:00"`.
+
+Se uma atualização instalada exigir reboot, um kernel novo por exemplo, o node reinicia sozinho àquela hora, fora de qualquer execução do Ansible. É o único reboot deste repositório que nenhuma role dispara nem espera.
+
+O horário coincide com o do `hl-gc.timer` da role `maintenance`, descrita adiante, que roda aos domingos de madrugada com atraso aleatório; não há indício de que choquem de verdade, só a coincidência de janela vale ter em mente.
+
+`sysctl_hardening` aplica parâmetros de kernel recomendados, verificando primeiro se cada parâmetro existe no kernel do host antes de tentar defini-lo, e configura o kernel para reiniciar sozinho depois de um oops em vez de ficar travado.
+
+A lista inclui os parâmetros na tabela abaixo, além de desligar redirects e source route em IPv4 e IPv6; `ip_forward` fica de fora porque o roteamento dos pods depende dele.
+
+| Parâmetro sysctl | Efeito |
+| --- | --- |
+| `kernel.kptr_restrict=2` | esconde endereços do kernel de usuários sem privilégio |
+| `kernel.dmesg_restrict=1` | esconde o `dmesg` de usuários sem privilégio |
+| `net.ipv4.ip_unprivileged_port_start` | baixado para 80, para o Traefik escutar sem root |
+
+Os valores vão para `/etc/sysctl.d/90-hl-hardening.conf`, e não para `/etc/sysctl.conf`.
+
+A Debian 13 deixou de ler esse arquivo no boot: o link `99-sysctl.conf` em `sysctl.d` não existe mais.
+
+Foi assim que um reboot devolveu `kernel.kptr_restrict` a zero e derrubou o Traefik, que não conseguia mais abrir a porta 80; o valor vivo estava certo e o arquivo também, só o boot não os ligava.
+
+A mesma role também baixa o parâmetro de porta mínima sem privilégio para 80, no sentido contrário do hardening: o Traefik do [ingress](ingress.md) roda no namespace de rede do host, sem root e sem capability, e sem isso não conseguiria escutar nas portas 80 e 443.
+
+O sysctl é por namespace de rede, então só alcança processos do host; os pods comuns já recebem o valor zero do kubelet no próprio namespace.
+
+`umask_hardening` declara `UMASK 027` em /etc/login.defs, restringindo a permissão padrão de todo arquivo novo criado por um shell de login interativo.
+
+A ressalva é que isso não alcança um serviço gerenciado pelo systemd, como o próprio k3s, o containerd ou o agente do Cilium, cada um com seu próprio umask de processo.
+
+A role é uma linha em `/etc/login.defs` e nada mais, o que deixa claro o alcance dela: o que um operador cria digitando num shell, não o que um daemon escreve.
+
+Para os arquivos que de fato guardam segredo, a permissão vem declarada na própria task que os escreve, como o modo 600 do kubeconfig e do `config.yaml` do k3s, e não desta role.
+
+`apparmor_hardening` garante o pacote apparmor instalado e liga o LSM na linha de comando do kernel (`apparmor=1 security=apparmor`), reiniciando o node quando isso muda.
+
+Isso segue o mesmo padrão da `os_prerequisites` para o cgroup de memória: o kernel da Raspberry Pi Foundation vem com o AppArmor compilado, mas não o ativa por padrão como uma Debian ou Ubuntu comuns ativariam, então assumir que "o Raspberry Pi OS já vem com isso" seria falso aqui.
+
+A role não define nenhum perfil próprio, só garante que o controle de acesso obrigatório exista para ser usado depois.
+
+Ligar o LSM na linha de comando não basta como verificação, porque o arquivo editado pode nem ser o que o boot usa, então a role termina lendo `/sys/module/apparmor/parameters/enabled` e falha se o kernel não responder que está ativo.
+
+Essa checagem contra o estado vivo, e não contra o arquivo que ela mesma escreveu, é o que distingue ter declarado a intenção de ter o controle funcionando.
+
+`auditd` liga auditoria de chamadas de sistema e vigia as mudanças que indicariam um invasor se instalando: arquivos de identidade (`passwd/shadow/group/gshadow/sudoers.d`), configuração do SSH e do firewalld, cron, carga e remoção de módulos do kernel (pelos binários e pelas syscalls) e a configuração e as credenciais do k3s.
+
+Cada regra leva uma chave, listada na tabela abaixo, que é por onde se busca depois: sem elas, o registro do auditd é volume demais para ser lido.
+
+| Chave da regra | Área vigiada |
+| --- | --- |
+| `identity` | arquivos de identidade |
+| `sshd_config` | configuração do SSH |
+| `firewall` | configuração do firewalld |
+| `cron` | cron |
+| `modules` | módulos do kernel |
+| `k3s_config` | configuração do k3s |
+| `k3s_credentials` | credenciais do k3s |
+
+Vigiar módulo do kernel pelos binários e pelas syscalls ao mesmo tempo é redundância deliberada, porque quem carrega um módulo por chamada direta não passa por `insmod` nem por `modprobe`.
+
+O que o auditd não faz é impedir qualquer uma dessas mudanças; ele registra, e o valor está em haver rastro quando algo já aconteceu.
+
+`ssh_hardening` trata a lista de chaves autorizadas como estado declarado: ela vive em `ansible/group_vars/all/authorized_keys.yml`, commitada em texto claro porque chave pública não é segredo.
+
+A role reconcilia o node contra essa lista, removendo o que não está declarado, com o mesmo padrão de teto do `firewall`, declarado em `ssh_hardening_max_key_removals`.
+
+Antes de escrever qualquer coisa, ela extrai a chave pública correspondente à chave privada que o próprio Ansible está usando nesta conexão e confere que ela está na lista declarada; se não estiver, aborta sem tocar no arquivo, porque aplicar a mudança trancaria o operador para fora.
+
+Essa extração roda sobre uma cópia temporária da chave privada, com permissão restrita e apagada no fim, delegada à máquina do operador.
+
+O `ssh-keygen -y` recusa ler a chave original quando ela está com permissão mais aberta que `0600`, e a role não corrige isso na chave de verdade, só numa cópia descartável.
+
+Só depois disso ela desliga login por senha e restringe `PermitRootLogin` a autenticação por chave.
+
+O drop-in também limita o login ao `AllowGroups root`, reduz a janela de autenticação e liga `LogLevel VERBOSE`, que registra a impressão digital da chave usada em cada login.
+
+Antes de gravar, o `validate` do template testa o drop-in novo junto com o sshd_config inteiro com `sshd -t`.
+
+Assim, uma configuração inválida nunca chega ao disco para derrubar o SSH no próximo reload.
+
+Do lado do operador, `group_vars/all/connection.yml` liga `StrictHostKeyChecking=yes`.
+
+Isso é comparado contra `.local/operator/known_hosts`, então o Ansible recusa conectar se a host key do Pi mudar.
+
+Ela não instala chave nenhuma: a chave que importa é a que o Ansible já usou para entrar.
+
+`fail2ban` bane automaticamente origens com tentativas repetidas de login SSH inválido, com `banaction = firewallcmd-ipset`.
+
+O ban entra por um ipset que o firewalld administra, a mesma peça que a role `firewall` já governa, em vez do banaction clássico que mexe direto no iptables.
+
+A jail usa `backend = systemd`, porque lê o journal do systemd, não um arquivo de log tipo `/var/log/auth.log`, que esta imagem não popula; a escolha casa com o resto do repositório, que não tem rsyslog dedicado nenhum.
+
+A jail banda cinco tentativas em dez minutos por uma hora, números modestos de propósito: com login por senha desligado pelo `ssh_hardening`, o fail2ban não é o que impede uma invasão por força bruta, e sim o que tira do journal o ruído constante de varredura.
+
+O ban também vive num ipset, e não como regra de zona, então ele fica fora do que a role `firewall` reconcilia: um endereço banido não aparece para ela como configuração não declarada a remover.
 
 ## Plataforma Kubernetes
 
-`k3s` baixa o binário da release oficial no GitHub para a arquitetura do node e o verifica contra o arquivo de checksum publicado na mesma release antes de qualquer outra coisa; só então roda o instalador oficial com `INSTALL_K3S_SKIP_DOWNLOAD`, para que o script configure o serviço mas nunca baixe um binário por conta própria. O instalador em si é baixado da tag do k3s no GitHub, não de `get.k3s.io`, e conferido contra `k3s_install_script_sha256`, porque um script executado como root não pode ser o único download do bootstrap sem checksum; como o `/tmp` está montado com `noexec`, a role o chama com `sh /tmp/k3s-install.sh` em vez de executá-lo direto. São dois downloads conferidos por dois motivos diferentes: o binário porque é o que vai rodar como servidor da API, e o script porque roda como root uma única vez e pode fazer qualquer coisa nesse intervalo. A conferência de cada um vem de uma fonte diferente por consequência disso: o binário é comparado com o arquivo de checksum da própria release, que acompanha a versão automaticamente, enquanto o script tem o seu digest escrito em `versions.yml` como `k3s_install_script_sha256`, para que uma mudança nele apareça no diff de um pull request.
+`k3s` baixa o binário da release oficial no GitHub para a arquitetura do node e o verifica contra o arquivo de checksum publicado na mesma release antes de qualquer outra coisa; só então roda o instalador oficial com `INSTALL_K3S_SKIP_DOWNLOAD`, para que o script configure o serviço mas nunca baixe um binário por conta própria.
 
-O k3s sobe com o backend de rede padrão e o kube-proxy embutido desabilitados via `/etc/rancher/k3s/config.yaml`, porque o Cilium assume essas responsabilidades a seguir, e com os addons `traefik`, `servicelb` e `local-storage` na lista `disable`, porque cada um deles é substituído por algo que o repositório declara e pina: o [ingress](ingress.md), nenhum balanceador, e o provisioner de volumes do app `storage`, descrito em [GitOps: root e satélites](gitops-root-e-satelites.md). Um addon que o k3s embute reaplica o próprio manifesto a cada reinício, então não dá para só editar o objeto dele no cluster. Quando esse `config.yaml` muda num node já instalado, a role reinicia o node e espera por ele com uma janela alongada: um Raspberry Pi com o k3s e muitos contêineres leva vários minutos só para desligar, e a janela padrão do módulo `reboot` já foi curta o bastante para o Ansible declarar o node inalcançável enquanto ele ainda estava reiniciando normalmente.
+O instalador em si é baixado da tag do k3s no GitHub, não de `get.k3s.io`, e conferido contra `k3s_install_script_sha256`, porque um script executado como root não pode ser o único download do bootstrap sem checksum.
 
-O mesmo `config.yaml` declara uma política de auditoria do API server que registra metadados de toda escrita, o corpo completo de mudanças em RBAC, `AppProject` e `exec` em pods, metadados de todo acesso a `SopsSecret` (o CRD `isindir.github.com`, sucessor do `SealedSecret` que essa mesma regra cobria antes da migração), e nada de leitura de rotina. O mesmo arquivo liga a cifragem de `Secret` em repouso (`secrets-encryption`) e grava o kubeconfig do node com modo 600, legível só pelo root. A role lê `k3s secrets-encrypt status` depois do API server responder e aborta se a cifragem não estiver ativa; como a opção entra no `config.yaml` antes do primeiro start, todo `Secret` já nasce cifrado, e não existe passo de recifragem. O token de join também vem do `config.yaml`: é `k3s_join_token`, cifrado em `secrets.sops.yaml`, gravado com modo 600 porque o arquivo passa a conter um segredo, e é para esse valor declarado que `just rotate-token` converge um node já vivo. A chave fica em `/var/lib/rancher/k3s/server/cred/encryption-config.json`, só no node.
+Como `/tmp` está montado com a flag que impede execução, a role o chama com `sh /tmp/k3s-install.sh` em vez de executá-lo direto.
 
-O mesmo padrão de checksum publicado vale para o Helm e o cilium-cli, que a role `cilium` instala: o hash não fica no repositório porque o Renovate não teria como atualizá-lo junto com a versão, mas a integridade do download é verificada contra o que o próprio projeto publica, por TLS, a cada instalação. O que se perde em relação ao digest escrito no repositório é a revisão humana: uma versão republicada com conteúdo diferente passaria, porque o checksum publicado mudaria junto com ela. As duas tasks também só baixam quando o binário ainda não está em `/usr/local/bin`, então um bootstrap repetido não volta à rede por causa delas.
+São dois downloads conferidos por dois motivos diferentes: o binário porque é o que vai rodar como servidor da API, e o script porque roda como root uma única vez e pode fazer qualquer coisa nesse intervalo.
 
-`cilium` verifica que o k3s já desabilitou o que precisa, então instala o Cilium via chart Helm oficial, com `policyEnforcementMode: always` e `policyAuditMode: false` (as `CiliumNetworkPolicy` de cada namespace do sistema já existem e o tráfego que faltava foi observado pelo Hubble por um período com o audit mode ligado antes de desligá-lo, então o enforcement agora bloqueia de verdade o que não está explicitamente permitido) e o Hubble ligado para observabilidade. O agente fala com o API server por `127.0.0.1`, não pelo endereço do inventário, liga a interface web do Hubble (`hubble.ui.enabled`, servida pelo ingress em `hubble.guesant.internal`), e se prende a `eth+ wlan+` em vez de a uma interface fixa: o node trocou de Wi-Fi para cabo e mudou de rede, e com `wlan0` e o IP antigo gravados no chart nenhum pod voltava a subir depois do reboot. O chart sobe com `routingMode: tunnel` e `tunnelProtocol: vxlan`, em vez de roteamento nativo, porque VXLAN não depende de rota L3 direta entre nodes: só importa hoje se um segundo node algum dia entrar numa sub-rede L2 diferente da deste, mas evita ter que revisitar essa decisão nesse momento. `l7Proxy: false` desliga o Envoy embutido, o que economiza CPU e memória num Raspberry Pi de nó só, ao custo de não dar pra escrever uma `CiliumNetworkPolicy` que filtre por método ou caminho HTTP, só por porta e protocolo de transporte.
+A conferência de cada um vem de uma fonte diferente por consequência disso: o binário é comparado com o arquivo de checksum da própria release, que acompanha a versão automaticamente, enquanto o script tem o seu digest escrito em `versions.yml` como `k3s_install_script_sha256`, para que uma mudança nele apareça no diff de um pull request.
 
-Os certificados do Hubble usam `hubble.tls.auto.method: cronJob`, e não o `helm` padrão do chart: sem um release de Helm de verdade guardando estado, a função `lookup` que o chart usaria para reaproveitar a CA já existente sempre volta vazia dentro de `helm template`, e o método `helm` regeneraria a CA e os certificados a cada reaplicação; veja [Helm e os charts](helm-e-charts.md). O agente, o operator e o Hubble Relay têm `requests` e limite de memória declarados, sem limite de CPU, para não estrangular o agente num node de um nó só. Quando a sonda encontra diferença de verdade e reinicia o DaemonSet do agente e o Deployment do Hubble Relay juntos, o Relay costuma sofrer turbulência transitória (o sandbox do pod é recriado, o probe de saída falha enquanto o agente ainda está subindo) antes de estabilizar sozinho; `cilium status --wait` espera por várias tentativas antes de desistir, em vez de confiar só no timeout interno do próprio `--wait`. O Cilium ainda cifra o tráfego entre pods com WireGuard (`encryption.type: wireguard`), cujo módulo já vem no kernel do node; num nó só isso quase não muda nada, porque os pacotes não saem da máquina, mas deixa um segundo node pronto para entrar sem tráfego em claro no Wi-Fi.
+O k3s sobe com o backend de rede padrão e o kube-proxy embutido desabilitados via `/etc/rancher/k3s/config.yaml`, porque o Cilium assume essas responsabilidades a seguir.
 
-`argocd` instala o ArgoCD, com `server.insecure` ligado nos values porque o TLS de `argocd.guesant.internal` é terminado pelo [ingress](ingress.md) e o `argocd-server` só precisa servir HTTP por dentro, com o login pelo realm `management` do Keycloak declarado em `oidc.config`, com PKCE, que o client do realm exige; o client secret vem do `Secret` `argocd-oidc`, entregue pela `Application` `sso`, referenciado como `$argocd-oidc:clientSecret`. A mesma configuração declara uma política RBAC em que só o grupo `admins` tem papel, com a conta `admin` local desligada (`admin.enabled` falso: emergência é `kubectl` no node, que já é acesso total), e registra o segredo compartilhado do webhook do GitHub. O segredo é comparado com o que já está no `argocd-secret` a cada execução e reaplicado só quando difere, então uma rotação em `secrets.sops.yaml` chega ao cluster no bootstrap seguinte; essas tasks rodam com `no_log`, porque a leitura devolve o valor atual codificado em base64.
+Os addons `traefik/servicelb/local-storage` ficam na lista `disable`, porque cada um deles é substituído por algo que o repositório declara e pina.
 
-A configuração do chart vive em `roles/argocd/files/values.yaml`, copiado para o node antes do `helm template`: métricas, `requests` e limite de memória em cada componente (o do application controller foi elevado depois de o pod ser morto por OOM repetidas vezes ao reconciliar todas as `Application` de uma vez, cada reinício custando um pico de CPU no node inteiro), imagens do argocd e do dex pinadas por digest (o Renovate mantém o digest junto da tag) e o redis com ServiceAccount própria, sem token da API montado. O redis também vai por digest, resolvido direto no mirror da AWS de onde o chart o puxa, e não no Docker Hub, porque o digest que importa é o da imagem que o node de fato baixa. Pinar por digest e não só por tag tira do caminho a possibilidade de a mesma tag apontar para outra imagem entre uma instalação e a seguinte, que é o equivalente, no registry, da versão de chart republicada. O custo é que cada bump passa a mexer em duas linhas em vez de uma, e é por isso que o digest fica junto da tag, onde o Renovate consegue atualizar os dois de uma vez.
+O substituto de cada um: o [ingress](ingress.md), nenhum balanceador, e o provisioner de volumes do app storage, descrito em [GitOps: root e satélites](gitops-root-e-satelites.md).
 
-Como o namespace `argocd` nasce dessa role, e não de uma `Application` com `CreateNamespace`, é ela quem aplica os labels de Pod Security `restricted` (`enforce`, `warn` e `audit`) nesse namespace; os outros namespaces recebem os mesmos labels pelo próprio Argo. Essa é a única exceção a uma regra que vale para o resto do cluster, e ela existe só porque o ArgoCD precisa de um namespace antes de existir para criar namespaces. Como a exceção é fácil de esquecer numa mudança futura, o gate `check-namespace-pod-security.sh` exige que todo namespace criado por uma `Application` declare o nível de enforce, e trata o `argocd` como caso conhecido justamente por reconhecer a task desta role.
+Um addon que o k3s embute reaplica o próprio manifesto a cada reinício, então não dá para só editar o objeto dele no cluster.
+
+Quando esse `config.yaml` muda num node já instalado, a role reinicia o node e espera por ele com uma janela alongada.
+
+Um Raspberry Pi com o k3s e muitos contêineres leva vários minutos só para desligar, e a janela padrão do módulo `reboot` já foi curta o bastante para o Ansible declarar o node inalcançável enquanto ele ainda estava reiniciando normalmente.
+
+O mesmo `config.yaml` declara uma política de auditoria do API server que registra metadados de toda escrita, o corpo completo de mudanças em RBAC, `AppProject/exec` em pods.
+
+Ela também registra metadados de todo acesso a `SopsSecret` (o CRD `isindir.github.com`, sucessor do SealedSecret que essa mesma regra cobria antes da migração), e nada de leitura de rotina.
+
+O mesmo arquivo liga a cifragem de `Secret` em repouso (`secrets-encryption`) e grava o kubeconfig do node com modo 600, legível só pelo root.
+
+A role lê `k3s secrets-encrypt status` depois do API server responder e aborta se a cifragem não estiver ativa; como a opção entra no config.yaml antes do primeiro start, todo Secret já nasce cifrado, e não existe passo de recifragem.
+
+O token de join também vem do config.yaml: é `k3s_join_token`, cifrado em `secrets.sops.yaml`, gravado com modo 600 porque o arquivo passa a conter um segredo.
+
+É para esse valor declarado que `just rotate-token` converge um node já vivo. A chave fica em `/var/lib/rancher/k3s/server/cred/encryption-config.json`, só no node.
+
+O mesmo padrão de checksum publicado vale para o Helm e o cilium-cli, que a role `cilium` instala: o hash não fica no repositório porque o Renovate não teria como atualizá-lo junto com a versão, mas a integridade do download é verificada contra o que o próprio projeto publica, por TLS, a cada instalação.
+
+O que se perde em relação ao digest escrito no repositório é a revisão humana: uma versão republicada com conteúdo diferente passaria, porque o checksum publicado mudaria junto com ela.
+
+As duas tasks também só baixam quando o binário ainda não está em `/usr/local/bin`, então um bootstrap repetido não volta à rede por causa delas.
+
+`cilium` verifica que o k3s já desabilitou o que precisa, então instala o Cilium via chart Helm oficial; a tabela abaixo resume os values principais.
+
+| Values do chart Cilium | Efeito |
+| --- | --- |
+| `policyEnforcementMode: always` / `policyAuditMode: false` | enforcement de rede ativo, sem modo auditoria |
+| `routingMode: tunnel` / `tunnelProtocol: vxlan` | roteamento por túnel, não nativo |
+| `l7Proxy: false` | desliga o Envoy embutido |
+
+As `CiliumNetworkPolicy` de cada namespace do sistema já existem, e o tráfego que faltava foi observado pelo Hubble por um período com o audit mode ligado antes de desligá-lo, então o enforcement agora bloqueia de verdade o que não está explicitamente permitido, com o Hubble ligado para observabilidade.
+
+O agente fala com o API server por `127.0.0.1`, não pelo endereço do inventário.
+
+Ele liga a interface web do Hubble (`hubble.ui.enabled`), servida pelo ingress em `hubble.guesant.internal`.
+
+Ele se prende a `eth+ wlan+` em vez de a uma interface fixa: o node trocou de Wi-Fi para cabo e mudou de rede, e com `wlan0` e o IP antigo gravados no chart nenhum pod voltava a subir depois do reboot.
+
+O chart sobe com roteamento por túnel em vez de roteamento nativo, porque VXLAN não depende de rota L3 direta entre nodes: só importa hoje se um segundo node algum dia entrar numa sub-rede L2 diferente da deste, mas evita ter que revisitar essa decisão nesse momento.
+
+O `l7Proxy: false` desliga o Envoy embutido, o que economiza CPU e memória num Raspberry Pi de nó só, ao custo de não dar pra escrever uma `CiliumNetworkPolicy` que filtre por método ou caminho HTTP, só por porta e protocolo de transporte.
+
+Os certificados do Hubble usam `hubble.tls.auto.method: cronJob`, e não o método `helm` padrão do chart.
+
+Sem um release de Helm de verdade guardando estado, a função `lookup` que o chart usaria para reaproveitar a CA já existente sempre volta vazia dentro de `helm template`.
+
+O método `helm` regeneraria a CA e os certificados a cada reaplicação; veja [Helm e os charts](helm-e-charts.md).
+
+O agente, o operator e o Hubble Relay têm `requests` e limite de memória declarados, sem limite de CPU, para não estrangular o agente num node de um nó só.
+
+Quando a sonda encontra diferença de verdade e reinicia o DaemonSet do agente e o Deployment do Hubble Relay juntos, o Relay costuma sofrer turbulência transitória, o sandbox do pod é recriado e o probe de saída falha enquanto o agente ainda está subindo, antes de estabilizar sozinho.
+
+`cilium status --wait` espera por várias tentativas antes de desistir, em vez de confiar só no timeout interno do próprio `--wait`.
+
+O Cilium ainda cifra o tráfego entre pods com WireGuard (`encryption.type: wireguard`), cujo módulo já vem no kernel do node; num nó só isso quase não muda nada, porque os pacotes não saem da máquina, mas deixa um segundo node pronto para entrar sem tráfego em claro no Wi-Fi.
+
+`argocd` instala o ArgoCD, com `server.insecure` ligado nos values porque o TLS de argocd.guesant.internal é terminado pelo [ingress](ingress.md).
+
+O `argocd-server` só precisa servir HTTP por dentro.
+
+O login é pelo realm `management` do Keycloak declarado em `oidc.config`, com PKCE, que o client do realm exige.
+
+O client secret vem do Secret `argocd-oidc`, entregue pela aplicação de login único, referenciado como `$argocd-oidc:clientSecret`.
+
+A mesma configuração declara uma política RBAC em que só o grupo `admins` tem papel, com a conta `admin` local desligada.
+
+`admin.enabled` fica falso porque a emergência é `kubectl` no node, que já é acesso total, e a configuração também registra o segredo compartilhado do webhook do GitHub.
+
+O segredo é comparado com o que já está no `argocd-secret` a cada execução e reaplicado só quando difere, então uma rotação em `secrets.sops.yaml` chega ao cluster no bootstrap seguinte.
+
+Essas tasks rodam com `no_log`, porque a leitura devolve o valor atual codificado em base64.
+
+A configuração do chart vive em `roles/argocd/files/values.yaml`, copiado para o node antes do `helm template`.
+
+Ela declara métricas e `requests`/limite de memória em cada componente; o do application controller foi elevado depois de o pod ser morto por OOM repetidas vezes ao reconciliar todas as `Application` de uma vez, cada reinício custando um pico de CPU no node inteiro.
+
+As imagens do argocd e do dex são pinadas por digest, e o Renovate mantém o digest junto da tag; o redis roda com ServiceAccount própria, sem token da API montado.
+
+O redis também vai por digest, resolvido direto no mirror da AWS de onde o chart o puxa, e não no Docker Hub, porque o digest que importa é o da imagem que o node de fato baixa.
+
+Pinar por digest e não só por tag tira do caminho a possibilidade de a mesma tag apontar para outra imagem entre uma instalação e a seguinte, que é o equivalente, no registry, da versão de chart republicada.
+
+O custo é que cada bump passa a mexer em duas linhas em vez de uma, e é por isso que o digest fica junto da tag, onde o Renovate consegue atualizar os dois de uma vez.
+
+Como o namespace argocd nasce dessa role, e não de uma `Application` com `CreateNamespace`, é ela quem aplica os labels de Pod Security nesse namespace.
+
+Esses labels são o nível `restricted`, com `enforce/warn/audit`; os outros namespaces recebem os mesmos labels pelo próprio Argo.
+
+Essa é a única exceção a uma regra que vale para o resto do cluster, e ela existe só porque o ArgoCD precisa de um namespace antes de existir para criar namespaces.
+
+Como a exceção é fácil de esquecer numa mudança futura, o gate `check-namespace-pod-security.sh` exige que todo namespace criado por uma `Application` declare o nível de enforce.
+
+Ele trata o `argocd` como caso conhecido justamente por reconhecer a task desta role.
 
 ## A ponte para o GitOps
 
-`bootstrap_app` aplica manualmente uma `Application` do Argo: a aplicação `root`, descrita em [GitOps: root e satélites](gitops-root-e-satelites.md), e os `AppProject` declarados em `argocd/root`. A URL do repositório que o root sincroniza vem de `bootstrap_app_repo_url`, cujo padrão é este repositório. Um fork ou um ambiente de teste pode sobrescrever a variável em `secrets.sops.yaml` para o primeiro bootstrap, mas precisa também trocar a URL nos manifestos de `argocd/root`: depois que o root existe, ele passa a sincronizar os `AppProject` a partir do git, e o `sourceRepos` do projeto `infra` voltaria para a URL commitada. Da primeira execução em diante, a role só reaplica o que o root não gerencia, o `application.yaml` do próprio root.
+`bootstrap_app` aplica manualmente uma `Application` do Argo: a aplicação root, descrita em [GitOps: root e satélites](gitops-root-e-satelites.md).
 
-A partir do momento em que o root existe no cluster, tudo o que acontece depois é responsabilidade do Argo, não do Ansible: é assim que o cert-manager, o CNPG, o sops-secrets-operator e o Kargo chegam ao cluster hoje, como `Application` de plataforma sincronizadas pelo root, sem role própria em `site.yml`. Só o Cilium e o próprio ArgoCD continuam instalados pelo Ansible, permanentemente: são pré-requisitos de bootstrap que precisam existir antes de qualquer coisa GitOps poder funcionar, e não podem se autogerenciar antes de existir. A consequência prática dessa fronteira é que subir a versão do cert-manager ou do Kargo é um merge, enquanto subir a do Cilium ou do próprio Argo exige rodar o bootstrap contra o node. Vale a pena ter em mente qual dos dois lados uma mudança toca antes de abrir o pull request, porque o caminho até o cluster é diferente.
+Ela também aplica os `AppProject` declarados em `argocd/root`.
 
-`sops_age_key` garante o binário `age` instalado e, se o `Secret` `sops-age-key-file` ainda não existir no namespace `sops`, gera um par de chaves novo com `age-keygen` num diretório temporário, cria o segredo a partir dele e apaga o diretório logo em seguida, num bloco `always` que roda mesmo se um passo no meio falhar. Diferente do segredo do webhook do Argo, essa chave não vem de `secrets.yml`: ela nasce no próprio node, nunca fica num arquivo permanente nele, e nem a máquina do operador nem este repositório chegam a ver a metade privada em nenhum momento. A checagem de existência desse segredo é o que torna a role segura de rodar de novo: gerar uma chave nova por engano tornaria todo `SopsSecret` já commitado indecifrável. A role roda logo depois do Cilium e antes do ArgoCD, de propósito: a aplicação do sops-secrets-operator, uma das aplicações de plataforma que o root sincroniza, monta esse segredo assim que ele existe, e rodar a role depois do ArgoCD a deixaria tentando montar um segredo ainda inexistente na primeira sincronização.
+A URL do repositório que o root sincroniza vem de `bootstrap_app_repo_url`, cujo padrão é este repositório.
 
-A metade pública é lida de volta do `Secret` (nunca do diretório temporário, que já não existe nesse ponto) e impressa pelo `ansible.builtin.debug` em toda execução do `bootstrap`, não só na primeira; `just sops-recipients sync-node` escreve ela direto em `.sops.yaml`, sem depender de ter visto esse output. `just sops-recipients add`/`update`/`remove` cuidam dos demais destinatários (a chave de rotina do operador, a de desastre, qualquer outra), que não têm papel fixo nem quantidade fixa. A separação entre os dois comandos existe porque o destinatário do node é o único que o repositório sabe derivar sozinho, lendo o cluster; os demais dependem de alguém dizer qual chave entra ou sai. Imprimir a metade pública em toda execução, e não só na primeira, é o que permite reconstruir o `.sops.yaml` sem depender de ter guardado o output do dia do bootstrap.
+Um fork ou um ambiente de teste pode sobrescrever a variável em `secrets.sops.yaml` para o primeiro bootstrap, mas precisa também trocar a URL nos manifestos de `argocd/root`.
+
+Depois que o root existe, ele passa a sincronizar os `AppProject` a partir do git.
+
+O `sourceRepos` do projeto infra voltaria para a URL commitada.
+
+Da primeira execução em diante, a role só reaplica o que o root não gerencia, o `application.yaml` do próprio root.
+
+A partir do momento em que o root existe no cluster, tudo o que acontece depois é responsabilidade do Argo, não do Ansible: é assim que o cert-manager, o CNPG, o sops-secrets-operator e o Kargo chegam ao cluster hoje, como `Application` de plataforma sincronizadas pelo root, sem role própria em `site.yml`.
+
+Só o Cilium e o próprio ArgoCD continuam instalados pelo Ansible, permanentemente: são pré-requisitos de bootstrap que precisam existir antes de qualquer coisa GitOps poder funcionar, e não podem se autogerenciar antes de existir.
+
+A consequência prática dessa fronteira é que subir a versão do cert-manager ou do Kargo é um merge, enquanto subir a do Cilium ou do próprio Argo exige rodar o bootstrap contra o node.
+
+Vale a pena ter em mente qual dos dois lados uma mudança toca antes de abrir o pull request, porque o caminho até o cluster é diferente.
+
+`sops_age_key` garante o binário `age` instalado.
+
+Se o Secret `sops-age-key-file` ainda não existir no namespace sops, ela gera um par de chaves novo com `age-keygen` num diretório temporário.
+
+Ela cria o segredo a partir dele e apaga o diretório logo em seguida, num bloco `always` que roda mesmo se um passo no meio falhar.
+
+Diferente do segredo do webhook do Argo, essa chave não vem de `secrets.yml`: ela nasce no próprio node, nunca fica num arquivo permanente nele, e nem a máquina do operador nem este repositório chegam a ver a metade privada em nenhum momento.
+
+A checagem de existência desse segredo é o que torna a role segura de rodar de novo: gerar uma chave nova por engano tornaria todo `SopsSecret` já commitado indecifrável.
+
+A role roda logo depois do Cilium e antes do ArgoCD, de propósito: a aplicação do sops-secrets-operator, uma das aplicações de plataforma que o root sincroniza, monta esse segredo assim que ele existe.
+
+Rodar a role depois do ArgoCD a deixaria tentando montar um segredo ainda inexistente na primeira sincronização.
+
+A metade pública é lida de volta do `Secret`, nunca do diretório temporário que já não existe nesse ponto, e impressa pelo `ansible.builtin.debug` em toda execução do bootstrap, não só na primeira.
+
+`just sops-recipients sync-node` escreve ela direto em `.sops.yaml`, sem depender de ter visto esse output.
+
+`just sops-recipients add/update/remove` cuidam dos demais destinatários, a chave de rotina do operador, a de desastre, qualquer outra, que não têm papel fixo nem quantidade fixa.
+
+A separação entre os dois comandos existe porque o destinatário do node é o único que o repositório sabe derivar sozinho, lendo o cluster; os demais dependem de alguém dizer qual chave entra ou sai.
+
+Imprimir a metade pública em toda execução, e não só na primeira, é o que permite reconstruir o `.sops.yaml` sem depender de ter guardado o output do dia do bootstrap.
 
 ## Manutenção contínua
 
-O host é reconciliado por `just bootstrap` rodado pelo operador, e não por um `ansible-pull` agendado no próprio node. A decisão foi deliberada: o `ansible-pull` exigiria deixar no node uma chave de leitura do repositório e o `secrets.yml`, que hoje só existe na máquina do operador, e várias roles reiniciam o node ou o k3s, o que não deveria acontecer sem alguém olhando. A deriva que um pull agendado pegaria é coberta de outro jeito: o dry-run do `bootstrap-check` antes de cada mudança, o relatório de pacotes instalados à mão e a reconciliação do firewall.
+O host é reconciliado por `just bootstrap` rodado pelo operador, e não por um `ansible-pull` agendado no próprio node.
 
-Um bootstrap sem nada a mudar ainda leva alguns minutos, e a maior parte desse tempo não é o Ansible comparando estado, é o node fazendo trabalho repetido. Várias medidas cortam isso sem tirar nada do que é reconciliado. Cada role em `site.yml` carrega uma tag com o próprio nome, então `just bootstrap --tags firewall,tailscale` roda só o que foi mexido, e `--skip-tags k3s` pula o que reinicia o node; sem tag, tudo roda como antes. Toda task `apt` que atualiza o índice declara `cache_valid_time`, para o `apt-get update` acontecer só de tempos em tempos entre as roles que precisam dele, não a cada role. O `ansible.cfg` liga `pipelining`, que executa cada módulo numa única conexão SSH em vez de copiar o arquivo e rodá-lo em etapas separadas, guarda os facts do node num cache local por um tempo (em `.cache/ansible/facts`, ignorado pelo git) e habilita o callback `profile_tasks`, que imprime no fim de cada execução as tasks mais demoradas, para que a próxima otimização seja guiada por medida e não por palpite.
+A decisão foi deliberada: o `ansible-pull` exigiria deixar no node uma chave de leitura do repositório e o `secrets.yml`, que hoje só existe na máquina do operador, e várias roles reiniciam o node ou o k3s, o que não deveria acontecer sem alguém olhando.
 
-A que mais pesa é o atalho por hash. As roles `cilium` e `argocd` renderizam o chart com `helm template` e o comparam com o cluster por `kubectl diff --server-side` a cada execução, depois de um `helm repo update`; no Raspberry Pi isso custa um tempo real por chart, mesmo quando nada mudou. Agora cada uma calcula o hash SHA-256 das suas entradas (a versão do chart e o conteúdo dos values renderizados) e o compara com o hash gravado em `/etc/rancher/<chart>-applied.sha256` pela última execução que confirmou o cluster igual ao declarado; se bater, a role pula o `repo update`, o `diff` e o `apply`, e diz isso na saída. O hash só é gravado quando o `diff` devolve zero ou o `apply` termina bem, então uma execução interrompida no meio refaz a comparação na próxima. O que o atalho não vê é deriva feita por fora, alguém que rodou `kubectl` direto no cluster sem mudar o git; `-e chart_reconcile=true` força o `diff` contra o cluster em ambas as roles, e vale rodar assim depois de qualquer intervenção manual ou na revisão periódica.
+A deriva que um pull agendado pegaria é coberta de outro jeito: o dry-run do `bootstrap-check` antes de cada mudança, o relatório de pacotes instalados à mão e a reconciliação do firewall.
 
-A task que garante `/etc/rancher/charts` roda com `check_mode: false` em ambas, porque o `helm pull` que baixa o chart pinado por digest também roda com `check_mode: false` (precisa acontecer de verdade mesmo num `--check`, para conferir o digest contra o declarado): sem isso, um `just bootstrap-check` que primeiro encontra `argocd_reconcile` ou `cilium_reconcile` verdadeiro simula a criação do diretório em vez de criá-lo, e o `helm pull` seguinte falha tentando escrever nele. É o mesmo raciocínio do arquivo renderizado antes do apply: o que precisa ser real sob `--check` é o preparo que alimenta a comparação, nunca a comparação em si. O detalhe só aparece quando o atalho por hash não dispara, o que faz dele um caso fácil de quebrar sem perceber numa mudança futura.
+Um bootstrap sem nada a mudar ainda leva alguns minutos, e a maior parte desse tempo não é o Ansible comparando estado, é o node fazendo trabalho repetido. Várias medidas cortam isso sem tirar nada do que é reconciliado.
 
-`maintenance` deixa agendado no node: journal persistente em disco (a imagem do Raspberry Pi OS o deixa só em memória), com teto de tamanho, piso de espaço livre e prazo de retenção declarados na própria role, e um timer semanal (`hl-gc.timer`, domingo de madrugada) que apaga ReplicaSets com zero réplicas, remove imagens de contêiner sem uso com `crictl rmi --prune` e imprime o espaço em disco. É o que impede um node de um nó só de encher o disco com o rastro de meses de deploys. O serviço do timer roda com sandbox do systemd (`ProtectSystem=strict`, `NoNewPrivileges`, `PrivateTmp` e escrita só nos diretórios de que o script precisa).
+Cada role em `site.yml` carrega uma tag com o próprio nome, então `just bootstrap --tags firewall,tailscale` roda só o que foi mexido.
 
-`kube_bench` roda depois dela e instala o kube-bench direto no host, a partir do tarball da release conferido por SHA-256, com um timer semanal (`hl-kube-bench.timer`, segunda de manhã) que grava o resultado em JSON em `/var/lib/kube-bench/report.json`. As checagens de master, etcd, control plane e node do perfil `k3s-cis-1.9` precisam ler os argumentos do processo `k3s`, os arquivos em `/var/lib/rancher` e o `journalctl`, e nada disso existe dentro de um pod sem root; por isso o `CronJob` do cluster ficou só com as checagens de `policies`, e o host cobre o resto. O serviço roda como root, porque precisa ler esses arquivos, mas com `ProtectSystem=strict` e escrita só no diretório do relatório. O alerta a partir do relatório espera o webhook do Discord.
+`--skip-tags k3s` pula o que reinicia o node; sem tag, tudo roda como antes.
+
+Toda task `apt` que atualiza o índice declara `cache_valid_time`, para o apt-get update acontecer só de tempos em tempos entre as roles que precisam dele, não a cada role.
+
+O `ansible.cfg` liga `pipelining`, que executa cada módulo numa única conexão SSH em vez de copiar o arquivo e rodá-lo em etapas separadas.
+
+Ele também guarda os facts do node num cache local por um tempo, em `.cache/ansible/facts`, ignorado pelo git.
+
+E habilita o callback `profile_tasks`, que imprime no fim de cada execução as tasks mais demoradas, para que a próxima otimização seja guiada por medida e não por palpite.
+
+A que mais pesa é o atalho por hash. As roles `cilium/argocd` renderizam o chart com `helm template` e o comparam com o cluster a cada execução.
+
+Essa comparação roda por `kubectl diff --server-side`, depois de um `helm repo update`; no Raspberry Pi isso custa um tempo real por chart, mesmo quando nada mudou.
+
+Agora cada uma calcula o hash SHA-256 das suas entradas, a versão do chart e o conteúdo dos values renderizados, e o compara com o hash gravado em `/etc/rancher/<chart>-applied.sha256` pela última execução que confirmou o cluster igual ao declarado.
+
+Se bater, a role pula o repo update, o `diff` e o `apply`, e diz isso na saída.
+
+O hash só é gravado quando o `diff` devolve zero ou o `apply` termina bem, então uma execução interrompida no meio refaz a comparação na próxima.
+
+O que o atalho não vê é deriva feita por fora, alguém que rodou `kubectl` direto no cluster sem mudar o git.
+
+`-e chart_reconcile=true` força o `diff` contra o cluster em ambas as roles, e vale rodar assim depois de qualquer intervenção manual ou na revisão periódica.
+
+A task que garante `/etc/rancher/charts` roda com `check_mode: false` em ambas as roles.
+
+O `helm pull` que baixa o chart pinado por digest também roda de verdade mesmo num `--check`, para conferir o digest contra o declarado.
+
+Sem isso, um `just bootstrap-check` que primeiro encontra `argocd_reconcile/cilium_reconcile` verdadeiro simula a criação do diretório em vez de criá-lo, e o helm pull seguinte falha tentando escrever nele.
+
+É o mesmo raciocínio do arquivo renderizado antes do apply: o que precisa ser real sob `--check` é o preparo que alimenta a comparação, nunca a comparação em si.
+
+O detalhe só aparece quando o atalho por hash não dispara, o que faz dele um caso fácil de quebrar sem perceber numa mudança futura.
+
+`maintenance` deixa agendado no node um journal persistente em disco, a imagem do Raspberry Pi OS o deixa só em memória, com teto de tamanho, piso de espaço livre e prazo de retenção declarados na própria role.
+
+Um timer semanal (`hl-gc.timer`, domingo de madrugada) apaga ReplicaSets com zero réplicas, remove imagens de contêiner sem uso com `crictl rmi --prune` e imprime o espaço em disco.
+
+É o que impede um node de um nó só de encher o disco com o rastro de meses de deploys.
+
+O serviço do timer roda com sandbox do systemd: `ProtectSystem=strict/NoNewPrivileges/PrivateTmp`, e escrita só nos diretórios de que o script precisa.
+
+`kube_bench` roda depois dela e instala o kube-bench direto no host, a partir do tarball da release conferido por SHA-256.
+
+Um timer semanal (`hl-kube-bench.timer`, segunda de manhã) grava o resultado em JSON em `/var/lib/kube-bench/report.json`.
+
+As checagens de master, etcd, control plane e node do perfil `k3s-cis-1.9` precisam ler os argumentos do processo `k3s`.
+
+Elas também precisam dos arquivos em `/var/lib/rancher` e do `journalctl`, e nada disso existe dentro de um pod sem root.
+
+Por isso o `CronJob` do cluster ficou só com as checagens de `policies`, e o host cobre o resto.
+
+O serviço roda como root, porque precisa ler esses arquivos, mas com `ProtectSystem=strict` e escrita só no diretório do relatório.
+
+O alerta a partir do relatório espera o webhook do Discord.
 
 ## Continue por aqui
 

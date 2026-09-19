@@ -257,7 +257,7 @@ lint-tofu:
 lint-links: (_build "lychee")
     {{run}} hl-infra/lychee:{{tools_hash}} --config .config/lychee.toml README.md SECURITY.md SUPPORT.md CONTRIBUTING.md 'docs/**/*.md'
 
-[doc("Spell-check the prose in Portuguese and English")]
+[doc("Spell-check the prose in Portuguese and English; superseded by docs-grammar-report as the check gate, kept as a manual second opinion")]
 lint-spelling: (_build "cspell")
     {{run}} hl-infra/cspell:{{tools_hash}} --config .config/cspell.yaml --no-progress
 
@@ -368,5 +368,21 @@ docs-serve:
 docs-prose-stats *args:
     {{run}} python:3.12-slim python3 .tools/prose-stats.py {{args}}
 
+[doc("Report Vale style findings (hedging, minimizing language, paragraph length) across the docs; not a gate, a reading tool")]
+docs-prose-lint: (_build "vale")
+    {{run}} hl-infra/vale:{{tools_hash}} --config .config/vale.ini docs || true
+
+[doc("Report LanguageTool PT-BR grammar and spelling issues across the docs; not a gate, a reading tool")]
+docs-grammar-report:
+    docker network create hl-infra-docs-lint >/dev/null 2>&1 || true
+    docker rm -f hl-infra-languagetool >/dev/null 2>&1 || true
+    docker run -d --name hl-infra-languagetool --network hl-infra-docs-lint \
+        -v {{justfile_directory()}}/.tools/languagetool-pt-extra-words.txt:/extra-words.txt:ro \
+        --entrypoint bash erikvl87/languagetool:6.8@sha256:ef8fa12cbd485166c9ceeb7139d76d56d07707a624da6bb1fc1fbb5411750527 \
+        -c "cat /extra-words.txt >> org/languagetool/resource/pt/spelling.txt && bash start.sh" >/dev/null
+    {{run}} --network hl-infra-docs-lint -e LT_HOST=hl-infra-languagetool python:3.12-slim python3 .tools/check-grammar.py || true
+    docker rm -f hl-infra-languagetool >/dev/null 2>&1 || true
+    docker network rm hl-infra-docs-lint >/dev/null 2>&1 || true
+
 [doc("Every check the CI runs, in order")]
-check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-placeholders lint-secret-age lint-docs lint-pod-security lint-spelling security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-conftest infra-kubescape security-trivy-images lint-commits infra-helm-lint docs-build
+check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-placeholders lint-secret-age lint-docs lint-pod-security security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-conftest infra-kubescape security-trivy-images lint-commits infra-helm-lint docs-build

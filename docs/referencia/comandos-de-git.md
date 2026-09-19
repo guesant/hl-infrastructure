@@ -1,0 +1,13 @@
+# Comandos de Git
+
+| Comando | Quando usar | Observação |
+| --- | --- | --- |
+| `git status` / `git diff` / `git diff --cached` | Revisar o que mudou antes de um commit. | `git diff` sozinho mostra só o não staged; `--cached` mostra o que já foi adicionado com `git add` e entraria no próximo commit. |
+| `git commit -m "tipo: descrição"` | Registrar um conjunto de mudanças no histórico. | Repetir `-m` acrescenta parágrafos ao corpo, além do título; `git add .` inclui tudo do diretório atual, revise com `git status` antes para não commitar algo não intencional. |
+| `git log --oneline --graph --all` | Entender o histórico, ou achar quando uma mudança foi introduzida. | `--author` filtra por autor, `--since`/`--until` por intervalo de tempo; `git log -- arquivo` mostra só os commits que tocaram um arquivo específico. |
+| `git checkout -b feature/x` | Isolar trabalho em desenvolvimento, paralelizar features. | Uma branch local é independente da remota até um `push` sincronizar; `git branch -d` recusa remover uma branch com commits não mesclados, `-D` maiúsculo descarta esse trabalho de propósito. |
+| `git merge feature/x` | Integrar uma branch de feature de volta à principal. | Sem `--no-ff`, o Git faz fast-forward quando possível, sem commit de merge dedicado; `git merge --abort` só funciona enquanto o merge ainda está em andamento, antes de qualquer conflito resolvido ser commitado. |
+| `git revert <hash>` vs. `git reset --hard` | Desfazer uma mudança já publicada (`revert`), ou descartar commits ainda locais (`reset`). | `revert` é seguro para histórico compartilhado, cria um commit novo que desfaz o anterior; `reset --hard` reescreve o histórico local e descarta permanentemente, nunca usar numa branch que outras pessoas já baixaram sem coordenar antes. |
+| `git stash` / `git stash pop` | Trocar de branch sem commitar um trabalho ainda incompleto. | `pop` recupera o stash mais recente e o remove da lista; `apply` recupera sem remover, útil quando o mesmo stash precisa ser aplicado em mais de um lugar. |
+| `git push --force-with-lease` | Enviar commits locais, inclusive reescrevendo uma branch já enviada antes. | `--force-with-lease` verifica se ninguém mais atualizou a branch remota antes de sobrescrever, mais seguro que `--force` puro mas ainda destrutivo; nunca fazer force-push direto em `main` sem coordenar com a equipe. |
+| `git pull --rebase` | Sincronizar com o remoto antes de continuar um trabalho. | `git pull` equivale a `fetch` seguido de `merge`; `git fetch` sozinho só baixa as referências, sem tocar na branch local, útil para inspecionar antes de integrar; `--rebase` reaplica os commits locais sobre o histórico remoto atualizado, mantendo um histórico linear em vez de um commit de merge extra. |

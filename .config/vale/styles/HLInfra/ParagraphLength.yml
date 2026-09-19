@@ -1,0 +1,7 @@
+extends: occurrence
+message: "Parágrafo com %d frase(s); a convenção pede de três a cinco, com exceção para transição e fecho curto (docs/contribuindo/convencoes-de-escrita.md)."
+level: error
+scope: paragraph
+max: 5
+min: 3
+token: '[.!?]'

@@ -14,12 +14,6 @@ quadrantChart
     quadrant-4 How-to guide
 ```
 
-## Como isso se encaixa na taxonomia deste repositório
-
-As seções desta documentação, aprender, [arquitetura](../arquitetura/index.md) e [operacional](../operacional/index.md), não são os quadrantes do Diátaxis original, mas nasceram inspiradas na mesma separação. Aprender ocupa o espaço de explicação e, quando o conceito pede, de tutorial: ensina o que uma ferramenta é, independente deste repositório específico. Arquitetura é explicação pura, focada neste sistema: o porquê de cada decisão, não o passo a passo de executá-la. Operacional é how-to guide: cada página resolve uma tarefa concreta que quem já conhece o repositório precisa fazer, sem reexplicar conceito.
-
-O quadrante que falta de propósito é referência isolada. Este repositório não tem uma seção de referência separada porque o conteúdo que normalmente viraria referência (nomes de variável, valores de configuração, esquema de um recurso) já vive no próprio código, que é a fonte da verdade. Duplicá-lo em prosa criaria uma segunda cópia para manter sincronizada, e uma cópia desatualizada é pior do que a ausência dela, porque continua parecendo confiável. Quando uma página operacional ou de arquitetura precisa apontar para um valor exato, ela linka o arquivo que o declara em vez de repeti-lo.
-
 ## Continue por aqui
 
-[Contribuindo](../contribuindo/index.md) explica como essa separação se aplica na prática, incluindo o teste de "isso deveria virar páginas separadas" para conteúdo que mistura como fazer com por que funciona assim.
+[Categorização e organização](../contribuindo/categorizacao-e-organizacao.md) explica como este repositório adapta essa separação nas suas próprias seções, incluindo onde e por que diverge do framework original.

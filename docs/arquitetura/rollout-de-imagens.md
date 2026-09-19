@@ -2,43 +2,94 @@
 
 <!-- source-of-trust paths="argocd/apps/platform/kargo argocd/applications/platform/kargo.yaml argocd/apps/satellites/delivery argocd/applications/satellites/delivery.yaml" -->
 
-O Argo CD só reage quando o manifesto renderizado muda de texto; ele não sabe, por si só, que uma imagem nova foi publicada num registry enquanto a tag declarada continua a mesma. Alguém precisa observar o registry e traduzir "há um digest novo atrás da tag `main`" numa mudança que o Argo enxergue. Neste cluster esse alguém é o [Kargo](https://kargo.io/), instalado como `Application` de plataforma em `argocd/apps/platform/kargo`.
+O Argo CD só reage quando o manifesto renderizado muda de texto; ele não sabe, por si só, que uma imagem nova foi publicada num registry enquanto a tag declarada continua a mesma. Alguém precisa observar o registry e traduzir "há um digest novo atrás da tag principal" numa mudança que o Argo enxergue. Neste cluster esse alguém é o [Kargo](https://kargo.io/), instalado como aplicação de plataforma em `argocd/apps/platform/kargo`.
 
-Ele substituiu o Argo CD Image Updater, que fazia a mesma escrita sem interface, sem histórico de promoções e com um controller que reiniciava por falta de memória. As armadilhas que a versão anterior desta página documentava deixaram de existir com a troca: o `status.summary.images` vazio que fazia o updater ignorar a imagem, e o formato do valor gravado, que mudava conforme a estratégia escolhida. No lugar delas ficou um registro: cada promoção vira um objeto `Promotion` no namespace de entrega, com data e resultado, e o `Freight` que a originou continua listado para ser promovido de novo.
+Ele substituiu o Argo CD Image Updater, que fazia a mesma escrita sem interface, sem histórico de promoções e com um controller que reiniciava por falta de memória. As armadilhas que a versão anterior desta página documentava deixaram de existir com a troca: o campo `status.summary.images` vazio que fazia o updater ignorar a imagem, e o formato do valor gravado, que mudava conforme a estratégia escolhida.
+
+No lugar delas ficou um registro: cada promoção vira um objeto Promotion no namespace de entrega, com data e resultado, e o Freight que a originou continua listado para ser promovido de novo.
 
 ## Os objetos do Kargo
 
-O Kargo organiza a entrega em objetos próprios, todos dentro de um `Project`, que é ao mesmo tempo um recurso de escopo de cluster e um namespace com o mesmo nome. Um único chart, `argocd/apps/satellites/delivery`, sincronizado pela `Application` `satellites-delivery` do projeto `satellites`, gera esses objetos para todo satélite que precisa de promoção de imagem: `values.yaml` tem uma lista, um item por satélite, e os templates do chart (`namespace.yaml`, `project.yaml`, `project-config.yaml`, `warehouse.yaml`, `stage.yaml`) usam `{{- range .Values.satellites }}` para emitir o conjunto completo por item; [gerar várias instâncias de um recurso com Helm](../aprender/helm-templating-de-lista.md) explica o mecanismo, e [adicionar um satélite novo](../operacional/adicionar-um-satelite.md) mostra como acrescentar um satélite a essa lista. Para o blog, o item se chama `blog`, e o projeto que nasce dele é `blog-delivery`. O nome não é `blog` porque esse namespace já é o da aplicação, e misturar os objetos de entrega com o app faria o RBAC que o Kargo cria por projeto alcançar o namespace do app.
+O Kargo organiza a entrega em objetos próprios, todos dentro de um projeto, que é ao mesmo tempo um recurso de escopo de cluster e um namespace com o mesmo nome. Um único chart sincronizado pela aplicação do launcher de entrega gera esses objetos para todo satélite que precisa de promoção de imagem, um item de lista por satélite.
 
-O namespace de cada item vem do template `namespace.yaml`, já com o label `kargo.akuity.io/project: "true"`, que é o que o Kargo exige para adotar um namespace existente em vez de falhar dizendo que ele não é dele; para isso o projeto `satellites` do Argo passou a permitir `Namespace` entre os recursos de cluster, além do `Project` do Kargo. Antes desse chart existir, cada satélite tinha sua própria `Application` de entrega com `managedNamespaceMetadata` criando um único namespace, o que deixou de servir quando uma aplicação só passou a cobrir vários satélites em vários namespaces ao mesmo tempo. O namespace virou então um recurso templado como qualquer outro, e o `managedNamespaceMetadata` saiu do `syncPolicy`.
+Os templates que emitem o conjunto completo por item estão listados em [adicionar um satélite novo](../operacional/adicionar-um-satelite.md); [gerar várias instâncias de um recurso com Helm](../aprender/helm-templating-de-lista.md) explica o mecanismo geral.
 
-Os pods do Kargo rodam com o usuário `65532` da imagem oficial e `runAsNonRoot` declarado nos values, porque o namespace `kargo` é `restricted` e a admissão recusa um pod que não afirme isso. O mesmo bloco de `securityContext` nos values desliga a escalada de privilégio, deixa o sistema de arquivos raiz somente leitura, descarta todas as capabilities e pede o perfil seccomp `RuntimeDefault`, de modo que a declaração não pare no mínimo que a admissão exige. Os namespaces que o próprio Kargo cria para os recursos compartilhados e de sistema recebem os mesmos três labels `restricted`, declarados em `global.sharedResources` e `global.systemResources`, para que nada nascido de dentro dele escape dessa admissão.
+Para o blog, o item se chama `blog`, e o projeto que nasce dele é `blog-delivery`. O nome não é o mesmo do namespace da aplicação, porque misturar os objetos de entrega com o app faria o RBAC que o Kargo cria por projeto alcançar o namespace do app.
 
-O `Warehouse` `blog` é a assinatura: ele consulta `ghcr.io/guesant/blog` no intervalo declarado no template do `Warehouse`, mais curto que o padrão do Kargo, com a estratégia `Digest` sobre a tag `main`. O `strictSemvers: true` que o manifesto declara é só o padrão que o Kargo preencheria sozinho, e vai no git para o Argo não ver deriva. A `freightCreationPolicy` fica em `Automatic`, então a consulta que encontra um digest novo já cria o `Freight` sem passo intermediário, e o `discoveryLimit` guarda as últimas cinco descobertas, que são as que a interface oferece na hora de voltar atrás.
+O namespace de cada item vem do template do namespace, já com o label `kargo.akuity.io/project: "true"`, que é o que o Kargo exige para adotar um namespace existente em vez de falhar dizendo que ele não é dele; para isso o projeto de satélites do Argo passou a permitir namespace entre os recursos de cluster, além do projeto do Kargo.
 
-Essa estratégia é a única que assume uma tag móvel de propósito: ela não escolhe a tag mais nova, ela pergunta qual digest a tag `main` aponta agora, e quando a resposta muda, cria um `Freight`, um registro imutável dizendo "a imagem `ghcr.io/guesant/blog` no digest tal". A alternativa de acompanhar as tags `sha-<commit>` foi descartada pela mesma razão que já valia antes: o que se quer no manifesto é o digest, não um nome. O digest também é o que separa uma publicação real de uma reconstrução que não mudou nada: enquanto a tag `main` continuar apontando para o mesmo digest, consulta nenhuma gera `Freight`, e o cluster segue no que já está rodando.
+Antes desse chart existir, cada satélite tinha sua própria aplicação de entrega com `managedNamespaceMetadata` criando um único namespace, o que deixou de servir quando uma aplicação só passou a cobrir vários satélites em vários namespaces ao mesmo tempo. O namespace virou então um recurso templado como qualquer outro, e essa opção saiu da política de sincronização.
 
-O `Stage` `prod` é o destino. Ele pede `Freight` direto do `Warehouse` `blog` e, pela `ProjectConfig` do projeto, tem promoção automática ligada, então todo `Freight` novo vira uma promoção sem clique. A promoção executa um único passo, `argocd-update`, que localiza a `Application` `blog` no namespace `argocd` e escreve no parâmetro Helm `application.deployment.image.tag` o valor `main@<digest do Freight>`, o mesmo formato que o Image Updater gravava. O Argo CD vê o parâmetro mudar, renderiza o chart do blog com a imagem nova, e faz o rollout.
+Os pods do Kargo rodam com o usuário `65532` da imagem oficial e a flag de não rodar como root declarada nos values, porque o namespace do Kargo é restrito e a admissão recusa um pod que não afirme isso.
 
-Esse rollout começa por um Job `PreSync` declarado nos values do chart (`job.jobs.migrate`): ele roda a mesma imagem que vai entrar, com as credenciais do `Secret` do CNPG e a configuração de banco correspondente, executando `php artisan migrate --force` na imagem Laravel ou `/app/migrate` na imagem EF legada. Só depois de o Job terminar o Argo troca o `Deployment`. Uma migração nova chega junto com a imagem que precisa dela, e uma migração que falha impede o rollout em vez de deixar o app subir contra um schema antigo. A tag do Job é uma referência ao mesmo valor `deployment.image.tag` que o Kargo grava, então nunca divergem.
+O mesmo bloco de contexto de segurança nos values desliga a escalada de privilégio, deixa o sistema de arquivos raiz somente leitura, descarta todas as capabilities e pede o perfil seccomp padrão de runtime, de modo que a declaração não pare no mínimo que a admissão exige.
+
+Os namespaces que o próprio Kargo cria para os recursos compartilhados e de sistema recebem os mesmos labels restritos, declarados em `global.sharedResources` e `global.systemResources`, para que nada nascido de dentro dele escape dessa admissão.
+
+O Warehouse do blog é a assinatura: ele consulta `ghcr.io/guesant/blog` no intervalo declarado no template, mais curto que o padrão do Kargo, com a estratégia de digest sobre a tag principal.
+
+Três campos do manifesto valem a pena conhecer, listados na tabela abaixo: um é só o padrão que o Kargo preencheria sozinho, e vai no git para o Argo não ver deriva; outro faz a consulta que encontra um digest novo já criar o Freight sem passo intermediário; o terceiro guarda as últimas cinco descobertas, que são as que a interface oferece na hora de voltar atrás.
+
+| Campo do `Warehouse` | Valor |
+| --- | --- |
+| `strictSemvers` | `true` |
+| `freightCreationPolicy` | `Automatic` |
+| `discoveryLimit` | `5` |
+
+Essa estratégia é a única que assume uma tag móvel de propósito: ela não escolhe a tag mais nova, ela pergunta qual digest a tag principal aponta agora, e quando a resposta muda, cria um Freight, um registro imutável do digest daquele momento. A alternativa de acompanhar tags de commit foi descartada pela mesma razão que já valia antes: o que se quer no manifesto é o digest, não um nome.
+
+O digest também é o que separa uma publicação real de uma reconstrução que não mudou nada: enquanto a tag principal continuar apontando para o mesmo digest, consulta nenhuma gera Freight, e o cluster segue no que já está rodando.
+
+O estágio de produção é o destino. Ele pede Freight direto do Warehouse do blog e, pela configuração do projeto, tem promoção automática ligada, então todo Freight novo vira uma promoção sem clique.
+
+A promoção executa um único passo de atualização do ArgoCD, que localiza a aplicação do blog no namespace `argocd` e escreve no parâmetro Helm `application.deployment.image.tag` o digest do Freight, o mesmo formato que o Image Updater gravava. O Argo CD vê o parâmetro mudar, renderiza o chart do blog com a imagem nova, e faz o rollout.
+
+Esse rollout começa por um [Job de pré-sincronização](../aprender/jobs-cronjobs-e-securitycontext.md) declarado nos values do chart (`job.jobs.migrate`): ele roda a mesma imagem que vai entrar, e só depois de ele terminar o Argo troca o Deployment.
+
+Durante a transição para a imagem Laravel, o Job executa `php artisan migrate --force` na imagem Laravel ou `/app/migrate`, o bundle de migrações do EF Core, na imagem legada, dependendo de qual imagem está de fato entrando.
+
+A composição do Job usa a mesma variável `PORTFOLIO_DB_CONNECTION` a partir do segredo do CNPG que o Deployment usa, então a migração fala com o mesmo banco que a aplicação vai usar em seguida. Uma migração nova chega junto com a imagem que precisa dela, e uma migração que falha impede o rollout em vez de deixar o app subir contra um schema antigo.
+
+A tag do Job é uma referência ao mesmo valor que o Kargo grava, então nunca divergem.
 
 ## Por que a escrita é na `Application`, e não em git
 
-O Kargo sabe fazer commit: ele tem passos para clonar, editar um `values.yaml` e dar push, e esse é o modelo que a documentação dele sugere. Aqui a escolha foi manter a escrita como parâmetro da `Application`, e a razão é a credencial. Commitar em `hl-infrastructure` exigiria uma credencial de escrita no repositório guardada no cluster, e o `main` deste repositório exige pull request e o check `gate`, então essa credencial teria ainda que ter bypass das regras de proteção; um rollout de imagem viraria ou um push com um ator privilegiado ou um pull request por deploy. Nenhuma dessas alternativas paga o benefício de ter o digest corrente no git, porque ele já fica em lugares consultáveis: no `Freight` promovido, que o Kargo guarda com data e resultado, e no `status` da própria aplicação.
+O Kargo sabe fazer commit: ele tem passos para clonar, editar um arquivo de values e dar push, e esse é o modelo que a documentação dele sugere. Aqui a escolha foi manter a escrita como parâmetro da aplicação, e a razão é a credencial.
 
-O custo dessa escolha é o parâmetro ter mais de um dono, o git e o Kargo, e é por isso que a `Application` `root` declara `ignoreDifferences` em `/spec/source/helm/parameters` da `Application` `blog`, com `RespectIgnoreDifferences=true`: sem isso, o `selfHeal` do root devolveria a tag do git a cada reconciliação e desfaria toda promoção. O valor em `argocd/apps/satellites/blog/blog/values.yaml` continua real, mas é só o ponto de partida de um cluster novo; a primeira promoção o deixa para trás. Um cluster reconstruído do zero sobe, portanto, na imagem commitada, e só converge para o digest corrente quando o `Warehouse` faz a primeira consulta ao registry.
+Commitar neste repositório exigiria uma credencial de escrita guardada no cluster, e o branch principal exige pull request e o gate de qualidade, então essa credencial teria ainda que ter bypass das regras de proteção; um rollout de imagem viraria ou um push com um ator privilegiado ou um pull request por deploy.
 
-Há ainda outro controle nessa escrita. O `argocd-update` só toca numa `Application` que carregue a anotação `kargo.akuity.io/authorized-stage: blog-delivery:prod`, apontando exatamente para o projeto e o `Stage` que pretendem editá-la. É a prova, dada por quem tem permissão de editar essa aplicação, de que aquele stage pode fazê-lo; um stage de outro projeto, mesmo que alguém o declare, falha com erro explícito na promoção. O Kargo fala com o Argo pela API do Kubernetes, editando o objeto `Application`, não pela API do Argo CD; não existe conta de serviço nem token do Argo envolvido.
+Nenhuma dessas alternativas paga o benefício de ter o digest corrente no git, porque ele já fica em lugares consultáveis: no Freight promovido, que o Kargo guarda com data e resultado, e no status da própria aplicação.
+
+O custo dessa escolha é o parâmetro ter mais de um dono, o git e o Kargo, e é por isso que a aplicação root declara um `ignoreDifferences` sobre o parâmetro Helm da aplicação do blog, com `RespectIgnoreDifferences=true`: sem isso, o [selfHeal](../aprender/argocd.md) do root devolveria a tag do git a cada reconciliação e desfaria toda promoção.
+
+O valor em `argocd/apps/satellites/blog/blog/values.yaml` continua real, mas é só o ponto de partida de um cluster novo; a primeira promoção o deixa para trás. Um cluster reconstruído do zero sobe, portanto, na imagem commitada, e só converge para o digest corrente quando o Warehouse faz a primeira consulta ao registry.
+
+Há ainda outro controle nessa escrita. O passo de atualização só toca numa aplicação que carregue a anotação `kargo.akuity.io/authorized-stage: blog-delivery:prod`, apontando exatamente para o projeto e o estágio que pretendem editá-la. É a prova, dada por quem tem permissão de editar essa aplicação, de que aquele stage pode fazê-lo; um stage de outro projeto, mesmo que alguém o declare, falha com erro explícito na promoção.
+
+O Kargo fala com o Argo pela API do Kubernetes, editando o objeto aplicação, não pela API do Argo CD; não existe conta de serviço nem token do Argo envolvido.
 
 ## Login e permissão
 
-A UI e o CLI do Kargo autenticam no Keycloak, realm `management`, com o client público `kargo` declarado em `tofu/keycloak-management`: Authorization Code com PKCE, sem segredo de client, porque o Kargo roda o fluxo no navegador e no CLI (`kargo login https://kargo.guesant.internal --sso`) e um segredo ali não protegeria nada. Quem está no grupo `admins`, que chega no claim `groups`, é administrador do Kargo; quem não está autentica e não vê projeto nenhum. A conta `admin` embutida está desligada nos values (`api.adminAccount.enabled: false`), e a API não tem permissão de ler `Secret` (`api.secretManagementEnabled: false`), porque todo objeto do Kargo entra por GitOps e ninguém cria credencial pela interface. A rota `kargo.guesant.internal` vive no [ingress](ingress.md), sem o `oauth2-proxy` na frente, pela mesma razão que Argo CD, Grafana e Portainer: o serviço já fala OIDC sozinho.
+A UI e o CLI do Kargo autenticam no Keycloak, realm management, com o client público declarado no módulo do Keycloak: Authorization Code com PKCE, sem segredo de client, porque o Kargo roda o fluxo no navegador e no CLI e um segredo ali não protegeria nada. Quem está no grupo de administradores, que chega no claim `groups`, é administrador do Kargo; quem não está autentica e não vê projeto nenhum.
+
+A conta administradora embutida e a permissão de ler segredos pela API estão desligadas nos values, listadas na tabela abaixo, porque todo objeto do Kargo entra por GitOps e ninguém cria credencial pela interface. A rota do Kargo vive no [ingress](ingress.md), sem o oauth2-proxy na frente, pela mesma razão que Argo CD, Grafana e Portainer: o serviço já fala OIDC sozinho.
+
+| Campo dos values | Valor |
+| --- | --- |
+| `api.adminAccount.enabled` | `false` |
+| `api.secretManagementEnabled` | `false` |
 
 ## Quando nada acontece
 
-O primeiro lugar a olhar é o `Warehouse`: `kubectl -n blog-delivery describe warehouse blog` (por `just kubectl`) mostra a última consulta ao registry e o erro, se houver. Um erro de rede ou um limite de consultas anônimas do GHCR aparece ali, não como pod caído; enquanto durar, nenhum `Freight` novo nasce e o que está rodando continua rodando. Se há `Freight` novo e nenhuma promoção, a política de promoção automática do `ProjectConfig` é a suspeita. Se há promoção com falha, a mensagem dela diz o motivo, e os mais prováveis são a anotação `authorized-stage` ausente na `Application` e um nome ou namespace de aplicação diferente do que o passo declara. Se a promoção teve sucesso mas o pod não mudou, o problema já é do Argo: `kubectl -n argocd get application blog -o yaml` mostra o parâmetro gravado, e um parâmetro certo com manifesto antigo significa que o root devolveu o valor do git, ou seja, o `ignoreDifferences` foi perdido.
+O primeiro lugar a olhar é o Warehouse: `kubectl -n blog-delivery describe warehouse blog` mostra a última consulta ao registry e o erro, se houver. Um erro de rede ou um limite de consultas anônimas do GHCR aparece ali, não como pod caído; enquanto durar, nenhum Freight novo nasce e o que está rodando continua rodando.
 
-Voltar atrás é promover de novo: a UI lista os `Freight` anteriores e qualquer um deles pode ser promovido para `prod`, o que grava o digest antigo na `Application` do mesmo jeito. Não há `git revert` a fazer, porque nada foi commitado; o histórico da promoção fica nos objetos `Promotion` do namespace `blog-delivery`. Como as demais aplicações do Argo daqui, `kargo` e `blog-delivery` carregam o finalizer de recursos do Argo: apagar qualquer uma delas do git remove o que ela criou, e como nenhuma guarda estado (o histórico de promoções é descartável, o parâmetro já gravado na `Application` do blog fica), nenhuma leva `Delete=false`.
+Se há Freight novo e nenhuma promoção, a política de promoção automática da configuração do projeto é a suspeita. Se há promoção com falha, a mensagem dela diz o motivo, e os mais prováveis são a anotação de stage autorizado ausente na aplicação e um nome ou namespace de aplicação diferente do que o passo declara.
+
+Se a promoção teve sucesso mas o pod não mudou, o problema já é do Argo: consultar a aplicação pelo `kubectl` mostra o parâmetro gravado, e um parâmetro certo com manifesto antigo significa que o root devolveu o valor do git, ou seja, o `ignoreDifferences` foi perdido.
+
+Voltar atrás é promover de novo: a UI lista os Freight anteriores e qualquer um deles pode ser promovido para produção, o que grava o digest antigo na aplicação do mesmo jeito. Não há reversão de commit a fazer, porque nada foi commitado; o histórico da promoção fica nos objetos Promotion do namespace de entrega do blog.
+
+Como as demais aplicações do Argo daqui, o Kargo e a entrega do blog carregam o [finalizer de recursos do Argo](gitops-root-e-satelites.md): apagar qualquer uma delas do git remove o que ela criou, e como nenhuma guarda estado, o histórico de promoções é descartável e o parâmetro já gravado na aplicação do blog fica, nenhuma leva a opção de proteção contra remoção do banco.
 
 ## Continue por aqui
 
