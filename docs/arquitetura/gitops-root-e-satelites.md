@@ -109,6 +109,8 @@ Esse Job roda o bundle de migrações do EF Core que a imagem traz em `/app/migr
 
 Durante a transição, o Job aceita tanto o bundle EF legado em `/app/migrate` quanto `php artisan migrate --force` da imagem Laravel, dependendo de qual imagem está de fato entrando.
 
+As sondas de vida e prontidão do app Laravel, no endpoint `/up`, também levam um atraso inicial maior do que a imagem anterior usava, porque o boot no Raspberry Pi demora mais do que os poucos segundos que bastavam antes; o mesmo padrão já vale para a sonda de startup do Grafana, descrita adiante.
+
 Um detalhe do chart `application` que já custou um sync: no template de `Job` ele escreve o comando como texto simples, não como lista YAML.
 
 Isso faz um comando com argumentos virar um único executável inexistente.
