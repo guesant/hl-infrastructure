@@ -171,7 +171,7 @@ laravel:
   enabled: true
   image:
     repository: ghcr.io/guesant/blog-laravel
-    tag: main
+    tag: main@sha256:d5e63a17ffe1a8940035bc1fcfd628b70d5ae5548c0e8e76fd17db8f0457e962
   env:
     APP_NAME: Portfolio
     APP_ENV: production
