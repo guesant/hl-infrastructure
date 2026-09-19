@@ -4,6 +4,7 @@ application:
     serviceAccount:
       create: true
   deployment:
+    enabled: false
     annotations:
       reloader.stakater.com/auto: "true"
     strategy:
@@ -148,6 +149,7 @@ application:
             drop:
               - ALL
   service:
+    enabled: false
     ports:
       - port: 80
         name: http

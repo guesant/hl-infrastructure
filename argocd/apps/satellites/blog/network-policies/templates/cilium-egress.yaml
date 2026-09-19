@@ -60,7 +60,7 @@ spec:
             app.kubernetes.io/name: app
       toPorts:
         - ports:
-            - port: "8080"
+            - port: "8000"
               protocol: TCP
     - toEndpoints:
         - matchLabels:
