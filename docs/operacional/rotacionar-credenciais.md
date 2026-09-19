@@ -188,7 +188,7 @@ Não há agendamento nenhum nesse workflow, porque uma rotação automática abr
 | `sops-data-keys` | troca a chave de dados de todo segredo cifrado | `ROTATION_AGE_KEY` |
 | `cloudflare-tunnel-token` | troca o token do túnel do blog | `CLOUDFLARE_TUNNEL_TOKEN` |
 | `cloudflare-api-token` | rola o token de API que o OpenTofu usa | `CLOUDFLARE_TOKENS_EDIT_TOKEN` |
-| `all` | roda os três jobs acima | — |
+| `all` | roda os três jobs acima | nenhum |
 
 O job de chaves de dados decifra com uma identidade age dedicada à CI, que precisa estar no arquivo de destinatários como mais um deles, distinta da identidade da Secure Enclave, que não sai do Mac, e da chave de desastre, que não deveria sair do Bitwarden.
 
