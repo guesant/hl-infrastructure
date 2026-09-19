@@ -1,0 +1,22 @@
+{{- if .Values.laravel.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: laravel
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: app
+    app.kubernetes.io/component: laravel
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: app
+    app.kubernetes.io/component: laravel
+    application.stakater.com/workload-class: serving
+  ports:
+    - name: http
+      port: 8000
+      protocol: TCP
+      targetPort: 8000
+{{- end }}

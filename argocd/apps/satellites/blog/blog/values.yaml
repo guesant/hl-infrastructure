@@ -86,7 +86,7 @@ application:
       seccompProfile:
         type: RuntimeDefault
   job:
-    enabled: true
+    enabled: false
     jobs:
       migrate:
         annotations:
@@ -103,6 +103,15 @@ application:
           - -c
           - |
             export PORTFOLIO_DB_CONNECTION="Host=$(cat /secrets/db/host);Database=$(cat /secrets/db/dbname);Username=$(cat /secrets/db/user);Password=$(cat /secrets/db/password)"
+            export DB_CONNECTION=pgsql
+            export DB_HOST="$(cat /secrets/db/host)"
+            export DB_PORT=5432
+            export DB_DATABASE="$(cat /secrets/db/dbname)"
+            export DB_USERNAME="$(cat /secrets/db/user)"
+            export DB_PASSWORD="$(cat /secrets/db/password)"
+            if [ -f /app/artisan ]; then
+              exec php /app/artisan migrate --force
+            fi
             exec /app/migrate
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT:
@@ -149,8 +158,43 @@ application:
     files:
       config:
         PUBLIC_SITE_BASE_URL: https://guesant.net
+        PORTFOLIO_CONTENT_API_URL: http://laravel:8000/api/v1
         PORTFOLIO_ADMIN_OIDC_AUTHORITY: https://auth.guesant.net/realms/homelab
         PORTFOLIO_ADMIN_OIDC_CLIENT_ID: blog
         PORTFOLIO_ADMIN_OIDC_GROUP: admins
         TECTONIC_BUNDLE: https://data1.fullyjustified.net/tlextras-2022.0r0.tar
         TECTONIC_ONLY_CACHED: "false"
+
+laravel:
+  enabled: true
+  image:
+    repository: ghcr.io/guesant/blog-laravel
+    tag: main
+  env:
+    APP_NAME: Portfolio
+    APP_ENV: production
+    APP_DEBUG: "false"
+    APP_URL: https://guesant.net
+    APP_LOCALE: en
+    APP_FALLBACK_LOCALE: en
+    LOG_CHANNEL: stderr
+    LOG_LEVEL: error
+    DB_CONNECTION: pgsql
+    DB_PORT: "5432"
+    SESSION_DRIVER: database
+    SESSION_COOKIE: sid
+    SESSION_SECURE_COOKIE: "true"
+    FILESYSTEM_DISK: local
+    QUEUE_CONNECTION: database
+    CACHE_STORE: database
+    ADMIN_PATH: admin
+    PORTFOLIO_RESUME_PDF_ROOT: /data/resume-cache
+    PORTFOLIO_PUBLIC_ASSET_ROOT: /data/public
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 400m
+      memory: 768Mi

@@ -62,7 +62,9 @@ O sops-secrets-operator segue o mesmo padrão de endurecimento, com o `securityC
 
 Endurecer o resto do pod importa mais nesse caso, e não menos, já que um processo com esse acesso é o alvo mais atraente do namespace.
 
-O schema do banco do blog nunca é tocado pelo processo web. O chart declara um Job de pré-sincronização que roda, na mesma imagem e com o mesmo segredo do CNPG, o bundle de migrações do EF Core que a imagem traz, e o Argo só troca a implantação depois que ele termina, como descrito em [Rollout de imagens](rollout-de-imagens.md).
+O schema do banco do blog nunca é tocado pelo processo web. O chart declara um Job de pré-sincronização que roda, na mesma imagem e com o mesmo segredo do CNPG, a migração da imagem que vai entrar, e o Argo só troca a implantação depois que ele termina, como descrito em [Rollout de imagens](rollout-de-imagens.md).
+
+Durante a transição para a imagem Laravel, o Job aceita tanto o bundle de migrações do EF Core legado quanto a migração nativa do Laravel, dependendo de qual imagem está de fato entrando.
 
 Um detalhe do chart já custou um sync: o template do Job escreve o comando como texto simples, não como lista YAML, então um comando com argumentos vira um único executável inexistente; por isso o Job declara o interpretador de shell como comando e o script de fato como argumento, que o chart serializa corretamente.
 

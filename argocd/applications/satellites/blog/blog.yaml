@@ -18,7 +18,9 @@ spec:
       releaseName: blog
       parameters:
         - name: application.deployment.image.tag
-          value: main@sha256:706f1a66b2a2c2bf3eab9ae8f08754ae2afa4426a3c3dee6654c18f8a27d1927
+          value: main@sha256:3d59a74935dd961bf2e1f83c4eb589315a4b3d7e74bb68ceae3e0c6daefd0e1c
+        - name: laravel.image.tag
+          value: main@sha256:693e74dabd1f22317472b8a7c50adf476c1dc93bfbd7786022ae18c6307d6dd1
   destination:
     server: https://kubernetes.default.svc
     namespace: blog

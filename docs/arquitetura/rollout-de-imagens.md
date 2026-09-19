@@ -44,7 +44,9 @@ O estágio de produção é o destino. Ele pede Freight direto do Warehouse do b
 
 A promoção executa um único passo de atualização do ArgoCD, que localiza a aplicação do blog no namespace `argocd` e escreve no parâmetro Helm `application.deployment.image.tag` o digest do Freight, o mesmo formato que o Image Updater gravava. O Argo CD vê o parâmetro mudar, renderiza o chart do blog com a imagem nova, e faz o rollout.
 
-Esse rollout começa por um [Job de pré-sincronização](../aprender/jobs-cronjobs-e-securitycontext.md) declarado nos values do chart (`job.jobs.migrate`): ele roda a mesma imagem que vai entrar, executando `/app/migrate`, o bundle de migrações do EF Core que a imagem do blog traz, e só depois de ele terminar o Argo troca o Deployment.
+Esse rollout começa por um [Job de pré-sincronização](../aprender/jobs-cronjobs-e-securitycontext.md) declarado nos values do chart (`job.jobs.migrate`): ele roda a mesma imagem que vai entrar, e só depois de ele terminar o Argo troca o Deployment.
+
+Durante a transição para a imagem Laravel, o Job executa `php artisan migrate --force` na imagem Laravel ou `/app/migrate`, o bundle de migrações do EF Core, na imagem legada, dependendo de qual imagem está de fato entrando.
 
 A composição do Job usa a mesma variável `PORTFOLIO_DB_CONNECTION` a partir do segredo do CNPG que o Deployment usa, então a migração fala com o mesmo banco que a aplicação vai usar em seguida. Uma migração nova chega junto com a imagem que precisa dela, e uma migração que falha impede o rollout em vez de deixar o app subir contra um schema antigo.
 
