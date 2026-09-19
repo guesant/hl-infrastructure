@@ -67,24 +67,24 @@ COPY pip/ansible-lint.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir --require-hashes -r /tmp/requirements.txt
 ENTRYPOINT ["ansible-lint"]
 
-FROM node:24-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 AS ast-grep
+FROM node:24-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6 AS ast-grep
 COPY npm/ast-grep/package.json npm/ast-grep/package-lock.json /opt/ast-grep/
 RUN npm ci --prefix /opt/ast-grep --ignore-scripts --no-audit --no-fund && ln -s /opt/ast-grep/node_modules/.bin/ast-grep /usr/local/bin/ast-grep && ln -s /opt/ast-grep/node_modules/.bin/sg /usr/local/bin/sg
 
-FROM node:24-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 AS jscpd
+FROM node:24-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6 AS jscpd
 COPY npm/jscpd/package.json npm/jscpd/package-lock.json /opt/jscpd/
 RUN npm ci --prefix /opt/jscpd --ignore-scripts --no-audit --no-fund && ln -s /opt/jscpd/node_modules/.bin/jscpd /usr/local/bin/jscpd
 
-FROM node:24-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 AS markdownlint
+FROM node:24-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6 AS markdownlint
 COPY npm/markdownlint/package.json npm/markdownlint/package-lock.json /opt/markdownlint/
 RUN npm ci --prefix /opt/markdownlint --ignore-scripts --no-audit --no-fund && ln -s /opt/markdownlint/node_modules/.bin/markdownlint-cli2 /usr/local/bin/markdownlint-cli2
 
-FROM node:24-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 AS cspell
+FROM node:24-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6 AS cspell
 COPY npm/cspell/package.json npm/cspell/package-lock.json /opt/cspell/
 RUN npm ci --prefix /opt/cspell --ignore-scripts --no-audit --no-fund
 ENTRYPOINT ["/opt/cspell/node_modules/.bin/cspell"]
 
-FROM node:24-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 AS commitlint
+FROM node:24-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6 AS commitlint
 RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/* \
     && true
 COPY npm/commitlint/package.json npm/commitlint/package-lock.json /opt/commitlint/
