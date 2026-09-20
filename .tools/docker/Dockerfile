@@ -94,4 +94,4 @@ ENTRYPOINT ["/opt/commitlint/node_modules/.bin/commitlint"]
 
 FROM quay.io/kubescape/kubescape-cli:v4.0.13@sha256:cf9b0dc386e75e8dea9ad443f9497fe73e0251476bbea5efe51a0d368d7a7d12 AS kubescape
 
-FROM openpolicyagent/conftest:v0.69.0@sha256:a38ba21668929a00dce2fe6ee43d1312228340bce5fd243f47dd0ce90516e558 AS conftest
+FROM openpolicyagent/conftest:v0.70.0@sha256:1d5b939a6310fbc18a66165f436f763c57a568822bfe449cb0b9d89a70a0334b AS conftest
