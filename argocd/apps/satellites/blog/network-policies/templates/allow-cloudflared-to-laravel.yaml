@@ -1,12 +1,13 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-cloudflared-to-frontend
+  name: allow-cloudflared-to-laravel
   namespace: blog
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/name: frontend
+      app.kubernetes.io/name: app
+      app.kubernetes.io/component: laravel
   policyTypes:
     - Ingress
   ingress:
@@ -16,4 +17,4 @@ spec:
               app.kubernetes.io/name: cloudflared
       ports:
         - protocol: TCP
-          port: 3000
+          port: 8000

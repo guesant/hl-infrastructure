@@ -16,11 +16,6 @@ spec:
     path: argocd/apps/satellites/blog/blog
     helm:
       releaseName: blog
-      parameters:
-        - name: application.deployment.image.tag
-          value: main@sha256:3d59a74935dd961bf2e1f83c4eb589315a4b3d7e74bb68ceae3e0c6daefd0e1c
-        - name: laravel.image.tag
-          value: main@sha256:693e74dabd1f22317472b8a7c50adf476c1dc93bfbd7786022ae18c6307d6dd1
   destination:
     server: https://kubernetes.default.svc
     namespace: blog

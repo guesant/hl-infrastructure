@@ -35,8 +35,6 @@ spec:
           args:
             - mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs storage/app/private storage/app/public storage/app/resume-pdf && php artisan migrate --force
           envFrom:
-            - configMapRef:
-                name: app-config
             - secretRef:
                 name: app-secret
             - secretRef:

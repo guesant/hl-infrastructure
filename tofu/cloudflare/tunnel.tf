@@ -25,11 +25,21 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "blog" {
       },
       {
         hostname = var.blog_hostname
-        service  = "http://app.blog.svc.cluster.local"
+        path     = "^/(api/v1|admin)(/|$)"
+        service  = "http://app.blog.svc.cluster.local:8080"
       },
       {
         hostname = "www.${var.blog_hostname}"
-        service  = "http://app.blog.svc.cluster.local"
+        path     = "^/(api/v1|admin)(/|$)"
+        service  = "http://app.blog.svc.cluster.local:8080"
+      },
+      {
+        hostname = var.blog_hostname
+        service  = "http://frontend.blog.svc.cluster.local"
+      },
+      {
+        hostname = "www.${var.blog_hostname}"
+        service  = "http://frontend.blog.svc.cluster.local"
       },
       {
         service = "http_status:404"

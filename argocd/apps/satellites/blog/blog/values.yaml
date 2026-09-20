@@ -1,10 +1,10 @@
 application:
-  applicationName: app
+  applicationName: frontend
   rbac:
     serviceAccount:
       create: true
   deployment:
-    enabled: false
+    enabled: true
     annotations:
       reloader.stakater.com/auto: "true"
     strategy:
@@ -14,69 +14,42 @@ application:
     reloadOnChange: false
     image:
       repository: ghcr.io/guesant/blog
-      tag: sha-bf56a5992fe6cd70c58164ce3291685ad9197e83
-    command:
-      - /bin/sh
-      - -c
-      - |
-        export PORTFOLIO_DB_CONNECTION="Host=$(cat /secrets/db/host);Database=$(cat /secrets/db/dbname);Username=$(cat /secrets/db/user);Password=$(cat /secrets/db/password)"
-        exec /app/entrypoint.prod.sh
+      tag: main
     ports:
-      - containerPort: 8080
+      - containerPort: 3000
+        name: http
+        protocol: TCP
     envFrom:
       config:
         type: configmap
         nameSuffix: config
-    volumes:
-      db-credentials:
-        secret:
-          secretName: postgres-app
-      app-secret:
-        secret:
-          secretName: app-secret
-          defaultMode: 0440
-      public-assets:
-        emptyDir: {}
-      resume-cache:
-        persistentVolumeClaim:
-          claimName: resume-cache
-      tmp:
-        emptyDir: {}
-    volumeMounts:
-      db-credentials:
-        mountPath: /secrets/db
-        readOnly: true
-      app-secret:
-        mountPath: /secrets/app
-        readOnly: true
-      public-assets:
-        mountPath: /data/public
-      resume-cache:
-        mountPath: /data/resume-cache
-      tmp:
-        mountPath: /tmp
     livenessProbe:
       enabled: true
       httpGet:
-        path: /health
-        port: 8080
+        path: /pt-BR
+        port: 3000
+      initialDelaySeconds: 20
+      periodSeconds: 10
+      timeoutSeconds: 5
     readinessProbe:
       enabled: true
-      timeoutSeconds: 3
       httpGet:
-        path: /health/ready
-        port: 8080
+        path: /pt-BR
+        port: 3000
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
     resources:
       requests:
-        cpu: 250m
-        memory: 256Mi
+        cpu: 100m
+        memory: 128Mi
       limits:
-        cpu: 1000m
+        cpu: 500m
         memory: 512Mi
     securityContext:
       runAsNonRoot: true
-      runAsUser: 1654
-      fsGroup: 1654
+      runAsUser: 1000
+      fsGroup: 1000
     containerSecurityContext:
       readOnlyRootFilesystem: true
       runAsNonRoot: true
@@ -88,84 +61,19 @@ application:
         type: RuntimeDefault
   job:
     enabled: false
-    jobs:
-      migrate:
-        annotations:
-          argocd.argoproj.io/hook: PreSync
-          argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
-        backoffLimit: 3
-        activeDeadlineSeconds: 600
-        restartPolicy: OnFailure
-        image:
-          repository: ghcr.io/guesant/blog
-          tag: "{{ .Values.deployment.image.tag }}"
-        command: [/bin/sh]
-        args:
-          - -c
-          - |
-            export PORTFOLIO_DB_CONNECTION="Host=$(cat /secrets/db/host);Database=$(cat /secrets/db/dbname);Username=$(cat /secrets/db/user);Password=$(cat /secrets/db/password)"
-            export DB_CONNECTION=pgsql
-            export DB_HOST="$(cat /secrets/db/host)"
-            export DB_PORT=5432
-            export DB_DATABASE="$(cat /secrets/db/dbname)"
-            export DB_USERNAME="$(cat /secrets/db/user)"
-            export DB_PASSWORD="$(cat /secrets/db/password)"
-            if [ -f /app/artisan ]; then
-              exec php /app/artisan migrate --force
-            fi
-            exec /app/migrate
-        env:
-          DOTNET_CLI_TELEMETRY_OPTOUT:
-            value: "1"
-        volumes:
-          - name: db-credentials
-            secret:
-              secretName: postgres-app
-          - name: tmp
-            emptyDir: {}
-        volumeMounts:
-          - name: db-credentials
-            mountPath: /secrets/db
-            readOnly: true
-          - name: tmp
-            mountPath: /tmp
-        resources:
-          requests:
-            cpu: 50m
-            memory: 128Mi
-          limits:
-            memory: 256Mi
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 1654
-          fsGroup: 1654
-          seccompProfile:
-            type: RuntimeDefault
-        containerSecurityContext:
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - ALL
   service:
-    enabled: false
+    enabled: true
     ports:
       - port: 80
         name: http
         protocol: TCP
-        targetPort: 8080
+        targetPort: 3000
   configMap:
     enabled: true
     files:
       config:
-        PUBLIC_SITE_BASE_URL: https://guesant.net
-        PORTFOLIO_CONTENT_API_URL: http://laravel:8000/api/v1
-        PORTFOLIO_ADMIN_OIDC_AUTHORITY: https://auth.guesant.net/realms/homelab
-        PORTFOLIO_ADMIN_OIDC_CLIENT_ID: blog
-        PORTFOLIO_ADMIN_OIDC_GROUP: admins
-        TECTONIC_BUNDLE: https://data1.fullyjustified.net/tlextras-2022.0r0.tar
-        TECTONIC_ONLY_CACHED: "false"
+        PORTFOLIO_CONTENT_API_URL: http://app:8080/api/v1/public-site
+        PORTFOLIO_PUBLIC_API_URL: /api/v1
 
 laravel:
   enabled: true
@@ -177,6 +85,7 @@ laravel:
     APP_ENV: production
     APP_DEBUG: "false"
     APP_URL: https://guesant.net
+    PUBLIC_SITE_BASE_URL: https://guesant.net
     APP_LOCALE: en
     APP_FALLBACK_LOCALE: en
     LOG_CHANNEL: stderr
@@ -190,8 +99,13 @@ laravel:
     QUEUE_CONNECTION: database
     CACHE_STORE: database
     ADMIN_PATH: admin
+    PORTFOLIO_ADMIN_OIDC_AUTHORITY: https://auth.guesant.net/realms/homelab
+    PORTFOLIO_ADMIN_OIDC_CLIENT_ID: blog
+    PORTFOLIO_ADMIN_OIDC_GROUP: admins
     PORTFOLIO_RESUME_PDF_ROOT: /data/resume-cache
     PORTFOLIO_PUBLIC_ASSET_ROOT: /data/public
+    TECTONIC_BUNDLE: https://data1.fullyjustified.net/tlextras-2022.0r0.tar
+    TECTONIC_ONLY_CACHED: "false"
   replicas: 1
   resources:
     requests:
