@@ -92,6 +92,7 @@ laravel:
     APP_FALLBACK_LOCALE: en
     LOG_CHANNEL: stderr
     LOG_LEVEL: error
+    PHP_CLI_SERVER_WORKERS: "2"
     DB_CONNECTION: pgsql
     DB_PORT: "5432"
     SESSION_DRIVER: database
