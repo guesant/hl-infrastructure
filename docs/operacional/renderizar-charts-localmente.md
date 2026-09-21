@@ -16,6 +16,8 @@ Essa receita constrói a imagem helm a partir de [.tools/docker/Dockerfile](http
 
 O script lê a versão dos charts instalados pelo Ansible do mesmo arquivo de variáveis, adiciona os repositórios Helm distintos que eles usam e confere o `.tgz` de cada um contra o digest declarado em `versions.yml` antes de renderizar, o mesmo par que a role cilium e a role argocd conferem no node.
 
+Os downloads dos charts têm retries limitados para absorver falhas transitórias do repositório remoto sem esconder erros persistentes.
+
 Um digest que não bate aborta a renderização com a instrução de revisar o chart antes de atualizar o valor em `versions.yml`, em vez de seguir e produzir manifestos a partir de um tarball diferente do que o node instalaria.
 
 Praticamente todo o resto vem direto da fonte local, sem depender de repositório Helm nem de versão vinda de versions.yml: os wrappers de `argocd/apps/operators/` e `argocd/apps/platform/` (inclusive os que não embrulham chart upstream nenhum, como o StatefulSet do Keycloak, renderizados só a partir dos próprios templates), mais os charts de satélite listados abaixo.
