@@ -22,12 +22,22 @@ mkdir -p "$out_dir"
 
 helm repo add argo https://argoproj.github.io/argo-helm >/dev/null
 helm repo add cilium https://helm.cilium.io/ >/dev/null
-helm repo update >/dev/null
+
+retry() {
+  local attempt=1
+  until "$@"; do
+    test "$attempt" -lt 5 || return 1
+    sleep "$((attempt * 5))"
+    attempt=$((attempt + 1))
+  done
+}
+
+retry helm repo update >/dev/null
 
 charts_dir="$out_dir/.charts"
 mkdir -p "$charts_dir"
-helm pull argo/argo-cd --version "$argocd_chart_version" --destination "$charts_dir" >/dev/null
-helm pull cilium/cilium --version "$cilium_version" --destination "$charts_dir" >/dev/null
+retry helm pull argo/argo-cd --version "$argocd_chart_version" --destination "$charts_dir" >/dev/null
+retry helm pull cilium/cilium --version "$cilium_version" --destination "$charts_dir" >/dev/null
 test "$(sha256sum "$charts_dir/argo-cd-$argocd_chart_version.tgz" | cut -d' ' -f1)" = "$argocd_chart_sha256" || {
   echo "argo-cd-$argocd_chart_version.tgz does not match argocd_chart_sha256 in $vars_file; review the chart and update the digest" >&2
   exit 1
