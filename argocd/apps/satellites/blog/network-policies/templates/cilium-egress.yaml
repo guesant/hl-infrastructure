@@ -61,6 +61,8 @@ spec:
             app.kubernetes.io/component: laravel
       toPorts:
         - ports:
+            - port: "8080"
+              protocol: TCP
             - port: "8000"
               protocol: TCP
     - toEndpoints:
@@ -89,6 +91,8 @@ spec:
             app.kubernetes.io/name: app
       toPorts:
         - ports:
+            - port: "8080"
+              protocol: TCP
             - port: "8000"
               protocol: TCP
     - toEndpoints:
