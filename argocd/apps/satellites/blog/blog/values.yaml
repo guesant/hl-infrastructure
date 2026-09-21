@@ -14,7 +14,7 @@ application:
     reloadOnChange: false
     image:
       repository: ghcr.io/guesant/blog
-      tag: main
+      tag: main@sha256:7c819fad5bf9f904d290e001d6e093824b3f900baebed66e126403dfc479cd92
     ports:
       - containerPort: 3000
         name: http
@@ -81,7 +81,7 @@ laravel:
   enabled: true
   image:
     repository: ghcr.io/guesant/blog-laravel
-    tag: main
+    tag: main@sha256:2758a17421ff2b6cd1dcf4d51a40e022b98ba525270e0243262df1066f4fdc20
   env:
     APP_NAME: Portfolio
     APP_ENV: production
