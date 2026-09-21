@@ -1,0 +1,114 @@
+{{- if and .Values.laravel.enabled .Values.laravel.scheduler.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: laravel-scheduler
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: app
+    app.kubernetes.io/component: laravel-scheduler
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: {{ .Values.laravel.scheduler.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app
+      app.kubernetes.io/component: laravel-scheduler
+      application.stakater.com/workload-class: scheduler
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: app
+        app.kubernetes.io/component: laravel-scheduler
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        application.stakater.com/workload-class: scheduler
+    spec:
+      automountServiceAccountToken: false
+      serviceAccountName: app
+      containers:
+        - name: laravel-scheduler
+          image: "{{ .Values.laravel.image.repository }}:{{ .Values.laravel.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - >-
+              mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs storage/app/private storage/app/public storage/app/resume-pdf &&
+              php artisan config:cache &&
+              exec php artisan schedule:work
+          envFrom:
+            - secretRef:
+                name: app-secret
+            - secretRef:
+                name: laravel-secret
+          env:
+            {{- range $name, $value := .Values.laravel.env }}
+            - name: {{ $name }}
+              value: {{ $value | quote }}
+            {{- end }}
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-app
+                  key: host
+            - name: DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-app
+                  key: dbname
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-app
+                  key: user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-app
+                  key: password
+          resources:
+            {{- toYaml .Values.laravel.scheduler.resources | nindent 12 }}
+          securityContext:
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 33
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: app-storage
+              mountPath: /app/storage
+            - name: bootstrap-cache
+              mountPath: /app/bootstrap/cache
+            - name: public-assets
+              mountPath: /data/public
+            - name: resume-cache
+              mountPath: /data/resume-cache
+            - name: tmp
+              mountPath: /tmp
+      securityContext:
+        fsGroup: 33
+        runAsNonRoot: true
+        runAsUser: 33
+      volumes:
+        - name: app-storage
+          emptyDir: {}
+        - name: bootstrap-cache
+          emptyDir: {}
+        - name: public-assets
+          emptyDir: {}
+        - name: resume-cache
+          persistentVolumeClaim:
+            claimName: resume-cache
+        - name: tmp
+          emptyDir: {}
+      terminationGracePeriodSeconds: 30
+{{- end }}

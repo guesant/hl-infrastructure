@@ -116,3 +116,24 @@ laravel:
     limits:
       cpu: 400m
       memory: 768Mi
+  worker:
+    enabled: true
+    replicas: 1
+    queues: default,open-graph
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 400m
+        memory: 768Mi
+  scheduler:
+    enabled: true
+    replicas: 1
+    resources:
+      requests:
+        cpu: 25m
+        memory: 96Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
