@@ -23,10 +23,19 @@ provider_installation {
 }
 RC
 
+retry() {
+  local attempt=1
+  until "$@"; do
+    test "$attempt" -lt 5 || return 1
+    sleep "$((attempt * 5))"
+    attempt=$((attempt + 1))
+  done
+}
+
 for dir in tofu/*/; do
     name=$(basename "$dir")
     mkdir -p "$work/$name"
     find "$dir" -maxdepth 1 -type f \( -name '*.tf' -o -name '*.tfvars' -o -name '*.crt' -o -name '.terraform.lock.hcl' \) -exec cp {} "$work/$name/" \;
-    docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e TF_CLI_CONFIG_FILE=/work/.tofu/tofurc -v "$work":/work -v "$repo_root/.cache/tofu/mirror":/mirror:ro -w /work -e TF_VAR_state_passphrase "$TOFU_IMAGE" -chdir="$name" init -backend=false -input=false
+    retry docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e TF_CLI_CONFIG_FILE=/work/.tofu/tofurc -v "$work":/work -v "$repo_root/.cache/tofu/mirror":/mirror:ro -w /work -e TF_VAR_state_passphrase "$TOFU_IMAGE" -chdir="$name" init -backend=false -input=false
     docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -v "$work":/work -w /work -e TF_VAR_state_passphrase "$TOFU_IMAGE" -chdir="$name" validate
 done

@@ -452,6 +452,8 @@ Para cada módulo em `tofu/`, ele roda `tofu validate`.
 
 Isso usa `init -backend=false`.
 
+A inicialização dos providers tem retries limitados para absorver indisponibilidades transitórias do registro ou das releases sem ignorar falhas persistentes.
+
 Isso usa uma passphrase fictícia, sem credencial nenhuma.
 
 [.tools/tofu-validate.sh](https://github.com/guesant/hl-infrastructure/blob/main/.tools/tofu-validate.sh) é o mesmo script do `just lint-tofu`.
