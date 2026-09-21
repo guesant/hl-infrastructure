@@ -23,6 +23,4 @@ cd "$repo_root"
     ' "$values" | tr -d '"'
   done < <(find argocd/apps -name 'values*.yaml' -not -path '*/charts/*')
 
-  grep -rhE -A1 'name: application.deployment.image.tag' argocd/applications \
-    | grep -oE 'value: [^[:space:]]+' | awk '{print "ghcr.io/guesant/blog:" $2}'
 } | grep -E '^[a-z0-9.-]+(/[a-z0-9._-]+)+(:[A-Za-z0-9._-]+)?(@sha256:[0-9a-f]{64})?$' | grep -E '[:@]' | sort -u

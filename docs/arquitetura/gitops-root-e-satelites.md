@@ -81,6 +81,8 @@ Isso acontece porque a camada `data/` agrupa todo dado com estado, dedicado ou c
 
 O `blog-postgres` não tem `SopsSecret` hoje: o backup em object storage que precisaria de credenciais está desligado de propósito, veja [estado fora do git](../operacional/estado-fora-do-git.md).
 
+As imagens do blog ficam registradas no chart por digest, incluindo o public-app e o Laravel. O Kargo pode atualizar esses valores quando uma nova imagem da branch `main` é publicada, e o Argo aplica a revisão promovida.
+
 O critério que separa a pasta do satélite da camada de dado é a política de remoção, não a titularidade: um banco exclusivo de uma aplicação continua sendo dado, e dado sai do cluster por um caminho mais conservador do que o resto.
 
 Manter as duas coisas na mesma pasta convidaria a aplicar a elas a mesma política de prune, que é exatamente o erro que a separação evita.

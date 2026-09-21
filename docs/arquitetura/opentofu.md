@@ -48,6 +48,8 @@ O certificado do `argocd-server` é autoassinado, por isso a regra liga `no_tls_
 
 O túnel não reescreve caminho: ele escolhe esquema, host e porta do destino, mas encaminha o caminho do jeito que chegou.
 
+O hostname da API encaminha tanto `/api/v1` quanto `/docs` para o serviço Laravel. Assim, a API pública e a documentação OpenAPI permanecem no mesmo origin sem expor a interface administrativa.
+
 Qualquer outro caminho nesse hostname cai no 404, então a interface e a API do Argo CD nunca ficam expostas; apontar o hostname inteiro para o `argocd-server` publicaria interface e API na internet.
 
 `guesant.net/www.guesant.net` vão inteiros para o `Service` do blog, e qualquer outro hostname recebe 404.
