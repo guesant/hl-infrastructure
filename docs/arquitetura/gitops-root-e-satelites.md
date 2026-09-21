@@ -322,7 +322,7 @@ A identidade vive no Keycloak, em peças com responsabilidades separadas.
 
 O servidor é um `StatefulSet` escrito à mão em `argocd/apps/platform/keycloak`, no mesmo molde do Portainer.
 
-Ele leva imagem oficial por digest, um pod só, `securityContext` endurecido e sem token de `ServiceAccount`, porque o processo não fala com o Kubernetes.
+Ele leva a imagem oficial 26.7.4 por digest, um pod só, `securityContext` endurecido e sem token de `ServiceAccount`, porque o processo não fala com o Kubernetes.
 
 Ele roda `kc.sh start` sem `--optimized`, então refaz a configuração a cada início, alguns segundos a mais que não pesam num único pod.
 
