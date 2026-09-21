@@ -24,6 +24,15 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "blog" {
         service  = "http://keycloak-service.keycloak.svc.cluster.local:8080"
       },
       {
+        hostname = var.api_hostname
+        path     = "^/api/v1(/|$)"
+        service  = "http://app.blog.svc.cluster.local:8080"
+      },
+      {
+        hostname = var.admin_hostname
+        service  = "http://app.blog.svc.cluster.local:8080"
+      },
+      {
         hostname = var.blog_hostname
         path     = "^/(api/v1|admin)(/|$)"
         service  = "http://app.blog.svc.cluster.local:8080"

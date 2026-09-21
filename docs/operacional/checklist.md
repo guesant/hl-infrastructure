@@ -14,7 +14,7 @@ Lista curta para marcar a cada bootstrap, upgrade de versão ou mudança de rede
 | Todo `Application` `Synced` e `Healthy` | `just status` | pendente, `cloudflared` do blog em `Degraded` até existir o token real do túnel |
 | Timer de manutenção armado | `systemctl list-timers hl-gc.timer` mostra a próxima execução | confirmado |
 | Módulos do OpenTofu sem deriva | `just tofu-plan-all` termina em `No changes` para todo módulo listado por `just tofu-list` | pendente |
-| Login pelo Keycloak em cada aplicação | Dashy, Grafana, Portainer, Argo CD e `guesant.net/admin` entram com o usuário do realm e recusam um usuário fora do grupo `admins` | confirmado, exceto o blog, ainda sem usuário no realm `homelab` |
+| Login pelo Keycloak em cada aplicação | Dashy, Grafana, Portainer, Argo CD e `admin.guesant.net` entram com o usuário do realm e recusam um usuário fora do grupo `admins` | confirmado, exceto o blog, ainda sem usuário no realm `homelab` |
 | Nenhum login local sobrando | O formulário do Grafana e o `admin` do Argo CD desligados; o Portainer CE mantém o formulário, com o `admin` protegido pela senha do `SopsSecret` | pendente até o `bootstrap --tags argocd` que desliga o `admin` |
 | Kubeconfig local atualizado | `kubectl get nodes` com `.local/operator/kubeconfig` depois de rotação de certificados | pendente |
 

@@ -27,6 +27,24 @@ variable "blog_hostname" {
   }
 }
 
+variable "api_hostname" {
+  type = string
+
+  validation {
+    condition     = can(regex("^([a-z0-9]([a-z0-9-]*[a-z0-9])?\\.)+[a-z]{2,}$", var.api_hostname)) && !endswith(var.api_hostname, ".invalid")
+    error_message = "api_hostname must be the real public hostname of the Laravel API, not a placeholder under .invalid."
+  }
+}
+
+variable "admin_hostname" {
+  type = string
+
+  validation {
+    condition     = can(regex("^([a-z0-9]([a-z0-9-]*[a-z0-9])?\\.)+[a-z]{2,}$", var.admin_hostname)) && !endswith(var.admin_hostname, ".invalid")
+    error_message = "admin_hostname must be the real public hostname of the Filament panel, not a placeholder under .invalid."
+  }
+}
+
 variable "ops_hostname" {
   type = string
 
