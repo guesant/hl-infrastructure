@@ -28,17 +28,17 @@ application:
       httpGet:
         path: /pt-BR
         port: 3000
-      initialDelaySeconds: 20
+      initialDelaySeconds: 60
       periodSeconds: 10
-      timeoutSeconds: 5
+      timeoutSeconds: 30
     readinessProbe:
       enabled: true
       httpGet:
         path: /pt-BR
         port: 3000
-      initialDelaySeconds: 10
+      initialDelaySeconds: 30
       periodSeconds: 10
-      timeoutSeconds: 5
+      timeoutSeconds: 30
     resources:
       requests:
         cpu: 100m
