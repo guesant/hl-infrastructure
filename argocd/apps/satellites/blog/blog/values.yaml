@@ -115,7 +115,7 @@ laravel:
       memory: 256Mi
     limits:
       cpu: 400m
-      memory: 768Mi
+      memory: 512Mi
   worker:
     enabled: true
     replicas: 1
@@ -125,8 +125,8 @@ laravel:
         cpu: 50m
         memory: 128Mi
       limits:
-        cpu: 400m
-        memory: 768Mi
+        cpu: 200m
+        memory: 128Mi
   scheduler:
     enabled: true
     replicas: 1
@@ -135,5 +135,5 @@ laravel:
         cpu: 25m
         memory: 96Mi
       limits:
-        cpu: 200m
-        memory: 256Mi
+        cpu: 100m
+        memory: 64Mi
