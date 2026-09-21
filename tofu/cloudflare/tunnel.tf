@@ -29,6 +29,11 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "blog" {
         service  = "http://app.blog.svc.cluster.local:8080"
       },
       {
+        hostname = var.api_hostname
+        path     = "^/docs(/|$)"
+        service  = "http://app.blog.svc.cluster.local:8080"
+      },
+      {
         hostname = var.admin_hostname
         service  = "http://app.blog.svc.cluster.local:8080"
       },
