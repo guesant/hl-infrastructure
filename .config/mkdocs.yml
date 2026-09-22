@@ -117,6 +117,14 @@ nav:
               - ROA: aprender/rede/roteamento/roa.md
               - uRPF: aprender/rede/roteamento/urpf.md
               - BCP 38: aprender/rede/roteamento/bcp38.md
+          - Proxies:
+              - Visão geral: aprender/rede/proxy/index.md
+              - Forward proxy: aprender/rede/proxy/forward-proxy.md
+              - Reverse proxy: aprender/rede/proxy/reverse-proxy.md
+              - Host-based routing: aprender/rede/proxy/host-routing.md
+              - Path-based routing: aprender/rede/proxy/path-routing.md
+          - DNS:
+              - Split-horizon DNS: aprender/rede/dns/split-horizon.md
           - Conectividade:
               - VPN: aprender/rede/conectividade/vpn.md
               - Túneis: aprender/rede/conectividade/tunel.md
@@ -156,6 +164,23 @@ nav:
               - K3s: aprender/k3s.md
               - Kubernetes gerenciado e HA: aprender/kubernetes-gerenciado-e-ha-avancada.md
               - Quorum, etcd e datastore K3s: aprender/quorum-etcd-e-datastore-do-k3s.md
+          - Workloads batch:
+              - Job: aprender/kubernetes/workloads/job.md
+              - CronJob: aprender/kubernetes/workloads/cronjob.md
+              - Restart policy: aprender/kubernetes/workloads/restart-policy.md
+              - Backoff limit: aprender/kubernetes/workloads/backoff-limit.md
+              - Active deadline: aprender/kubernetes/workloads/active-deadline.md
+              - Concurrency policy: aprender/kubernetes/workloads/concurrency-policy.md
+              - Starting deadline: aprender/kubernetes/workloads/starting-deadline.md
+              - Idempotência: aprender/kubernetes/workloads/idempotencia.md
+          - Segurança de workload:
+              - SecurityContext: aprender/kubernetes/seguranca/security-context.md
+              - Run as non-root: aprender/kubernetes/seguranca/run-as-non-root.md
+              - Privilege escalation: aprender/kubernetes/seguranca/allow-privilege-escalation.md
+              - Linux capabilities: aprender/kubernetes/seguranca/linux-capabilities.md
+              - seccomp: aprender/kubernetes/seguranca/seccomp.md
+              - Read-only root filesystem: aprender/kubernetes/seguranca/read-only-root-filesystem.md
+              - ServiceAccount token: aprender/kubernetes/seguranca/service-account-token.md
           - Recursos e extensibilidade:
               - Recursos de workload:
                   - Visão geral: aprender/kubernetes/recursos/index.md
@@ -310,6 +335,15 @@ nav:
               - Filas: aprender/dados/mensageria/filas.md
               - Event streaming: aprender/dados/mensageria/event-streaming.md
               - Mapa legado: aprender/filas-e-streaming-de-eventos.md
+      - Capacidade e resiliência:
+          - Visão geral: aprender/confiabilidade/testes/index.md
+          - Teste de carga: aprender/confiabilidade/testes/load-testing.md
+          - Stress testing: aprender/confiabilidade/testes/stress-testing.md
+          - Soak testing: aprender/confiabilidade/testes/soak-testing.md
+          - Spike testing: aprender/confiabilidade/testes/spike-testing.md
+          - Chaos engineering: aprender/confiabilidade/testes/chaos-engineering.md
+          - k6: aprender/confiabilidade/testes/k6.md
+          - Apache JMeter: aprender/confiabilidade/testes/jmeter.md
       - Backup e recuperação:
           - Visão geral: aprender/confiabilidade/backup/index.md
           - Backup: aprender/confiabilidade/backup/backup.md
@@ -341,6 +375,17 @@ nav:
           - Scripts operacionais defensivos: aprender/padroes-defensivos-de-script-operacional.md
       - Diagnóstico:
           - Diagnóstico profundo com iperf3, tcpdump e strace: aprender/diagnostico-profundo-iperf3-tcpdump-e-strace.md
+      - Ferramentas:
+          - Dados estruturados:
+              - Visão geral: aprender/ferramentas/dados-estruturados/index.md
+              - jq: aprender/ferramentas/dados-estruturados/jq.md
+              - yq: aprender/ferramentas/dados-estruturados/yq.md
+          - Transferência:
+              - Visão geral: aprender/ferramentas/transferencia/index.md
+              - rsync: aprender/ferramentas/transferencia/rsync.md
+              - SSHFS: aprender/ferramentas/transferencia/sshfs.md
+              - SFTP: aprender/ferramentas/transferencia/sftp.md
+              - rclone: aprender/ferramentas/transferencia/rclone.md
       - Cenários e padrões:
           - Visão geral: aprender/cenarios/index.md
           - Execução de aplicações:
