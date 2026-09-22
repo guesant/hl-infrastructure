@@ -96,8 +96,16 @@ nav:
               - Rate limiting: aprender/rate-limiting-politica-local-e-compartilhada.md
           - Rede de cluster:
               - Rede interna do cluster: aprender/rede-interna-do-cluster.md
-              - Cilium e Calico: aprender/cilium-e-calico-como-cni.md
-              - Service mesh, Istio e Linkerd: aprender/service-mesh-istio-e-linkerd.md
+              - CNI:
+                  - Visão geral: aprender/rede/cni/index.md
+                  - Cilium: aprender/rede/cni/cilium.md
+                  - Calico: aprender/rede/cni/calico.md
+                  - Cilium e Calico (mapa legado): aprender/cilium-e-calico-como-cni.md
+              - Service mesh:
+                  - Visão geral: aprender/rede/service-mesh/index.md
+                  - Istio: aprender/rede/service-mesh/istio.md
+                  - Linkerd: aprender/rede/service-mesh/linkerd.md
+                  - Istio e Linkerd (mapa legado): aprender/service-mesh-istio-e-linkerd.md
               - Topologias K3s multinó: aprender/topologias-rede-e-falhas-em-k3s-multino.md
       - Kubernetes:
           - Distribuições e arquitetura:
@@ -218,7 +226,15 @@ nav:
           - Padrões e governança da internet: aprender/padroes-e-governanca-da-internet.md
           - Fundações do software livre: aprender/fundacoes-do-software-livre-e-aberto.md
           - Linters de artefato: aprender/linters-de-qualidade-de-artefato.md
-          - commitlint, lychee e Renovate: aprender/commitlint-lychee-e-renovate.md
+          - Validação e policy:
+              - Validação de schema: aprender/qualidade/schema-validation.md
+              - kubeconform: aprender/qualidade/kubeconform.md
+              - Conftest: aprender/qualidade/conftest.md
+          - Ferramentas:
+              - commitlint: aprender/qualidade/commitlint.md
+              - Lychee: aprender/qualidade/lychee.md
+              - Renovate: aprender/renovate-atualizacao-automatica-de-dependencia.md
+              - Mapa legado: aprender/commitlint-lychee-e-renovate.md
           - Smoke tests e checklists: aprender/smoke-test-e-o-limite-da-automacao-de-checklist.md
           - Scripts operacionais defensivos: aprender/padroes-defensivos-de-script-operacional.md
       - Diagnóstico:
