@@ -666,3 +666,5 @@ Separar os projetos torna essa garantia parte da configuração do próprio Argo
 ## Continue por aqui
 
 [Adicionar um satélite novo](../operacional/adicionar-um-satelite.md) aplica essa separação na prática, com o `just` que escreve a `Application`.
+
+<!-- reviewed: argocd -->
