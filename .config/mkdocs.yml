@@ -98,7 +98,14 @@ nav:
               - Rede interna do cluster: aprender/rede-interna-do-cluster.md
               - CNI:
                   - Visão geral: aprender/rede/cni/index.md
-                  - Cilium: aprender/rede/cni/cilium.md
+                  - Fundamentos:
+                      - eBPF: aprender/rede/cni/ebpf.md
+                      - Encapsulamento: aprender/rede/cni/encapsulamento.md
+                      - Roteamento nativo: aprender/rede/cni/native-routing.md
+                  - Cilium:
+                      - Visão geral: aprender/rede/cni/cilium.md
+                      - Hubble: aprender/rede/cni/hubble.md
+                      - Kube-proxy replacement: aprender/rede/cni/kube-proxy-replacement.md
                   - Calico: aprender/rede/cni/calico.md
                   - Cilium e Calico (mapa legado): aprender/cilium-e-calico-como-cni.md
               - Service mesh:
@@ -153,7 +160,16 @@ nav:
               - Visão geral: aprender/seguranca/appsec/index.md
               - SAST:
                   - Visão geral: aprender/seguranca/appsec/sast/index.md
-                  - CodeQL: aprender/seguranca/appsec/sast/codeql.md
+                  - Técnicas:
+                      - Data-flow analysis: aprender/seguranca/appsec/sast/data-flow-analysis.md
+                      - Taint analysis: aprender/seguranca/appsec/sast/taint-analysis.md
+                      - Source: aprender/seguranca/appsec/sast/source.md
+                      - Sink: aprender/seguranca/appsec/sast/sink.md
+                      - Sanitizer: aprender/seguranca/appsec/sast/sanitizer.md
+                      - Análise incremental: aprender/seguranca/appsec/sast/analise-incremental.md
+                      - Baseline: aprender/seguranca/appsec/sast/baseline.md
+                  - Implementações:
+                      - CodeQL: aprender/seguranca/appsec/sast/codeql.md
               - SCA:
                   - Visão geral: aprender/seguranca/appsec/sca/index.md
                   - OSV-Scanner: aprender/seguranca/appsec/sca/osv-scanner.md
@@ -171,6 +187,13 @@ nav:
               - Policy enforcement e Kubescape: aprender/policy-enforcement-e-kubescape.md
           - PKI e confiança:
               - Visão geral: aprender/seguranca/pki/index.md
+              - Modelo de confiança:
+                  - Certificate Authority: aprender/seguranca/pki/ca.md
+                  - Root CA: aprender/seguranca/pki/root-ca.md
+                  - Intermediate CA: aprender/seguranca/pki/intermediate-ca.md
+                  - Cadeia de certificados: aprender/seguranca/pki/certificate-chain.md
+                  - Trust store: aprender/seguranca/pki/trust-store.md
+                  - ACME: aprender/seguranca/pki/acme.md
               - TLS e mTLS: aprender/tls-mtls-e-confianca-de-rede.md
               - TLS automático: aprender/tls-automatico.md
               - step-ca: aprender/seguranca/pki/step-ca.md
@@ -198,6 +221,13 @@ nav:
               - Métricas: aprender/observabilidade/metricas.md
               - Logs: aprender/observabilidade/logs.md
               - Distributed tracing: aprender/observabilidade/tracing.md
+              - Profiling: aprender/observabilidade/profiling.md
+          - Modelos e propriedades:
+              - RED: aprender/observabilidade/red.md
+              - USE: aprender/observabilidade/use.md
+              - Golden signals: aprender/observabilidade/golden-signals.md
+              - Cardinalidade: aprender/observabilidade/cardinalidade.md
+              - Retenção: aprender/observabilidade/retencao.md
               - Sinais e saúde de aplicação: aprender/sinais-de-observabilidade-e-saude-de-aplicacao.md
           - Ferramentas:
               - Prometheus: aprender/observabilidade/prometheus.md
