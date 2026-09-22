@@ -473,39 +473,13 @@ Ele não faz verificação de status dos serviços, porque os nomes internos só
 
 ### Observabilidade
 
-A observabilidade vive em `argocd/apps/platform/monitoring`, um wrapper do kube-prometheus-stack e do blackbox exporter. O Prometheus coleta em intervalo curto e raspa o node-exporter, o kubelet, o kube-state-metrics e o próprio API server.
+A observabilidade continua definida em `argocd/apps/platform/monitoring`, mas está desligada por padrão para preservar CPU e memória no Raspberry Pi. O flag raiz `enabled: false` controla o wrapper Helm inteiro, incluindo o kube-prometheus-stack, o Grafana, o Prometheus, o Alertmanager, os exporters e o blackbox exporter.
 
-Os alvos de etcd, controller manager, scheduler e kube-proxy ficam desligados, porque no k3s eles rodam dentro do mesmo processo e não expõem métricas separadas, e o kube-proxy nem existe com o Cilium no lugar.
+Os templates próprios de `Probe` e `PrometheusRule` também são condicionais. Quando o flag está desligado, eles não são renderizados e o Argo remove os recursos namespaced que pertenciam à stack. A `Application` usa `allowEmpty: true` para autorizar explicitamente esse estado vazio, já que o comportamento padrão do Argo impede uma sincronização que apagaria todos os recursos gerenciados.
 
-Ele descarta na origem os histogramas do API server e do etcd e as métricas do cAdvisor que ninguém consulta.
+A configuração anterior de coleta, retenção, alertas, autenticação do Grafana e sondas permanece nos values para que a stack possa ser reativada alterando apenas `enabled` para `true`. Enquanto estiver desligada, Grafana, Prometheus, Alertmanager e os endpoints internos de monitoramento não ficam disponíveis.
 
-Isso porque só o kubelet e o API server respondiam pela maior parte das séries e o consumo de memória encostava no limite do pod.
-
-O descarte vive nos `metricRelabelings` do `ServiceMonitor` do API server e nos `cAdvisorMetricRelabelings` do kubelet, em regras curtas porque o yamllint limita o tamanho da linha.
-
-Com o descarte em vigor, o limite de memória do pod foi apertado depois de confirmar que o uso real ficava bem abaixo do limite antigo, ainda com folga sobre o consumo observado. A retenção está declarada nos values.
-
-O Grafana fica ligado só para a tailnet, em `grafana.guesant.internal`, autenticando só pelo realm `management` do Keycloak, sem formulário local (`disable_login_form/auto_login`).
-
-Quem está no grupo `admins` entra como Admin, e o `admin` local sobrevive só por baixo, para a API.
-
-Ele não tem persistência, os dashboards e a fonte de dados chegam por `ConfigMap` pelos sidecars, e atualizações, relatórios e cadastro ficam desligados no `grafana.ini`. A sonda de startup é alongada, porque no Raspberry Pi o registro dos plugins no primeiro start demora, e a sonda de liveness padrão o matava antes de responder.
-
-A atualização derruba a instância antiga antes de subir a nova (`maxSurge: 0`) e o limite de memória é mais alto do que o padrão, porque instâncias do Grafana subindo lado a lado estouravam o limite e eram mortas por OOM antes de ficarem prontas.
-
-`Recreate` não serviu porque o server-side apply do Argo recusa trocar o tipo enquanto o `Deployment` vivo ainda carrega o bloco `rollingUpdate`.
-
-O chart gera a senha do administrador aleatoriamente a cada renderização, o que faria o Argo reescrevê-la em todo sync.
-
-A `Application` ignora esse campo do `Secret/kps-grafana` com `RespectIgnoreDifferences`, então a senha criada no primeiro sync fica estável.
-
-Além das regras padrão do chart, `templates/rules.yaml` declara alertas de host (disco, memória, temperatura do SoC, reboot, exporter fora do ar), de volume quase cheio e dos endpoints públicos, que o blackbox exporter testa de fora para dentro, pelo túnel, incluindo a validade do certificado.
-
-Os alvos são o blog, o `www` e o endpoint de descoberta do realm `homelab` no Keycloak, que só responde 200 quando o servidor e o realm estão de pé. O Alertmanager sobe com o receptor vazio do chart: os alertas aparecem na interface dele e na do Prometheus, e o envio para o Discord espera o webhook.
-
-O namespace `monitoring` é o único fora do `kube-system` com Pod Security `privileged`, porque o node-exporter precisa da rede e do sistema de arquivos do host para medir o node.
-
-Todo o resto dele segue as mesmas políticas de admissão dos outros namespaces, e a política de rede do namespace só libera DNS, o API server, as portas do kubelet e do node-exporter no host e HTTPS para fora.
+O namespace `monitoring` e as CRDs do operador podem continuar existindo como infraestrutura declarada, mas não há workloads de observabilidade rodando nele. Isso permite reativar a stack sem recriar os contratos do cluster e elimina o consumo contínuo dos pods de coleta e visualização.
 
 ### Armazenamento
 
