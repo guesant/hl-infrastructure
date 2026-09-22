@@ -200,9 +200,7 @@ O cert-manager usa o campo `image.digest` do próprio chart, e CNPG, sops-secret
 
 Apontar direto para um chart upstream funcionaria, mas obrigaria a incluir o repositório dele em `sourceRepos`, e a partir daí qualquer aplicação do projeto `infra` poderia sincronizar de lá. Manter a lista com um endereço só transforma "de onde este cluster aceita manifesto" numa resposta de uma linha, verificável sem ler cada aplicação.
 
-O app do blog é a exceção com limite de CPU folgado, e não apertado: uma medição mostrou que a cota de meio núcleo segurava a pré-renderização de cada página por tanto tempo quanto o próprio trabalho de renderizar, num node onde nada mais disputa CPU em regime.
-
-O limite subiu para um núcleo inteiro.
+O app do blog separa o frontend do Laravel. O frontend mantém uma réplica com request de `100m` e limite de `200m` de CPU, enquanto o Laravel mantém duas réplicas com request de `25m` e limite de `250m` por pod. Esses valores foram reduzidos depois de conferir o consumo no node único e permitem que o namespace permaneça dentro da cota mesmo com o worker e o scheduler ativos.
 
 Não ficou sem limite porque o namespace `blog` carrega um `LimitRange` que injeta um limite default em todo container sem um declarado.
 
@@ -212,7 +210,7 @@ Um `request` maior que esse default torna o pod inválido na criação, como aco
 
 A sequência explica por que o limite existe mesmo sem concorrência por CPU: ele não está lá para proteger vizinhos, e sim porque o namespace exige que todo contêiner tenha um. Declarar o valor certo é melhor do que herdar o default, que foi escolhido para um workload qualquer e não para um que renderiza página sob demanda.
 
-O `Deployment` do app roda com `strategy.type: Recreate`, porque só existe uma réplica.
+Os `Deployment` do frontend e do Laravel rodam com `strategy.type: Recreate`. O Laravel usa duas réplicas para atender a leitura pública e mantém o PVC compartilhado do cache do currículo, que exige `ReadWriteOnce`; a estratégia evita uma sobreposição de pods durante uma atualização.
 
 O `PVC` de `/data/resume-cache` não suporta dois pods montando o mesmo volume ao mesmo tempo.
 
