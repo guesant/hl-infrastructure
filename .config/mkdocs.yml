@@ -117,6 +117,15 @@ nav:
               - ROA: aprender/rede/roteamento/roa.md
               - uRPF: aprender/rede/roteamento/urpf.md
               - BCP 38: aprender/rede/roteamento/bcp38.md
+          - Service mesh:
+              - Visão geral: aprender/rede/service-mesh/index.md
+              - Arquiteturas:
+                  - Sidecar: aprender/rede/service-mesh/sidecar.md
+                  - Sidecarless: aprender/rede/service-mesh/sidecarless.md
+              - Implementações:
+                  - Istio: aprender/rede/service-mesh/istio.md
+                  - Linkerd: aprender/rede/service-mesh/linkerd.md
+                  - Cilium Service Mesh: aprender/rede/service-mesh/cilium-service-mesh.md
           - Proxies:
               - Visão geral: aprender/rede/proxy/index.md
               - Forward proxy: aprender/rede/proxy/forward-proxy.md
@@ -317,7 +326,17 @@ nav:
               - Cardinalidade: aprender/observabilidade/cardinalidade.md
               - Retenção: aprender/observabilidade/retencao.md
               - Sinais e saúde de aplicação: aprender/sinais-de-observabilidade-e-saude-de-aplicacao.md
-          - Ferramentas:
+          - Qualidade e validação:
+          - Validação declarativa:
+              - Visão geral: aprender/qualidade/validacao/index.md
+              - Schema validation: aprender/qualidade/validacao/schema-validation.md
+              - Policy as code: aprender/qualidade/validacao/policy-as-code.md
+              - kubeconform: aprender/qualidade/validacao/kubeconform.md
+              - Conftest: aprender/qualidade/validacao/conftest.md
+          - Manutenção de repositório:
+              - commitlint: aprender/qualidade/repositorio/commitlint.md
+              - Lychee: aprender/qualidade/repositorio/lychee.md
+      - Ferramentas:
               - Prometheus: aprender/observabilidade/prometheus.md
               - Loki: aprender/observabilidade/loki.md
               - Grafana: aprender/observabilidade/grafana.md
