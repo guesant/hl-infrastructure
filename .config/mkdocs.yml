@@ -243,6 +243,33 @@ nav:
           - Diátaxis: aprender/diataxis.md
           - Avaliar ferramentas de operação: aprender/avaliar-ferramentas-de-operacao.md
           - Certificações de infraestrutura e nuvem: aprender/certificacoes-de-infraestrutura-e-nuvem.md
+      - Cenários e padrões:
+          - Visão geral: aprender/cenarios/index.md
+          - Execução de aplicações:
+              - Single-node: aprender/cenarios/execucao/single-node.md
+              - Pequeno cluster: aprender/cenarios/execucao/pequeno-cluster.md
+              - Quando Kubernetes faz sentido: aprender/cenarios/execucao/quando-kubernetes.md
+      - Composições:
+          - Visão geral: aprender/composicoes/index.md
+          - Kubernetes:
+              - CNI, Service, Gateway e service mesh: aprender/composicoes/kubernetes/rede-e-trafego.md
+          - Entrega:
+              - IaC, configuração e GitOps: aprender/composicoes/entrega/iac-configuracao-gitops.md
+          - Observabilidade:
+              - Pipeline de observabilidade: aprender/composicoes/observabilidade/pipeline.md
+          - Segurança:
+              - Emissão e distribuição de confiança: aprender/composicoes/seguranca/pki.md
+      - Comparações:
+          - Visão geral: aprender/comparacoes/index.md
+          - Plataforma:
+              - Compose, Swarm e Kubernetes: aprender/comparacoes/plataforma/orquestracao.md
+              - Distribuições Kubernetes: aprender/comparacoes/plataforma/distribuicoes-kubernetes.md
+          - Rede:
+              - Cilium e Calico: aprender/comparacoes/rede/cilium-calico.md
+          - Entrega:
+              - Argo CD e Flux: aprender/comparacoes/entrega/argocd-flux.md
+          - IaC:
+              - Terraform, OpenTofu e Pulumi: aprender/comparacoes/iac/declarativo-programavel.md
   - Arquitetura:
       - arquitetura/index.md
       - Bootstrap e entrega:
