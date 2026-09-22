@@ -326,7 +326,15 @@ nav:
               - Cardinalidade: aprender/observabilidade/cardinalidade.md
               - Retenção: aprender/observabilidade/retencao.md
               - Sinais e saúde de aplicação: aprender/sinais-de-observabilidade-e-saude-de-aplicacao.md
-          - Qualidade e validação:
+          - Ferramentas:
+              - Prometheus: aprender/observabilidade/prometheus.md
+              - Loki: aprender/observabilidade/loki.md
+              - Grafana: aprender/observabilidade/grafana.md
+              - Stack Prometheus, Loki e Grafana (mapa legado): aprender/stack-prometheus-loki-grafana.md
+          - Alertas e testes:
+              - Alertas acionáveis e tracing: aprender/alertas-acionaveis-e-distributed-tracing.md
+              - Teste de carga e chaos engineering: aprender/teste-de-carga-e-chaos-engineering.md
+      - Qualidade e validação:
           - Validação declarativa:
               - Visão geral: aprender/qualidade/validacao/index.md
               - Schema validation: aprender/qualidade/validacao/schema-validation.md
@@ -336,14 +344,6 @@ nav:
           - Manutenção de repositório:
               - commitlint: aprender/qualidade/repositorio/commitlint.md
               - Lychee: aprender/qualidade/repositorio/lychee.md
-      - Ferramentas:
-              - Prometheus: aprender/observabilidade/prometheus.md
-              - Loki: aprender/observabilidade/loki.md
-              - Grafana: aprender/observabilidade/grafana.md
-              - Stack Prometheus, Loki e Grafana (mapa legado): aprender/stack-prometheus-loki-grafana.md
-          - Alertas e testes:
-              - Alertas acionáveis e tracing: aprender/alertas-acionaveis-e-distributed-tracing.md
-              - Teste de carga e chaos engineering: aprender/teste-de-carga-e-chaos-engineering.md
       - Dados e mensageria:
           - Visão geral: aprender/dados/index.md
           - Bancos:
