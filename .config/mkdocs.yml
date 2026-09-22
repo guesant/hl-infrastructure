@@ -108,6 +108,15 @@ nav:
               - mDNS: aprender/rede/dns/mdns.md
               - Registro de domínio: aprender/rede/dns/registro-de-dominio.md
               - "DNSSEC, mDNS e registro (mapa legado)": aprender/dnssec-mdns-e-registro-de-dominio.md
+          - Roteamento:
+              - Visão geral: aprender/rede/roteamento/index.md
+              - BGP: aprender/rede/roteamento/bgp.md
+              - Autonomous System: aprender/rede/roteamento/autonomous-system.md
+              - ASN: aprender/rede/roteamento/asn.md
+              - RPKI: aprender/rede/roteamento/rpki.md
+              - ROA: aprender/rede/roteamento/roa.md
+              - uRPF: aprender/rede/roteamento/urpf.md
+              - BCP 38: aprender/rede/roteamento/bcp38.md
           - Conectividade:
               - VPN: aprender/rede/conectividade/vpn.md
               - Túneis: aprender/rede/conectividade/tunel.md
