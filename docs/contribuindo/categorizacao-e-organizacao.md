@@ -30,15 +30,68 @@ Uma página de índice de seção cumpre duas funções ao mesmo tempo, hoje sem
 
 ## Um conceito, uma página
 
-Uma página de Aprender deve tratar de um conceito raiz por vez, aprofundado até o ponto em que uma enciclopédia generalista pararia de detalhar e este projeto continua, com teoria, fundamentação e fonte primária, não um resumo de resumo. Quando duas ferramentas ou abordagens concorrentes acabam descritas na mesma página só porque resolvem o mesmo problema, o sinal de que a página deveria virar três é o mesmo de sempre, um heading que já é assunto suficiente para o próprio título: uma página aprofundada para a primeira ferramenta, uma para a segunda, e uma página de comparação que apresenta as duas lado a lado, aponta as duas páginas aprofundadas, e não repete o conteúdo de nenhuma delas. [Cilium e Calico como CNI](../aprender/cilium-e-calico-como-cni.md) é um caso real desse padrão ainda não aplicado: hoje é uma página só; o critério correto, daqui em diante, é uma página aprofundada por CNI mais uma página de comparação que apresenta os dois e linka as duas.
+Uma página de Aprender trata de uma unidade de conhecimento por vez. Relação entre assuntos não é motivo suficiente para fundi-los. Se dois conceitos, abordagens ou produtos possuem definição, mecanismo, limitações, alternativas ou fontes próprias, cada um merece endereço próprio.
 
-Essa regra vale para páginas novas a partir de agora; não é, sozinha, uma convocação para desmembrar as páginas já publicadas que ainda misturam mais de um conceito. Uma página existente só é dividida quando alguém já está mexendo nela por outro motivo e nota a mistura, ou quando uma revisão dedicada a isso for decidida explicitamente, não como consequência automática desta regra.
+A profundidade não é medida pelo tamanho da página. Uma página pode ser longa quando aprofunda uma única unidade. O problema é largura temática: uma página sobre SAST pode aprofundar análise sintática, semântica, fluxo de dados, taint analysis, falsos positivos e integração no ciclo de desenvolvimento; ela não deve virar, ao mesmo tempo, o manual de CodeQL, Semgrep e SonarQube.
+
+Quando várias implementações pertencem à mesma categoria, use três tipos de página:
+
+1. uma página de categoria ou abordagem, que explica o espaço do problema e relaciona as implementações;
+2. uma página própria para cada implementação relevante;
+3. uma página de comparação quando houver diferenças suficientes para justificar uma análise lado a lado.
+
+A comparação não repete as páginas individuais. Ela explicita dimensões comparáveis, trade-offs, sobreposições, diferenças e critérios de decisão e aponta para os documentos especializados.
+
+A regra se aplica também ao conteúdo já publicado. Uma revisão dedicada de estrutura pode promover headings independentes a páginas próprias e transformar a página original numa página de categoria, comparação ou mapa.
+
+### O que significa aprofundar
+
+Uma página de conceito, abordagem ou ferramenta deve, quando aplicável, responder às perguntas abaixo. Os headings não precisam ser idênticos nem aparecer mecanicamente quando não fizerem sentido.
+
+- O que é?
+- O que não é e quais são suas fronteiras?
+- Qual problema motivou sua existência?
+- Como funciona internamente?
+- Quais abstrações e componentes formam o modelo?
+- Em quais casos de uso é apropriado?
+- Em quais casos não é apropriado?
+- Como aparece em sistemas reais?
+- Qual é um exemplo mínimo que demonstra o mecanismo?
+- Qual é um exemplo realista de produção?
+- Quais são as boas práticas?
+- Quais são as más práticas e anti-patterns?
+- Quais falhas e erros de entendimento são comuns?
+- Quais são seus limites e trade-offs?
+- Quais implicações de segurança, desempenho e operação existem?
+- Quais alternativas existem, gratuitas, abertas, comerciais ou gerenciadas?
+- Como organizações e ambientes enterprise costumam aplicar o conceito?
+- Quais padrões, especificações, RFCs, documentação oficial ou outras fontes primárias sustentam a explicação?
+
+Exemplo não é sinônimo de tutorial. Em Aprender, exemplos existem para tornar um mecanismo observável e concreto. Uma sequência destinada a alterar o cluster real continua pertencendo a Operacional.
+
+Boas práticas também precisam de fundamentação. Evite regras apresentadas como universais quando dependem de contexto. Explique qual risco a prática reduz, quais premissas ela assume e quando a recomendação deixa de fazer sentido. Da mesma forma, uma má prática deve mostrar o modo de falha, e não apenas receber o rótulo de "errada".
+
+### Páginas de categoria e páginas-mapa
+
+Descompactar não significa criar índices vazios. Uma página de categoria explica o mapa conceitual daquele espaço: vocabulário, fronteiras, relações, dimensões de comparação e quando seguir para cada filho.
+
+Por exemplo, uma página de segurança de aplicações pode situar SAST, DAST, SCA e secret scanning sem tentar ensinar profundamente cada técnica. Cada técnica recebe a própria página. Uma página de SAST, por sua vez, pode apontar para CodeQL e outras implementações sem absorver a documentação de cada produto.
+
+Esse padrão permite que o leitor pare no nível de abstração de que precisa: domínio, categoria, abordagem ou implementação.
 
 ## Hierarquia de navegação
 
-A navegação lateral do site é organizada como uma hierarquia de grupos: cada seção principal (Aprender, Arquitetura, Operacional, Referência, Contribuindo) é o primeiro nível, e dentro dela as páginas se agrupam em grupos temáticos, que por sua vez podem se dividir em subgrupos quando um grupo cresce demais para ser escaneado de uma vez. O critério de agrupamento é a ordem de dependência e de aprendizado, do fundamento ao que depende dele, o mesmo critério que já orienta a prosa de cada página de índice, mas com nomes de grupo mais curtos, otimizados para escaneabilidade em vez de leitura corrida. Isso significa que o agrupamento da navegação e o agrupamento em prosa do índice podem divergir em nome ou em nível de detalhe sem que isso seja um problema: um serve para encontrar uma página específica rápido, o outro para entender o assunto em ordem.
+A navegação lateral representa a taxonomia do conhecimento, não apenas uma lista de arquivos. A hierarquia pode seguir, quando fizer sentido:
 
-Um grupo deveria se dividir em subgrupos quando ultrapassa algo como quinze a vinte páginas, o ponto em que uma lista deixa de ser escaneável de uma vez; abaixo disso, um grupo plano continua sendo mais simples de manter do que introduzir um nível a mais de aninhamento sem necessidade real. Um subgrupo não deveria, por sua vez, se dividir de novo; se um subgrupo já dividido ainda cresce demais, o sinal é que a seção inteira precisa de uma nova página de conteúdo em vez de mais um nível de navegação, porque cada nível adicional custa um clique a mais para quem só quer achar uma página.
+`seção → domínio → categoria → abordagem/conceito → ferramenta ou implementação`.
+
+A profundidade não possui um limite artificial de níveis. Um caminho como `Aprender → Segurança → Segurança de aplicações → SAST → CodeQL` é aceitável porque cada nível responde a uma pergunta classificatória diferente. O problema a evitar é nesting sem significado ou categorias que existam apenas para reduzir o número de itens visíveis.
+
+Páginas intermediárias devem ser úteis por si mesmas. Um grupo que representa um conceito real deve preferencialmente possuir uma página-mapa correspondente, em vez de existir somente como rótulo da sidebar.
+
+O filesystem deve acompanhar a taxonomia quando isso tornar a classificação mais previsível. Uma árvore como `aprender/seguranca/appsec/sast/codeql.md` comunica mais do que dezenas de arquivos não relacionados no mesmo diretório. A navegação não precisa reproduzir mecanicamente cada diretório, mas caminho, sidebar e modelo conceitual não devem contradizer uns aos outros.
+
+A ordem dentro de cada categoria segue dependência conceitual: primeiro fundamentos, depois abordagens, implementações, comparações e assuntos avançados. O índice de Aprender continua oferecendo uma trilha em prosa; a sidebar serve principalmente à descoberta e à localização rápida.
 
 ## Continue por aqui
 
