@@ -79,6 +79,35 @@ Por exemplo, uma página de segurança de aplicações pode situar SAST, DAST, S
 
 Esse padrão permite que o leitor pare no nível de abstração de que precisa: domínio, categoria, abordagem ou implementação.
 
+
+### Páginas de cenário, composição e seleção
+
+Uma taxonomia de conceitos não responde sozinha à pergunta operacional anterior à decisão: "dado este contexto, quais famílias de solução fazem sentido e como elas se combinam?". Para isso, Aprender admite três tipos transversais de página que não substituem conceito, ferramenta nem Arquitetura.
+
+**Cenário** parte das restrições, não de um produto. Exemplos: executar serviços em um único host; operar um cluster pequeno; oferecer uma plataforma multi-tenant; manter serviços em edge desconectado. A página descreve requisitos, forças que mudam a decisão, padrões adequados, combinações comuns e sinais de que o cenário evoluiu. Ela pode mostrar "Podman + Quadlet" e "K3s + GitOps" como padrões diferentes para single-node sem declarar um vencedor universal.
+
+**Composição** explica como peças de categorias diferentes conversam. Exemplos: CNI + Gateway API + service mesh; Prometheus + Alertmanager + Grafana; cert-manager + CA + trust distribution; IaC + configuration management + GitOps. O foco é responsabilidade, interface, fluxo, sobreposição e failure domains. Uma composição deve deixar claro quando uma peça é opcional e quando duas ferramentas competem pela mesma responsabilidade.
+
+**Seleção/comparação** parte de alternativas que realmente disputam uma responsabilidade e explicita dimensões de decisão. O documento não escolhe "a melhor ferramenta" em abstrato. Ele relaciona restrições a consequências: número de nós, necessidade de HA, multi-tenancy, equipe, estado persistente, conectividade, recursos de hardware, compliance, custo operacional, ecossistema e caminho de evolução.
+
+Uma recomendação condicional é válida em Aprender quando deriva de premissas explícitas. "Se há um host, poucos serviços e não existe requisito de API Kubernetes, systemd + Podman/Quadlet reduz peças móveis" é uma orientação de cenário. "Este repositório usa K3s porque..." pertence a Arquitetura.
+
+Páginas de cenário devem conter, quando aplicável:
+
+- contexto e premissas;
+- requisitos obrigatórios e desejáveis;
+- forças que alteram a decisão;
+- padrões de solução plausíveis;
+- composição das peças em cada padrão;
+- vantagens e custos de cada padrão naquele contexto;
+- anti-patterns e overengineering;
+- sinais de que o padrão deixou de servir;
+- caminhos de evolução e migração;
+- exemplos realistas;
+- links para conceitos e ferramentas usados.
+
+Uma ferramenta pode aparecer em vários cenários e um cenário pode combinar várias ferramentas. Essa relação muitos-para-muitos é deliberada. A árvore da navegação continua organizando conhecimento por domínio; páginas de cenário criam caminhos transversais sem duplicar a documentação das ferramentas.
+
 ## Hierarquia de navegação
 
 A navegação lateral representa a taxonomia do conhecimento, não apenas uma lista de arquivos. A hierarquia pode seguir, quando fizer sentido:
