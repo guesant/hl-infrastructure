@@ -79,7 +79,6 @@ Por exemplo, uma página de segurança de aplicações pode situar SAST, DAST, S
 
 Esse padrão permite que o leitor pare no nível de abstração de que precisa: domínio, categoria, abordagem ou implementação.
 
-
 ### Páginas de cenário, composição e seleção
 
 Uma taxonomia de conceitos não responde sozinha à pergunta operacional anterior à decisão: "dado este contexto, quais famílias de solução fazem sentido e como elas se combinam?". Para isso, Aprender admite três tipos transversais de página que não substituem conceito, ferramenta nem Arquitetura.
