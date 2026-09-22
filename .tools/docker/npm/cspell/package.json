@@ -2,7 +2,7 @@
   "name": "hl-infra-cspell",
   "private": true,
   "dependencies": {
-    "cspell": "10.3.0",
+    "cspell": "10.3.2",
     "@cspell/dict-pt-br": "2.4.2"
   }
 }
