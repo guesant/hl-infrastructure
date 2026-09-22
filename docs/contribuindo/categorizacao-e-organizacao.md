@@ -151,9 +151,9 @@ Isso cria um grafo sobre a árvore de navegação: cada entidade tem uma página
 
 A navegação lateral representa a taxonomia do conhecimento, não apenas uma lista de arquivos. A hierarquia pode seguir, quando fizer sentido:
 
-`seção → domínio → categoria → abordagem/conceito → ferramenta ou implementação`.
+`seção -> domínio -> categoria -> abordagem/conceito -> ferramenta ou implementação`.
 
-A profundidade não possui um limite artificial de níveis. Um caminho como `Aprender → Segurança → Segurança de aplicações → SAST → CodeQL` é aceitável porque cada nível responde a uma pergunta classificatória diferente. O problema a evitar é nesting sem significado ou categorias que existam apenas para reduzir o número de itens visíveis.
+A profundidade não possui um limite artificial de níveis. Um caminho como `Aprender -> Segurança -> Segurança de aplicações -> SAST -> CodeQL` é aceitável porque cada nível responde a uma pergunta classificatória diferente. O problema a evitar é nesting sem significado ou categorias que existam apenas para reduzir o número de itens visíveis.
 
 Páginas intermediárias devem ser úteis por si mesmas. Um grupo que representa um conceito real deve preferencialmente possuir uma página-mapa correspondente, em vez de existir somente como rótulo da sidebar.
 
