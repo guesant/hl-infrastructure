@@ -60,6 +60,33 @@ nav:
               - systemd: aprender/systemd-units-timers-e-dependencias.md
       - Virtualização e containers:
           - Visão geral: aprender/plataforma/index.md
+          - Containers:
+              - Mapa: aprender/containers/index.md
+              - OCI:
+                  - Visão geral: aprender/containers/oci/index.md
+                  - Image Specification: aprender/containers/oci/image-spec.md
+                  - Distribution Specification: aprender/containers/oci/distribution-spec.md
+                  - Runtime Specification: aprender/containers/oci/runtime-spec.md
+              - Runtimes:
+                  - High-level runtime: aprender/containers/runtimes/high-level-runtime.md
+                  - Low-level runtime: aprender/containers/runtimes/low-level-runtime.md
+                  - CRI: aprender/containers/runtimes/cri.md
+                  - containerd: aprender/containers/runtimes/containerd.md
+                  - CRI-O: aprender/containers/runtimes/cri-o.md
+                  - runc: aprender/containers/runtimes/runc.md
+                  - crun: aprender/containers/runtimes/crun.md
+              - Engines:
+                  - Visão geral: aprender/containers/engines/index.md
+                  - Docker Engine: aprender/containers/engines/docker-engine.md
+                  - Podman: aprender/containers/engines/podman.md
+              - Build:
+                  - Dockerfile: aprender/containers/build/dockerfile.md
+                  - BuildKit: aprender/containers/build/buildkit.md
+                  - Buildah: aprender/containers/build/buildah.md
+              - Distribuição:
+                  - Registry OCI: aprender/containers/distribuicao/registry.md
+                  - Skopeo: aprender/containers/distribuicao/skopeo.md
+              - Compose Specification: aprender/containers/compose/specification.md
           - Máquinas virtuais e hipervisores: aprender/vms-e-hipervisores.md
           - "Isolamento leve: zones, jails e microVMs": aprender/isolamento-leve-zones-jails-e-microvms.md
           - Wine e compatibilidade: aprender/wine-e-compatibilidade.md
@@ -121,6 +148,16 @@ nav:
               - Kubernetes gerenciado e HA: aprender/kubernetes-gerenciado-e-ha-avancada.md
               - Quorum, etcd e datastore K3s: aprender/quorum-etcd-e-datastore-do-k3s.md
           - Recursos e extensibilidade:
+              - Recursos de workload:
+                  - Visão geral: aprender/kubernetes/recursos/index.md
+                  - Requests: aprender/kubernetes/recursos/requests.md
+                  - Limits: aprender/kubernetes/recursos/limits.md
+                  - QoS: aprender/kubernetes/recursos/qos.md
+                  - Liveness probe: aprender/kubernetes/recursos/liveness-probe.md
+                  - Readiness probe: aprender/kubernetes/recursos/readiness-probe.md
+                  - Startup probe: aprender/kubernetes/recursos/startup-probe.md
+                  - PodDisruptionBudget: aprender/kubernetes/recursos/pdb.md
+                  - Graceful shutdown: aprender/kubernetes/recursos/graceful-shutdown.md
               - Namespace: aprender/namespace-do-kubernetes.md
               - Operators: aprender/kubernetes-operators.md
               - Jobs e CronJobs: aprender/jobs-cronjobs-e-securitycontext.md
@@ -194,7 +231,15 @@ nav:
                   - Cadeia de certificados: aprender/seguranca/pki/certificate-chain.md
                   - Trust store: aprender/seguranca/pki/trust-store.md
                   - ACME: aprender/seguranca/pki/acme.md
-              - TLS e mTLS: aprender/tls-mtls-e-confianca-de-rede.md
+              - TLS:
+                  - Visão geral: aprender/seguranca/tls/index.md
+                  - TLS 1.3: aprender/seguranca/tls/tls13.md
+                  - mTLS: aprender/seguranca/tls/mtls.md
+                  - SNI: aprender/seguranca/tls/sni.md
+                  - TLS termination: aprender/seguranca/tls/termination.md
+                  - TLS passthrough: aprender/seguranca/tls/passthrough.md
+                  - Forward secrecy: aprender/seguranca/tls/forward-secrecy.md
+                  - Mapa legado: aprender/tls-mtls-e-confianca-de-rede.md
               - TLS automático: aprender/tls-automatico.md
               - step-ca: aprender/seguranca/pki/step-ca.md
               - trust-manager: aprender/seguranca/pki/trust-manager.md
@@ -213,7 +258,16 @@ nav:
               - OWASP: aprender/owasp.md
               - Frameworks de compliance: aprender/frameworks-de-compliance.md
           - Supply chain:
-              - Supply chain e SBOM: aprender/supply-chain-e-sbom.md
+              - Visão geral: aprender/seguranca/supply-chain/index.md
+              - SBOM: aprender/seguranca/supply-chain/sbom.md
+              - SPDX: aprender/seguranca/supply-chain/spdx.md
+              - CycloneDX: aprender/seguranca/supply-chain/cyclonedx.md
+              - VEX: aprender/seguranca/supply-chain/vex.md
+              - Proveniência: aprender/seguranca/supply-chain/provenance.md
+              - Atestação: aprender/seguranca/supply-chain/attestation.md
+              - Assinatura de artefatos: aprender/seguranca/supply-chain/artifact-signing.md
+              - Checksum: aprender/seguranca/supply-chain/checksum.md
+              - Mapa legado: aprender/supply-chain-e-sbom.md
               - Renovate: aprender/renovate-atualizacao-automatica-de-dependencia.md
       - Observabilidade:
           - Visão geral: aprender/observabilidade/index.md
@@ -248,7 +302,16 @@ nav:
               - Event streaming: aprender/dados/mensageria/event-streaming.md
               - Mapa legado: aprender/filas-e-streaming-de-eventos.md
       - Backup e recuperação:
-          - Fundamentos, RPO e RTO: aprender/fundamentos-de-backup-rpo-e-rto.md
+          - Visão geral: aprender/confiabilidade/backup/index.md
+          - Backup: aprender/confiabilidade/backup/backup.md
+          - Snapshot: aprender/confiabilidade/backup/snapshot.md
+          - Replicação: aprender/confiabilidade/backup/replicacao.md
+          - RPO: aprender/confiabilidade/backup/rpo.md
+          - RTO: aprender/confiabilidade/backup/rto.md
+          - Retenção: aprender/confiabilidade/backup/retencao.md
+          - Teste de restauração: aprender/confiabilidade/backup/teste-de-restauracao.md
+          - Velero: aprender/confiabilidade/backup/velero.md
+          - Fundamentos, RPO e RTO (mapa legado): aprender/fundamentos-de-backup-rpo-e-rto.md
           - Retenção, testes e Velero: aprender/retencao-testes-e-velero.md
           - Backup de etcd, CNPG e age: aprender/backup-do-etcd-cnpg-e-chave-age.md
           - Reconstrução single-node e segredos: aprender/reconstrucao-de-cluster-single-node-e-recuperacao-de-segredos.md
