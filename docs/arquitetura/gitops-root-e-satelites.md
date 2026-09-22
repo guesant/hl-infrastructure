@@ -200,7 +200,7 @@ O cert-manager usa o campo `image.digest` do próprio chart, e CNPG, sops-secret
 
 Apontar direto para um chart upstream funcionaria, mas obrigaria a incluir o repositório dele em `sourceRepos`, e a partir daí qualquer aplicação do projeto `infra` poderia sincronizar de lá. Manter a lista com um endereço só transforma "de onde este cluster aceita manifesto" numa resposta de uma linha, verificável sem ler cada aplicação.
 
-O app do blog separa o frontend do Laravel. O frontend mantém uma réplica com request de `100m` e limite de `200m` de CPU, enquanto o Laravel mantém duas réplicas com request de `25m` e limite de `250m` por pod. Esses valores foram reduzidos depois de conferir o consumo no node único e permitem que o namespace permaneça dentro da cota mesmo com o worker e o scheduler ativos.
+O app do blog separa o frontend do Laravel. O frontend mantém uma réplica com request de `100m` e limite de `200m` de CPU, enquanto o Laravel mantém duas réplicas com request de `50m` e limite de `750m` por pod. O worker tem limite de `400m` e o scheduler tem limite de `200m`. A quota do namespace reserva `3000m` de limite de CPU para acomodar a carga observada sem alterar a memória.
 
 Não ficou sem limite porque o namespace `blog` carrega um `LimitRange` que injeta um limite default em todo container sem um declarado.
 
