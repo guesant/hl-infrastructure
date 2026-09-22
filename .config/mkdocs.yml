@@ -239,10 +239,6 @@ nav:
           - Scripts operacionais defensivos: aprender/padroes-defensivos-de-script-operacional.md
       - Diagnóstico:
           - Diagnóstico profundo com iperf3, tcpdump e strace: aprender/diagnostico-profundo-iperf3-tcpdump-e-strace.md
-      - Estudo e documentação:
-          - Diátaxis: aprender/diataxis.md
-          - Avaliar ferramentas de operação: aprender/avaliar-ferramentas-de-operacao.md
-          - Certificações de infraestrutura e nuvem: aprender/certificacoes-de-infraestrutura-e-nuvem.md
       - Cenários e padrões:
           - Visão geral: aprender/cenarios/index.md
           - Execução de aplicações:
@@ -270,6 +266,10 @@ nav:
               - Argo CD e Flux: aprender/comparacoes/entrega/argocd-flux.md
           - IaC:
               - Terraform, OpenTofu e Pulumi: aprender/comparacoes/iac/declarativo-programavel.md
+      - Estudo e documentação:
+          - Diátaxis: aprender/diataxis.md
+          - Avaliar ferramentas de operação: aprender/avaliar-ferramentas-de-operacao.md
+          - Certificações de infraestrutura e nuvem: aprender/certificacoes-de-infraestrutura-e-nuvem.md
   - Arquitetura:
       - arquitetura/index.md
       - Bootstrap e entrega:
