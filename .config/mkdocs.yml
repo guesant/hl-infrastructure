@@ -123,13 +123,24 @@ nav:
           - Backup do etcd, do CloudNativePG e da chave age: aprender/backup-do-etcd-cnpg-e-chave-age.md
           - Reconstrução de cluster single-node e recuperação de segredos: aprender/reconstrucao-de-cluster-single-node-e-recuperacao-de-segredos.md
       - CI/CD, segurança e qualidade:
-          - Segurança de código e supply chain:
-              - "CI/CD": aprender/ci-cd.md
-              - Scanning de vulnerabilidade: aprender/vulnerability-scanning.md
+          - Segurança:
+              - Visão geral: aprender/seguranca/index.md
+              - Segurança de aplicações:
+                  - Visão geral: aprender/seguranca/appsec/index.md
+                  - SAST:
+                      - Visão geral: aprender/seguranca/appsec/sast/index.md
+                      - CodeQL: aprender/seguranca/appsec/sast/codeql.md
+                  - SCA:
+                      - Visão geral: aprender/seguranca/appsec/sca/index.md
+                      - OSV-Scanner: aprender/seguranca/appsec/sca/osv-scanner.md
+                  - DAST: aprender/seguranca/appsec/dast.md
+                  - Secret scanning: aprender/seguranca/appsec/secret-scanning/index.md
+              - Segurança de CI/CD:
+                  - zizmor: aprender/seguranca/cicd/zizmor.md
+              - Scanning de vulnerabilidade (mapa legado): aprender/vulnerability-scanning.md
               - Supply chain e SBOM: aprender/supply-chain-e-sbom.md
               - Pinagem por digest e hash em cada ecossistema: aprender/pinagem-por-digest-e-hash.md
               - Threat modeling: aprender/threat-modeling.md
-              - CodeQL e zizmor: aprender/codeql-e-zizmor.md
               - kubeconform e conftest: aprender/kubeconform-e-conftest.md
           - Segredos e confiança zero:
               - Criptografia de segredos no Git: aprender/criptografia-de-segredos-no-git.md
