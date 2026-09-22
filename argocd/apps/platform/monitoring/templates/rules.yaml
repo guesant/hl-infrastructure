@@ -1,3 +1,4 @@
+{{- if .Values.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -68,3 +69,4 @@ spec:
             severity: warning
           annotations:
             summary: "{{`{{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }}`}} has less than 15% free"
+{{- end }}
