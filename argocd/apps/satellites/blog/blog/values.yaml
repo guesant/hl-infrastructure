@@ -120,7 +120,7 @@ laravel:
   worker:
     enabled: true
     replicas: 1
-    queues: default,open-graph
+    queues: default
     resources:
       requests:
         cpu: 50m
@@ -129,7 +129,7 @@ laravel:
         cpu: 400m
         memory: 128Mi
   scheduler:
-    enabled: true
+    enabled: false
     replicas: 1
     resources:
       requests:
