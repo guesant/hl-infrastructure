@@ -5,7 +5,7 @@ metadata:
   namespace: blog
 spec:
   hard:
-    requests.cpu: 500m
+    requests.cpu: 550m
     requests.memory: 1100Mi
-    limits.cpu: 3200m
+    limits.cpu: 3400m
     limits.memory: 2200Mi
