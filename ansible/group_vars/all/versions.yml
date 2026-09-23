@@ -4,6 +4,6 @@ helm_version: v4.3.0
 cilium_version: 1.20.1
 cilium_chart_sha256: 06210eef7c23d15f7699c79e2fe3a1ec9c389024c5c5c006ea04022d322449a2
 cilium_cli_version: v0.20.0
-argocd_chart_version: 10.9.0
+argocd_chart_version: 10.9.1
 argocd_chart_sha256: 3d457160c878eb0036b7677176091ff958036f6afd08d359c063f285984e9fec
 kube_bench_version: v0.16.0
