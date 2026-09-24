@@ -58,6 +58,8 @@ nav:
               - Famílias e padrões Unix: aprender/unix-familias-e-padroes.md
               - Shells e scripts: aprender/shells-e-scripts.md
               - Coreutils e documentação: aprender/coreutils-e-documentacao.md
+              - GNU Coreutils: aprender/sistemas/linux/coreutils.md
+              - Documentação de comandos: aprender/sistemas/linux/documentacao.md
               - systemd:
                   - Visão geral: aprender/systemd-units-timers-e-dependencias.md
                   - Unit: aprender/sistemas/systemd/unit.md
@@ -211,6 +213,7 @@ nav:
                   - Cilium Service Mesh: aprender/rede/service-mesh/cilium-service-mesh.md
           - Proxies:
               - Visão geral: aprender/rede/proxy/index.md
+              - Squid: aprender/rede/proxy/squid.md
               - Forward proxy: aprender/rede/proxy/forward-proxy.md
               - Reverse proxy: aprender/rede/proxy/reverse-proxy.md
               - Host-based routing: aprender/rede/proxy/host-routing.md
@@ -283,10 +286,17 @@ nav:
               - Ingress: aprender/kubernetes/networking/ingress.md
               - CNI: aprender/kubernetes/networking/cni.md
               - kube-proxy: aprender/kubernetes/networking/kube-proxy.md
-              - Gateway API: aprender/gateway-api.md
+              - Gateway API:
+                  - Visão geral: aprender/gateway-api.md
+                  - GatewayClass: aprender/rede/gateway-api/gateway-class.md
+                  - Gateway: aprender/rede/gateway-api/gateway.md
+                  - HTTPRoute: aprender/rede/gateway-api/http-route.md
           - Scheduling:
-              - Taints e tolerations: aprender/kubernetes/scheduling/taints-tolerations.md
-              - Affinity e anti-affinity: aprender/kubernetes/scheduling/affinity.md
+              - Taints:
+                  - Visão geral: aprender/kubernetes/scheduling/taints-tolerations.md
+                  - Taints: aprender/kubernetes/scheduling/taints.md
+                  - Tolerations: aprender/kubernetes/scheduling/tolerations.md
+              - Affinity: aprender/kubernetes/scheduling/affinity.md
               - Topology spread constraints: aprender/kubernetes/scheduling/topology-spread.md
           - Workloads batch:
               - Job: aprender/kubernetes/workloads/job.md
@@ -340,7 +350,10 @@ nav:
               - Modelo de armazenamento: aprender/modelo-de-armazenamento-do-kubernetes.md
               - Armazenamento local, distribuído e Longhorn: aprender/armazenamento-local-distribuido-e-longhorn.md
           - Empacotamento:
-              - Helm e charts: aprender/helm-e-charts.md
+              - Helm:
+                  - Visão geral: aprender/containers/packaging/helm.md
+                  - Chart: aprender/containers/packaging/chart.md
+                  - Mapa legado: aprender/helm-e-charts.md
               - Templating de listas: aprender/helm-templating-de-lista.md
           - Operação:
               - Manutenção de nó: aprender/manutencao-de-no-cordon-drain-e-disco.md
@@ -373,32 +386,36 @@ nav:
               - Foreman: aprender/provisionamento/foreman.md
           - Configuração de frotas: aprender/entregar-configuracao-a-uma-frota-de-hosts.md
           - SSH: aprender/ssh.md
-      - Entrega e GitOps:
-          - Visão geral: aprender/entrega/index.md
-          - GitOps: aprender/entrega/gitops.md
-          - Reconciliação: aprender/entrega/reconciliation.md
-          - Entrega pull-based: aprender/entrega/pull-based-delivery.md
-          - Entrega push-based: aprender/entrega/push-based-delivery.md
-          - Drift em GitOps: aprender/entrega/drift.md
-          - Sync, prune e self-heal: aprender/entrega/sync-prune-self-heal.md
-          - Argo CD:
-              - Visão geral: aprender/argocd.md
-              - Tutorial completo: aprender/entrega/argocd-tutorial.md
-          - Recursos Argo CD:
-              - Application: aprender/entrega/application.md
-              - AppProject: aprender/entrega/appproject.md
-              - ApplicationSet: aprender/entrega/applicationset.md
-              - App of apps: aprender/entrega/app-of-apps.md
-          - Flux: aprender/entrega/flux.md
-          - Kargo:
-              - Visão geral: aprender/entrega/kargo.md
-              - Tutorial completo: aprender/entrega/kargo-tutorial.md
-          - CI/CD: aprender/ci-cd.md
-          - Entrega progressiva:
-              - Canary: aprender/entrega/progressiva/canary.md
-              - Blue-green: aprender/entrega/progressiva/blue-green.md
-              - Argo Rollouts: aprender/entrega/progressiva/argo-rollouts.md
-          - Feature flags: aprender/feature-flags.md
+          - Entrega e GitOps:
+              - Visão geral: aprender/entrega/index.md
+              - GitOps: aprender/entrega/gitops.md
+              - Reconciliação: aprender/entrega/reconciliation.md
+              - Entrega pull-based: aprender/entrega/pull-based-delivery.md
+              - Entrega push-based: aprender/entrega/push-based-delivery.md
+              - Drift em GitOps: aprender/entrega/drift.md
+              - Sync, prune e self-heal: aprender/entrega/sync-prune-self-heal.md
+              - Argo CD:
+                  - Visão geral: aprender/argocd.md
+                  - Tutorial completo: aprender/entrega/argocd-tutorial.md
+              - Recursos Argo CD:
+                  - Application: aprender/entrega/application.md
+                  - AppProject: aprender/entrega/appproject.md
+                  - ApplicationSet: aprender/entrega/applicationset.md
+                  - App of apps: aprender/entrega/app-of-apps.md
+              - Flux: aprender/entrega/flux.md
+              - Kargo:
+                  - Visão geral: aprender/entrega/kargo.md
+                  - Tutorial completo: aprender/entrega/kargo-tutorial.md
+              - CI/CD: aprender/ci-cd.md
+              - GitLab Runner:
+                  - Docker executor: aprender/ci/gitlab-runner/docker-executor.md
+                  - Kubernetes executor: aprender/ci/gitlab-runner/kubernetes-executor.md
+                  - Cache: aprender/ci/gitlab-runner/cache.md
+              - Entrega progressiva:
+                  - Canary: aprender/entrega/progressiva/canary.md
+                  - Blue-green: aprender/entrega/progressiva/blue-green.md
+                  - Argo Rollouts: aprender/entrega/progressiva/argo-rollouts.md
+              - Feature flags: aprender/feature-flags.md
       - Segurança:
           - Visão geral: aprender/seguranca/index.md
           - Segurança de aplicações:
@@ -440,7 +457,10 @@ nav:
               - Visão geral: aprender/seguranca/iac/index.md
               - Checkov: aprender/seguranca/iac/checkov.md
               - KubeLinter: aprender/seguranca/iac/kubelinter.md
-              - Policy enforcement e Kubescape: aprender/policy-enforcement-e-kubescape.md
+              - Policy enforcement:
+                  - Visão geral: aprender/seguranca/iac/policy-enforcement.md
+                  - Kubescape: aprender/seguranca/iac/kubescape.md
+                  - Mapa legado: aprender/policy-enforcement-e-kubescape.md
           - PKI e confiança:
               - Visão geral: aprender/seguranca/pki/index.md
               - Certificado X.509: aprender/seguranca/pki/certificate.md
@@ -539,6 +559,7 @@ nav:
               - Cardinalidade: aprender/observabilidade/cardinalidade.md
               - Retenção: aprender/observabilidade/retencao.md
               - Sinais e saúde de aplicação: aprender/sinais-de-observabilidade-e-saude-de-aplicacao.md
+              - Saúde de aplicação: aprender/observabilidade/application-health.md
           - Ferramentas:
               - Prometheus:
                   - Visão geral: aprender/observabilidade/prometheus.md
@@ -556,7 +577,8 @@ nav:
               - Sentry: aprender/observabilidade/sentry.md
               - Stack Prometheus, Loki e Grafana (mapa legado): aprender/stack-prometheus-loki-grafana.md
           - Alertas e testes:
-              - Alertas acionáveis e tracing: aprender/alertas-acionaveis-e-distributed-tracing.md
+              - Alertas acionáveis: aprender/observabilidade/alertas-acionaveis.md
+              - Composição de alertas e tracing: aprender/alertas-acionaveis-e-distributed-tracing.md
       - Qualidade e validação:
           - Validação declarativa:
               - Visão geral: aprender/qualidade/validacao/index.md
@@ -571,6 +593,8 @@ nav:
               - jscpd: aprender/qualidade/repositorio/jscpd.md
       - Dados e mensageria:
           - Visão geral: aprender/dados/index.md
+          - Armazenamento de objetos:
+              - Silo: aprender/dados/armazenamento-objetos/silo.md
           - Bancos:
               - Chave-valor: aprender/dados/bancos/key-value.md
               - Documentos: aprender/dados/bancos/documentos.md
@@ -598,6 +622,9 @@ nav:
           - Velero: aprender/confiabilidade/backup/velero.md
           - Retenção, testes e Velero: aprender/retencao-testes-e-velero.md
           - Backup de etcd, CNPG e age: aprender/backup-do-etcd-cnpg-e-chave-age.md
+          - Backup do etcd: aprender/confiabilidade/backup/etcd.md
+          - Backup do CloudNativePG: aprender/confiabilidade/backup/cloudnative-pg.md
+          - Backup da chave age: aprender/seguranca/secrets/age-key-backup.md
           - Reconstrução single-node e segredos: aprender/reconstrucao-de-cluster-single-node-e-recuperacao-de-segredos.md
       - Qualidade e governança:
           - Padrões e governança da internet: aprender/padroes-e-governanca-da-internet.md
@@ -684,6 +711,8 @@ nav:
               - IaC, configuração e GitOps: aprender/composicoes/entrega/iac-configuracao-gitops.md
           - Observabilidade:
               - Pipeline de observabilidade: aprender/composicoes/observabilidade/pipeline.md
+          - CI:
+              - Cache de GitLab Runner: aprender/composicoes/ci/gitlab-runner-cache.md
           - Segurança:
               - Emissão e distribuição de confiança: aprender/composicoes/seguranca/pki.md
       - Comparações:
@@ -693,6 +722,7 @@ nav:
               - Distribuições Kubernetes: aprender/comparacoes/plataforma/distribuicoes-kubernetes.md
           - Rede:
               - Cilium e Calico: aprender/comparacoes/rede/cilium-calico.md
+              - Ingress e Gateway API: aprender/comparacoes/rede/ingress-gateway-api.md
               - Istio, Linkerd e Cilium Service Mesh: aprender/comparacoes/rede/service-mesh.md
           - Entrega:
               - Argo CD e Flux: aprender/comparacoes/entrega/argocd-flux.md
