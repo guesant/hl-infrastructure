@@ -1,0 +1,27 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: portfolio
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+spec:
+  cluster:
+    name: postgres
+  name: portfolio
+  owner: portfolio
+  databaseReclaimPolicy: retain
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: keycloak
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+spec:
+  cluster:
+    name: postgres
+  name: keycloak
+  owner: keycloak
+  databaseReclaimPolicy: retain

@@ -1,0 +1,31 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: DatabaseRole
+metadata:
+  name: portfolio
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+spec:
+  cluster:
+    name: postgres
+  name: portfolio
+  login: true
+  passwordSecret:
+    name: portfolio-postgres-app
+  databaseRoleReclaimPolicy: retain
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: DatabaseRole
+metadata:
+  name: keycloak
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+spec:
+  cluster:
+    name: postgres
+  name: keycloak
+  login: true
+  passwordSecret:
+    name: keycloak-postgres-app
+  databaseRoleReclaimPolicy: retain

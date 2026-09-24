@@ -43,3 +43,13 @@ spec:
               protocol: TCP
             - port: "9187"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: data
+            cnpg.io/cluster: postgres
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+            - port: "9187"
+              protocol: TCP

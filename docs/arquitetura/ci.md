@@ -93,7 +93,7 @@ Nenhum job instala nada no runner. Cada ferramenta é um stage de [.tools/docker
 
 A action termina rodando o comando de versão da ferramenta dentro da imagem, antes de qualquer scan: uma imagem quebrada aparece como imagem quebrada, e não como um lint que passou verde porque não rodou nada.
 
-Localmente o `justfile` faz o mesmo, taggeando cada imagem pelo hash do Dockerfile e pulando o build quando a tag já existe.
+Localmente o `justfile` faz o mesmo, taggeando cada imagem pelo hash do Dockerfile e pulando o build quando a tag já existe. A receita `infra-render-charts` renderiza todos os charts locais, inclusive os preparatórios que ainda aguardam uma promoção operacional explícita.
 
 O stage `ops` reúne `sops/age/age-plugin-se/kubectl/jq/yq` numa única imagem Alpine.
 

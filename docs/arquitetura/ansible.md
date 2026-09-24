@@ -149,7 +149,9 @@ Se o node ainda não está na tailnet e `tailscale_auth_key` ainda é o valor de
 
 Com a chave, ela escreve o valor num arquivo em tmpfs com modo 600 e roda `tailscale up --auth-key=file:...`, para o segredo nunca aparecer na lista de processos, e apaga o arquivo mesmo se o comando falhar.
 
-Num node já ligado, `tailscale set` reaplica as preferências declaradas: hostname e as flags `--accept-dns=false / --accept-routes=false`, a primeira para o tailscaled não reescrever o resolv.conf do node.
+Num node já ligado, `tailscale set` reaplica as preferências declaradas: `--hostname={{ tailscale_hostname }}` e as flags `--accept-dns=false / --accept-routes=false`, a primeira para o tailscaled não reescrever o resolv.conf do node.
+
+O hostname do node não vem de `hostnamectl set-hostname` numa role própria de sistema operacional; é essa reconciliação da role `tailscale` que declara o valor final, porque é o nome pelo qual o node precisa responder na tailnet e no split DNS interno.
 
 A role só reporta mudança quando o `tailscale debug prefs` de antes e de depois diferem.
 
@@ -469,7 +471,16 @@ Sem isso, um `just bootstrap-check` que primeiro encontra `argocd_reconcile/cili
 
 O detalhe só aparece quando o atalho por hash não dispara, o que faz dele um caso fácil de quebrar sem perceber numa mudança futura.
 
-`maintenance` deixa agendado no node um journal persistente em disco, a imagem do Raspberry Pi OS o deixa só em memória, com teto de tamanho, piso de espaço livre e prazo de retenção declarados na própria role.
+`maintenance` deixa agendado no node um journal persistente em disco, a imagem do Raspberry Pi OS o deixa só em memória, com teto de tamanho, piso de espaço livre e prazo de retenção declarados num drop-in próprio.
+
+O drop-in fica em `/etc/systemd/journald.conf.d/50-cap.conf`, resumido na tabela abaixo.
+
+| Campo do drop-in | Valor |
+| --- | --- |
+| `Storage` | `persistent` |
+| `SystemMaxUse` | `500M` |
+| `SystemKeepFree` | `1G` |
+| `MaxRetentionSec` | `1month` |
 
 Um timer semanal (`hl-gc.timer`, domingo de madrugada) apaga ReplicaSets com zero réplicas, remove imagens de contêiner sem uso com `crictl rmi --prune` e imprime o espaço em disco.
 

@@ -332,6 +332,15 @@ A conexão com o banco vem do `Secret/keycloak-postgres-app` que o CNPG gera par
 
 Esse `Cluster` fica em `argocd/apps/data/keycloak-postgres`.
 
+Esse Secret não vem de um recurso `Database` do CNPG nem de `managed.roles` declarados à parte, o caminho recomendado pela documentação oficial para não reaproveitar a credencial de superusuário. O cluster já declara o dono do banco no próprio bootstrap inicial, e o operador cria usuário, banco e o Secret correspondente nesse mesmo passo, sem outro objeto para manter. O cluster do blog segue o mesmo caminho, com outro dono e outro Secret, listados na tabela abaixo.
+
+| Cluster CNPG | Dono do banco | Secret gerado |
+| --- | --- | --- |
+| `postgres` (blog) | `portfolio` | `postgres-app` |
+| `keycloak-postgres` | `keycloak` | `keycloak-postgres-app` |
+
+Os dois clusters declaram `instances: 1`. O failover do operador não se aplica aqui: não há réplica para promover quando a primária cai. A proteção que sobra é o reinício automático do pod pelo Kubernetes sobre o mesmo volume, que sobrevive pela retenção do provisionador, não por existir uma segunda cópia do dado. Um segundo nó mudaria esse cálculo: com um nó só, mais instâncias protegeriam o processo, não o host onde o volume mora.
+
 As variáveis `KC_HOSTNAME/KC_HOSTNAME_ADMIN` separam o nome público do console de administração.
 
 O nome público é `auth.guesant.net`, e o console é `keycloak.guesant.internal`.

@@ -329,7 +329,7 @@ lint-domain-expiry: (_build-ops)
 quality-jscpd: (_build "jscpd")
     {{run}} hl-infra/jscpd:{{tools_hash}} jscpd --config .config/jscpd.json
 
-[doc("Render the six Helm charts into .build/rendered/")]
+[doc("Render the Helm charts into .build/rendered/")]
 infra-render-charts: _build-helm
     mkdir -p {{justfile_directory()}}/.build
     {{run}} --entrypoint bash {{helm_image}} .tools/render-charts.sh

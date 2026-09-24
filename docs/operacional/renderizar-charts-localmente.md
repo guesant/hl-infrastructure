@@ -20,7 +20,7 @@ Os downloads dos charts têm retries limitados para absorver falhas transitória
 
 Um digest que não bate aborta a renderização com a instrução de revisar o chart antes de atualizar o valor em `versions.yml`, em vez de seguir e produzir manifestos a partir de um tarball diferente do que o node instalaria.
 
-Praticamente todo o resto vem direto da fonte local, sem depender de repositório Helm nem de versão vinda de versions.yml: os wrappers de `argocd/apps/operators/` e `argocd/apps/platform/` (inclusive os que não embrulham chart upstream nenhum, como o StatefulSet do Keycloak, renderizados só a partir dos próprios templates), mais os charts de satélite listados abaixo.
+Praticamente todo o resto vem direto da fonte local, sem depender de repositório Helm nem de versão vinda de versions.yml: os wrappers de `argocd/apps/operators/` e `argocd/apps/platform/` (inclusive os que não embrulham chart upstream nenhum, como o StatefulSet do Keycloak, renderizados só a partir dos próprios templates), o chart preparatório `argocd/apps/data/shared-postgres` e os charts de satélite listados abaixo.
 
 | Caminho | O que faz |
 | --- | --- |

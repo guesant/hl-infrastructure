@@ -72,6 +72,9 @@ helm template monitoring "$repo_root/argocd/apps/platform/monitoring" \
 helm template keycloak-postgres "$repo_root/argocd/apps/data/keycloak-postgres" \
   --namespace keycloak >"$out_dir/keycloak-postgres.yaml"
 
+helm template shared-postgres "$repo_root/argocd/apps/data/shared-postgres" \
+  --namespace data >"$out_dir/shared-postgres.yaml"
+
 helm template keycloak "$repo_root/argocd/apps/platform/keycloak" \
   --namespace keycloak >"$out_dir/keycloak.yaml"
 

@@ -774,6 +774,8 @@ nav:
           - "GitOps: root e satélites": arquitetura/gitops-root-e-satelites.md
           - Rollout de imagens: arquitetura/rollout-de-imagens.md
           - A pipeline de CI: arquitetura/ci.md
+      - Dados:
+          - PostgreSQL compartilhado: arquitetura/postgresql-compartilhado.md
       - Rede e terceiros:
           - "OpenTofu: a camada da Cloudflare": arquitetura/opentofu.md
           - "Tailscale: acesso remoto e DNS interno": arquitetura/tailscale.md

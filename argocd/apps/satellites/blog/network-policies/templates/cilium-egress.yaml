@@ -33,6 +33,10 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: blog
+            cnpg.io/cluster: postgres
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: data
             cnpg.io/cluster: postgres
       toPorts:
         - ports:
