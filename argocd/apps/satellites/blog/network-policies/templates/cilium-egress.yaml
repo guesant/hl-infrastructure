@@ -30,7 +30,7 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: app
-    egress:
+  egress:
     - toEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: data
