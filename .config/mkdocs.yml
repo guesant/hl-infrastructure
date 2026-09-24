@@ -162,6 +162,10 @@ nav:
           - Ninja: aprender/build/ninja.md
           - LLVM: aprender/build/llvm.md
           - justfile: aprender/just-executor-de-tarefas.md
+      - Web e compatibilidade:
+          - Visão geral: aprender/web/index.md
+          - MDN Web Docs: aprender/web/mdn.md
+          - Can I Use: aprender/web/caniuse.md
       - Redes:
           - Visão geral: aprender/rede/index.md
           - Fundamentos:
@@ -459,6 +463,7 @@ nav:
                   - TLS termination: aprender/seguranca/tls/termination.md
                   - TLS passthrough: aprender/seguranca/tls/passthrough.md
                   - Forward secrecy: aprender/seguranca/tls/forward-secrecy.md
+                  - Fingerprinting de TLS e HTTP: aprender/seguranca/tls/fingerprinting.md
               - Revogação:
                   - Visão geral: aprender/seguranca/pki/revocation.md
                   - OCSP: aprender/seguranca/pki/ocsp.md
@@ -607,6 +612,8 @@ nav:
               - tcpdump: aprender/ferramentas/diagnostico/tcpdump.md
               - termshark: aprender/ferramentas/diagnostico/termshark.md
               - strace: aprender/ferramentas/diagnostico/strace.md
+              - tls.peet.ws: aprender/ferramentas/diagnostico/tls-peet-ws.md
+              - TrackMe: aprender/ferramentas/diagnostico/trackme.md
           - "Composição: iperf3, tcpdump e strace": aprender/diagnostico-profundo-iperf3-tcpdump-e-strace.md
           - Ferramentas:
               - Dados estruturados:
