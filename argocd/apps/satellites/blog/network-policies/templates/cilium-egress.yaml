@@ -30,11 +30,8 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: app
-  egress:
+    egress:
     - toEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: blog
-            cnpg.io/cluster: postgres
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: data
             cnpg.io/cluster: postgres
@@ -132,16 +129,3 @@ spec:
               protocol: UDP
             - port: "443"
               protocol: TCP
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: postgres-egress
-  namespace: blog
-spec:
-  endpointSelector:
-    matchLabels:
-      cnpg.io/cluster: postgres
-  egress:
-    - toEntities:
-        - kube-apiserver

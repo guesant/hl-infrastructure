@@ -32,9 +32,6 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: keycloak
-            cnpg.io/cluster: keycloak-postgres
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: data
             cnpg.io/cluster: postgres
       toPorts:
