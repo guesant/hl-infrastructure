@@ -168,6 +168,11 @@ nav:
           - Visão geral: aprender/web/index.md
           - MDN Web Docs: aprender/web/mdn.md
           - Can I Use: aprender/web/caniuse.md
+      - Portais e dashboards:
+          - Visão geral: aprender/portais/index.md
+          - Dashy: aprender/portais/dashy.md
+          - Homarr: aprender/portais/homarr.md
+          - Homepage: aprender/portais/homepage.md
       - Redes:
           - Visão geral: aprender/rede/index.md
           - Fundamentos:
