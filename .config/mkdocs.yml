@@ -158,6 +158,13 @@ nav:
           - GitOps para Podman: aprender/gitops-para-podman-orches-e-materia.md
       - Build e toolchains:
           - Visão geral: aprender/build/index.md
+          - Bazel: aprender/build/bazel.md
+          - Hermit: aprender/build/hermit.md
+          - moon: aprender/build/moon.md
+          - Nx: aprender/build/nx.md
+          - Turborepo: aprender/build/turborepo.md
+          - pkgx: aprender/build/pkgx.md
+          - Nix: aprender/build/nix.md
           - Meson: aprender/build/meson.md
           - CMake: aprender/build/cmake.md
           - Makefile: aprender/build/makefile.md
@@ -207,6 +214,10 @@ nav:
               - ROA: aprender/rede/roteamento/roa.md
               - uRPF: aprender/rede/roteamento/urpf.md
               - BCP 38: aprender/rede/roteamento/bcp38.md
+              - OPNsense: aprender/rede/roteamento/opnsense.md
+              - pfSense: aprender/rede/roteamento/pfsense.md
+              - OpenWrt: aprender/rede/roteamento/openwrt.md
+              - Proxmox SDN: aprender/rede/roteamento/proxmox-sdn.md
           - Service mesh:
               - Visão geral: aprender/rede/service-mesh/index.md
               - Arquiteturas:
@@ -379,6 +390,15 @@ nav:
           - OpenTofu:
               - Visão geral: aprender/iac/opentofu.md
               - Tutorial completo: aprender/iac/opentofu-tutorial.md
+              - Providers:
+                  - Visão geral: aprender/iac/providers/index.md
+                  - Cloudflare: aprender/iac/providers/cloudflare.md
+                  - Proxmox: aprender/iac/providers/proxmox.md
+                  - OPNsense: aprender/iac/providers/opnsense.md
+                  - Keycloak: aprender/iac/providers/keycloak.md
+                  - AWS: aprender/iac/providers/aws.md
+                  - GKE: aprender/iac/providers/gke.md
+                  - Azure: aprender/iac/providers/azure.md
               - Terraform: aprender/iac/terraform.md
           - Pulumi: aprender/iac/pulumi.md
           - Ansible:
@@ -579,6 +599,10 @@ nav:
                   - Instrumentação: aprender/observabilidade/opentelemetry/instrumentation.md
               - Grafana Alloy: aprender/observabilidade/alloy.md
               - Netdata: aprender/observabilidade/netdata.md
+              - Zabbix: aprender/observabilidade/zabbix.md
+              - Glances: aprender/observabilidade/glances.md
+              - Checkmk: aprender/observabilidade/checkmk.md
+              - Beszel: aprender/observabilidade/beszel.md
               - Sentry: aprender/observabilidade/sentry.md
               - Stack Prometheus, Loki e Grafana (mapa legado): aprender/stack-prometheus-loki-grafana.md
           - Alertas e testes:
