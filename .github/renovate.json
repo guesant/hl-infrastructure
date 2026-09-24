@@ -15,6 +15,17 @@
   "pip_requirements": {
     "enabled": false
   },
+  "postUpgradeTasks": [
+    {
+      "commands": [
+        "bash .tools/renovate-version-checksums.sh"
+      ],
+      "fileFilters": [
+        "ansible/group_vars/all/versions.yml"
+      ],
+      "executionMode": "branch"
+    }
+  ],
   "packageRules": [
     {
       "description": "Keep every Dockerfile base image pinned by digest next to its tag",

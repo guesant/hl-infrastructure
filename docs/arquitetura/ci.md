@@ -23,8 +23,14 @@ A tabela abaixo resume quando cada família de job roda.
 | `tofu` | `tofu/` ou os scripts e políticas dele |
 | `markdownlint`, `spelling` | doc ou Markdown |
 | `hadolint`, `shellcheck` | `.tools/` |
+| `version-checksums` | charts, `.tools/` ou `ansible/group_vars/all/versions.yml` |
 
 Os jobs que olham o repositório inteiro, como `gitleaks/osv-scanner/trivy-fs/prose/placeholders/docs-consistency/ast-grep/jscpd/commitlint`, rodam sempre.
+
+`version-checksums` recalcula os artefatos derivados de `versions.yml` dentro da
+imagem local de Helm. O job falha quando uma versão e seu checksum divergem,
+impedindo que uma atualização automatizada deixe a versão declarada apontando
+para um artefato diferente do que o checksum verifica.
 
 Em push para main, no agendamento diário e no disparo manual, a saída `all` do `changes` é verdadeira e tudo roda; o filtro existe só para encurtar o ciclo de um PR, nunca para deixar main passar sem a bateria inteira.
 

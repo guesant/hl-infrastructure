@@ -217,6 +217,14 @@ freeze *args: (_build-ops)
 tofu module *args: _require-host-sops
     SOPS_AGE_KEY_FILE={{sops_identity}} TOFU_IMAGE={{tofu_image}} .tools/tofu-run.sh {{module}} {{args}}
 
+[doc("Verify that version checksums match the artifacts selected by versions.yml")]
+version-checksums: _build-helm
+    {{run}} --entrypoint bash {{helm_image}} .tools/update-version-checksums.sh --check
+
+[doc("Recalculate and write the version checksums selected by versions.yml")]
+version-checksums-update: _build-helm
+    {{run}} --entrypoint bash {{helm_image}} .tools/update-version-checksums.sh --write
+
 [doc("Apply tofu/<module> against the real provider account")]
 [confirm("This changes real infrastructure outside the cluster. Continue?")]
 tofu-apply module: _require-host-sops
@@ -390,4 +398,4 @@ docs-grammar-report:
     docker network rm hl-infra-docs-lint >/dev/null 2>&1 || true
 
 [doc("Every check the CI runs, in order")]
-check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-placeholders lint-secret-age lint-docs lint-doc-nav lint-pod-security security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-conftest infra-kubescape security-trivy-images lint-commits infra-helm-lint docs-build
+check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-placeholders lint-secret-age lint-docs lint-doc-nav lint-pod-security version-checksums security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-conftest infra-kubescape security-trivy-images lint-commits infra-helm-lint docs-build

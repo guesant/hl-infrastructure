@@ -31,7 +31,7 @@ jobs:
         env:
           RENOVATE_PLATFORM: github
           RENOVATE_REPOSITORIES: guesant/hl-infrastructure
-          RENOVATE_ALLOWED_COMMANDS: '["^curl -fsSL .* -o "]'
+          RENOVATE_ALLOWED_COMMANDS: '["^curl -fsSL .* -o ","^bash [.]tools/renovate-version-checksums[.]sh$"]'
           RENOVATE_ONBOARDING: "false"
           RENOVATE_REQUIRE_CONFIG: "optional"
         timeout-minutes: 30
