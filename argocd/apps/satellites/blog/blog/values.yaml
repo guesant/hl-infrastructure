@@ -104,6 +104,7 @@ laravel:
     ADMIN_PATH: ""
     PORTFOLIO_ADMIN_OIDC_AUTHORITY: https://auth.guesant.net/realms/homelab
     PORTFOLIO_ADMIN_OIDC_CLIENT_ID: blog
+    PORTFOLIO_ADMIN_OIDC_REDIRECT_URI: https://admin.guesant.net/auth/keycloak/callback
     PORTFOLIO_ADMIN_OIDC_GROUP: admins
     PORTFOLIO_RESUME_PDF_ROOT: /data/resume-cache
     PORTFOLIO_PUBLIC_ASSET_ROOT: /data/public
