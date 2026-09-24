@@ -79,13 +79,80 @@ Por exemplo, uma página de segurança de aplicações pode situar SAST, DAST, S
 
 Esse padrão permite que o leitor pare no nível de abstração de que precisa: domínio, categoria, abordagem ou implementação.
 
+### Páginas de cenário, composição e seleção
+
+Uma taxonomia de conceitos não responde sozinha à pergunta operacional anterior à decisão: "dado este contexto, quais famílias de solução fazem sentido e como elas se combinam?". Para isso, Aprender admite três tipos transversais de página que não substituem conceito, ferramenta nem Arquitetura.
+
+**Cenário** parte das restrições, não de um produto. Exemplos: executar serviços em um único host; operar um cluster pequeno; oferecer uma plataforma multi-tenant; manter serviços em edge desconectado. A página descreve requisitos, forças que mudam a decisão, padrões adequados, combinações comuns e sinais de que o cenário evoluiu. Ela pode mostrar "Podman + Quadlet" e "K3s + GitOps" como padrões diferentes para single-node sem declarar um vencedor universal.
+
+**Composição** explica como peças de categorias diferentes conversam. Exemplos: CNI + Gateway API + service mesh; Prometheus + Alertmanager + Grafana; cert-manager + CA + trust distribution; IaC + configuration management + GitOps. O foco é responsabilidade, interface, fluxo, sobreposição e failure domains. Uma composição deve deixar claro quando uma peça é opcional e quando duas ferramentas competem pela mesma responsabilidade.
+
+**Seleção/comparação** parte de alternativas que realmente disputam uma responsabilidade e explicita dimensões de decisão. O documento não escolhe "a melhor ferramenta" em abstrato. Ele relaciona restrições a consequências: número de nós, necessidade de HA, multi-tenancy, equipe, estado persistente, conectividade, recursos de hardware, compliance, custo operacional, ecossistema e caminho de evolução.
+
+Uma recomendação condicional é válida em Aprender quando deriva de premissas explícitas. "Se há um host, poucos serviços e não existe requisito de API Kubernetes, systemd + Podman/Quadlet reduz peças móveis" é uma orientação de cenário. "Este repositório usa K3s porque..." pertence a Arquitetura.
+
+Páginas de cenário devem conter, quando aplicável:
+
+- contexto e premissas;
+- requisitos obrigatórios e desejáveis;
+- forças que alteram a decisão;
+- padrões de solução plausíveis;
+- composição das peças em cada padrão;
+- vantagens e custos de cada padrão naquele contexto;
+- anti-patterns e overengineering;
+- sinais de que o padrão deixou de servir;
+- caminhos de evolução e migração;
+- exemplos realistas;
+- links para conceitos e ferramentas usados.
+
+Uma ferramenta pode aparecer em vários cenários e um cenário pode combinar várias ferramentas. Essa relação muitos-para-muitos é deliberada. A árvore da navegação continua organizando conhecimento por domínio; páginas de cenário criam caminhos transversais sem duplicar a documentação das ferramentas.
+
+## Atomicidade recursiva
+
+A regra "um conceito, uma página" é recursiva. Ela não termina quando uma página de primeiro nível foi separada.
+
+Toda entidade que possua identidade técnica própria deve ter endereço próprio quando for materialmente explicada: conceito, tecnologia, ferramenta, abordagem, padrão, protocolo, especificação, algoritmo/técnica, estratégia, modo operacional ou arquitetura reconhecível.
+
+Por exemplo:
+
+- SAST não absorve taint analysis. SAST aponta para uma página de taint analysis.
+- Taint analysis não absorve source, sink e sanitizer quando esses conceitos recebem explicação substancial; cada conceito pode ter página própria e a página de taint analysis os relaciona.
+- Cilium não absorve eBPF, Hubble, kube-proxy replacement, BGP ou seus modos de roteamento. A página Cilium explica o produto e aponta para páginas especializadas.
+- Kubernetes não absorve Pod, Service, Deployment, controller, scheduler, CNI ou CSI.
+- PKI não absorve CA, root CA, intermediate CA, certificate chain, trust store, ACME ou mTLS.
+- Observabilidade não absorve métricas, logs, tracing, profiling, RED, USE ou golden signals.
+
+A existência de uma página própria não exige texto artificialmente longo. Uma unidade simples pode ter uma página curta, desde que ela tenha definição, fronteira e relações suficientes para ser consultada independentemente.
+
+### O teste recursivo
+
+Ao revisar cada heading, pergunte:
+
+1. o heading nomeia algo que alguém pesquisaria diretamente?
+2. esse algo possui definição ou documentação primária própria?
+3. ele pode aparecer em mais de um contexto?
+4. existem alternativas, modos, propriedades ou failure modes próprios?
+5. outra página poderia querer linkar especificamente para ele?
+
+Se uma ou mais respostas forem fortes, promova o heading a página e deixe no pai apenas contexto, relação e resumo curto.
+
+Não promova detalhes que só existem como partes inseparáveis da explicação local, como uma variável temporária de um exemplo ou uma consequência que não constitui conceito reutilizável.
+
+### Relação entre páginas atômicas e páginas relacionais
+
+Atomicidade não proíbe páginas que mencionam várias entidades. Ela muda o papel dessas páginas.
+
+Uma página de categoria relaciona filhos. Uma página de composição explica interfaces entre unidades. Uma página de comparação compara unidades. Uma página de cenário aplica unidades a restrições. Nenhuma delas deve duplicar a explicação profunda que pertence às páginas atômicas.
+
+Isso cria um grafo sobre a árvore de navegação: cada entidade tem uma página canônica e páginas relacionais apontam para ela.
+
 ## Hierarquia de navegação
 
 A navegação lateral representa a taxonomia do conhecimento, não apenas uma lista de arquivos. A hierarquia pode seguir, quando fizer sentido:
 
-`seção → domínio → categoria → abordagem/conceito → ferramenta ou implementação`.
+`seção -> domínio -> categoria -> abordagem/conceito -> ferramenta ou implementação`.
 
-A profundidade não possui um limite artificial de níveis. Um caminho como `Aprender → Segurança → Segurança de aplicações → SAST → CodeQL` é aceitável porque cada nível responde a uma pergunta classificatória diferente. O problema a evitar é nesting sem significado ou categorias que existam apenas para reduzir o número de itens visíveis.
+A profundidade não possui um limite artificial de níveis. Um caminho como `Aprender -> Segurança -> Segurança de aplicações -> SAST -> CodeQL` é aceitável porque cada nível responde a uma pergunta classificatória diferente. O problema a evitar é nesting sem significado ou categorias que existam apenas para reduzir o número de itens visíveis.
 
 Páginas intermediárias devem ser úteis por si mesmas. Um grupo que representa um conceito real deve preferencialmente possuir uma página-mapa correspondente, em vez de existir somente como rótulo da sidebar.
 

@@ -1,9 +1,9 @@
-k3s_version: v1.36.4+k3s1
+k3s_version: v1.37.0+k3s1
 k3s_install_script_sha256: 46177d4c99440b4c0311b67233823a8e8a2fc09693f6c89af1a7161e152fbfad
 helm_version: v4.3.0
-cilium_version: 1.20.1
-cilium_chart_sha256: 06210eef7c23d15f7699c79e2fe3a1ec9c389024c5c5c006ea04022d322449a2
+cilium_version: 1.20.2
+cilium_chart_sha256: b2afd87b7f75f875f92a14559f14f59b7babbb479d968e3fd625a20bf30ec20e
 cilium_cli_version: v0.20.0
-argocd_chart_version: 10.9.0
-argocd_chart_sha256: 3d457160c878eb0036b7677176091ff958036f6afd08d359c063f285984e9fec
+argocd_chart_version: 10.9.1
+argocd_chart_sha256: eac496f95314bd6feedbba119e55f3ffb00cad2b492346579b979d577c5159d2
 kube_bench_version: v0.16.0

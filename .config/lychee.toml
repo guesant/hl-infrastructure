@@ -7,6 +7,7 @@ accept_timeouts = true
 exclude_all_private = true
 remap = ["https://github.com/guesant/hl-infrastructure/(blob|tree)/main/(.*) file:///repo/$2"]
 exclude = [
+  "^https?://",
   "github\\.com/guesant/hl-infrastructure/security/advisories/new",
   "github\\.com/guesant/hl-infrastructure/issues/new",
   "github\\.com/guesant/hl-infrastructure/edit/",

@@ -81,7 +81,7 @@ Isso acontece porque a camada `data/` agrupa todo dado com estado, dedicado ou c
 
 O `blog-postgres` não tem `SopsSecret` hoje: o backup em object storage que precisaria de credenciais está desligado de propósito, veja [estado fora do git](../operacional/estado-fora-do-git.md).
 
-As imagens do blog ficam registradas no chart por digest, incluindo o public-app e o Laravel. O Kargo pode atualizar esses valores quando uma nova imagem da branch `main` é publicada, e o Argo aplica a revisão promovida.
+As imagens do blog ficam registradas no chart por digest, incluindo o public-app e o Laravel. O pin ARM64 atual do Laravel aponta para a imagem publicada em `c6507f2168eb7500217a76c2a8f7e5494f978213924f253279e9f89dae37f2f4`. O Kargo pode atualizar esses valores quando uma nova imagem da branch `main` é publicada, e o Argo aplica a revisão promovida.
 
 O critério que separa a pasta do satélite da camada de dado é a política de remoção, não a titularidade: um banco exclusivo de uma aplicação continua sendo dado, e dado sai do cluster por um caminho mais conservador do que o resto.
 
@@ -201,6 +201,8 @@ O cert-manager usa o campo `image.digest` do próprio chart, e CNPG, sops-secret
 Apontar direto para um chart upstream funcionaria, mas obrigaria a incluir o repositório dele em `sourceRepos`, e a partir daí qualquer aplicação do projeto `infra` poderia sincronizar de lá. Manter a lista com um endereço só transforma "de onde este cluster aceita manifesto" numa resposta de uma linha, verificável sem ler cada aplicação.
 
 O app do blog separa o frontend do Laravel. O frontend mantém uma réplica com request de `100m` e limite de `200m` de CPU, enquanto o Laravel mantém duas réplicas com request de `50m` e limite de `750m` por pod. O worker tem limite de `400m` e o scheduler tem limite de `200m`. A quota do namespace reserva `3000m` de limite de CPU para acomodar a carga observada sem alterar a memória.
+
+O Laravel também executa dois workers do servidor PHP em cada pod, e o worker de filas permanece habilitado para a fila `default`. O scheduler continua desligado nesta configuração. A imagem Laravel é fixada por digest no values do chart, e a promoção do Kargo é a autoridade para trocar esse digest.
 
 Não ficou sem limite porque o namespace `blog` carrega um `LimitRange` que injeta um limite default em todo container sem um declarado.
 
@@ -666,3 +668,5 @@ Separar os projetos torna essa garantia parte da configuração do próprio Argo
 ## Continue por aqui
 
 [Adicionar um satélite novo](../operacional/adicionar-um-satelite.md) aplica essa separação na prática, com o `just` que escreve a `Application`.
+
+<!-- reviewed: argocd -->
