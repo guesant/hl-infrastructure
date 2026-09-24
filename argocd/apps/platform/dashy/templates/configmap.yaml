@@ -90,13 +90,28 @@ data:
             description: CI e workflows do blog
             url: https://github.com/guesant/blog/actions
             icon: fas fa-play-circle
+      - name: guesant.net
+        icon: fas fa-globe
+        items:
+          - title: guesant.net
+            description: Site público
+            url: https://guesant.net
+            icon: fas fa-globe
+          - title: auth.guesant.net
+            description: Autenticação e conta
+            url: https://auth.guesant.net
+            icon: fas fa-user-shield
+          - title: admin.guesant.net
+            description: Painel administrativo
+            url: https://admin.guesant.net
+            icon: fas fa-toolbox
+          - title: api.guesant.net/docs
+            description: Documentação da API
+            url: https://api.guesant.net/docs
+            icon: fas fa-code
       - name: Fora do node
         icon: fas fa-cloud
         items:
-          - title: guesant.net
-            description: O blog, pelo túnel Cloudflare
-            url: https://guesant.net
-            icon: fas fa-globe
           - title: Tailscale
             description: Console da tailnet
             url: https://login.tailscale.com/admin/machines
