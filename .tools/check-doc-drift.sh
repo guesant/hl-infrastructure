@@ -14,7 +14,7 @@ while IFS= read -r file; do
       continue
     fi
     # shellcheck disable=SC2086
-    source_commit="$(git log -1 --format=%H -- $paths)"
+    source_commit="$(git log --no-merges -1 --format=%H -- $paths)"
     page_commit="$(git log -1 --format=%H -- "$file")"
     if [ -n "$source_commit" ] && [ -n "$page_commit" ] && ! git merge-base --is-ancestor "$source_commit" "$page_commit"; then
       echo "$file: its sources ($paths) changed in $(git rev-parse --short "$source_commit") after the page was last reviewed in $(git rev-parse --short "$page_commit"); review the page and commit it" >&2
