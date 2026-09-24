@@ -202,6 +202,8 @@ Apontar direto para um chart upstream funcionaria, mas obrigaria a incluir o rep
 
 O app do blog separa o frontend do Laravel. O frontend mantém uma réplica com request de `100m` e limite de `200m` de CPU, enquanto o Laravel mantém duas réplicas com request de `50m` e limite de `750m` por pod. O worker tem limite de `400m` e o scheduler tem limite de `200m`. A quota do namespace reserva `3000m` de limite de CPU para acomodar a carga observada sem alterar a memória.
 
+O Laravel também executa dois workers do servidor PHP em cada pod, e o worker de filas permanece habilitado para a fila `default`. O scheduler continua desligado nesta configuração. A imagem Laravel é fixada por digest no values do chart, e a promoção do Kargo é a autoridade para trocar esse digest.
+
 Não ficou sem limite porque o namespace `blog` carrega um `LimitRange` que injeta um limite default em todo container sem um declarado.
 
 Esse `LimitRange` se chama `blog-namespace-limits`, no chart de políticas de rede.

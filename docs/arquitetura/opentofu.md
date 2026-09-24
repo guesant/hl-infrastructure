@@ -16,6 +16,8 @@ O módulo declara o túnel `blog` (`cloudflare_zero_trust_tunnel_cloudflared`).
 
 Ele também declara a configuração de ingress desse túnel (`cloudflare_zero_trust_tunnel_cloudflared_config`).
 
+O provider da Cloudflare está fixado na versão `5.25.0`, com os hashes correspondentes registrados no lockfile do módulo. Atualizar essa versão altera a seleção do provider e exige revisar a validação do módulo antes de qualquer apply.
+
 O módulo também declara os registros CNAME apontando para `<id do túnel>.cfargotunnel.com`.
 
 Esses registros são os do blog, no domínio raiz `guesant.net/www.guesant.net`, que servem o mesmo conteúdo sem redirect.
