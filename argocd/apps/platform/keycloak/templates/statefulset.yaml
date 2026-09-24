@@ -37,18 +37,18 @@ spec:
             - name: KC_DB
               value: postgres
             - name: KC_DB_URL_HOST
-              value: keycloak-postgres-rw
+              value: postgres-rw.data.svc.cluster.local
             - name: KC_DB_URL_DATABASE
               value: keycloak
             - name: KC_DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: keycloak-postgres-app
+                  name: shared-postgres-app
                   key: username
             - name: KC_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: keycloak-postgres-app
+                  name: shared-postgres-app
                   key: password
             - name: KC_HOSTNAME
               value: https://auth.guesant.net

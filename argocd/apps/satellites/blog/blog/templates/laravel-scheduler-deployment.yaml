@@ -54,22 +54,22 @@ spec:
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: postgres-app
+                  name: shared-postgres-app
                   key: host
             - name: DB_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: postgres-app
+                  name: shared-postgres-app
                   key: dbname
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: postgres-app
+                  name: shared-postgres-app
                   key: user
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-app
+                  name: shared-postgres-app
                   key: password
           resources:
             {{- toYaml .Values.laravel.scheduler.resources | nindent 12 }}
