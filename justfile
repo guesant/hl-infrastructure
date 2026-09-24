@@ -357,7 +357,12 @@ infra-trivy-config: infra-render-charts (_build "trivy")
 [doc("Build the MkDocs site in strict mode")]
 docs-build:
     {{run}} python:3.12-slim \
-        sh -c "pip install --quiet --require-hashes -r docs/requirements.txt && mkdocs build --strict --config-file .config/mkdocs.yml"
+        sh -c "pip install --quiet --require-hashes -r docs/requirements.txt && python3 .tools/check-doc-nav.py && mkdocs build --strict --config-file .config/mkdocs.yml"
+
+[doc("Fail when a Markdown page is missing from the MkDocs navigation")]
+lint-doc-nav:
+    {{run}} python:3.12-slim \
+        sh -c "pip install --quiet --require-hashes -r docs/requirements.txt && python3 .tools/check-doc-nav.py"
 
 [doc("Serve the MkDocs site on port 8000")]
 docs-serve:
@@ -385,4 +390,4 @@ docs-grammar-report:
     docker network rm hl-infra-docs-lint >/dev/null 2>&1 || true
 
 [doc("Every check the CI runs, in order")]
-check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-placeholders lint-secret-age lint-docs lint-pod-security security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-conftest infra-kubescape security-trivy-images lint-commits infra-helm-lint docs-build
+check: lint-actions lint-yaml lint-ansible lint-tofu lint-shellcheck lint-hadolint lint-markdown lint-prose lint-placeholders lint-secret-age lint-docs lint-doc-nav lint-pod-security security-gitleaks security-osv-scanner security-trivy-fs security-sopssecrets quality-ast-grep quality-jscpd infra-kube-linter infra-checkov infra-kubeconform infra-trivy-config infra-conftest infra-kubescape security-trivy-images lint-commits infra-helm-lint docs-build

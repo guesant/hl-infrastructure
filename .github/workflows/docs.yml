@@ -39,6 +39,9 @@ jobs:
       - name: Install dependencies
         run: pip install --require-hashes -r docs/requirements.txt
 
+      - name: Check documentation navigation
+        run: python3 .tools/check-doc-nav.py
+
       - name: Build
         run: mkdocs build --strict --config-file .config/mkdocs.yml
 

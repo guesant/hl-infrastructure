@@ -605,6 +605,39 @@ nav:
           - Linters de artefato: aprender/linters-de-qualidade-de-artefato.md
           - Smoke tests e checklists: aprender/smoke-test-e-o-limite-da-automacao-de-checklist.md
           - Scripts operacionais defensivos: aprender/padroes-defensivos-de-script-operacional.md
+      - Mapas de compatibilidade:
+          - Bancos não relacionais: aprender/bancos-nao-relacionais-chave-valor-e-documento.md
+          - Cgroups, capabilities e filesystem: aprender/cgroups-capabilities-e-filesystem.md
+          - CodeQL e zizmor: aprender/codeql-e-zizmor.md
+          - Commitlint, Lychee e Renovate: aprender/commitlint-lychee-e-renovate.md
+          - CPU, privilégios e system calls: aprender/cpu-privilegios-e-syscalls.md
+          - DNSSEC, mDNS e registro de domínio: aprender/dnssec-mdns-e-registro-de-dominio.md
+          - Entrega progressiva: aprender/entrega-progressiva-canary-blue-green-e-argo-rollouts.md
+          - Especificações OCI e runtimes: aprender/especificacoes-oci-e-pilha-de-runtimes.md
+          - Fail2ban, atualizações e journal: aprender/fail2ban-atualizacoes-automaticas-e-journal.md
+          - Filas e streaming de eventos: aprender/filas-e-streaming-de-eventos.md
+          - Fundamentos de backup, RPO e RTO: aprender/fundamentos-de-backup-rpo-e-rto.md
+          - Imagens, registries e Compose: aprender/imagens-registries-e-compose.md
+          - Jobs, CronJobs e SecurityContext: aprender/jobs-cronjobs-e-securitycontext.md
+          - jq e yq: aprender/jq-e-yq.md
+          - kubeconform e Conftest: aprender/kubeconform-e-conftest.md
+          - Namespace do Kubernetes: aprender/namespace-do-kubernetes.md
+          - Processo, namespaces e usuários: aprender/processo-namespaces-e-usuarios.md
+          - Saúde e desligamento de workloads: aprender/prontidao-de-workload-probes-pdb-e-desligamento.md
+          - RBAC do Kubernetes: aprender/rbac-do-kubernetes.md
+          - Requests, limits e QoS: aprender/requests-limits-e-qos-de-um-pod.md
+          - Reverse proxy e split-horizon DNS: aprender/reverse-proxy-e-split-horizon-dns.md
+          - rsync e SSHFS: aprender/rsync-e-sshfs.md
+          - Service mesh, Istio e Linkerd: aprender/service-mesh-istio-e-linkerd.md
+          - Supply chain e SBOM: aprender/supply-chain-e-sbom.md
+          - Teste de carga e chaos engineering: aprender/teste-de-carga-e-chaos-engineering.md
+          - TLS, mTLS e confiança: aprender/tls-mtls-e-confianca-de-rede.md
+          - Scanning de vulnerabilidade: aprender/vulnerability-scanning.md
+          - commitlint: aprender/qualidade/commitlint.md
+          - Conftest: aprender/qualidade/conftest.md
+          - kubeconform: aprender/qualidade/kubeconform.md
+          - Lychee: aprender/qualidade/lychee.md
+          - Schema validation: aprender/qualidade/schema-validation.md
       - Diagnóstico:
           - Visão geral: aprender/diagnostico/index.md
           - Ferramentas:
