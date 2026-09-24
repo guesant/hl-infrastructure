@@ -1,4 +1,9 @@
 vulnerabilities:
+  - id: GHSA-r277-6w6q-xmqw
+    paths:
+      - usr/local/bin/frankenphp
+    statement: FrankenPHP in the upstream blog-laravel image; waiting for a rebuilt image with kin-openapi 0.144.0 or newer
+    expired_at: 2026-10-15
   - id: CVE-2025-68121
     paths:
       - usr/local/bin/gomplate
