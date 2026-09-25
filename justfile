@@ -74,6 +74,22 @@ satellite-delivery-add nome repo_imagem app_filha caminho_values: (_build-ops)
 kubectl *args:
     {{node_ssh}} k3s kubectl {{args}}
 
+[doc("Prepare an encrypted inactive PostgreSQL credential slot and make its role testable")]
+postgres-rotation-prepare app slot: (_build-ops)
+    {{run}} --entrypoint bash {{ops_image}} .tools/postgres-rotation-prepare.sh {{app}} {{slot}}
+
+[doc("Show the active and retired PostgreSQL credential slots")]
+postgres-rotation-status app: (_build-ops)
+    {{run}} --entrypoint bash {{ops_image}} .tools/postgres-rotation-slot.sh status {{app}}
+
+[doc("Select a prepared PostgreSQL credential slot in GitOps")]
+postgres-rotation-activate app slot: (_build-ops)
+    {{run}} --entrypoint bash {{ops_image}} .tools/postgres-rotation-slot.sh activate {{app}} {{slot}}
+
+[doc("Retire a PostgreSQL credential slot after the rollback window")]
+postgres-rotation-retire app slot: (_build-ops)
+    {{run}} --entrypoint bash {{ops_image}} .tools/postgres-rotation-slot.sh retire {{app}} {{slot}}
+
 [doc("Show nodes and ArgoCD applications")]
 status:
     {{node_ssh}} 'k3s kubectl get nodes; k3s kubectl -n argocd get applications'

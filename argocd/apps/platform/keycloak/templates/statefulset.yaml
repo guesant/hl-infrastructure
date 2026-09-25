@@ -5,6 +5,7 @@ metadata:
   namespace: keycloak
   annotations:
     argocd.argoproj.io/sync-wave: "4"
+    reloader.stakater.com/auto: "true"
   labels:
     app.kubernetes.io/name: keycloak
 spec:

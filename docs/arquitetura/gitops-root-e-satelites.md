@@ -320,16 +320,16 @@ Ele roda `kc.sh start` sem `--optimized`, então refaz a configuração a cada i
 
 O cache interno fica em modo `local`, porque não há segundo pod com quem formar cluster.
 
-A conexão vem do `Secret/keycloak-postgres-app`, replicado pelo `ClusterSecretStore/data-secrets` a partir do Secret mantido no namespace `data`. O Laravel usa o mesmo mecanismo com `portfolio-postgres-app`. As roles são distintas e cada uma só autentica no seu banco.
+A conexão vem do `Secret/keycloak-postgres-app`, replicado pelo `ClusterSecretStore/data-secrets` a partir do slot selecionado no namespace `data`. O Laravel usa o mesmo mecanismo com `portfolio-postgres-app`. Cada aplicação possui dois slots de login, e a role proprietária de cada banco não aceita login depois da transição.
 
 O cluster compartilhado fica em `argocd/apps/data/shared-postgres` e declara `instances: 1`. O failover do operador não se aplica aqui: não há réplica para promover quando a primária cai. A proteção que sobra é o reinício automático do pod pelo Kubernetes sobre o mesmo volume, que sobrevive pela retenção do provisionador, não por existir uma segunda cópia do dado. Um segundo nó mudaria esse cálculo: com um nó só, mais instâncias protegeriam o processo, não o host onde o volume mora.
 
-| Banco | Role | Secret de origem | Namespace consumidor |
+| Banco | Roles de aplicação | Secrets de origem | Namespace consumidor |
 | --- | --- | --- | --- |
-| `portfolio` | `portfolio` | `portfolio-postgres-app` | `blog` |
-| `keycloak` | `keycloak` | `keycloak-postgres-app` | `keycloak` |
+| `portfolio` | `portfolio_a`, `portfolio_b` | `portfolio-postgres-app-a`, `portfolio-postgres-app-b` | `blog` |
+| `keycloak` | `keycloak_a`, `keycloak_b` | `keycloak-postgres-app-a`, `keycloak-postgres-app-b` | `keycloak` |
 
-O bootstrap do cluster cria o banco inicial do portfólio. Os objetos `Database` e `DatabaseRole` declarados no chart criam e mantêm o segundo banco e as duas roles sem reutilizar a credencial de superusuário.
+O bootstrap do cluster cria o banco inicial do portfólio. Os objetos `Database` e `DatabaseRole` declarados no chart criam e mantêm os dois bancos, as roles proprietárias e os quatro slots de aplicação sem reutilizar a credencial de superusuário.
 
 As variáveis `KC_HOSTNAME/KC_HOSTNAME_ADMIN` separam o nome público do console de administração.
 

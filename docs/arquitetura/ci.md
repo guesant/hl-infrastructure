@@ -95,6 +95,8 @@ A action termina rodando o comando de versão da ferramenta dentro da imagem, an
 
 Localmente o `justfile` faz o mesmo, taggeando cada imagem pelo hash do Dockerfile e pulando o build quando a tag já existe. A receita `infra-render-charts` renderiza todos os charts locais, inclusive os preparatórios que ainda aguardam uma promoção operacional explícita.
 
+As receitas `postgres-rotation-prepare`, `postgres-rotation-status`, `postgres-rotation-activate` e `postgres-rotation-retire` executam a preparação e a troca das credenciais PostgreSQL dentro da imagem de operações. Elas alteram somente os valores GitOps necessários para o próximo ciclo de sincronização e não fazem alterações diretas no cluster.
+
 O stage `ops` reúne `sops/age/age-plugin-se/kubectl/jq/yq` numa única imagem Alpine.
 
 `sops-recipients/security-sopssecrets/freeze` precisam de algum subconjunto delas e rodam inteiras em Docker, nunca no host.

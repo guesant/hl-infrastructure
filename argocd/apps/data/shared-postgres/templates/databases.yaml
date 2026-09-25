@@ -3,7 +3,7 @@ kind: Database
 metadata:
   name: portfolio
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "3"
     argocd.argoproj.io/sync-options: Prune=false,Delete=false
 spec:
   cluster:
@@ -17,7 +17,7 @@ kind: Database
 metadata:
   name: keycloak
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "3"
     argocd.argoproj.io/sync-options: Prune=false,Delete=false
 spec:
   cluster:
