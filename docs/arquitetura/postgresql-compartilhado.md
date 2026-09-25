@@ -49,16 +49,15 @@ chart `shared-postgres`. Eles sempre criam os mesmos Secrets locais, mas leem
 o slot indicado por `rotation.*.activeSlot`. Assim, a troca da credencial é
 uma alteração declarativa de uma única fonte, sem editar os Deployments.
 
-Depois da ativação, os Secrets legados permanecem somente durante a janela de
-validação. Eles serão removidos em uma mudança posterior, depois de confirmar
-que os dois consumidores autenticam usando o slot `a`.
+Depois da validação do cutover, os Secrets de origem legados foram removidos.
+Os consumidores mantêm os mesmos nomes de Secret locais e leem somente o slot
+ativo A ou B.
 
 O label `cnpg.io/reload: "true"` permite que o CloudNativePG aplique a nova
 senha assim que o Secret do slot for alterado.
 
-O `ClusterSecretStore` `data-secrets` só lê os seis Secrets necessários para a
-transição, quatro slots A/B e os dois Secrets legados. A permissão dos
-consumidores continua limitada aos namespaces previstos.
+O `ClusterSecretStore` `data-secrets` só lê os quatro Secrets dos slots A/B. A
+permissão dos consumidores continua limitada aos namespaces previstos.
 
 ## Rotação A/B
 
@@ -81,11 +80,8 @@ O comando `prepare` gera uma senha forte, cifra o novo Secret e torna o slot
 testável. O comando `activate` altera o slot consumido pelos `ExternalSecret`.
 O ESO atualiza o Secret local e o Reloader reinicia os workloads que recebem a
 credencial por variável de ambiente. O comando `retire` deve ser executado
-somente depois de uma janela operacional de 30 minutos. Na primeira ativação,
-o slot `legacy` deixa de ser a role de aplicação automaticamente quando a role
-proprietária passa para `NOLOGIN`; o comando `retire` passa a ser usado nas
-trocas seguintes entre A e B. Ele desabilita o login do slot anterior, mas
-mantém sua definição para rollback e reutilização.
+somente depois de uma janela operacional de 30 minutos. Ele desabilita o login
+do slot anterior, mas mantém sua definição para rollback e reutilização.
 
 O Laravel tem réplicas suficientes para um rollout gradual. O Keycloak possui
 uma réplica e pode ter uma breve janela de readiness durante a troca da

@@ -1,9 +1,9 @@
 # yamllint disable-file
-{{ if and (ne .Values.rotation.portfolio.activeSlot "legacy") (ne .Values.rotation.portfolio.activeSlot "a") (ne .Values.rotation.portfolio.activeSlot "b") }}
-{{ fail "rotation.portfolio.activeSlot must be legacy, a or b" }}
+{{ if and (ne .Values.rotation.portfolio.activeSlot "a") (ne .Values.rotation.portfolio.activeSlot "b") }}
+{{ fail "rotation.portfolio.activeSlot must be a or b" }}
 {{ end }}
-{{ if and (ne .Values.rotation.keycloak.activeSlot "legacy") (ne .Values.rotation.keycloak.activeSlot "a") (ne .Values.rotation.keycloak.activeSlot "b") }}
-{{ fail "rotation.keycloak.activeSlot must be legacy, a or b" }}
+{{ if and (ne .Values.rotation.keycloak.activeSlot "a") (ne .Values.rotation.keycloak.activeSlot "b") }}
+{{ fail "rotation.keycloak.activeSlot must be a or b" }}
 {{ end }}
 {{ if and (ne (default "" .Values.rotation.portfolio.retiredSlot) "") (ne .Values.rotation.portfolio.retiredSlot "a") (ne .Values.rotation.portfolio.retiredSlot "b") }}
 {{ fail "rotation.portfolio.retiredSlot must be empty, a or b" }}
@@ -17,8 +17,6 @@
 {{ if and (ne (default "" .Values.rotation.keycloak.retiredSlot) "") (eq .Values.rotation.keycloak.retiredSlot .Values.rotation.keycloak.activeSlot) }}
 {{ fail "rotation.keycloak.retiredSlot cannot be the active slot" }}
 {{ end }}
-{{ $portfolioLegacy := eq .Values.rotation.portfolio.activeSlot "legacy" }}
-{{ $keycloakLegacy := eq .Values.rotation.keycloak.activeSlot "legacy" }}
 apiVersion: postgresql.cnpg.io/v1
 kind: DatabaseRole
 metadata:
@@ -30,13 +28,8 @@ spec:
   cluster:
     name: postgres
   name: portfolio
-  login: {{ $portfolioLegacy }}
-  {{- if $portfolioLegacy }}
-  passwordSecret:
-    name: portfolio-postgres-app
-  {{- else }}
+  login: false
   disablePassword: true
-  {{- end }}
   databaseRoleReclaimPolicy: retain
 ---
 apiVersion: postgresql.cnpg.io/v1
@@ -86,13 +79,8 @@ spec:
   cluster:
     name: postgres
   name: keycloak
-  login: {{ $keycloakLegacy }}
-  {{- if $keycloakLegacy }}
-  passwordSecret:
-    name: keycloak-postgres-app
-  {{- else }}
+  login: false
   disablePassword: true
-  {{- end }}
   databaseRoleReclaimPolicy: retain
 ---
 apiVersion: postgresql.cnpg.io/v1
