@@ -24,6 +24,7 @@ spec:
           port: 80
           weight: 1
 ---
+{{- if .Values.monitoring.enabled }}
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -113,6 +114,7 @@ spec:
           name: kps-alertmanager
           port: 9093
           weight: 1
+{{- end }}
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -140,6 +142,7 @@ spec:
           port: 9000
           weight: 1
 ---
+{{- if .Values.monitoring.enabled }}
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -198,6 +201,7 @@ spec:
           name: kps-grafana
           port: 80
           weight: 1
+{{- end }}
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute

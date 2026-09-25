@@ -1,3 +1,4 @@
+{{- if .Values.monitoring.enabled }}
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
@@ -10,6 +11,7 @@ spec:
     authResponseHeaders:
       - X-Auth-Request-User
       - X-Auth-Request-Email
+{{- end }}
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware

@@ -1,3 +1,6 @@
+monitoring:
+  enabled: false
+
 traefik-crds:
   traefik: false
   gatewayAPI: true
@@ -78,7 +81,7 @@ traefik:
       service:
         enabled: true
       serviceMonitor:
-        enabled: true
+        enabled: false
   accessLog:
     enabled: true
   resources:
