@@ -24,3 +24,6 @@ vulnerabilities:
   - id: CVE-2026-33186
     statement: grpc in the upstream dex image; waiting for the Argo CD chart to ship a rebuilt dex
     expired_at: 2026-10-15
+  - id: CVE-2026-84939
+    statement: Upstream Keycloak 26.7.4 uses a server-controlled ThemeTemplateLoader and does not expose the vulnerable template loading path to request input; Red Hat VEX marks its Keycloak build not affected for the same reason. Reassess when upstream ships FreeMarker 2.3.35.
+    expired_at: 2026-10-15
