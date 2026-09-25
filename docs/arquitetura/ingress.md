@@ -49,14 +49,12 @@ A tabela lista o nome, o serviço de destino e como o login é resolvido em cada
 | --- | --- | --- |
 | `argocd.guesant.internal` | `argocd-server`, porta 80 | OIDC próprio com o Keycloak |
 | `keycloak.guesant.internal` | `keycloak-service`, o console de administração | O próprio Keycloak |
-| `grafana.guesant.internal` | Grafana | OIDC próprio com o Keycloak |
-| `prometheus.guesant.internal`, `alertmanager.guesant.internal` | Prometheus e Alertmanager | `Middleware` `keycloak-login` |
 | `portainer.guesant.internal` | Portainer | OIDC próprio com o Keycloak |
 | `kargo.guesant.internal` | `kargo-api`, porta 80 | OIDC próprio com o Keycloak |
 | `hubble.guesant.internal` | Hubble UI do Cilium | `Middleware` `keycloak-login`, copiado para `kube-system` |
 | `dashy.guesant.internal` e o apex `guesant.internal` | Dashy, a página inicial com o link de cada um dos outros | `Middleware` `keycloak-login` |
 
-Prometheus, Alertmanager, Hubble UI e Dashy não têm autenticação própria, então o Traefik pede o login por eles. As rotas desses serviços carregam um filtro para o middleware `keycloak-login`, declarado em [middlewares.yaml](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/platform/ingress/templates/middlewares.yaml) uma vez por namespace, porque a Gateway API só aceita referência a um middleware do mesmo namespace da rota.
+Prometheus, Alertmanager, Hubble UI e Dashy não têm autenticação própria, então o Traefik pede o login por eles quando a rota está habilitada. Hubble UI e Dashy carregam um filtro para o middleware `keycloak-login`, declarado em [middlewares.yaml](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/platform/ingress/templates/middlewares.yaml) uma vez por namespace, porque a Gateway API só aceita referência a um middleware do mesmo namespace da rota. As rotas e o middleware do namespace `monitoring` só são renderizados quando a stack de monitoramento está habilitada.
 
 Ele é um forwardAuth que encaminha cada requisição à raiz do oauth2-proxy: com uma sessão válida a resposta é 202 (o upstream dele é `static://202`) e o Traefik deixa passar, repassando o usuário e o e-mail em cabeçalhos; sem sessão a resposta é o 302 para o Keycloak, que o Traefik devolve ao navegador tal como veio.
 
@@ -86,7 +84,7 @@ O Tailscale só emite certificado para nomes `*.ts.net`, e o Let's Encrypt não 
 
 A chave privada da CA é o único segredo desta camada e nunca sai do cluster; o que sai é o certificado público, que `just internal-ca` imprime para você instalar nos seus dispositivos, como o [primeiro bootstrap](../operacional/primeiro-bootstrap.md) descreve.
 
-O Traefik em si roda com a imagem por digest do GHCR, sem dashboard, sem verificação de versão nova nem telemetria, com access log ligado para o journal do node e um ServiceMonitor para o Prometheus. O Service do chart fica desligado, porque em modo de rede do host ele não teria função; só o Service de métricas existe.
+O Traefik em si roda com a imagem por digest do GHCR, sem dashboard, sem verificação de versão nova nem telemetria, com access log ligado para o journal do node. O Service do chart fica desligado, porque em modo de rede do host ele não teria função; só o Service de métricas existe. Como a stack de monitoramento está desligada por padrão, o `ServiceMonitor` também permanece desabilitado para não criar uma referência a um coletor ausente. Ao reativar o monitoramento, as rotas de Grafana, Prometheus e Alertmanager, o middleware do namespace `monitoring` e a coleta do Traefik precisam ser habilitados de forma coerente.
 
 As portas internas do processo, a de saúde e a de métricas, foram movidas para valores que não colidem com o node-exporter, que também escuta no namespace de rede do host.
 

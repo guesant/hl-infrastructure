@@ -484,6 +484,8 @@ A configuração anterior de coleta, retenção, alertas, autenticação do Graf
 
 O namespace `monitoring` e as CRDs do operador podem continuar existindo como infraestrutura declarada, mas não há workloads de observabilidade rodando nele. Isso permite reativar a stack sem recriar os contratos do cluster e elimina o consumo contínuo dos pods de coleta e visualização.
 
+O ingress acompanha esse mesmo estado. As HTTPRoutes de Grafana, Prometheus e Alertmanager, o middleware de autenticação do namespace `monitoring` e o `ServiceMonitor` do Traefik são condicionais ao flag da stack. Assim, a desativação não deixa rotas apontando para Services inexistentes nem objetos de coleta sem consumidor.
+
 ### Armazenamento
 
 O armazenamento tem uma classe só.
