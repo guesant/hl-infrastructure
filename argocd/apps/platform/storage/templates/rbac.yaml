@@ -1,37 +1,27 @@
+# yamllint disable-file
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: local-path-provisioner-service-account
-  namespace: kube-system
-automountServiceAccountToken: true
+  name: {{ .Values.serviceAccount.name }}
+  namespace: {{ .Values.namespace }}
+automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: local-path-provisioner-role
+  name: {{ .Values.rbac.roleName }}
 rules:
-  - apiGroups: [""]
-    resources: [nodes, persistentvolumeclaims, configmaps, pods/log]
-    verbs: [get, list, watch]
-  - apiGroups: [""]
-    resources: [endpoints, persistentvolumes, pods]
-    verbs: ["*"]
-  - apiGroups: [""]
-    resources: [events]
-    verbs: [create, patch]
-  - apiGroups: [storage.k8s.io]
-    resources: [storageclasses]
-    verbs: [get, list, watch]
+{{ toYaml .Values.rbac.rules | nindent 2 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: local-path-provisioner-bind
+  name: {{ .Values.rbac.bindingName }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: local-path-provisioner-role
+  name: {{ .Values.rbac.roleName }}
 subjects:
   - kind: ServiceAccount
-    name: local-path-provisioner-service-account
-    namespace: kube-system
+    name: {{ .Values.serviceAccount.name }}
+    namespace: {{ .Values.namespace }}

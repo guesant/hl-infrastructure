@@ -128,7 +128,7 @@ O provider da Cloudflare até oferece um data source que lê esse token, mas qua
 
 Em vez disso, [.tools/cloudflare-tunnel-token.sh](https://github.com/guesant/hl-infrastructure/blob/main/.tools/cloudflare-tunnel-token.sh) (via `just cloudflare-tunnel-token`) lê do state só o ID do túnel, e pede o token direto à API da Cloudflare.
 
-Ele grava o token recifrado no `SopsSecret` do cloudflared com `sops set --idempotent`, sem arquivo intermediário em texto claro.
+Ele grava o token recifrado no `SopsSecret` de `argocd/apps/secrets/satellites/cloudflared` com `sops set --idempotent`, sem arquivo intermediário em texto claro.
 
 A fonte da verdade desse token é a Cloudflare; o `SopsSecret` é uma cópia cifrada para entrega.
 

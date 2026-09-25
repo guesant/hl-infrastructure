@@ -1,9 +1,43 @@
+argocd:
+  namespace: argocd
+  server: https://kubernetes.default.svc
+  project: satellites
+  defaultDestinationNamespace: argocd
+  targetRevision: main
+  finalizer: resources-finalizer.argocd.argoproj.io
+  revisionHistoryLimit: 3
+  sync:
+    automated:
+      selfHeal: true
+      prune: true
+      allowEmpty: false
+    options:
+      - ServerSideApply=true
+      - SkipDryRunOnMissingResource=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+      - PrunePropagationPolicy=foreground
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
 satellites:
+  - name: blog-secrets
+    repoURL: https://github.com/guesant/hl-infrastructure.git
+    path: argocd/apps/secrets/satellites/blog
+    destinationNamespace: blog
+    helmReleaseName: blog-secrets
+    syncWave: "1"
+    targetRevision: main
   - name: blog
     repoURL: https://github.com/guesant/hl-infrastructure.git
     path: argocd/apps/satellites/blog/blog
     destinationNamespace: blog
     helmReleaseName: blog
     syncWave: "2"
+    targetRevision: main
     annotations:
       kargo.akuity.io/authorized-stage: blog-delivery:prod

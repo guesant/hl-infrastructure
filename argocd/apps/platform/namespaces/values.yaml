@@ -1,0 +1,11 @@
+namespaces:
+  - name: blog
+  - name: data
+  - name: keycloak
+  - name: kube-bench
+labels:
+  pod-security.kubernetes.io/enforce: restricted
+  pod-security.kubernetes.io/warn: restricted
+  pod-security.kubernetes.io/audit: restricted
+annotations:
+  argocd.argoproj.io/sync-options: Delete=false

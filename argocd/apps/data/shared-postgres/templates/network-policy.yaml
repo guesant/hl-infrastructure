@@ -1,48 +1,43 @@
+# yamllint disable-file
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-database-clients
+  name: {{ .Values.networkPolicy.databaseClientsName }}
 spec:
   podSelector:
     matchLabels:
-      cnpg.io/cluster: postgres
+      cnpg.io/cluster: {{ .Values.cluster.name }}
   policyTypes:
     - Ingress
   ingress:
     - from:
+{{ range .Values.networkPolicy.databaseClients }}
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: blog
+              kubernetes.io/metadata.name: {{ .namespace }}
           podSelector:
             matchLabels:
-              app.kubernetes.io/name: app
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: keycloak
-          podSelector:
-            matchLabels:
-              app.kubernetes.io/name: keycloak
+{{ toYaml .selector | nindent 14 }}
+{{ end }}
       ports:
-        - protocol: TCP
-          port: 5432
+        - protocol: {{ .Values.networkPolicy.databaseProtocol }}
+          port: {{ .Values.networkPolicy.databasePort }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-cnpg-operator-to-database
+  name: {{ .Values.networkPolicy.operatorName }}
 spec:
   podSelector:
     matchLabels:
-      cnpg.io/cluster: postgres
+      cnpg.io/cluster: {{ .Values.cluster.name }}
   policyTypes:
     - Ingress
   ingress:
     - from:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: cnpg-system
+              kubernetes.io/metadata.name: {{ .Values.networkPolicy.operatorNamespace }}
       ports:
-        - protocol: TCP
-          port: 8000
-        - protocol: TCP
-          port: 9187
+{{ toYaml .Values.networkPolicy.operatorPorts | nindent 8 }}
+# yamllint disable-file

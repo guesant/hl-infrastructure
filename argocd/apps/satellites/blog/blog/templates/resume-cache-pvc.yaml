@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: resume-cache
-  namespace: blog
+  name: {{ .Values.resumeCache.name }}
+  namespace: {{ .Values.resumeCache.namespace }}
   annotations:
-    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/sync-wave: {{ .Values.resumeCache.syncWave | quote }}
 spec:
-  accessModes: [ReadWriteOnce]
+  accessModes:
+{{ toYaml .Values.resumeCache.accessModes | nindent 4 }}
   resources:
     requests:
-      storage: 2Gi
+      storage: {{ .Values.resumeCache.size }}

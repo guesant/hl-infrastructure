@@ -1,33 +1,28 @@
+# yamllint disable-file
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: selfsigned-bootstrap
+  name: {{ .Values.internalCa.bootstrapIssuerName }}
 spec:
   selfSigned: {}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: internal-ca
-  namespace: cert-manager
+  name: {{ .Values.internalCa.issuerName }}
+  namespace: {{ .Values.internalCa.namespace }}
 spec:
   isCA: true
-  commonName: guesant.internal CA
-  secretName: internal-ca
-  duration: 87600h
-  renewBefore: 8760h
-  privateKey:
-    algorithm: ECDSA
-    size: 256
-    rotationPolicy: Never
+{{ toYaml (dict "commonName" .Values.internalCa.commonName "secretName" .Values.internalCa.secretName "duration" .Values.internalCa.duration "renewBefore" .Values.internalCa.renewBefore "privateKey" .Values.internalCa.privateKey) | nindent 2 }}
   issuerRef:
     kind: ClusterIssuer
-    name: selfsigned-bootstrap
+    name: {{ .Values.internalCa.bootstrapIssuerName }}
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: internal-ca
+  name: {{ .Values.internalCa.issuerName }}
 spec:
   ca:
-    secretName: internal-ca
+    secretName: {{ .Values.internalCa.secretName }}
+# yamllint disable-file

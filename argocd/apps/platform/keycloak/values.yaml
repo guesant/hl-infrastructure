@@ -1,0 +1,77 @@
+name: keycloak
+namespace: keycloak
+replicas: 1
+annotations:
+  argocd.argoproj.io/sync-wave: "4"
+  reloader.stakater.com/auto: "true"
+serviceAccount:
+  name: keycloak
+  automountServiceAccountToken: false
+service:
+  name: keycloak-service
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+    - name: management
+      port: 9000
+      targetPort: management
+image:
+  repository: quay.io/keycloak/keycloak
+  tag: 26.7.4
+  digest: sha256:82a77884f3af238beab1e7afd63b5f530e1b5c0590bd7aa60b40a40463e29b2c
+args:
+  - start
+bootstrapSecretName: keycloak-bootstrap-admin
+configMapName: keycloak-config
+env:
+  - name: KC_DB_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: keycloak-postgres-app
+        key: username
+  - name: KC_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: keycloak-postgres-app
+        key: password
+ports:
+  - name: http
+    containerPort: 8080
+  - name: management
+    containerPort: 9000
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+volume:
+  name: tmp
+  mountPath: /tmp
+  type: emptyDir
+probes:
+  startup:
+    path: /health/started
+    port: management
+    periodSeconds: 5
+    failureThreshold: 120
+  readiness:
+    path: /health/ready
+    port: management
+    periodSeconds: 10
+  liveness:
+    path: /health/live
+    port: management
+    periodSeconds: 10
+resources:
+  requests:
+    cpu: 100m
+    memory: 700Mi
+  limits:
+    memory: 1Gi

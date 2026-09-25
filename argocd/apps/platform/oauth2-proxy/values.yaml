@@ -1,0 +1,77 @@
+name: oauth2-proxy
+namespace: oauth2-proxy
+replicas: 1
+annotations:
+  reloader.stakater.com/auto: "true"
+image:
+  repository: quay.io/oauth2-proxy/oauth2-proxy
+  tag: v7.15.4
+  digest: sha256:b1b2021fe8f4004573e8d690dec6c7bb29cc44364572cf8510a05bf3a0ae2ded
+args:
+  - --http-address=0.0.0.0:4180
+  - --reverse-proxy=true
+  - --provider=oidc
+  - --provider-display-name=Keycloak
+  - --oidc-issuer-url=https://auth.guesant.net/realms/management
+  - --client-id=oauth2-proxy
+  - --code-challenge-method=S256
+  - --scope=openid profile email groups
+  - --oidc-groups-claim=groups
+  - --allowed-group=admins
+  - --email-domain=*
+  - --redirect-url=https://auth.guesant.internal/oauth2/callback
+  - --cookie-domain=.guesant.internal
+  - --whitelist-domain=.guesant.internal
+  - --cookie-secure=true
+  - --cookie-samesite=lax
+  - --cookie-expire=8h
+  - --cookie-refresh=1h
+  - --set-xauthrequest=true
+  - --skip-provider-button=true
+  - --upstream=static://202
+env:
+  - name: OAUTH2_PROXY_CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: oauth2-proxy
+        key: client-secret
+  - name: OAUTH2_PROXY_COOKIE_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: oauth2-proxy
+        key: cookie-secret
+ports:
+  - name: http
+    containerPort: 4180
+    protocol: TCP
+service:
+  name: oauth2-proxy
+  port: 4180
+  targetPort: http
+pod:
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 2000
+    runAsGroup: 2000
+    seccompProfile:
+      type: RuntimeDefault
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+probes:
+  readiness:
+    path: /ready
+    port: http
+  liveness:
+    path: /ping
+    port: http
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 96Mi

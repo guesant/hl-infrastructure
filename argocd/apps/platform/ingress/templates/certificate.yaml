@@ -1,19 +1,9 @@
+# yamllint disable-file
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: internal-domain
-  namespace: ingress
+  name: {{ .Values.certificate.name }}
+  namespace: {{ .Values.certificate.namespace }}
 spec:
-  secretName: internal-domain-tls
-  dnsNames:
-    - "*.guesant.internal"
-    - guesant.internal
-  duration: 2160h
-  renewBefore: 360h
-  privateKey:
-    algorithm: ECDSA
-    size: 256
-    rotationPolicy: Always
-  issuerRef:
-    kind: ClusterIssuer
-    name: internal-ca
+{{ toYaml (dict "secretName" .Values.certificate.secretName "dnsNames" .Values.certificate.dnsNames "duration" .Values.certificate.duration "renewBefore" .Values.certificate.renewBefore "privateKey" .Values.certificate.privateKey "issuerRef" .Values.certificate.issuerRef) | nindent 2 }}
+# yamllint disable-file

@@ -1,68 +1,47 @@
+# yamllint disable-file
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: local-path-provisioner
-  namespace: kube-system
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
 spec:
-  revisionHistoryLimit: 0
+  revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
   strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
+{{ toYaml .Values.deployment.strategy | nindent 4 }}
   selector:
     matchLabels:
-      app: local-path-provisioner
+      app: {{ .Values.name }}
   template:
     metadata:
       labels:
-        app: local-path-provisioner
+        app: {{ .Values.name }}
     spec:
-      priorityClassName: system-node-critical
-      serviceAccountName: local-path-provisioner-service-account
-      automountServiceAccountToken: true
+      priorityClassName: {{ .Values.priorityClassName }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
       tolerations:
-        - key: CriticalAddonsOnly
-          operator: Exists
-        - key: node-role.kubernetes.io/control-plane
-          operator: Exists
-          effect: NoSchedule
+{{ toYaml .Values.deployment.tolerations | nindent 8 }}
       nodeSelector:
-        kubernetes.io/os: linux
+{{ toYaml .Values.deployment.nodeSelector | nindent 8 }}
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 65532
-        runAsGroup: 65532
-        seccompProfile:
-          type: RuntimeDefault
+{{ toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: local-path-provisioner
-          image: docker.io/rancher/local-path-provisioner:v0.0.37@sha256:e757967a5ec338f6a9b371c5a9688bedaa8c3578ea3dd4db329ea0084be0a86f
-          imagePullPolicy: IfNotPresent
+        - name: {{ .Values.name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.digest }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           command:
-            - local-path-provisioner
-            - start
-            - --config
-            - /etc/config/config.json
+{{ toYaml .Values.command | nindent 12 }}
           securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop: [ALL]
+{{ toYaml .Values.containerSecurityContext | nindent 12 }}
           resources:
-            requests:
-              cpu: 10m
-              memory: 32Mi
-            limits:
-              memory: 128Mi
+{{ toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-            - name: config-volume
-              mountPath: /etc/config/
+            - name: {{ .Values.deployment.volumeMount.name }}
+              mountPath: {{ .Values.deployment.volumeMount.mountPath }}
           env:
-            - name: POD_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
+{{ toYaml .Values.deployment.env | nindent 12 }}
       volumes:
-        - name: config-volume
-          configMap:
-            name: local-path-config
+        - name: {{ .Values.deployment.volume.name }}
+          {{ .Values.deployment.volume.type }}:
+            name: {{ .Values.config.name }}
+# yamllint disable-file

@@ -4,6 +4,8 @@
 
 A única `StorageClass` do cluster, `local-path`, tem `reclaimPolicy: Retain`. Isso muda o que acontece quando um `PersistentVolumeClaim` é apagado: em vez de o provisioner remover o diretório do node, o `PersistentVolume` fica em `Released`, ainda apontando para o diretório em `/var/lib/rancher/k3s/storage/<pv>_<namespace>_<pvc>` e ainda com o `claimRef` do PVC que morreu. O dado está intacto, mas nenhum PVC novo consegue se ligar a esse PV enquanto o `claimRef` antigo estiver lá. Este runbook é o caminho de volta, e vale para o erro comum (um `kubectl delete pvc` ou uma `Application` apagada sem `Delete=false`) e para o caso deliberado de recriar um StatefulSet.
 
+Os parâmetros da `StorageClass`, do provisioner local e do volume do Portainer ficam no `values.yaml` do chart de storage. Os templates interpolam esses parâmetros, de modo que o procedimento continua descrevendo o comportamento do recurso sem depender de valores duplicados no manifesto.
+
 ## O que conferir antes
 
 `just kubectl get pv` mostra o PV em `Released` com a coluna `CLAIM` ainda preenchida. Anote o nome do PV e confira no node que o diretório existe e tem o conteúdo esperado (`ls` no caminho do `spec.local.path` ou `spec.hostPath.path` do PV, por SSH). Se o objetivo é descartar o dado, o procedimento é o inverso: apagar o PV (`kubectl delete pv`) e depois o diretório à mão no node, porque com `Retain` o provisioner não faz isso por você.

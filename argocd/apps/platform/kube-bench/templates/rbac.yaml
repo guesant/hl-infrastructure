@@ -1,33 +1,27 @@
+# yamllint disable-file
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: kube-bench
-  namespace: kube-bench
+  name: {{ .Values.serviceAccount.name }}
+  namespace: {{ .Values.namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kube-bench-read
+  name: {{ .Values.rbac.roleName }}
 rules:
-  - apiGroups: [""]
-    resources: ["pods", "serviceaccounts", "namespaces"]
-    verbs: ["get", "list"]
-  - apiGroups: ["rbac.authorization.k8s.io"]
-    resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
-    verbs: ["get", "list"]
-  - apiGroups: ["networking.k8s.io"]
-    resources: ["networkpolicies"]
-    verbs: ["get", "list"]
+{{ toYaml .Values.rbac.rules | nindent 2 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: kube-bench-read
+  name: {{ .Values.rbac.roleName }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: kube-bench-read
+  name: {{ .Values.rbac.roleName }}
 subjects:
   - kind: ServiceAccount
-    name: kube-bench
-    namespace: kube-bench
+    name: {{ .Values.serviceAccount.name }}
+    namespace: {{ .Values.namespace }}
+# yamllint disable-file

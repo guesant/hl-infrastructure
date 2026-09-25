@@ -4,6 +4,8 @@
 
 O Argo CD só reage quando o manifesto renderizado muda de texto; ele não sabe, por si só, que uma imagem nova foi publicada num registry enquanto a tag declarada continua a mesma. Alguém precisa observar o registry e traduzir "há um digest novo atrás da tag principal" numa mudança que o Argo enxergue. Neste cluster esse alguém é o [Kargo](https://kargo.io/), instalado como aplicação de plataforma em `argocd/apps/platform/kargo`.
 
+O chart de entrega mantém os nomes do projeto, namespace, estágio e repositório no `values.yaml`. Os templates percorrem a lista de satélites e imagens, sem repetir esses valores na estrutura dos recursos Kargo.
+
 Ele substituiu o Argo CD Image Updater, que fazia a mesma escrita sem interface, sem histórico de promoções e com um controller que reiniciava por falta de memória. As armadilhas que a versão anterior desta página documentava deixaram de existir com a troca: o campo `status.summary.images` vazio que fazia o updater ignorar a imagem, e o formato do valor gravado, que mudava conforme a estratégia escolhida.
 
 No lugar delas ficou um registro: cada promoção vira um objeto Promotion no namespace de entrega, com data e resultado, e o Freight que a originou continua listado para ser promovido de novo.

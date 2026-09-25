@@ -1,3 +1,45 @@
+delivery:
+  namespaceSuffix: -delivery
+  projectNamespace: argocd
+  stageName: prod
+  repository: https://github.com/guesant/hl-infrastructure.git
+  namespaceLabels:
+    kargo.akuity.io/project: "true"
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+  projectSyncWave: "0"
+  resourceSyncWave: "1"
+  autoPromotionEnabled: true
+  warehouse:
+    interval: 2m0s
+    freightCreationPolicy: Automatic
+    imageSelectionStrategy: Digest
+    constraint: main
+    strictSemvers: true
+    discoveryLimit: 5
+  promotion:
+    step: argocd-update
+  app:
+    targetRevision: main
+    revisionHistoryLimit: 3
+    sync:
+      selfHeal: true
+      prune: true
+      allowEmpty: false
+    syncOptions:
+      - ServerSideApply=true
+      - SkipDryRunOnMissingResource=true
+      - FailOnSharedResource=true
+      - PruneLast=true
+      - PrunePropagationPolicy=foreground
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
 satellites:
   - name: blog
     childApp: blog

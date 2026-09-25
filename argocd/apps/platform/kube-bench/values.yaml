@@ -1,0 +1,77 @@
+name: kube-bench
+namespace: kube-bench
+serviceAccount:
+  name: kube-bench
+  automountServiceAccountToken: true
+schedule: "0 9 * * 1"
+timeZone: America/Sao_Paulo
+concurrencyPolicy: Forbid
+successfulJobsHistoryLimit: 2
+failedJobsHistoryLimit: 2
+backoffLimit: 0
+ttlSecondsAfterFinished: 604800
+job:
+  restartPolicy: Never
+image:
+  repository: docker.io/aquasec/kube-bench
+  tag: v0.16.0
+  digest: sha256:75506f222d1eb6ce2a751a5533bdc0a3b54c898e2e49e7751d0ee22cfb862679
+command:
+  - kube-bench
+  - run
+  - --targets
+  - policies
+  - --benchmark
+  - k3s-cis-1.9
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+  seccompProfile:
+    type: RuntimeDefault
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  capabilities:
+    drop:
+      - ALL
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+volume:
+  name: tmp
+  mountPath: /tmp
+rbac:
+  roleName: kube-bench-read
+  rules:
+    - apiGroups:
+        - ""
+      resources:
+        - pods
+        - serviceaccounts
+        - namespaces
+      verbs:
+        - get
+        - list
+    - apiGroups:
+        - rbac.authorization.k8s.io
+      resources:
+        - roles
+        - rolebindings
+        - clusterroles
+        - clusterrolebindings
+      verbs:
+        - get
+        - list
+    - apiGroups:
+        - networking.k8s.io
+      resources:
+        - networkpolicies
+      verbs:
+        - get
+        - list

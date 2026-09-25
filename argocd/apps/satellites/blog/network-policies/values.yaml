@@ -1,0 +1,232 @@
+policies: |-
+  apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    name: allow-cloudflared-to-frontend
+    namespace: blog
+  spec:
+    podSelector:
+      matchLabels:
+        app.kubernetes.io/name: frontend
+    policyTypes:
+      - Ingress
+    ingress:
+      - from:
+          - podSelector:
+              matchLabels:
+                app.kubernetes.io/name: cloudflared
+        ports:
+          - protocol: TCP
+            port: 3000
+  ---
+  apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    name: allow-cloudflared-to-laravel
+    namespace: blog
+  spec:
+    podSelector:
+      matchLabels:
+        app.kubernetes.io/name: app
+        app.kubernetes.io/component: laravel
+    policyTypes:
+      - Ingress
+    ingress:
+      - from:
+          - podSelector:
+              matchLabels:
+                app.kubernetes.io/name: cloudflared
+        ports:
+          - protocol: TCP
+            port: 8000
+  ---
+  apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    name: allow-frontend-to-laravel
+    namespace: blog
+  spec:
+    podSelector:
+      matchLabels:
+        app.kubernetes.io/name: app
+        app.kubernetes.io/component: laravel
+    policyTypes:
+      - Ingress
+    ingress:
+      - from:
+          - podSelector:
+              matchLabels:
+                app.kubernetes.io/name: frontend
+        ports:
+          - protocol: TCP
+            port: 8000
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: blog-baseline
+    namespace: blog
+  spec:
+    endpointSelector: {}
+    ingress:
+      - fromEntities:
+          - host
+          - remote-node
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: app-egress
+    namespace: blog
+  spec:
+    endpointSelector:
+      matchLabels:
+        app.kubernetes.io/name: app
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: data
+              cnpg.io/cluster: postgres
+        toPorts:
+          - ports:
+              - port: "5432"
+                protocol: TCP
+      - toEntities:
+          - world
+        toPorts:
+          - ports:
+              - port: "443"
+                protocol: TCP
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: frontend-egress
+    namespace: blog
+  spec:
+    endpointSelector:
+      matchLabels:
+        app.kubernetes.io/name: frontend
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              app.kubernetes.io/name: app
+              app.kubernetes.io/component: laravel
+        toPorts:
+          - ports:
+              - port: "8080"
+                protocol: TCP
+              - port: "8000"
+                protocol: TCP
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: cloudflared-egress
+    namespace: blog
+  spec:
+    endpointSelector:
+      matchLabels:
+        app.kubernetes.io/name: cloudflared
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              app.kubernetes.io/name: app
+        toPorts:
+          - ports:
+              - port: "8080"
+                protocol: TCP
+              - port: "8000"
+                protocol: TCP
+      - toEndpoints:
+          - matchLabels:
+              app.kubernetes.io/name: frontend
+        toPorts:
+          - ports:
+              - port: "3000"
+                protocol: TCP
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: argocd
+              app.kubernetes.io/name: argocd-server
+        toPorts:
+          - ports:
+              - port: "8080"
+                protocol: TCP
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: keycloak
+              app.kubernetes.io/name: keycloak
+        toPorts:
+          - ports:
+              - port: "8080"
+                protocol: TCP
+      - toEntities:
+          - world
+        toPorts:
+          - ports:
+              - port: "7844"
+                protocol: TCP
+              - port: "7844"
+                protocol: UDP
+              - port: "443"
+                protocol: TCP
+  ---
+  apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    name: default-deny-ingress
+    namespace: blog
+  spec:
+    podSelector: {}
+    policyTypes:
+      - Ingress
+    ingress: []
+  ---
+  apiVersion: v1
+  kind: LimitRange
+  metadata:
+    name: blog-namespace-limits
+    namespace: blog
+  spec:
+    limits:
+      - type: Container
+        default:
+          cpu: 200m
+          memory: 256Mi
+        defaultRequest:
+          cpu: 50m
+          memory: 64Mi
+  ---
+  apiVersion: v1
+  kind: ResourceQuota
+  metadata:
+    name: blog-namespace-quota
+    namespace: blog
+  spec:
+    hard:
+      requests.cpu: 550m
+      requests.memory: 1100Mi
+      limits.cpu: 4200m
+      limits.memory: 2200Mi

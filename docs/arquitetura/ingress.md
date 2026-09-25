@@ -4,6 +4,8 @@
 
 O DNS interno da [tailnet](tailscale.md) faz todo nome sob o domínio interno apontar para o node, mas um endereço só não diz qual serviço atender. Quem separa um nome do outro e entrega cada um ao serviço certo é a camada descrita aqui: um Traefik declarado como aplicação do Argo CD em [argocd/apps/platform/ingress](https://github.com/guesant/hl-infrastructure/tree/main/argocd/apps/platform/ingress), implementando a [Gateway API](../aprender/gateway-api.md), com certificados emitidos por uma autoridade certificadora interna do [cert-manager](../aprender/tls-automatico.md).
 
+Os nomes de certificados, middlewares e rotas vivem em `values.yaml`. Os templates apenas interpolam esses dados e percorrem a lista de rotas, para que uma mudança de hostname, serviço ou política de autenticação não exija editar a estrutura do recurso Kubernetes.
+
 As três decisões que essa camada carrega estão explicadas nas seções seguintes: por que o Traefik escuta direto no node em vez de atrás de um Service, por que as rotas são Gateway API e não o recurso próprio do Traefik, e por que os certificados vêm de uma CA do próprio cluster. Nenhuma delas é o caminho mais comum num cluster Kubernetes, e cada uma existe por uma limitação concreta deste node.
 
 ## Por que o Traefik escuta direto no node

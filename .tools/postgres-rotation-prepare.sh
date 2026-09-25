@@ -3,7 +3,7 @@ set -euo pipefail
 
 app="${1:-}"
 slot="${2:-}"
-values_file="argocd/apps/data/shared-postgres/values.yaml"
+values_file="argocd/apps/secrets/data/postgres/values.yaml"
 
 case "$app" in
 portfolio)
@@ -38,7 +38,7 @@ test "$active_slot" != "$slot" || {
 }
 
 user="${user_prefix}_${slot}"
-output="argocd/apps/data/shared-postgres/templates/${source_prefix}-${slot}.sops-secret.yaml"
+output="argocd/apps/secrets/data/postgres/templates/${source_prefix}-${slot}.sops-secret.yaml"
 secret_name="${source_prefix}-${slot}"
 password="$(head -c 48 /dev/urandom | base64 | tr -d '\n')"
 temporary="$(mktemp "${output}.XXXXXX")"

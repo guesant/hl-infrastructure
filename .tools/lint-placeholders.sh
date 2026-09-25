@@ -25,11 +25,11 @@ if [ -n "$matches" ]; then
 fi
 
 tofu_hostname="$(sed -nE 's/^blog_hostname[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' tofu/cloudflare/terraform.tfvars)"
-site_url="$(sed -nE 's/^[[:space:]]*PUBLIC_SITE_BASE_URL:[[:space:]]*"?([^"[:space:]]+).*/\1/p' argocd/apps/satellites/blog/blog/values.yaml)"
+site_url="$(sed -nE 's/^[[:space:]]{4}PUBLIC_SITE_BASE_URL:[[:space:]]*"?([^"[:space:]]+).*/\1/p' argocd/apps/secrets/satellites/blog/values.yaml)"
 site_hostname="${site_url#https://}"
 site_hostname="${site_hostname%%/*}"
 if [ -z "$tofu_hostname" ] || [ "$tofu_hostname" != "$site_hostname" ]; then
-  echo "hostname mismatch: blog_hostname in tofu/cloudflare/terraform.tfvars is '$tofu_hostname', PUBLIC_SITE_BASE_URL in the blog values.yaml is '$site_url'"
+  echo "hostname mismatch: blog_hostname in tofu/cloudflare/terraform.tfvars is '$tofu_hostname', PUBLIC_SITE_BASE_URL in the blog secrets values.yaml is '$site_url'"
   status=1
 fi
 

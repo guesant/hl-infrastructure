@@ -1,40 +1,29 @@
-{{- if .Values.monitoring.enabled }}
+{{- $auth := .Values.authMiddleware }}
+{{- range $namespace := $auth.alwaysNamespaces }}
+---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: keycloak-login
-  namespace: monitoring
+  name: {{ $auth.name }}
+  namespace: {{ $namespace }}
 spec:
   forwardAuth:
-    address: http://oauth2-proxy.oauth2-proxy.svc.cluster.local:4180/
-    trustForwardHeader: true
+    address: {{ $auth.address }}
+    trustForwardHeader: {{ $auth.trustForwardHeader }}
     authResponseHeaders:
-      - X-Auth-Request-User
-      - X-Auth-Request-Email
+{{ toYaml $auth.authResponseHeaders | nindent 6 }}
 {{- end }}
+{{- if .Values.monitoring.enabled }}
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: keycloak-login
-  namespace: dashy
+  name: {{ $auth.name }}
+  namespace: {{ $auth.monitoringNamespace }}
 spec:
   forwardAuth:
-    address: http://oauth2-proxy.oauth2-proxy.svc.cluster.local:4180/
-    trustForwardHeader: true
+    address: {{ $auth.address }}
+    trustForwardHeader: {{ $auth.trustForwardHeader }}
     authResponseHeaders:
-      - X-Auth-Request-User
-      - X-Auth-Request-Email
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: keycloak-login
-  namespace: kube-system
-spec:
-  forwardAuth:
-    address: http://oauth2-proxy.oauth2-proxy.svc.cluster.local:4180/
-    trustForwardHeader: true
-    authResponseHeaders:
-      - X-Auth-Request-User
-      - X-Auth-Request-Email
+{{ toYaml $auth.authResponseHeaders | nindent 6 }}
+{{- end }}

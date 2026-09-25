@@ -1,7 +1,54 @@
-rotation:
-  portfolio:
-    activeSlot: a
-    retiredSlot: ""
-  keycloak:
-    activeSlot: a
-    retiredSlot: ""
+cluster:
+  name: postgres
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+  instances: 1
+  enableSuperuserAccess: false
+  image:
+    repository: ghcr.io/cloudnative-pg/postgresql
+    tag: "17.11"
+    digest: sha256:70664ebcfa1100361b5bdc28bbf06fdbe08db2dc4ad7bd14de33c5e05fe8ea8e
+  storage:
+    storageClass: local-path
+    size: 10Gi
+  bootstrap:
+    database: portfolio
+    owner: portfolio
+  resources:
+    requests:
+      cpu: 150m
+      memory: 384Mi
+    limits:
+      cpu: 750m
+      memory: 768Mi
+
+databases:
+  - name: portfolio
+    owner: portfolio
+  - name: keycloak
+    owner: keycloak
+databaseDefaults:
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+  reclaimPolicy: retain
+
+networkPolicy:
+  databaseClientsName: allow-database-clients
+  operatorName: allow-cnpg-operator-to-database
+  databaseClients:
+    - namespace: blog
+      selector:
+        app.kubernetes.io/name: app
+    - namespace: keycloak
+      selector:
+        app.kubernetes.io/name: keycloak
+  operatorNamespace: cnpg-system
+  databasePort: 5432
+  databaseProtocol: TCP
+  operatorPorts:
+    - port: 8000
+      protocol: TCP
+    - port: 9187
+      protocol: TCP

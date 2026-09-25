@@ -1,0 +1,125 @@
+name: local-path-provisioner
+namespace: kube-system
+serviceAccount:
+  name: local-path-provisioner-service-account
+  automountServiceAccountToken: true
+priorityClassName: system-node-critical
+image:
+  repository: docker.io/rancher/local-path-provisioner
+  tag: v0.0.37
+  digest: sha256:e757967a5ec338f6a9b371c5a9688bedaa8c3578ea3dd4db329ea0084be0a86f
+imagePullPolicy: IfNotPresent
+command:
+  - local-path-provisioner
+  - start
+  - --config
+  - /etc/config/config.json
+deployment:
+  revisionHistoryLimit: 0
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  tolerations:
+    - key: CriticalAddonsOnly
+      operator: Exists
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+  nodeSelector:
+    kubernetes.io/os: linux
+  volumeMount:
+    name: config-volume
+    mountPath: /etc/config/
+  volume:
+    name: config-volume
+    type: configMap
+  env:
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  runAsGroup: 65532
+  seccompProfile:
+    type: RuntimeDefault
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 128Mi
+config:
+  name: local-path-config
+  nodePath: /var/lib/rancher/k3s/storage
+  image:
+    repository: docker.io/rancher/mirrored-library-busybox
+    tag: 1.37.0
+    digest: sha256:101b4afd76732482eff9b95cae5f94bcf295e521fbec4e01b69c5421f3f3f3e5
+  imagePullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 10m
+      memory: 16Mi
+    limits:
+      memory: 64Mi
+  helperPod:
+    name: helper-pod
+    imagePullPolicy: IfNotPresent
+    containerName: helper-pod
+    defaultNode: DEFAULT_PATH_FOR_NON_LISTED_NODES
+storageClass:
+  name: local-path
+  provisioner: rancher.io/local-path
+  reclaimPolicy: Retain
+  volumeBindingMode: WaitForFirstConsumer
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+    defaultVolumeType: local
+    storageclass.kubernetes.io/is-default-class: "true"
+rbac:
+  roleName: local-path-provisioner-role
+  bindingName: local-path-provisioner-bind
+  rules:
+    - apiGroups:
+        - ""
+      resources:
+        - nodes
+        - persistentvolumeclaims
+        - configmaps
+        - pods/log
+      verbs:
+        - get
+        - list
+        - watch
+    - apiGroups:
+        - ""
+      resources:
+        - endpoints
+        - persistentvolumes
+        - pods
+      verbs:
+        - "*"
+    - apiGroups:
+        - ""
+      resources:
+        - events
+      verbs:
+        - create
+        - patch
+    - apiGroups:
+        - storage.k8s.io
+      resources:
+        - storageclasses
+      verbs:
+        - get
+        - list
+        - watch

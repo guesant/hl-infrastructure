@@ -4,6 +4,8 @@
 
 O ArgoCD sincroniza este cluster a partir de um padrão de app-of-apps recursivo, com os projetos `infra/satellites`, que têm permissões bem diferentes, ambos declarados como `AppProject`.
 
+Os charts locais seguem a mesma separação: `values.yaml` concentra nomes, imagens, portas, recursos e demais parâmetros operacionais, enquanto os templates preservam apenas a composição dos recursos, condicionais e iterações. Isso mantém a mudança de configuração separada da estrutura Kubernetes que a aplica.
+
 App-of-apps recursivo quer dizer que uma aplicação do Argo não descreve um workload, e sim um diretório de outras aplicações, que por sua vez podem descrever mais um.
 
 Uma única aplicação aplicada à mão no bootstrap basta para o resto do cluster aparecer sozinho. O projeto ao qual cada aplicação pertence é o que limita o que ela pode criar, e é nessa diferença de teto que se apoia a maior parte das decisões desta página.
@@ -387,7 +389,7 @@ Argo CD e Grafana ficam em `argocd.guesant.internal` e `grafana.guesant.internal
 
 ### Login único: `sso`, oauth2-proxy e Reloader
 
-Os segredos de login único ficam em `argocd/apps/platform/sso`: um `SopsSecret` por consumidor, criado no namespace dele.
+Os segredos de login único ficam em `argocd/apps/secrets/platform/sso`: um `SopsSecret` por consumidor, criado no namespace dele.
 
 Isso cobre `grafana-oidc/monitoring` e `argocd-oidc/argocd`.
 
@@ -399,7 +401,7 @@ São os mesmos client secrets que o módulo [`tofu/keycloak-management`](opentof
 
 A `Application` não cria namespace: ela só coloca segredos onde já existe quem os consome.
 
-O `oauth2-proxy`, em `argocd/apps/platform/oauth2-proxy`, é o login dos serviços que não têm o seu.
+O `oauth2-proxy`, em `argocd/apps/platform/oauth2-proxy`, é o login dos serviços que não têm o seu. Seu `SopsSecret` fica em `argocd/apps/secrets/platform/oauth2-proxy`.
 
 É um processo pequeno, sem raiz gravável e sem token de `ServiceAccount`.
 
@@ -423,7 +425,7 @@ Sem ele, uma rotação declarada no git só valeria depois de alguém reiniciar 
 
 ### Portainer e Dashy
 
-O Portainer, em `argocd/apps/platform/portainer`, é uma interface de administração do cluster alcançável só pelo ingress da tailnet.
+O Portainer, em `argocd/apps/platform/portainer`, é uma interface de administração do cluster alcançável só pelo ingress da tailnet. Seu `SopsSecret` fica em `argocd/apps/secrets/platform/portainer`.
 
 Ele não usa o chart oficial: o chart não expõe `securityContext`, e a imagem sobe como root por padrão, então as políticas de admissão recusariam o pod.
 

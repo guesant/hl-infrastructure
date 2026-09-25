@@ -1,6 +1,150 @@
 monitoring:
   enabled: false
 
+certificate:
+  name: internal-domain
+  namespace: ingress
+  secretName: internal-domain-tls
+  dnsNames:
+    - "*.guesant.internal"
+    - guesant.internal
+  duration: 2160h
+  renewBefore: 360h
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Always
+  issuerRef:
+    kind: ClusterIssuer
+    name: internal-ca
+
+internalCa:
+  bootstrapIssuerName: selfsigned-bootstrap
+  issuerName: internal-ca
+  commonName: guesant.internal CA
+  namespace: cert-manager
+  secretName: internal-ca
+  duration: 87600h
+  renewBefore: 8760h
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Never
+
+authMiddleware:
+  name: keycloak-login
+  address: http://oauth2-proxy.oauth2-proxy.svc.cluster.local:4180/
+  trustForwardHeader: true
+  authResponseHeaders:
+    - X-Auth-Request-User
+    - X-Auth-Request-Email
+  alwaysNamespaces:
+    - dashy
+    - kube-system
+  monitoringNamespace: monitoring
+
+gateway:
+  group: gateway.networking.k8s.io
+  kind: Gateway
+  name: internal
+  namespace: ingress
+  sectionName: websecure
+
+route:
+  pathType: PathPrefix
+  filterType: ExtensionRef
+  filterGroup: traefik.io
+  filterKind: Middleware
+  backendGroup: ""
+  backendKind: Service
+  backendWeight: 1
+
+routes:
+  - name: argocd
+    namespace: argocd
+    hostnames:
+      - argocd.guesant.internal
+    serviceName: argocd-server
+    servicePort: 80
+    path: /
+    auth: false
+  - name: keycloak
+    namespace: keycloak
+    hostnames:
+      - keycloak.guesant.internal
+    serviceName: keycloak-service
+    servicePort: 8080
+    path: /
+    auth: false
+  - name: prometheus
+    namespace: monitoring
+    hostnames:
+      - prometheus.guesant.internal
+    serviceName: kps-prometheus
+    servicePort: 9090
+    path: /
+    auth: true
+    monitoringOnly: true
+  - name: alertmanager
+    namespace: monitoring
+    hostnames:
+      - alertmanager.guesant.internal
+    serviceName: kps-alertmanager
+    servicePort: 9093
+    path: /
+    auth: true
+    monitoringOnly: true
+  - name: portainer
+    namespace: portainer
+    hostnames:
+      - portainer.guesant.internal
+    serviceName: portainer
+    servicePort: 9000
+    path: /
+    auth: false
+  - name: dashy
+    namespace: dashy
+    hostnames:
+      - guesant.internal
+      - dashy.guesant.internal
+    serviceName: dashy
+    servicePort: 8080
+    path: /
+    auth: true
+  - name: grafana
+    namespace: monitoring
+    hostnames:
+      - grafana.guesant.internal
+    serviceName: kps-grafana
+    servicePort: 80
+    path: /
+    auth: false
+    monitoringOnly: true
+  - name: oauth2-proxy
+    namespace: oauth2-proxy
+    hostnames:
+      - auth.guesant.internal
+    serviceName: oauth2-proxy
+    servicePort: 4180
+    path: /oauth2/
+    auth: false
+  - name: hubble
+    namespace: kube-system
+    hostnames:
+      - hubble.guesant.internal
+    serviceName: hubble-ui
+    servicePort: 80
+    path: /
+    auth: true
+  - name: kargo
+    namespace: kargo
+    hostnames:
+      - kargo.guesant.internal
+    serviceName: kargo-api
+    servicePort: 80
+    path: /
+    auth: false
+
 traefik-crds:
   traefik: false
   gatewayAPI: true

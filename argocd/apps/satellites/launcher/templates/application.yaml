@@ -4,19 +4,19 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: {{ .name }}
-  namespace: argocd
+  namespace: {{ $.Values.argocd.namespace }}
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+    - {{ $.Values.argocd.finalizer }}
   annotations:
     argocd.argoproj.io/sync-wave: {{ .syncWave | default "10" | quote }}
     {{- range $key, $value := .annotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
-  project: satellites
+  project: {{ $.Values.argocd.project }}
   source:
     repoURL: {{ .repoURL | quote }}
-    targetRevision: {{ .targetRevision | default "main" | quote }}
+    targetRevision: {{ .targetRevision | default $.Values.argocd.targetRevision | quote }}
     path: {{ .path | quote }}
     {{- if .helmReleaseName }}
     helm:
@@ -26,24 +26,14 @@ spec:
       recurse: true
     {{- end }}
   destination:
-    server: https://kubernetes.default.svc
-    namespace: {{ .destinationNamespace | default "argocd" | quote }}
-  revisionHistoryLimit: 3
+    server: {{ $.Values.argocd.server }}
+    namespace: {{ .destinationNamespace | default $.Values.argocd.defaultDestinationNamespace | quote }}
+  revisionHistoryLimit: {{ $.Values.argocd.revisionHistoryLimit }}
   syncPolicy:
     automated:
-      selfHeal: true
-      prune: true
-      allowEmpty: false
+{{ toYaml $.Values.argocd.sync.automated | nindent 6 }}
     syncOptions:
-      - ServerSideApply=true
-      - SkipDryRunOnMissingResource=true
-      - FailOnSharedResource=true
-      - PruneLast=true
-      - PrunePropagationPolicy=foreground
+{{ toYaml $.Values.argocd.sync.options | nindent 6 }}
     retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m
+{{ toYaml $.Values.argocd.sync.retry | nindent 6 }}
 {{- end }}

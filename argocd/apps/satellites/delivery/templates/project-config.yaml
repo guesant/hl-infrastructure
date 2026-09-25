@@ -3,12 +3,12 @@
 apiVersion: kargo.akuity.io/v1alpha1
 kind: ProjectConfig
 metadata:
-  name: {{ .name }}-delivery
-  namespace: {{ .name }}-delivery
+  name: {{ .name }}{{ $.Values.delivery.namespaceSuffix }}
+  namespace: {{ .name }}{{ $.Values.delivery.namespaceSuffix }}
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: {{ $.Values.delivery.resourceSyncWave | quote }}
 spec:
   promotionPolicies:
-    - stage: prod
-      autoPromotionEnabled: true
+    - stage: {{ $.Values.delivery.stageName }}
+      autoPromotionEnabled: {{ $.Values.delivery.autoPromotionEnabled }}
 {{- end }}

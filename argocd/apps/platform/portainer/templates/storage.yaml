@@ -1,13 +1,15 @@
+# yamllint disable-file
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: portainer-v2
-  namespace: portainer
+  name: {{ .Values.storage.pvcName }}
+  namespace: {{ .Values.namespace }}
   annotations:
-    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+{{ toYaml .Values.storage.annotations | nindent 4 }}
 spec:
-  accessModes: [ReadWriteOnce]
-  storageClassName: local-path
+  accessModes:
+{{ toYaml .Values.storage.accessModes | nindent 4 }}
+  storageClassName: {{ .Values.storage.storageClassName }}
   resources:
     requests:
-      storage: 2Gi
+      storage: {{ .Values.storage.size }}

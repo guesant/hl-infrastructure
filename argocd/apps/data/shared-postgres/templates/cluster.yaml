@@ -1,25 +1,19 @@
+# yamllint disable-file
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: postgres
+  name: {{ .Values.cluster.name }}
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
-    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+{{ toYaml .Values.cluster.annotations | nindent 4 }}
 spec:
-  instances: 1
-  enableSuperuserAccess: false
-  imageName: ghcr.io/cloudnative-pg/postgresql:17.11@sha256:70664ebcfa1100361b5bdc28bbf06fdbe08db2dc4ad7bd14de33c5e05fe8ea8e
+  instances: {{ .Values.cluster.instances }}
+  enableSuperuserAccess: {{ .Values.cluster.enableSuperuserAccess }}
+  imageName: {{ .Values.cluster.image.repository }}:{{ .Values.cluster.image.tag }}@{{ .Values.cluster.image.digest }}
   storage:
-    storageClass: local-path
-    size: 10Gi
+{{ toYaml .Values.cluster.storage | nindent 4 }}
   bootstrap:
     initdb:
-      database: portfolio
-      owner: portfolio
+{{ toYaml .Values.cluster.bootstrap | nindent 6 }}
   resources:
-    requests:
-      cpu: 150m
-      memory: 384Mi
-    limits:
-      cpu: 750m
-      memory: 768Mi
+{{ toYaml .Values.cluster.resources | nindent 4 }}
+# yamllint disable-file

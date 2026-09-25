@@ -4,19 +4,19 @@ apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
   name: {{ .name }}
-  namespace: {{ .name }}-delivery
+  namespace: {{ .name }}{{ $.Values.delivery.namespaceSuffix }}
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: {{ $.Values.delivery.resourceSyncWave | quote }}
 spec:
-  interval: 2m0s
-  freightCreationPolicy: Automatic
+  interval: {{ $.Values.delivery.warehouse.interval }}
+  freightCreationPolicy: {{ $.Values.delivery.warehouse.freightCreationPolicy }}
   subscriptions:
     {{- range .images }}
     - image:
         repoURL: {{ .imageRepo | quote }}
-        imageSelectionStrategy: {{ .imageSelectionStrategy | default "Digest" | quote }}
-        constraint: {{ .constraint | default "main" | quote }}
-        strictSemvers: {{ .strictSemvers | default true }}
-        discoveryLimit: {{ .discoveryLimit | default 5 }}
+        imageSelectionStrategy: {{ .imageSelectionStrategy | default $.Values.delivery.warehouse.imageSelectionStrategy | quote }}
+        constraint: {{ .constraint | default $.Values.delivery.warehouse.constraint | quote }}
+        strictSemvers: {{ .strictSemvers | default $.Values.delivery.warehouse.strictSemvers }}
+        discoveryLimit: {{ .discoveryLimit | default $.Values.delivery.warehouse.discoveryLimit }}
     {{- end }}
 {{- end }}

@@ -3,10 +3,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ .name }}-delivery
+  name: {{ .name }}{{ $.Values.delivery.namespaceSuffix }}
   labels:
-    kargo.akuity.io/project: "true"
-    pod-security.kubernetes.io/enforce: restricted
-    pod-security.kubernetes.io/warn: restricted
-    pod-security.kubernetes.io/audit: restricted
+{{ toYaml $.Values.delivery.namespaceLabels | nindent 4 }}
 {{- end }}

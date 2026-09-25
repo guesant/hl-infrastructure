@@ -1,17 +1,14 @@
+# yamllint disable-file
 apiVersion: v1
 kind: Service
 metadata:
-  name: keycloak-service
-  namespace: keycloak
+  name: {{ .Values.service.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/name: {{ .Values.name }}
 spec:
   selector:
-    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/name: {{ .Values.name }}
   ports:
-    - name: http
-      port: 8080
-      targetPort: http
-    - name: management
-      port: 9000
-      targetPort: management
+{{ toYaml .Values.service.ports | nindent 4 }}
+# yamllint disable-file

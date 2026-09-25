@@ -79,48 +79,134 @@ application:
         protocol: TCP
         targetPort: 3000
   configMap:
-    enabled: true
-    files:
-      config:
-        PORTFOLIO_CONTENT_API_URL: http://app:8080/api/v1/public-site
-        PORTFOLIO_PUBLIC_API_URL: /api/v1
+    enabled: false
+
+resumeCache:
+  name: resume-cache
+  namespace: blog
+  size: 2Gi
+  syncWave: "4"
+  accessModes:
+    - ReadWriteOnce
 
 laravel:
   enabled: true
-  image:
-    repository: ghcr.io/guesant/blog-laravel
-    tag: main@sha256:2dbfa2f4588237c73737dd88afc0856bfb14a8a348ec665021d10e47dc36a571
-  env:
-    APP_NAME: Portfolio
-    APP_ENV: production
-    APP_DEBUG: "false"
-    APP_URL: https://guesant.net
-    PUBLIC_SITE_BASE_URL: https://guesant.net
-    OG_IMAGE_ENABLED: "true"
-    OG_IMAGE_BASE_URL: https://api.guesant.net
-    APP_LOCALE: en
-    APP_FALLBACK_LOCALE: en
-    LOG_CHANNEL: stderr
-    LOG_LEVEL: error
-    PHP_CLI_SERVER_WORKERS: "2"
-    DB_CONNECTION: pgsql
-    DB_PORT: "5432"
-    SESSION_DRIVER: database
-    SESSION_COOKIE: sid
-    SESSION_SECURE_COOKIE: "true"
-    FILESYSTEM_DISK: local
-    QUEUE_CONNECTION: database
-    CACHE_STORE: database
-    ADMIN_PATH: ""
-    PORTFOLIO_ADMIN_OIDC_AUTHORITY: https://auth.guesant.net
-    PORTFOLIO_ADMIN_OIDC_CLIENT_ID: blog
-    PORTFOLIO_ADMIN_OIDC_REDIRECT_URI: https://admin.guesant.net/auth/keycloak/callback
-    PORTFOLIO_ADMIN_OIDC_GROUP: admins
-    PORTFOLIO_RESUME_PDF_ROOT: /data/resume-cache
-    PORTFOLIO_PUBLIC_ASSET_ROOT: /data/public
-    TECTONIC_BUNDLE: https://data1.fullyjustified.net/tlextras-2022.0r0.tar
-    TECTONIC_ONLY_CACHED: "false"
-  replicas: 2
+  annotations:
+    reloader.stakater.com/auto: "true"
+    argocd.argoproj.io/sync-wave: "4"
+  strategy:
+    type: Recreate
+  pod:
+    automountServiceAccountToken: false
+    securityContext:
+      fsGroup: 33
+      runAsNonRoot: true
+      runAsUser: 33
+  container:
+    securityContext:
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 33
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      seccompProfile:
+        type: RuntimeDefault
+  components:
+    serving: laravel
+    worker: laravel-worker
+    scheduler: laravel-scheduler
+    batch: laravel
+  workloadClasses:
+    serving: serving
+    worker: worker
+    scheduler: scheduler
+    batch: batch
+  serviceAccount:
+    automountServiceAccountToken: false
+  serviceType: ClusterIP
+  servicePortName: http
+  serviceProtocol: TCP
+  sharedVolumeMounts:
+    - name: app-storage
+      mountPath: /app/storage
+    - name: bootstrap-cache
+      mountPath: /app/bootstrap/cache
+    - name: public-assets
+      mountPath: /data/public
+    - name: resume-cache
+      mountPath: /data/resume-cache
+    - name: tmp
+      mountPath: /tmp
+  migrationVolumeMounts:
+    - name: app-storage
+      mountPath: /app/storage
+    - name: bootstrap-cache
+      mountPath: /app/bootstrap/cache
+    - name: tmp
+      mountPath: /tmp
+  sharedVolumes:
+    - name: app-storage
+      type: emptyDir
+    - name: bootstrap-cache
+      type: emptyDir
+    - name: public-assets
+      type: emptyDir
+    - name: resume-cache
+      type: persistentVolumeClaim
+      claimName: resume-cache
+    - name: tmp
+      type: emptyDir
+  migrationVolumes:
+    - name: app-storage
+      type: emptyDir
+    - name: bootstrap-cache
+      type: emptyDir
+    - name: tmp
+      type: emptyDir
+  terminationGracePeriodSeconds: 30
+  probeDefaults:
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 1
+    failureThreshold: 3
+  migration:
+    containerName: migrate
+    restartPolicy: OnFailure
+    activeDeadlineSeconds: 600
+    backoffLimit: 3
+    databaseConnection: pgsql
+    databasePort: "5432"
+    hook:
+      argocd.argoproj.io/hook: Sync
+      argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+  names:
+    application: app
+    deployment: laravel
+    migrationJob: laravel-migrate
+    scheduler: laravel-scheduler
+    worker: laravel-worker
+    service: app
+    serviceAccount: app
+  secretNames:
+    bootstrap: app-secret
+    application: laravel-secret
+    ogImage: og-secret
+    database: portfolio-postgres-app
+  configMapName: laravel-config
+  imagePullPolicy: IfNotPresent
+  port: 8000
+  service:
+    port: 8080
+    targetPort: 8000
   resources:
     requests:
       cpu: 50m
@@ -128,6 +214,10 @@ laravel:
     limits:
       cpu: 1000m
       memory: 256Mi
+  image:
+    repository: ghcr.io/guesant/blog-laravel
+    tag: main@sha256:2dbfa2f4588237c73737dd88afc0856bfb14a8a348ec665021d10e47dc36a571
+  replicas: 2
   worker:
     enabled: true
     replicas: 1

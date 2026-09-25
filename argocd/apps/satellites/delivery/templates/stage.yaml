@@ -3,10 +3,10 @@
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: prod
-  namespace: {{ .name }}-delivery
+  name: {{ $.Values.delivery.stageName }}
+  namespace: {{ .name }}{{ $.Values.delivery.namespaceSuffix }}
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: {{ $.Values.delivery.resourceSyncWave | quote }}
 spec:
   requestedFreight:
     - origin:
@@ -17,13 +17,13 @@ spec:
   promotionTemplate:
     spec:
       steps:
-        - uses: argocd-update
+        - uses: {{ $.Values.delivery.promotion.step }}
           config:
             apps:
               - name: {{ .childApp }}
-                namespace: argocd
+                namespace: {{ $.Values.delivery.projectNamespace }}
                 sources:
-                  - repoURL: https://github.com/guesant/hl-infrastructure.git
+                  - repoURL: {{ $.Values.delivery.repository }}
                     helm:
                       images:
                         {{- range .images }}

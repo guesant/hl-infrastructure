@@ -1,0 +1,546 @@
+policies: |-
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: argocd
+    namespace: argocd
+  spec:
+    endpointSelector: {}
+    ingress:
+      - fromEndpoints:
+          - {}
+      - fromEntities:
+          - host
+          - remote-node
+          - kube-apiserver
+      - fromEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: blog
+              app.kubernetes.io/name: cloudflared
+        toPorts:
+          - ports:
+              - port: "8080"
+                protocol: TCP
+    egress:
+      - toEndpoints:
+          - {}
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+      - toEntities:
+          - kube-apiserver
+      - toEntities:
+          - world
+        toPorts:
+          - ports:
+              - port: "443"
+                protocol: TCP
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: cert-manager
+    namespace: cert-manager
+  spec:
+    endpointSelector: {}
+    ingress:
+      - fromEndpoints:
+          - {}
+      - fromEntities:
+          - host
+          - remote-node
+          - kube-apiserver
+    egress:
+      - toEndpoints:
+          - {}
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+      - toEntities:
+          - kube-apiserver
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumClusterwideNetworkPolicy
+  metadata:
+    name: cilium-health
+  spec:
+    endpointSelector:
+      matchLabels:
+        reserved:health: ""
+    ingress:
+      - fromEntities:
+          - host
+          - remote-node
+        icmps:
+          - fields:
+              - type: 8
+                family: IPv4
+      - fromEntities:
+          - host
+          - remote-node
+        toPorts:
+          - ports:
+              - port: "4240"
+                protocol: TCP
+    egress:
+      - toEntities:
+          - host
+          - remote-node
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: cnpg-system
+    namespace: cnpg-system
+  spec:
+    endpointSelector: {}
+    ingress:
+      - fromEntities:
+          - host
+          - remote-node
+          - kube-apiserver
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+      - toEntities:
+          - kube-apiserver
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: data
+              cnpg.io/cluster: postgres
+        toPorts:
+          - ports:
+              - port: "8000"
+                protocol: TCP
+              - port: "9187"
+                protocol: TCP
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: dashy
+    namespace: dashy
+  spec:
+    endpointSelector: {}
+    ingress:
+      - fromEntities:
+          - host
+          - remote-node
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: postgres-egress
+    namespace: data
+  spec:
+    endpointSelector:
+      matchLabels:
+        cnpg.io/cluster: postgres
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+      - toEntities:
+          - kube-apiserver
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: external-secrets
+    namespace: external-secrets
+  spec:
+    endpointSelector: {}
+    ingress:
+      - fromEndpoints:
+          - {}
+      - fromEntities:
+          - host
+          - remote-node
+          - kube-apiserver
+    egress:
+      - toEndpoints:
+          - {}
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+      - toEntities:
+          - kube-apiserver
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: kargo
+    namespace: kargo
+  spec:
+    endpointSelector: {}
+    ingress:
+      - fromEndpoints:
+          - {}
+      - fromEntities:
+          - host
+          - remote-node
+          - kube-apiserver
+    egress:
+      - toEndpoints:
+          - {}
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+      - toEntities:
+          - kube-apiserver
+      - toEntities:
+          - world
+        toPorts:
+          - ports:
+              - port: "443"
+                protocol: TCP
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: keycloak
+    namespace: keycloak
+  spec:
+    endpointSelector: {}
+    ingress:
+      - fromEndpoints:
+          - {}
+      - fromEntities:
+          - host
+          - remote-node
+          - kube-apiserver
+      - fromEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: blog
+              app.kubernetes.io/name: cloudflared
+        toPorts:
+          - ports:
+              - port: "8080"
+                protocol: TCP
+      - fromEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: cnpg-system
+        toPorts:
+          - ports:
+              - port: "8000"
+                protocol: TCP
+              - port: "9187"
+                protocol: TCP
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: data
+              cnpg.io/cluster: postgres
+        toPorts:
+          - ports:
+              - port: "5432"
+                protocol: TCP
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+      - toEntities:
+          - kube-apiserver
+      - toEntities:
+          - world
+        toPorts:
+          - ports:
+              - port: "443"
+                protocol: TCP
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: kube-bench
+    namespace: kube-bench
+  spec:
+    endpointSelector: {}
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+      - toEntities:
+          - kube-apiserver
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: kube-system
+    namespace: kube-system
+  spec:
+    endpointSelector: {}
+    ingress:
+      - fromEntities:
+          - host
+          - remote-node
+          - kube-apiserver
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+      - toEntities:
+          - kube-apiserver
+          - host
+          - remote-node
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: kube-dns
+    namespace: kube-system
+  spec:
+    endpointSelector:
+      matchLabels:
+        k8s-app: kube-dns
+    ingress:
+      - fromEntities:
+          - cluster
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+    egress:
+      - toEntities:
+          - world
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: monitoring
+    namespace: monitoring
+  spec:
+    endpointSelector: {}
+    ingress:
+      - fromEndpoints:
+          - {}
+      - fromEntities:
+          - host
+          - remote-node
+    egress:
+      - toEndpoints:
+          - {}
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+      - toEntities:
+          - kube-apiserver
+      - toEntities:
+          - host
+          - remote-node
+        toPorts:
+          - ports:
+              - port: "9100"
+                protocol: TCP
+              - port: "10250"
+                protocol: TCP
+      - toEntities:
+          - world
+        toPorts:
+          - ports:
+              - port: "443"
+                protocol: TCP
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: oauth2-proxy
+    namespace: oauth2-proxy
+  spec:
+    endpointSelector: {}
+    ingress:
+      - fromEntities:
+          - host
+          - remote-node
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+      - toEntities:
+          - world
+        toPorts:
+          - ports:
+              - port: "443"
+                protocol: TCP
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: portainer
+    namespace: portainer
+  spec:
+    endpointSelector: {}
+    ingress:
+      - fromEndpoints:
+          - {}
+      - fromEntities:
+          - host
+          - remote-node
+          - kube-apiserver
+    egress:
+      - toEndpoints:
+          - {}
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+      - toEntities:
+          - kube-apiserver
+      - toEntities:
+          - world
+        toPorts:
+          - ports:
+              - port: "443"
+                protocol: TCP
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: reloader
+    namespace: reloader
+  spec:
+    endpointSelector: {}
+    ingress:
+      - fromEntities:
+          - host
+          - remote-node
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+      - toEntities:
+          - kube-apiserver
+  ---
+  apiVersion: cilium.io/v2
+  kind: CiliumNetworkPolicy
+  metadata:
+    name: sops
+    namespace: sops
+  spec:
+    endpointSelector: {}
+    ingress:
+      - fromEntities:
+          - host
+          - remote-node
+          - kube-apiserver
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: kube-system
+              k8s-app: kube-dns
+        toPorts:
+          - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP
+      - toEntities:
+          - kube-apiserver

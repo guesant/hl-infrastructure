@@ -4,7 +4,7 @@ set -euo pipefail
 action="${1:-}"
 app="${2:-}"
 slot="${3:-}"
-values_file="argocd/apps/data/shared-postgres/values.yaml"
+values_file="argocd/apps/secrets/data/postgres/values.yaml"
 
 case "$app" in
 portfolio|keycloak)
@@ -35,7 +35,7 @@ activate)
     echo "$app slot $slot is already active" >&2
     exit 1
   }
-  test -f "argocd/apps/data/shared-postgres/templates/${app}-postgres-app-${slot}.sops-secret.yaml" || {
+  test -f "argocd/apps/secrets/data/postgres/templates/${app}-postgres-app-${slot}.sops-secret.yaml" || {
     echo "slot Secret is missing for $app/$slot" >&2
     exit 1
   }

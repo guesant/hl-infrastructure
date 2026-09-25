@@ -3,17 +3,15 @@
 apiVersion: monitoring.coreos.com/v1
 kind: Probe
 metadata:
-  name: public-endpoints
-  namespace: monitoring
+  name: {{ .Values.probe.name }}
+  namespace: {{ .Values.probe.namespace }}
 spec:
-  interval: 60s
-  module: http_2xx
+  interval: {{ .Values.probe.interval }}
+  module: {{ .Values.probe.module }}
   prober:
-    url: blackbox-exporter.monitoring.svc:9115
+    url: {{ .Values.probe.proberUrl }}
   targets:
     staticConfig:
       static:
-        - https://guesant.net
-        - https://www.guesant.net
-        - https://auth.guesant.net/realms/homelab/.well-known/openid-configuration
+{{ toYaml .Values.probe.targets | nindent 8 }}
 {{- end }}

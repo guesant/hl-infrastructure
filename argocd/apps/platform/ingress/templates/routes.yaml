@@ -1,288 +1,39 @@
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: argocd
-  namespace: argocd
-spec:
-  parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: internal
-      namespace: ingress
-      sectionName: websecure
-  hostnames:
-    - argocd.guesant.internal
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: argocd-server
-          port: 80
-          weight: 1
+{{- $root := . }}
+{{- range .Values.routes }}
+{{- if or (not .monitoringOnly) $root.Values.monitoring.enabled }}
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: keycloak
-  namespace: keycloak
+  name: {{ .name }}
+  namespace: {{ .namespace }}
 spec:
   parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: internal
-      namespace: ingress
-      sectionName: websecure
+    - group: {{ $root.Values.gateway.group }}
+      kind: {{ $root.Values.gateway.kind }}
+      name: {{ $root.Values.gateway.name }}
+      namespace: {{ $root.Values.gateway.namespace }}
+      sectionName: {{ $root.Values.gateway.sectionName }}
   hostnames:
-    - keycloak.guesant.internal
+{{ toYaml .hostnames | nindent 4 }}
   rules:
     - matches:
         - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: keycloak-service
-          port: 8080
-          weight: 1
----
-{{- if .Values.monitoring.enabled }}
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: prometheus
-  namespace: monitoring
-spec:
-  parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: internal
-      namespace: ingress
-      sectionName: websecure
-  hostnames:
-    - prometheus.guesant.internal
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
+            type: {{ $root.Values.route.pathType }}
+            value: {{ .path }}
+{{- if .auth }}
       filters:
-        - type: ExtensionRef
+        - type: {{ $root.Values.route.filterType }}
           extensionRef:
-            group: traefik.io
-            kind: Middleware
-            name: keycloak-login
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: kps-prometheus
-          port: 9090
-          weight: 1
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: alertmanager
-  namespace: monitoring
-spec:
-  parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: internal
-      namespace: ingress
-      sectionName: websecure
-  hostnames:
-    - alertmanager.guesant.internal
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      filters:
-        - type: ExtensionRef
-          extensionRef:
-            group: traefik.io
-            kind: Middleware
-            name: keycloak-login
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: kps-alertmanager
-          port: 9093
-          weight: 1
+            group: {{ $root.Values.route.filterGroup }}
+            kind: {{ $root.Values.route.filterKind }}
+            name: {{ $root.Values.authMiddleware.name }}
 {{- end }}
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: portainer
-  namespace: portainer
-spec:
-  parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: internal
-      namespace: ingress
-      sectionName: websecure
-  hostnames:
-    - portainer.guesant.internal
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
       backendRefs:
-        - group: ""
-          kind: Service
-          name: portainer
-          port: 9000
-          weight: 1
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: dashy
-  namespace: dashy
-spec:
-  parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: internal
-      namespace: ingress
-      sectionName: websecure
-  hostnames:
-    - guesant.internal
-    - dashy.guesant.internal
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      filters:
-        - type: ExtensionRef
-          extensionRef:
-            group: traefik.io
-            kind: Middleware
-            name: keycloak-login
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: dashy
-          port: 8080
-          weight: 1
----
-{{- if .Values.monitoring.enabled }}
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: grafana
-  namespace: monitoring
-spec:
-  parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: internal
-      namespace: ingress
-      sectionName: websecure
-  hostnames:
-    - grafana.guesant.internal
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: kps-grafana
-          port: 80
-          weight: 1
+        - group: {{ $root.Values.route.backendGroup | quote }}
+          kind: {{ $root.Values.route.backendKind }}
+          name: {{ .serviceName }}
+          port: {{ .servicePort }}
+          weight: {{ $root.Values.route.backendWeight }}
 {{- end }}
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: oauth2-proxy
-  namespace: oauth2-proxy
-spec:
-  parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: internal
-      namespace: ingress
-      sectionName: websecure
-  hostnames:
-    - auth.guesant.internal
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /oauth2/
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: oauth2-proxy
-          port: 4180
-          weight: 1
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: hubble
-  namespace: kube-system
-spec:
-  parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: internal
-      namespace: ingress
-      sectionName: websecure
-  hostnames:
-    - hubble.guesant.internal
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      filters:
-        - type: ExtensionRef
-          extensionRef:
-            group: traefik.io
-            kind: Middleware
-            name: keycloak-login
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: hubble-ui
-          port: 80
-          weight: 1
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: kargo
-  namespace: kargo
-spec:
-  parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: internal
-      namespace: ingress
-      sectionName: websecure
-  hostnames:
-    - kargo.guesant.internal
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: kargo-api
-          port: 80
-          weight: 1
+{{- end }}

@@ -1,27 +1,18 @@
+# yamllint disable-file
+{{ range $index, $database := .Values.databases }}
+{{ if $index }}---
+{{ end }}
 apiVersion: postgresql.cnpg.io/v1
 kind: Database
 metadata:
-  name: portfolio
+  name: {{ $database.name }}
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
-    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+{{ toYaml $.Values.databaseDefaults.annotations | nindent 4 }}
 spec:
   cluster:
-    name: postgres
-  name: portfolio
-  owner: portfolio
-  databaseReclaimPolicy: retain
----
-apiVersion: postgresql.cnpg.io/v1
-kind: Database
-metadata:
-  name: keycloak
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
-    argocd.argoproj.io/sync-options: Prune=false,Delete=false
-spec:
-  cluster:
-    name: postgres
-  name: keycloak
-  owner: keycloak
-  databaseReclaimPolicy: retain
+    name: {{ $.Values.cluster.name }}
+  name: {{ $database.name }}
+  owner: {{ $database.owner }}
+  databaseReclaimPolicy: {{ $.Values.databaseDefaults.reclaimPolicy }}
+{{ end }}
+# yamllint disable-file

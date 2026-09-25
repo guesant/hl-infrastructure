@@ -12,7 +12,7 @@ spec:
   source:
     repoURL: https://github.com/guesant/hl-infrastructure.git
     targetRevision: main
-    path: argocd/apps/platform/sso
+    path: argocd/apps/secrets/platform/sso
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

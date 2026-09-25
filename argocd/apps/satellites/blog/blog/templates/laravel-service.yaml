@@ -2,21 +2,21 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: app
+  name: {{ .Values.laravel.names.service }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: app
-    app.kubernetes.io/component: laravel
+    app.kubernetes.io/name: {{ .Values.laravel.names.application }}
+    app.kubernetes.io/component: {{ .Values.laravel.components.serving }}
     app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
-  type: ClusterIP
+  type: {{ .Values.laravel.serviceType }}
   selector:
-    app.kubernetes.io/name: app
-    app.kubernetes.io/component: laravel
-    application.stakater.com/workload-class: serving
+    app.kubernetes.io/name: {{ .Values.laravel.names.application }}
+    app.kubernetes.io/component: {{ .Values.laravel.components.serving }}
+    application.stakater.com/workload-class: {{ .Values.laravel.workloadClasses.serving }}
   ports:
-    - name: http
-      port: 8080
-      protocol: TCP
-      targetPort: 8000
+    - name: {{ .Values.laravel.servicePortName }}
+      port: {{ .Values.laravel.service.port }}
+      protocol: {{ .Values.laravel.serviceProtocol }}
+      targetPort: {{ .Values.laravel.service.targetPort }}
 {{- end }}

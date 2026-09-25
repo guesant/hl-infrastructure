@@ -60,14 +60,14 @@ helm template cnpg "$repo_root/argocd/apps/operators/cnpg" \
   --namespace cnpg-system \
   --include-crds >"$out_dir/cnpg.yaml"
 
-helm template sops-secrets-operator "$repo_root/argocd/apps/operators/sops-secrets-operator" \
+helm template sops-secrets-operator "$repo_root/argocd/apps/secrets/operators/sops-secrets-operator" \
   --namespace sops \
-  --values "$repo_root/argocd/apps/operators/sops-secrets-operator/values.yaml" \
+  --values "$repo_root/argocd/apps/secrets/operators/sops-secrets-operator/values.yaml" \
   --include-crds >"$out_dir/sops-secrets-operator.yaml"
 
-helm template external-secrets "$repo_root/argocd/apps/operators/external-secrets" \
+helm template external-secrets "$repo_root/argocd/apps/secrets/operators/external-secrets" \
   --namespace external-secrets \
-  --values "$repo_root/argocd/apps/operators/external-secrets/values.yaml" \
+  --values "$repo_root/argocd/apps/secrets/operators/external-secrets/values.yaml" \
   --include-crds >"$out_dir/external-secrets.yaml"
 
 helm template monitoring "$repo_root/argocd/apps/platform/monitoring" \
@@ -77,6 +77,9 @@ helm template monitoring "$repo_root/argocd/apps/platform/monitoring" \
 helm template shared-postgres "$repo_root/argocd/apps/data/shared-postgres" \
   --namespace data >"$out_dir/shared-postgres.yaml"
 
+helm template postgres-secrets "$repo_root/argocd/apps/secrets/data/postgres" \
+  --namespace data >"$out_dir/postgres-secrets.yaml"
+
 helm template keycloak "$repo_root/argocd/apps/platform/keycloak" \
   --namespace keycloak >"$out_dir/keycloak.yaml"
 
@@ -84,17 +87,32 @@ helm template reloader "$repo_root/argocd/apps/platform/reloader" \
   --namespace reloader \
   --api-versions monitoring.coreos.com/v1 >"$out_dir/reloader.yaml"
 
-helm template sso "$repo_root/argocd/apps/platform/sso" \
+helm template sso "$repo_root/argocd/apps/secrets/platform/sso" \
   --namespace argocd >"$out_dir/sso.yaml"
+
+helm template keycloak-secrets "$repo_root/argocd/apps/secrets/platform/keycloak" \
+  --namespace keycloak >"$out_dir/keycloak-secrets.yaml"
 
 helm template oauth2-proxy "$repo_root/argocd/apps/platform/oauth2-proxy" \
   --namespace oauth2-proxy >"$out_dir/oauth2-proxy.yaml"
+
+helm template oauth2-proxy-secrets "$repo_root/argocd/apps/secrets/platform/oauth2-proxy" \
+  --namespace oauth2-proxy >"$out_dir/oauth2-proxy-secrets.yaml"
 
 helm template dashy "$repo_root/argocd/apps/platform/dashy" \
   --namespace dashy >"$out_dir/dashy.yaml"
 
 helm template portainer "$repo_root/argocd/apps/platform/portainer" \
   --namespace portainer >"$out_dir/portainer.yaml"
+
+helm template portainer-secrets "$repo_root/argocd/apps/secrets/platform/portainer" \
+  --namespace portainer >"$out_dir/portainer-secrets.yaml"
+
+helm template blog-secrets "$repo_root/argocd/apps/secrets/satellites/blog" \
+  --namespace blog >"$out_dir/blog-secrets.yaml"
+
+helm template cloudflared-secrets "$repo_root/argocd/apps/secrets/satellites/cloudflared" \
+  --namespace blog >"$out_dir/cloudflared-secrets.yaml"
 
 helm template satellites-launcher "$repo_root/argocd/apps/satellites/launcher" \
   --namespace argocd >"$out_dir/satellites-launcher.yaml"

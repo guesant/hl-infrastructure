@@ -3,7 +3,7 @@
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Project
 metadata:
-  name: {{ .name }}-delivery
+  name: {{ .name }}{{ $.Values.delivery.namespaceSuffix }}
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: {{ $.Values.delivery.projectSyncWave | quote }}
 {{- end }}

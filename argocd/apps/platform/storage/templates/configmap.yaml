@@ -1,15 +1,16 @@
+# yamllint disable-file
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: local-path-config
-  namespace: kube-system
+  name: {{ .Values.config.name }}
+  namespace: {{ .Values.namespace }}
 data:
   config.json: |-
     {
       "nodePathMap":[
       {
-        "node":"DEFAULT_PATH_FOR_NON_LISTED_NODES",
-        "paths":["/var/lib/rancher/k3s/storage"]
+        "node":"{{ .Values.config.helperPod.defaultNode }}",
+        "paths":["{{ .Values.config.nodePath }}"]
       }
       ]
     }
@@ -26,15 +27,12 @@ data:
     apiVersion: v1
     kind: Pod
     metadata:
-      name: helper-pod
+      name: {{ .Values.config.helperPod.name }}
     spec:
       containers:
-      - name: helper-pod
-        image: docker.io/rancher/mirrored-library-busybox:1.37.0@sha256:101b4afd76732482eff9b95cae5f94bcf295e521fbec4e01b69c5421f3f3f3e5
-        imagePullPolicy: IfNotPresent
+      - name: {{ .Values.config.helperPod.containerName }}
+        image: {{ .Values.config.image.repository }}:{{ .Values.config.image.tag }}@{{ .Values.config.image.digest }}
+        imagePullPolicy: {{ .Values.config.helperPod.imagePullPolicy }}
         resources:
-          requests:
-            cpu: 10m
-            memory: 16Mi
-          limits:
-            memory: 64Mi
+{{ toYaml .Values.config.resources | nindent 10 }}
+# yamllint disable-file

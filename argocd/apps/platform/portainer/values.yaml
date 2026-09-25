@@ -1,0 +1,132 @@
+name: portainer
+namespace: portainer
+replicas: 1
+image:
+  repository: docker.io/portainer/portainer-ce
+  tag: 2.45.0
+  digest: sha256:511f3f06c96fe3b993ebeaafde311c1959cae73a7ef825dba6397d51b450dffa
+strategy:
+  type: Recreate
+args:
+  - --data=/data
+  - --bind=:9000
+  - --tunnel-port=0
+  - --admin-password-file=/run/secrets/portainer/password
+serviceAccount:
+  name: portainer
+  automountServiceAccountToken: true
+service:
+  port: 9000
+  targetPort: http
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+ports:
+  - name: http
+    containerPort: 9000
+    protocol: TCP
+volumeMounts:
+  - name: data
+    mountPath: /data
+  - name: tmp
+    mountPath: /tmp
+  - name: admin
+    mountPath: /run/secrets/portainer
+    readOnly: true
+volumes:
+  - name: data
+    type: persistentVolumeClaim
+    claimName: portainer-v2
+  - name: tmp
+    type: emptyDir
+  - name: admin
+    type: secret
+    secretName: portainer-admin
+probes:
+  path: /api/system/status
+  livenessInitialDelaySeconds: 30
+resources:
+  requests:
+    cpu: 20m
+    memory: 96Mi
+  limits:
+    memory: 256Mi
+storage:
+  pvcName: portainer-v2
+  storageClassName: local-path
+  size: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+rbac:
+  bindingName: portainer
+  roleName: cluster-admin
+secrets:
+  admin: portainer-admin
+  oidc: portainer-oidc
+oidcJob:
+  name: portainer-oidc
+  pod:
+    automountServiceAccountToken: false
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 65532
+      runAsGroup: 65532
+      seccompProfile:
+        type: RuntimeDefault
+  container:
+    name: configure
+    command:
+      - python3
+      - /scripts/configure.py
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        memory: 96Mi
+  restartPolicy: OnFailure
+  hook:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+  volumeMount:
+    name: script
+    mountPath: /scripts
+    readOnly: true
+  image:
+    repository: ghcr.io/astral-sh/uv
+    tag: python3.13-alpine
+    digest: sha256:e20433e476f56f543355bcef972d93813d050d0884ad5a570d8d0d291c317194
+  apiBase: http://portainer:9000/api
+  issuer: https://auth.guesant.net/realms/management
+  publicUrl: https://portainer.guesant.internal
+  bootstrapUsername: admin
+  authenticationMethod: 3
+  clientId: portainer
+  redirectUri: https://portainer.guesant.internal
+  userIdentifier: preferred_username
+  scopes: openid email profile
+  defaultTeamId: 0
+  operatorUsername: gabriel
+  operatorPassword: ""
+  operatorRole: 1
+  autoCreateUsers: false
+  backoffLimit: 6
+  ttlSecondsAfterFinished: 3600

@@ -20,9 +20,11 @@ Os downloads dos charts têm retries limitados para absorver falhas transitória
 
 Um digest que não bate aborta a renderização com a instrução de revisar o chart antes de atualizar o valor em `versions.yml`, em vez de seguir e produzir manifestos a partir de um tarball diferente do que o node instalaria.
 
-Praticamente todo o resto vem direto da fonte local, sem depender de repositório Helm nem de versão vinda de versions.yml: os wrappers de `argocd/apps/operators/` e `argocd/apps/platform/` (inclusive os que não embrulham chart upstream nenhum, como o StatefulSet do Keycloak, renderizados só a partir dos próprios templates), o chart preparatório `argocd/apps/data/shared-postgres` e os charts de satélite listados abaixo.
+Praticamente todo o resto vem direto da fonte local, sem depender de repositório Helm nem de versão vinda de versions.yml: os wrappers de `argocd/apps/secrets/operators/`, `argocd/apps/secrets/platform/`, `argocd/apps/secrets/data/` e `argocd/apps/secrets/satellites/`, além dos charts de workload e satélite restantes.
 
-O PostgreSQL do Keycloak não é mais renderizado como um chart separado. A instância compartilhada de `argocd/apps/data/shared-postgres` é a única fonte de manifesto do banco, e os consumidores usam bancos e credenciais distintos dentro dela. Por isso a saída não contém mais `keycloak-postgres.yaml`.
+Os recursos de credenciais e configuração não secreta ficam centralizados sob `argocd/apps/secrets/`, organizados pela camada e pelo destino. Um chart de destino pode renderizar `SopsSecret`, `ExternalSecret`, `ConfigMap` e recursos auxiliares juntos, enquanto o chart do workload mantém somente a execução da aplicação.
+
+O PostgreSQL do Keycloak não é mais renderizado como um chart separado. A instância compartilhada de `argocd/apps/data/shared-postgres` é a única fonte de manifesto do banco, e os consumidores usam bancos e credenciais distintos dentro dela. Os recursos de roles, replicação de secrets e credenciais do PostgreSQL são renderizados pelo chart de destino em `argocd/apps/secrets/data/postgres`. Por isso a saída não contém mais `keycloak-postgres.yaml`.
 
 | Caminho | O que faz |
 | --- | --- |

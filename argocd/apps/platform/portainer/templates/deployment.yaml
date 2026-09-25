@@ -1,89 +1,73 @@
+# yamllint disable-file
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: portainer
-  namespace: portainer
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app.kubernetes.io/name: portainer
+    app.kubernetes.io/name: {{ .Values.name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas }}
   strategy:
-    type: Recreate
+{{ toYaml .Values.strategy | nindent 4 }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: portainer
+      app.kubernetes.io/name: {{ .Values.name }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: portainer
+        app.kubernetes.io/name: {{ .Values.name }}
     spec:
-      serviceAccountName: portainer
-      automountServiceAccountToken: true
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        seccompProfile:
-          type: RuntimeDefault
+{{ toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: portainer
-          image: docker.io/portainer/portainer-ce:2.45.0@sha256:511f3f06c96fe3b993ebeaafde311c1959cae73a7ef825dba6397d51b450dffa
+        - name: {{ .Values.name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.digest }}
           args:
-            - --data=/data
-            - --bind=:9000
-            - --tunnel-port=0
-            - --admin-password-file=/run/secrets/portainer/password
+{{ toYaml .Values.args | nindent 12 }}
           ports:
-            - name: http
-              containerPort: 9000
+{{ toYaml .Values.ports | nindent 12 }}
           securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop: [ALL]
+{{ toYaml .Values.containerSecurityContext | nindent 12 }}
           volumeMounts:
-            - name: data
-              mountPath: /data
-            - name: tmp
-              mountPath: /tmp
-            - name: admin
-              mountPath: /run/secrets/portainer
-              readOnly: true
+{{ toYaml .Values.volumeMounts | nindent 12 }}
           readinessProbe:
             httpGet:
-              path: /api/system/status
-              port: http
+              path: {{ .Values.probes.path }}
+              port: {{ index .Values.ports 0 "name" }}
           livenessProbe:
             httpGet:
-              path: /api/system/status
-              port: http
-            initialDelaySeconds: 30
+              path: {{ .Values.probes.path }}
+              port: {{ index .Values.ports 0 "name" }}
+            initialDelaySeconds: {{ .Values.probes.livenessInitialDelaySeconds }}
           resources:
-            requests:
-              cpu: 20m
-              memory: 96Mi
-            limits:
-              memory: 256Mi
+{{ toYaml .Values.resources | nindent 12 }}
       volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: portainer-v2
-        - name: tmp
+{{- range .Values.volumes }}
+        - name: {{ .name }}
+{{- if eq .type "emptyDir" }}
           emptyDir: {}
-        - name: admin
+{{- else if eq .type "persistentVolumeClaim" }}
+          persistentVolumeClaim:
+            claimName: {{ .claimName }}
+{{- else if eq .type "secret" }}
           secret:
-            secretName: portainer-admin
+            secretName: {{ .secretName }}
+{{- end }}
+{{- end }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: portainer
-  namespace: portainer
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
 spec:
   selector:
-    app.kubernetes.io/name: portainer
+    app.kubernetes.io/name: {{ .Values.name }}
   ports:
-    - name: http
-      port: 9000
-      targetPort: http
+    - name: {{ index .Values.ports 0 "name" }}
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+# yamllint disable-file

@@ -1,0 +1,166 @@
+name: dashy
+namespace: dashy
+replicas: 1
+image:
+  repository: ghcr.io/lissy93/dashy
+  tag: 4.6.14
+  digest: sha256:56796f06f6ddba14354d4bab3dc3576535c012f60ec664975ac8672070c5e826
+service:
+  name: dashy
+  port: 8080
+  targetPort: http
+podSecurityContext:
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+ports:
+  - name: http
+    containerPort: 8080
+probes:
+  path: /
+  port: http
+  livenessInitialDelaySeconds: 20
+volumeMounts:
+  - name: config
+    mountPath: /app/user-data/conf.yml
+    subPath: conf.yml
+    readOnly: true
+  - name: tmp
+    mountPath: /tmp
+volumes:
+  - name: config
+    type: configMap
+  - name: tmp
+    type: emptyDir
+resources:
+  requests:
+    cpu: 10m
+    memory: 64Mi
+  limits:
+    memory: 192Mi
+config: |
+  pageInfo:
+    title: homelab
+    description: Serviços do node, alcançáveis só pela tailnet
+    navLinks:
+      - title: Repositório
+        path: https://github.com/guesant/hl-infrastructure
+      - title: Documentação
+        path: https://guesant.github.io/hl-infrastructure/
+  appConfig:
+    theme: nord
+    layout: auto
+    iconSize: medium
+    language: pt
+    preventWriteToDisk: true
+    preventLocalSave: true
+    disableConfiguration: true
+    disableUpdateChecks: true
+    hideComponents:
+      hideSettings: true
+  sections:
+    - name: Plataforma
+      icon: fas fa-server
+      items:
+        - title: Argo CD
+          description: GitOps, estado das Application
+          url: https://argocd.guesant.internal
+          icon: hl-argo-cd
+        - title: Portainer
+          description: Interface do cluster
+          url: https://portainer.guesant.internal
+          icon: hl-portainer
+        - title: Kargo
+          description: Promoção de imagens dos satélites
+          url: https://kargo.guesant.internal
+          icon: fas fa-truck
+        - title: Keycloak
+          description: Console de administração (realm master)
+          url: https://keycloak.guesant.internal/admin/
+          icon: hl-keycloak
+        - title: Minha conta
+          description: Senha e TOTP no realm management
+          url: https://auth.guesant.net/realms/management/account
+          icon: fas fa-user-shield
+        - title: Sair
+          description: Encerra a sessão do oauth2-proxy nos nomes internos
+          url: https://auth.guesant.internal/oauth2/sign_out
+          icon: fas fa-sign-out-alt
+    - name: Observabilidade
+      icon: fas fa-chart-line
+      items:
+        - title: Grafana
+          description: Dashboards do node e do cluster
+          url: https://grafana.guesant.internal
+          icon: hl-grafana
+        - title: Hubble
+          description: Fluxos de rede do Cilium, por namespace
+          url: https://hubble.guesant.internal
+          icon: hl-cilium
+        - title: Prometheus
+          description: Métricas e alvos
+          url: https://prometheus.guesant.internal
+          icon: hl-prometheus
+        - title: Alertmanager
+          description: Alertas ativos e silêncios
+          url: https://alertmanager.guesant.internal
+          icon: hl-alertmanager
+    - name: Repositórios
+      icon: fab fa-github
+      items:
+        - title: hl-infrastructure
+          description: Ansible, Argo CD e OpenTofu deste node
+          url: https://github.com/guesant/hl-infrastructure
+          icon: fab fa-github
+        - title: blog
+          description: O código de guesant.net
+          url: https://github.com/guesant/blog
+          icon: fab fa-github
+        - title: Actions do hl-infrastructure
+          description: CI e workflows deste repositório
+          url: https://github.com/guesant/hl-infrastructure/actions
+          icon: fas fa-play-circle
+        - title: Actions do blog
+          description: CI e workflows do blog
+          url: https://github.com/guesant/blog/actions
+          icon: fas fa-play-circle
+    - name: guesant.net
+      icon: fas fa-globe
+      items:
+        - title: guesant.net
+          description: Site público
+          url: https://guesant.net
+          icon: fas fa-globe
+        - title: auth.guesant.net
+          description: Autenticação e conta
+          url: https://auth.guesant.net
+          icon: fas fa-user-shield
+        - title: admin.guesant.net
+          description: Painel administrativo
+          url: https://admin.guesant.net
+          icon: fas fa-toolbox
+        - title: api.guesant.net/docs
+          description: Documentação da API
+          url: https://api.guesant.net/docs
+          icon: fas fa-code
+    - name: Fora do node
+      icon: fas fa-cloud
+      items:
+        - title: Tailscale
+          description: Console da tailnet
+          url: https://login.tailscale.com/admin/machines
+          icon: hl-tailscale
+        - title: Cloudflare
+          description: DNS, túnel e WAF
+          url: https://dash.cloudflare.com
+          icon: hl-cloudflare

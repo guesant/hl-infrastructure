@@ -2,38 +2,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: laravel-worker
+  name: {{ .Values.laravel.names.worker }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: app
-    app.kubernetes.io/component: laravel-worker
+    app.kubernetes.io/name: {{ .Values.laravel.names.application }}
+    app.kubernetes.io/component: {{ .Values.laravel.components.worker }}
     app.kubernetes.io/instance: {{ .Release.Name }}
   annotations:
-    reloader.stakater.com/auto: "true"
-    argocd.argoproj.io/sync-wave: "4"
+{{ toYaml .Values.laravel.annotations | nindent 4 }}
 spec:
   replicas: {{ .Values.laravel.worker.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: app
-      app.kubernetes.io/component: laravel-worker
-      application.stakater.com/workload-class: worker
+      app.kubernetes.io/name: {{ .Values.laravel.names.application }}
+      app.kubernetes.io/component: {{ .Values.laravel.components.worker }}
+      application.stakater.com/workload-class: {{ .Values.laravel.workloadClasses.worker }}
   strategy:
-    type: Recreate
+{{ toYaml .Values.laravel.strategy | nindent 4 }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: app
-        app.kubernetes.io/component: laravel-worker
+        app.kubernetes.io/name: {{ .Values.laravel.names.application }}
+        app.kubernetes.io/component: {{ .Values.laravel.components.worker }}
         app.kubernetes.io/instance: {{ .Release.Name }}
-        application.stakater.com/workload-class: worker
+        application.stakater.com/workload-class: {{ .Values.laravel.workloadClasses.worker }}
     spec:
-      automountServiceAccountToken: false
-      serviceAccountName: app
+      automountServiceAccountToken: {{ .Values.laravel.pod.automountServiceAccountToken }}
+      serviceAccountName: {{ .Values.laravel.names.serviceAccount }}
       containers:
-        - name: laravel-worker
+        - name: {{ .Values.laravel.names.worker }}
           image: "{{ .Values.laravel.image.repository }}:{{ .Values.laravel.image.tag }}"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.laravel.imagePullPolicy }}
           command:
             - /bin/sh
             - -c
@@ -44,72 +43,49 @@ spec:
               exec php artisan queue:work --queue={{ .Values.laravel.worker.queues }} --sleep=3 --tries=3 --max-time=3600
           envFrom:
             - secretRef:
-                name: app-secret
+                name: {{ .Values.laravel.secretNames.bootstrap }}
             - secretRef:
-                name: laravel-secret
+                name: {{ .Values.laravel.secretNames.application }}
+            - configMapRef:
+                name: {{ .Values.laravel.configMapName }}
           env:
-            {{- range $name, $value := .Values.laravel.env }}
-            - name: {{ $name }}
-              value: {{ $value | quote }}
-            {{- end }}
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: portfolio-postgres-app
+                  name: {{ .Values.laravel.secretNames.database }}
                   key: host
             - name: DB_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: portfolio-postgres-app
+                  name: {{ .Values.laravel.secretNames.database }}
                   key: dbname
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: portfolio-postgres-app
+                  name: {{ .Values.laravel.secretNames.database }}
                   key: user
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: portfolio-postgres-app
+                  name: {{ .Values.laravel.secretNames.database }}
                   key: password
           resources:
             {{- toYaml .Values.laravel.worker.resources | nindent 12 }}
           securityContext:
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 33
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            seccompProfile:
-              type: RuntimeDefault
+{{ toYaml .Values.laravel.container.securityContext | nindent 12 }}
           volumeMounts:
-            - name: app-storage
-              mountPath: /app/storage
-            - name: bootstrap-cache
-              mountPath: /app/bootstrap/cache
-            - name: public-assets
-              mountPath: /data/public
-            - name: resume-cache
-              mountPath: /data/resume-cache
-            - name: tmp
-              mountPath: /tmp
+{{ toYaml .Values.laravel.sharedVolumeMounts | nindent 12 }}
       securityContext:
-        fsGroup: 33
-        runAsNonRoot: true
-        runAsUser: 33
+{{ toYaml .Values.laravel.pod.securityContext | nindent 8 }}
       volumes:
-        - name: app-storage
+{{- range .Values.laravel.sharedVolumes }}
+        - name: {{ .name }}
+{{- if eq .type "emptyDir" }}
           emptyDir: {}
-        - name: bootstrap-cache
-          emptyDir: {}
-        - name: public-assets
-          emptyDir: {}
-        - name: resume-cache
+{{- else if eq .type "persistentVolumeClaim" }}
           persistentVolumeClaim:
-            claimName: resume-cache
-        - name: tmp
-          emptyDir: {}
-      terminationGracePeriodSeconds: 30
+            claimName: {{ $.Values.resumeCache.name }}
+{{- end }}
+{{- end }}
+      terminationGracePeriodSeconds: {{ .Values.laravel.terminationGracePeriodSeconds }}
 {{- end }}

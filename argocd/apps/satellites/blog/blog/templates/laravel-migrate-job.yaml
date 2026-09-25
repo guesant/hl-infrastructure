@@ -2,34 +2,32 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: laravel-migrate
+  name: {{ .Values.laravel.names.migrationJob }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: app
-    app.kubernetes.io/component: laravel
+    app.kubernetes.io/name: {{ .Values.laravel.names.application }}
+    app.kubernetes.io/component: {{ .Values.laravel.components.batch }}
     app.kubernetes.io/instance: {{ .Release.Name }}
   annotations:
-    argocd.argoproj.io/hook: Sync
-    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
-    argocd.argoproj.io/sync-wave: "4"
+{{ toYaml .Values.laravel.migration.hook | nindent 4 }}
 spec:
-  activeDeadlineSeconds: 600
-  backoffLimit: 3
+  activeDeadlineSeconds: {{ .Values.laravel.migration.activeDeadlineSeconds }}
+  backoffLimit: {{ .Values.laravel.migration.backoffLimit }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: app
-        app.kubernetes.io/component: laravel
+        app.kubernetes.io/name: {{ .Values.laravel.names.application }}
+        app.kubernetes.io/component: {{ .Values.laravel.components.batch }}
         app.kubernetes.io/instance: {{ .Release.Name }}
-        application.stakater.com/workload-class: batch
+        application.stakater.com/workload-class: {{ .Values.laravel.workloadClasses.batch }}
     spec:
-      automountServiceAccountToken: false
-      serviceAccountName: app
-      restartPolicy: OnFailure
+      automountServiceAccountToken: {{ .Values.laravel.pod.automountServiceAccountToken }}
+      serviceAccountName: {{ .Values.laravel.names.serviceAccount }}
+      restartPolicy: {{ .Values.laravel.migration.restartPolicy }}
       containers:
-        - name: migrate
+        - name: {{ .Values.laravel.migration.containerName }}
           image: "{{ .Values.laravel.image.repository }}:{{ .Values.laravel.image.tag }}"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.laravel.imagePullPolicy }}
           command:
             - /bin/sh
             - -c
@@ -37,67 +35,47 @@ spec:
             - mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs storage/app/private storage/app/public storage/app/resume-pdf && php artisan migrate --force
           envFrom:
             - secretRef:
-                name: app-secret
+                name: {{ .Values.laravel.secretNames.bootstrap }}
             - secretRef:
-                name: laravel-secret
+                name: {{ .Values.laravel.secretNames.application }}
+            - configMapRef:
+                name: {{ .Values.laravel.configMapName }}
           env:
             - name: DB_CONNECTION
-              value: pgsql
+              value: {{ .Values.laravel.migration.databaseConnection }}
             - name: DB_PORT
-              value: "5432"
+              value: {{ .Values.laravel.migration.databasePort | quote }}
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: portfolio-postgres-app
+                  name: {{ .Values.laravel.secretNames.database }}
                   key: host
             - name: DB_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: portfolio-postgres-app
+                  name: {{ .Values.laravel.secretNames.database }}
                   key: dbname
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: portfolio-postgres-app
+                  name: {{ .Values.laravel.secretNames.database }}
                   key: user
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: portfolio-postgres-app
+                  name: {{ .Values.laravel.secretNames.database }}
                   key: password
           resources:
-            requests:
-              cpu: 50m
-              memory: 128Mi
-            limits:
-              cpu: 100m
-              memory: 256Mi
+{{ toYaml .Values.laravel.migration.resources | nindent 12 }}
           securityContext:
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 33
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            seccompProfile:
-              type: RuntimeDefault
+{{ toYaml .Values.laravel.container.securityContext | nindent 12 }}
           volumeMounts:
-            - name: app-storage
-              mountPath: /app/storage
-            - name: bootstrap-cache
-              mountPath: /app/bootstrap/cache
-            - name: tmp
-              mountPath: /tmp
+{{ toYaml .Values.laravel.migrationVolumeMounts | nindent 12 }}
       securityContext:
-        fsGroup: 33
-        runAsNonRoot: true
-        runAsUser: 33
+{{ toYaml .Values.laravel.pod.securityContext | nindent 8 }}
       volumes:
-        - name: app-storage
+{{- range .Values.laravel.migrationVolumes }}
+        - name: {{ .name }}
           emptyDir: {}
-        - name: bootstrap-cache
-          emptyDir: {}
-        - name: tmp
-          emptyDir: {}
+{{- end }}
 {{- end }}

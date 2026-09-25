@@ -1,56 +1,39 @@
+# yamllint disable-file
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: kube-bench
-  namespace: kube-bench
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
 spec:
-  schedule: "0 9 * * 1"
-  timeZone: America/Sao_Paulo
-  concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 2
-  failedJobsHistoryLimit: 2
+  schedule: {{ .Values.schedule | quote }}
+  timeZone: {{ .Values.timeZone }}
+  concurrencyPolicy: {{ .Values.concurrencyPolicy }}
+  successfulJobsHistoryLimit: {{ .Values.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
   jobTemplate:
     spec:
-      backoffLimit: 0
-      ttlSecondsAfterFinished: 604800
+      backoffLimit: {{ .Values.backoffLimit }}
+      ttlSecondsAfterFinished: {{ .Values.ttlSecondsAfterFinished }}
       template:
         spec:
-          restartPolicy: Never
-          serviceAccountName: kube-bench
-          automountServiceAccountToken: true
+          restartPolicy: {{ .Values.job.restartPolicy }}
+          serviceAccountName: {{ .Values.serviceAccount.name }}
+          automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 65534
-            runAsGroup: 65534
-            seccompProfile:
-              type: RuntimeDefault
+{{ toYaml .Values.podSecurityContext | nindent 12 }}
           containers:
-            - name: kube-bench
-              image: docker.io/aquasec/kube-bench:v0.16.0@sha256:75506f222d1eb6ce2a751a5533bdc0a3b54c898e2e49e7751d0ee22cfb862679
+            - name: {{ .Values.name }}
+              image: {{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.digest }}
               command:
-                - kube-bench
-                - run
-                - --targets
-                - policies
-                - --benchmark
-                - k3s-cis-1.9
+{{ toYaml .Values.command | nindent 16 }}
               resources:
-                requests:
-                  cpu: 50m
-                  memory: 64Mi
-                limits:
-                  cpu: 500m
-                  memory: 256Mi
+{{ toYaml .Values.resources | nindent 16 }}
               securityContext:
-                allowPrivilegeEscalation: false
-                readOnlyRootFilesystem: true
-                runAsNonRoot: true
-                capabilities:
-                  drop:
-                    - ALL
+{{ toYaml .Values.containerSecurityContext | nindent 16 }}
               volumeMounts:
-                - name: tmp
-                  mountPath: /tmp
+                - name: {{ .Values.volume.name }}
+                  mountPath: {{ .Values.volume.mountPath }}
           volumes:
-            - name: tmp
+            - name: {{ .Values.volume.name }}
               emptyDir: {}
+# yamllint disable-file

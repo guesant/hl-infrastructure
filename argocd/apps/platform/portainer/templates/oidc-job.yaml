@@ -1,8 +1,9 @@
+# yamllint disable-file
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: portainer-oidc-script
-  namespace: portainer
+  name: {{ .Values.oidcJob.name }}-script
+  namespace: {{ .Values.namespace }}
 data:
   configure.py: |
     import json
@@ -13,7 +14,7 @@ data:
     import urllib.parse
     import urllib.request
 
-    base = "http://portainer:9000/api"
+    base = os.environ["PORTAINER_API_BASE"]
     issuer = os.environ["ISSUER"]
     public_url = os.environ["PUBLIC_URL"]
 
@@ -38,22 +39,22 @@ data:
     else:
         sys.exit("portainer did not answer in time")
 
-    token = call("POST", "/auth", {"Username": "admin", "Password": os.environ["ADMIN_PASSWORD"]})["jwt"]
+    token = call("POST", "/auth", {"Username": os.environ["BOOTSTRAP_USERNAME"], "Password": os.environ["ADMIN_PASSWORD"]})["jwt"]
 
     call("PUT", "/settings", {
-        "AuthenticationMethod": 3,
+        "AuthenticationMethod": int(os.environ["AUTHENTICATION_METHOD"]),
         "OAuthSettings": {
-            "ClientID": "portainer",
+            "ClientID": os.environ["CLIENT_ID"],
             "ClientSecret": os.environ["CLIENT_SECRET"],
             "AccessTokenURI": issuer + "/protocol/openid-connect/token",
             "AuthorizationURI": issuer + "/protocol/openid-connect/auth",
             "ResourceURI": issuer + "/protocol/openid-connect/userinfo",
-            "RedirectURI": public_url,
-            "LogoutURI": issuer + "/protocol/openid-connect/logout?client_id=portainer&post_logout_redirect_uri=" + urllib.parse.quote(public_url, safe=""),
-            "UserIdentifier": "preferred_username",
-            "Scopes": "openid email profile",
-            "OAuthAutoCreateUsers": False,
-            "DefaultTeamID": 0,
+            "RedirectURI": os.environ["REDIRECT_URI"],
+            "LogoutURI": issuer + "/protocol/openid-connect/logout?client_id=" + os.environ["CLIENT_ID"] + "&post_logout_redirect_uri=" + urllib.parse.quote(public_url, safe=""),
+            "UserIdentifier": os.environ["USER_IDENTIFIER"],
+            "Scopes": os.environ["SCOPES"],
+            "OAuthAutoCreateUsers": os.environ["AUTO_CREATE_USERS"].lower() == "true",
+            "DefaultTeamID": int(os.environ["DEFAULT_TEAM_ID"]),
             "SSO": True,
             "HideInternalAuth": True,
             "AuthStyle": 0,
@@ -64,74 +65,86 @@ data:
     users = call("GET", "/users", token=token)
     existing = [u for u in users if u["Username"] == operator]
     if not existing:
-        call("POST", "/users", {"Username": operator, "Password": "", "Role": 1}, token)
+        call("POST", "/users", {"Username": operator, "Password": os.environ["OPERATOR_PASSWORD"], "Role": int(os.environ["OPERATOR_ROLE"])}, token)
         print("created the operator as a Portainer administrator")
-    elif existing[0]["Role"] != 1:
-        call("PUT", "/users/%d" % existing[0]["Id"], {"Role": 1}, token)
+    elif existing[0]["Role"] != int(os.environ["OPERATOR_ROLE"]):
+        call("PUT", "/users/%d" % existing[0]["Id"], {"Role": int(os.environ["OPERATOR_ROLE"])}, token)
         print("promoted the operator to Portainer administrator")
     print("oauth settings applied against " + issuer)
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: portainer-oidc
-  namespace: portainer
+  name: {{ .Values.oidcJob.name }}
+  namespace: {{ .Values.namespace }}
   annotations:
-    argocd.argoproj.io/hook: PostSync
-    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+{{ toYaml .Values.oidcJob.hook | nindent 4 }}
 spec:
-  backoffLimit: 6
-  ttlSecondsAfterFinished: 3600
+  backoffLimit: {{ .Values.oidcJob.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.oidcJob.ttlSecondsAfterFinished }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: portainer-oidc
+        app.kubernetes.io/name: {{ .Values.oidcJob.name }}
     spec:
-      restartPolicy: OnFailure
-      automountServiceAccountToken: false
+      restartPolicy: {{ .Values.oidcJob.restartPolicy }}
+      automountServiceAccountToken: {{ .Values.oidcJob.pod.automountServiceAccountToken }}
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 65532
-        runAsGroup: 65532
-        seccompProfile:
-          type: RuntimeDefault
+{{ toYaml .Values.oidcJob.pod.securityContext | nindent 8 }}
       containers:
-        - name: configure
-          image: ghcr.io/astral-sh/uv:python3.13-alpine@sha256:e20433e476f56f543355bcef972d93813d050d0884ad5a570d8d0d291c317194
-          command: [python3, /scripts/configure.py]
+        - name: {{ .Values.oidcJob.container.name }}
+          image: {{ .Values.oidcJob.image.repository }}:{{ .Values.oidcJob.image.tag }}@{{ .Values.oidcJob.image.digest }}
+          command:
+{{ toYaml .Values.oidcJob.container.command | nindent 12 }}
           env:
             - name: ISSUER
-              value: https://auth.guesant.net/realms/management
+              value: {{ .Values.oidcJob.issuer }}
             - name: PUBLIC_URL
-              value: https://portainer.guesant.internal
+              value: {{ .Values.oidcJob.publicUrl }}
+            - name: PORTAINER_API_BASE
+              value: {{ .Values.oidcJob.apiBase }}
+            - name: BOOTSTRAP_USERNAME
+              value: {{ .Values.oidcJob.bootstrapUsername }}
+            - name: AUTHENTICATION_METHOD
+              value: {{ .Values.oidcJob.authenticationMethod | quote }}
+            - name: CLIENT_ID
+              value: {{ .Values.oidcJob.clientId }}
+            - name: REDIRECT_URI
+              value: {{ .Values.oidcJob.redirectUri }}
+            - name: USER_IDENTIFIER
+              value: {{ .Values.oidcJob.userIdentifier }}
+            - name: SCOPES
+              value: {{ .Values.oidcJob.scopes }}
+            - name: AUTO_CREATE_USERS
+              value: {{ .Values.oidcJob.autoCreateUsers | quote }}
+            - name: DEFAULT_TEAM_ID
+              value: {{ .Values.oidcJob.defaultTeamId | quote }}
+            - name: OPERATOR_USERNAME
+              value: {{ .Values.oidcJob.operatorUsername }}
+            - name: OPERATOR_PASSWORD
+              value: {{ .Values.oidcJob.operatorPassword | quote }}
+            - name: OPERATOR_ROLE
+              value: {{ .Values.oidcJob.operatorRole | quote }}
             - name: ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: portainer-admin
+                  name: {{ .Values.secrets.admin }}
                   key: password
             - name: CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: portainer-oidc
+                  name: {{ .Values.secrets.oidc }}
                   key: client-secret
-            - name: OPERATOR_USERNAME
-              value: gabriel
           securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop: [ALL]
+{{ toYaml .Values.oidcJob.container.securityContext | nindent 12 }}
           volumeMounts:
-            - name: script
-              mountPath: /scripts
-              readOnly: true
+            - name: {{ .Values.oidcJob.volumeMount.name }}
+              mountPath: {{ .Values.oidcJob.volumeMount.mountPath }}
+              readOnly: {{ .Values.oidcJob.volumeMount.readOnly }}
           resources:
-            requests:
-              cpu: 10m
-              memory: 32Mi
-            limits:
-              memory: 96Mi
+{{ toYaml .Values.oidcJob.container.resources | nindent 12 }}
       volumes:
-        - name: script
+        - name: {{ .Values.oidcJob.volumeMount.name }}
           configMap:
-            name: portainer-oidc-script
+            name: {{ .Values.oidcJob.name }}-script
+# yamllint disable-file

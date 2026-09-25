@@ -1,108 +1,67 @@
+# yamllint disable-file
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: keycloak
-  namespace: keycloak
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
   annotations:
-    argocd.argoproj.io/sync-wave: "4"
-    reloader.stakater.com/auto: "true"
+{{ toYaml .Values.annotations | nindent 4 }}
   labels:
-    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/name: {{ .Values.name }}
 spec:
-  replicas: 1
-  serviceName: keycloak-service
+  replicas: {{ .Values.replicas }}
+  serviceName: {{ .Values.service.name }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: keycloak
+      app.kubernetes.io/name: {{ .Values.name }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: keycloak
+        app.kubernetes.io/name: {{ .Values.name }}
     spec:
-      serviceAccountName: keycloak
-      automountServiceAccountToken: false
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        seccompProfile:
-          type: RuntimeDefault
+{{ toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: keycloak
-          image: quay.io/keycloak/keycloak:26.7.4@sha256:82a77884f3af238beab1e7afd63b5f530e1b5c0590bd7aa60b40a40463e29b2c
+        - name: {{ .Values.name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.digest }}
           args:
-            - start
+{{ toYaml .Values.args | nindent 12 }}
           envFrom:
             - secretRef:
-                name: keycloak-bootstrap-admin
+                name: {{ .Values.bootstrapSecretName }}
                 optional: true
+            - configMapRef:
+                name: {{ .Values.configMapName }}
           env:
-            - name: KC_DB
-              value: postgres
-            - name: KC_DB_URL_HOST
-              value: postgres-rw.data.svc.cluster.local
-            - name: KC_DB_URL_DATABASE
-              value: keycloak
-            - name: KC_DB_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: keycloak-postgres-app
-                  key: username
-            - name: KC_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: keycloak-postgres-app
-                  key: password
-            - name: KC_HOSTNAME
-              value: https://auth.guesant.net
-            - name: KC_HOSTNAME_ADMIN
-              value: https://keycloak.guesant.internal
-            - name: KC_HOSTNAME_STRICT
-              value: "true"
-            - name: KC_HTTP_ENABLED
-              value: "true"
-            - name: KC_PROXY_HEADERS
-              value: xforwarded
-            - name: KC_HEALTH_ENABLED
-              value: "true"
-            - name: KC_METRICS_ENABLED
-              value: "true"
-            - name: KC_CACHE
-              value: local
+{{ toYaml .Values.env | nindent 12 }}
           ports:
-            - name: http
-              containerPort: 8080
-            - name: management
-              containerPort: 9000
+{{ toYaml .Values.ports | nindent 12 }}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: [ALL]
+{{ toYaml .Values.containerSecurityContext | nindent 12 }}
           volumeMounts:
-            - name: tmp
-              mountPath: /tmp
+            - name: {{ .Values.volume.name }}
+              mountPath: {{ .Values.volume.mountPath }}
           startupProbe:
             httpGet:
-              path: /health/started
-              port: management
-            periodSeconds: 5
-            failureThreshold: 120
+              path: {{ .Values.probes.startup.path }}
+              port: {{ .Values.probes.startup.port }}
+            periodSeconds: {{ .Values.probes.startup.periodSeconds }}
+            failureThreshold: {{ .Values.probes.startup.failureThreshold }}
           readinessProbe:
             httpGet:
-              path: /health/ready
-              port: management
-            periodSeconds: 10
+              path: {{ .Values.probes.readiness.path }}
+              port: {{ .Values.probes.readiness.port }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
           livenessProbe:
             httpGet:
-              path: /health/live
-              port: management
-            periodSeconds: 10
+              path: {{ .Values.probes.liveness.path }}
+              port: {{ .Values.probes.liveness.port }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
           resources:
-            requests:
-              cpu: 100m
-              memory: 700Mi
-            limits:
-              memory: 1Gi
+{{ toYaml .Values.resources | nindent 12 }}
       volumes:
-        - name: tmp
-          emptyDir: {}
+        - name: {{ .Values.volume.name }}
+          {{ .Values.volume.type }}: {}
+# yamllint disable-file
