@@ -1,7 +1,7 @@
 rotation:
   portfolio:
-    activeSlot: legacy
+    activeSlot: a
     retiredSlot: ""
   keycloak:
-    activeSlot: legacy
+    activeSlot: a
     retiredSlot: ""

@@ -7,10 +7,10 @@ nem as credenciais das aplicações.
 
 ## Estado atual
 
-O chart declara a transição das credenciais legadas para slots A/B. Enquanto
-`activeSlot` permanece como `legacy`, os consumidores continuam usando os
-Secrets atuais. Os quatro slots novos podem ser preparados e testados sem
-alterar o tráfego. A ativação de um slot A ou B é uma mudança GitOps separada.
+O chart declara a transição das credenciais legadas para slots A/B. O slot `a`
+está ativo para Laravel e Keycloak, e os consumidores já leem os Secrets
+`portfolio-postgres-app-a` e `keycloak-postgres-app-a`. O slot `b` permanece
+preparado para rollback ou para a próxima rotação.
 
 Os manifests ficam em:
 
@@ -49,9 +49,9 @@ chart `shared-postgres`. Eles sempre criam os mesmos Secrets locais, mas leem
 o slot indicado por `rotation.*.activeSlot`. Assim, a troca da credencial é
 uma alteração declarativa de uma única fonte, sem editar os Deployments.
 
-Durante a transição, o valor `legacy` aponta para os Secrets antigos. Depois
-da ativação e da janela de rollback, esses Secrets podem ser removidos em uma
-mudança posterior.
+Depois da ativação, os Secrets legados permanecem somente durante a janela de
+validação. Eles serão removidos em uma mudança posterior, depois de confirmar
+que os dois consumidores autenticam usando o slot `a`.
 
 O label `cnpg.io/reload: "true"` permite que o CloudNativePG aplique a nova
 senha assim que o Secret do slot for alterado.

@@ -320,7 +320,7 @@ Ele roda `kc.sh start` sem `--optimized`, então refaz a configuração a cada i
 
 O cache interno fica em modo `local`, porque não há segundo pod com quem formar cluster.
 
-A conexão vem do `Secret/keycloak-postgres-app`, replicado pelo `ClusterSecretStore/data-secrets` a partir do slot selecionado no namespace `data`. O Laravel usa o mesmo mecanismo com `portfolio-postgres-app`. Cada aplicação possui dois slots de login, e a role proprietária de cada banco não aceita login depois da transição.
+A conexão vem do `Secret/keycloak-postgres-app`, replicado pelo `ClusterSecretStore/data-secrets` a partir do slot `a` selecionado no namespace `data`. O Laravel usa o mesmo mecanismo com `portfolio-postgres-app`. Cada aplicação possui dois slots de login, e a role proprietária de cada banco não aceita login depois da transição.
 
 O cluster compartilhado fica em `argocd/apps/data/shared-postgres` e declara `instances: 1`. O failover do operador não se aplica aqui: não há réplica para promover quando a primária cai. A proteção que sobra é o reinício automático do pod pelo Kubernetes sobre o mesmo volume, que sobrevive pela retenção do provisionador, não por existir uma segunda cópia do dado. Um segundo nó mudaria esse cálculo: com um nó só, mais instâncias protegeriam o processo, não o host onde o volume mora.
 
