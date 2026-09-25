@@ -75,13 +75,11 @@ A razão não é técnica, é organizacional: como o mesmo operador administra a
 
 O padrão de satélite continua existindo e documentado para o cenário em que ele resolve um problema real, um futuro colaborador ou uma automação com acesso de escrita só ao repositório da aplicação, não a este.
 
-O `Cluster` do banco é a exceção a essa pasta: apesar de ser exclusivo do blog e sincronizar sob o mesmo projeto de satélites, mora em `argocd/applications/data/blog-postgres.yaml/argocd/apps/data/blog-postgres/`.
+O banco é mantido pela aplicação `shared-postgres`, em `argocd/applications/data/shared-postgres.yaml` e `argocd/apps/data/shared-postgres/`. Ela cria um único `Cluster` do CloudNativePG no namespace `data`, com bancos e roles separados para o portfólio e o Keycloak.
 
-Isso acontece porque a camada `data/` agrupa todo dado com estado, dedicado ou compartilhado, separado do resto da aplicação que o consome; veja a tabela na seção seguinte.
+Essa separação mantém o dado fora das aplicações que o consomem sem criar um cluster por aplicação. Os objetos `Database` e `DatabaseRole` têm política de retenção, enquanto cada consumidor recebe seu próprio Secret por `ExternalSecret` no namespace correspondente.
 
-O `blog-postgres` não tem `SopsSecret` hoje: o backup em object storage que precisaria de credenciais está desligado de propósito, veja [estado fora do git](../operacional/estado-fora-do-git.md).
-
-As imagens do blog ficam registradas no chart por digest, incluindo o public-app e o Laravel. O pin ARM64 atual do Laravel aponta para a imagem publicada em `c6507f2168eb7500217a76c2a8f7e5494f978213924f253279e9f89dae37f2f4`. O Kargo pode atualizar esses valores quando uma nova imagem da branch `main` é publicada, e o Argo aplica a revisão promovida.
+As imagens do blog ficam registradas no chart por digest, incluindo o public-app e o Laravel. O Kargo resolve a imagem publicada pela branch `main` e o Argo aplica a revisão promovida, sem depender de uma tag mutável durante a execução.
 
 O critério que separa a pasta do satélite da camada de dado é a política de remoção, não a titularidade: um banco exclusivo de uma aplicação continua sendo dado, e dado sai do cluster por um caminho mais conservador do que o resto.
 
@@ -150,7 +148,7 @@ Por isso cada namespace tem uma `CiliumNetworkPolicy` que lista o que ele de fat
 
 `argocd/apps/platform/network-policies`, no projeto de infraestrutura, cobre os namespaces `argocd/cert-manager/cnpg-system/sops/kube-system`.
 
-Ela libera DNS para o CoreDNS, API server, entrada vinda do host e do API server para sondas, métricas e webhooks, saída 443 do Argo CD para o GitHub e os registros, e o CNPG falando com o Postgres do blog.
+Ela libera DNS para o CoreDNS, API server, entrada vinda do host e do API server para sondas, métricas e webhooks, saída 443 do Argo CD para o GitHub e os registros, e o CNPG falando com o banco compartilhado.
 
 O chart de políticas do blog ganha as de saída do próprio namespace: DNS, o app para o Postgres e para a internet em 443, o cloudflared para o app, para o `argocd-server`, para o Keycloak e para a borda da Cloudflare, o Postgres para o API server.
 
@@ -188,7 +186,7 @@ O Argo aplica as ondas em ordem crescente e só avança para a próxima quando t
 | --- | --- | --- |
 | `operators/` | `0` | Controllers que gerenciam CRD ou recurso de outro componente: cert-manager (certificados), CNPG (`Cluster` do Postgres) e o sops-secrets-operator (`SopsSecret`); todos no projeto `infra` |
 | `platform/` | `0` | Ferramentas de plataforma de uso direto, que não existem para gerenciar CRD de outra coisa: o Kargo, que promove imagens dos satélites editando a própria `Application` do Argo (veja [Rollout de imagens](rollout-de-imagens.md)), os namespaces, as políticas de rede, o kube-bench, as políticas de admissão, o [ingress](ingress.md) (Traefik com Gateway API, as `HTTPRoute` dos nomes internos e a CA interna), o Portainer, o Dashy, o Reloader, os segredos de OIDC (`sso`) e o `oauth2-proxy`; também no projeto `infra` |
-| `data/` | `1` | Dado com estado, dedicado a um único satélite ou compartilhado entre vários, mantido fora da pasta do satélite que o usa; hoje só `blog-postgres`, o `Cluster` do CNPG do blog, no projeto `satellites` porque é dado exclusivo dele, não infraestrutura de plataforma |
+| `data/` | `1` | Dados com estado, dedicados ou compartilhados, mantidos fora das aplicações que os consomem; hoje `shared-postgres`, um `Cluster` do CNPG com bancos separados para o portfólio e o Keycloak, no projeto `infra` |
 | `satellites/<nome>/` | `0` a `3` | As `Application` de um satélite consolidado neste repositório, no projeto `satellites`; hoje só `satellites/blog/`, com onda própria por peça (rede na onda `0`, antes do app na `2`, antes do túnel na `3`) |
 | `satellites/launcher/` e `satellites/delivery/` | `0` e `1` | Exceção à regra de uma pasta por satélite: charts com array de instâncias em `values.yaml`, descritos na seção seguinte |
 
@@ -322,18 +320,16 @@ Ele roda `kc.sh start` sem `--optimized`, então refaz a configuração a cada i
 
 O cache interno fica em modo `local`, porque não há segundo pod com quem formar cluster.
 
-A conexão com o banco vem do `Secret/keycloak-postgres-app` que o CNPG gera para o `Cluster` próprio.
+A conexão vem do `Secret/keycloak-postgres-app`, replicado pelo `ClusterSecretStore/data-secrets` a partir do Secret mantido no namespace `data`. O Laravel usa o mesmo mecanismo com `portfolio-postgres-app`. As roles são distintas e cada uma só autentica no seu banco.
 
-Esse `Cluster` fica em `argocd/apps/data/keycloak-postgres`.
+O cluster compartilhado fica em `argocd/apps/data/shared-postgres` e declara `instances: 1`. O failover do operador não se aplica aqui: não há réplica para promover quando a primária cai. A proteção que sobra é o reinício automático do pod pelo Kubernetes sobre o mesmo volume, que sobrevive pela retenção do provisionador, não por existir uma segunda cópia do dado. Um segundo nó mudaria esse cálculo: com um nó só, mais instâncias protegeriam o processo, não o host onde o volume mora.
 
-Esse Secret não vem de um recurso `Database` do CNPG nem de `managed.roles` declarados à parte, o caminho recomendado pela documentação oficial para não reaproveitar a credencial de superusuário. O cluster já declara o dono do banco no próprio bootstrap inicial, e o operador cria usuário, banco e o Secret correspondente nesse mesmo passo, sem outro objeto para manter. O cluster do blog segue o mesmo caminho, com outro dono e outro Secret, listados na tabela abaixo.
+| Banco | Role | Secret de origem | Namespace consumidor |
+| --- | --- | --- | --- |
+| `portfolio` | `portfolio` | `portfolio-postgres-app` | `blog` |
+| `keycloak` | `keycloak` | `keycloak-postgres-app` | `keycloak` |
 
-| Cluster CNPG | Dono do banco | Secret gerado |
-| --- | --- | --- |
-| `postgres` (blog) | `portfolio` | `postgres-app` |
-| `keycloak-postgres` | `keycloak` | `keycloak-postgres-app` |
-
-Os dois clusters declaram `instances: 1`. O failover do operador não se aplica aqui: não há réplica para promover quando a primária cai. A proteção que sobra é o reinício automático do pod pelo Kubernetes sobre o mesmo volume, que sobrevive pela retenção do provisionador, não por existir uma segunda cópia do dado. Um segundo nó mudaria esse cálculo: com um nó só, mais instâncias protegeriam o processo, não o host onde o volume mora.
+O bootstrap do cluster cria o banco inicial do portfólio. Os objetos `Database` e `DatabaseRole` declarados no chart criam e mantêm o segundo banco e as duas roles sem reutilizar a credencial de superusuário.
 
 As variáveis `KC_HOSTNAME/KC_HOSTNAME_ADMIN` separam o nome público do console de administração.
 
@@ -512,13 +508,11 @@ As políticas de admissão e o PSS `restricted` recusariam isso em qualquer outr
 
 A distinção vale ser repetida: `Retain` protege contra erro de operação, um prune que apaga o que não devia, e não contra falha de hardware, que levaria o diretório junto. Um provisioner de caminho local também amarra todo volume a este node, o que é irrelevante num cluster de um nó e seria o primeiro obstáculo se um segundo entrasse.
 
-A classe `local-path-retain` que existia antes dentro do chart do Postgres do blog não existe mais.
+A classe `local-path-retain` que existia antes dentro do chart dedicado do Postgres não existe mais.
 
-Os volumes do Keycloak e do Portainer foram recriados em `local-path` (o do Keycloak por outra instância do CNPG que assumiu como primary; o do Portainer por uma PVC nova com os dados copiados e conferidos por hash).
+Os dados do portfólio e do Keycloak agora usam o volume do cluster compartilhado `postgres`, declarado em `argocd/apps/data/shared-postgres`. O provisioner `local-path` tem política `Retain`, e a retenção protege o volume contra remoção acidental do PVC, sem substituir backup.
 
-O `Cluster` do Postgres do blog passou a declarar `local-path` sem precisar recriar o volume dele, e a classe antiga foi apagada do cluster junto com as PVC e PV órfãs que ainda a referenciavam.
-
-Ela existia porque a classe padrão de então estava em `Delete`, e uma segunda classe era o único jeito de reter um volume; com a classe padrão já em `Retain`, ela virou duplicata. Duas classes com a mesma política também são um convite a erro, porque um chart novo escolhe uma delas sem que a diferença signifique nada.
+A classe antiga foi removida depois da migração para o cluster compartilhado e da validação dos consumidores. Não há mais um cluster CNPG dedicado por aplicação no repositório.
 
 ### Políticas de admissão
 
@@ -597,17 +591,17 @@ Adotar um recurso já vivo tem uma armadilha própria, o nome do release do Helm
 
 A consolidação do blog trouxe uma variante do mesmo problema: quando uma aplicação antiga já é gerenciada pelo próprio Argo, ela herda o nome do release do nome dela mesma, sem precisar declarar `helm.releaseName`, então a aplicação nova só adota de forma limpa se receber exatamente o mesmo nome da antiga.
 
-O nome do release não é o único critério, e o caso do Postgres do blog mostrou o outro.
+O nome do release não é o único critério. A migração do banco dedicado do blog para o cluster compartilhado mostrou o outro.
 
-Quando a categorização em camadas chegou e o `Cluster` do blog foi promovido de `satellites/blog/postgres` para `data/blog-postgres`, o nome da aplicação mudou junto.
+Quando a categorização em camadas chegou, o `Cluster` foi promovido para `data/shared-postgres`, junto com os objetos `Database`, `DatabaseRole` e os Secrets de cada consumidor.
 
-Foi de `postgres` para `blog-postgres`, para não colidir com uma futura aplicação de dado de outro satélite.
+O nome da aplicação passou a ser `shared-postgres`, sem manter uma aplicação de dados por consumidor.
 
 Fixar `helm.releaseName: postgres` não resolveu, porque quem decide se uma aplicação pode assumir um recurso já existente é a anotação `argocd.argoproj.io/tracking-id` que o Argo grava em cada um.
 
-Essa anotação leva o nome da aplicação como prefixo, por exemplo `postgres:postgresql.cnpg.io/Cluster:blog/postgres`.
+Essa anotação leva o nome da aplicação como prefixo, por exemplo `shared-postgres:postgresql.cnpg.io/Cluster:data/postgres`.
 
-Com `FailOnSharedResource=true`, a aplicação nova se recusou a assumir recursos marcados com o nome antigo, e cada sincronização falhou até a anotação ser reescrita à mão para `blog-postgres:` no `Cluster/StorageClass`.
+Com `FailOnSharedResource=true`, a aplicação nova se recusaria a assumir recursos marcados com o nome antigo. A migração foi concluída antes do cutover, com os consumidores validados contra os Secrets replicados pelo ESO.
 
 Essa reescrita foi seguida de uma sincronização manual, já que o Argo não tenta de novo sozinho uma revisão que falhou.
 
@@ -633,8 +627,7 @@ O preço da cascata é que ela não distingue um `Deployment` de um banco, por i
 
 | Recurso protegido com `Prune=false,Delete=false` | Onde vive |
 | --- | --- |
-| `Cluster` do CNPG do blog | `argocd/apps/data/blog-postgres` |
-| `Cluster` do CNPG do Keycloak | `argocd/apps/data/keycloak-postgres` |
+| `Cluster` compartilhado do CNPG | `argocd/apps/data/shared-postgres` |
 | `StorageClass` `local-path` | `argocd/apps/platform/storage` |
 | Volume do Portainer | `argocd/apps/platform/portainer` |
 
@@ -652,7 +645,7 @@ Sem nenhum recurso vivo fora do git para comparar, não existe diff possível de
 
 A correção da ordem das roles é o que garante que o `Secret` que ele monta já existe na primeira sincronização de verdade.
 
-O `Cluster` do CNPG do blog apresentou, por um tempo, uma pista falsa: `kubectl diff` mostrava muitos campos default que o webhook do operador CloudNativePG preenche no objeto vivo (afinidade, `probes/replicationSlots` e outros).
+O `Cluster` compartilhado do CNPG apresentou, por um tempo, uma pista falsa: `kubectl diff` mostrava muitos campos default que o webhook do operador CloudNativePG preenche no objeto vivo (afinidade, `probes/replicationSlots` e outros).
 
 Esses campos são os que o manifesto deste repositório nunca declara.
 
