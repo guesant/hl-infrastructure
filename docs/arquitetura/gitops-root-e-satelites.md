@@ -478,6 +478,8 @@ O painel inteiro é um `ConfigMap` montado como o `conf.yml` do Dashy.
 
 Assim, adicionar um serviço é um commit, não um clique.
 
+O grupo `guesant.net` também reúne os endpoints públicos do projeto: `guesant.net`, `auth.guesant.net`, `admin.guesant.net` e `api.guesant.net/docs`. Eles ficam separados dos serviços internos para que o dashboard continue sendo um índice útil tanto para a operação na tailnet quanto para os endereços públicos do site.
+
 A edição pela interface, a gravação em disco e a verificação de versão nova (a única saída para a Internet que ele tentaria) ficam desligadas na própria configuração, e o pod roda como o usuário `node` da imagem, com raiz somente leitura e sem token de `ServiceAccount`.
 
 Ele não faz verificação de status dos serviços, porque os nomes internos só resolvem na tailnet, não dentro do cluster, e apontar as verificações para os `Service` exigiria abrir a política de rede de cada namespace para um painel.

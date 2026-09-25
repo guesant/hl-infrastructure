@@ -364,6 +364,8 @@ Cada um declara o conteúdo: o grupo `admins`, a required action que obriga TOTP
 
 Cada um também declara o escopo `groups` com o mapper de pertencimento, e os clients com seus redirects e escopos padrão.
 
+O client do blog é o client administrativo do `admin.guesant.net`. Seu `base_url` é `https://admin.<blog_hostname>`, o callback de login é `/auth/keycloak/callback` e o logout retorna para a raiz desse mesmo hostname. O site público não participa desse callback: a autenticação do painel e a sessão editorial ficam isoladas no domínio administrativo.
+
 Todos os clients exigem PKCE exceto o `portainer`, porque a edição livre do Portainer não o envia.
 
 Quase todos são confidenciais, com um segredo que vive num SopsSecret e chega ao módulo pelo `secrets.map`.

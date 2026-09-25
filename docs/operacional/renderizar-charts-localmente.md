@@ -22,6 +22,8 @@ Um digest que não bate aborta a renderização com a instrução de revisar o c
 
 Praticamente todo o resto vem direto da fonte local, sem depender de repositório Helm nem de versão vinda de versions.yml: os wrappers de `argocd/apps/operators/` e `argocd/apps/platform/` (inclusive os que não embrulham chart upstream nenhum, como o StatefulSet do Keycloak, renderizados só a partir dos próprios templates), o chart preparatório `argocd/apps/data/shared-postgres` e os charts de satélite listados abaixo.
 
+O PostgreSQL do Keycloak não é mais renderizado como um chart separado. A instância compartilhada de `argocd/apps/data/shared-postgres` é a única fonte de manifesto do banco, e os consumidores usam bancos e credenciais distintos dentro dela. Por isso a saída não contém mais `keycloak-postgres.yaml`.
+
 | Caminho | O que faz |
 | --- | --- |
 | `argocd/apps/satellites/launcher` | emite a `Application` de cada satélite a partir de uma lista |
