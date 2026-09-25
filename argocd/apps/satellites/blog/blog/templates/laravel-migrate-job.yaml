@@ -11,7 +11,7 @@ metadata:
   annotations:
     argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
-    argocd.argoproj.io/sync-wave: "-1"
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   activeDeadlineSeconds: 600
   backoffLimit: 3
@@ -48,22 +48,22 @@ spec:
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: shared-postgres-app
+                  name: portfolio-postgres-app
                   key: host
             - name: DB_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: shared-postgres-app
+                  name: portfolio-postgres-app
                   key: dbname
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: shared-postgres-app
+                  name: portfolio-postgres-app
                   key: user
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: shared-postgres-app
+                  name: portfolio-postgres-app
                   key: password
           resources:
             requests:

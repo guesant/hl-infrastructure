@@ -88,6 +88,8 @@ laravel:
     APP_DEBUG: "false"
     APP_URL: https://guesant.net
     PUBLIC_SITE_BASE_URL: https://guesant.net
+    OG_IMAGE_ENABLED: "true"
+    OG_IMAGE_BASE_URL: https://api.guesant.net
     APP_LOCALE: en
     APP_FALLBACK_LOCALE: en
     LOG_CHANNEL: stderr

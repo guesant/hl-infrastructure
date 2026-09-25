@@ -3,6 +3,8 @@ kind: StatefulSet
 metadata:
   name: keycloak
   namespace: keycloak
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
   labels:
     app.kubernetes.io/name: keycloak
 spec:
@@ -43,12 +45,12 @@ spec:
             - name: KC_DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: shared-postgres-app
+                  name: keycloak-postgres-app
                   key: username
             - name: KC_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: shared-postgres-app
+                  name: keycloak-postgres-app
                   key: password
             - name: KC_HOSTNAME
               value: https://auth.guesant.net

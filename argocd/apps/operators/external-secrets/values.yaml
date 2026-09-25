@@ -1,0 +1,41 @@
+external-secrets:
+  fullnameOverride: external-secrets
+  installCRDs: true
+  image:
+    repository: ghcr.io/external-secrets/external-secrets
+    tag: v2.11.0@sha256:66fb710878cbf3eba4a927e35c5d75e29a202c9bab238aad64bfb23b786b962b
+  serviceAccount:
+    create: true
+    name: external-secrets
+    automount: true
+  rbac:
+    serviceAccountTokenCreate: false
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+  webhook:
+    image:
+      repository: ghcr.io/external-secrets/external-secrets
+      tag: v2.11.0@sha256:66fb710878cbf3eba4a927e35c5d75e29a202c9bab238aad64bfb23b786b962b
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+  certController:
+    image:
+      repository: ghcr.io/external-secrets/external-secrets
+      tag: v2.11.0@sha256:66fb710878cbf3eba4a927e35c5d75e29a202c9bab238aad64bfb23b786b962b
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi

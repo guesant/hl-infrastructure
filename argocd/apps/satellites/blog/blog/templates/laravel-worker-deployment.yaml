@@ -10,6 +10,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
   annotations:
     reloader.stakater.com/auto: "true"
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   replicas: {{ .Values.laravel.worker.replicas }}
   selector:
@@ -54,22 +55,22 @@ spec:
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: shared-postgres-app
+                  name: portfolio-postgres-app
                   key: host
             - name: DB_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: shared-postgres-app
+                  name: portfolio-postgres-app
                   key: dbname
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: shared-postgres-app
+                  name: portfolio-postgres-app
                   key: user
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: shared-postgres-app
+                  name: portfolio-postgres-app
                   key: password
           resources:
             {{- toYaml .Values.laravel.worker.resources | nindent 12 }}
