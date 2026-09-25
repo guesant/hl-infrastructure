@@ -11,10 +11,12 @@ spec:
   interval: 2m0s
   freightCreationPolicy: Automatic
   subscriptions:
+    {{- range .images }}
     - image:
         repoURL: {{ .imageRepo | quote }}
         imageSelectionStrategy: {{ .imageSelectionStrategy | default "Digest" | quote }}
         constraint: {{ .constraint | default "main" | quote }}
         strictSemvers: {{ .strictSemvers | default true }}
         discoveryLimit: {{ .discoveryLimit | default 5 }}
+    {{- end }}
 {{- end }}

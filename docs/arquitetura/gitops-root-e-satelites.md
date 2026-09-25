@@ -286,19 +286,13 @@ Um array em `values.yaml` de um chart Helm local, a mesma convenção que todo c
 
 Há uma perda real na escolha: o `ApplicationSet` sabe gerar instâncias a partir do que ele descobre sozinho, varrendo diretórios de um repositório ou repositórios de uma organização, e um array em `values.yaml` exige que alguém escreva o item. Com um satélite consolidado e um punhado em perspectiva, escrever o item é barato, e a decisão merece ser revisitada se algum dia a lista crescer a ponto de a descoberta automática compensar a camada extra.
 
-O `satellites-delivery` nasceu com sincronização manual, ao contrário do `satellites-launcher`.
+O `satellites-delivery` e o `satellites-launcher` agora são as únicas aplicações genéricas de satélites. O blog aparece uma vez em cada lista: o launcher emite a `Application` `blog`, e o delivery emite o projeto, o `Warehouse`, o `Stage` e o `ProjectConfig` de `blog-delivery`.
 
-Ele precisou adotar os objetos de entrega do blog, que já viviam no cluster sob a `Application` antiga `blog-delivery`.
+A aplicação `satellites-delivery` tem `automated` com `selfHeal`, `prune` e `allowEmpty: false`. Assim, mudanças no chart genérico e nos itens de `values.yaml` são reconciliadas pelo Argo CD sem depender de uma sincronização manual.
 
-O [gate de deriva zero](#gate-de-deriva-zero) deste repositório não libera `automated` antes desse diff ficar vazio.
+O projeto do Kargo é cluster-scoped por definição do CRD. Por isso o template de `project.yaml` não possui `metadata.namespace`; o namespace `blog-delivery` é criado separadamente e concentra os recursos namespaced do projeto, como `Warehouse`, `Stage` e `ProjectConfig`. Adicionar um namespace ao `Project` seria inválido, não uma correção.
 
-A migração reetiquetou o `tracking-id` desses objetos do dono antigo para o novo, sem recriar nenhum recurso nem perder `Freight` ou histórico de promoção.
-
-A `Application` antiga e o chart antigo devem sair do repositório só depois de confirmado que nenhum recurso vivo continua sob o nome dela.
-
-Eles ainda estão commitados enquanto essa confirmação não roda, em `argocd/applications/satellites/blog/delivery.yaml/argocd/apps/satellites/blog/delivery/`.
-
-Removê-los antes disso, com ambos os lados sincronizando ao mesmo tempo, dispararia o `FailOnSharedResource` contra os mesmos objetos.
+O item do blog possui duas assinaturas no mesmo `Warehouse`, uma para a imagem do frontend e outra para a imagem Laravel. O mesmo `Stage` promove os dois digests para os caminhos Helm correspondentes da `Application` `blog`.
 
 O `Warehouse` do Kargo para o blog acompanha a tag `main`, e não a tag de commit mais nova.
 
@@ -623,7 +617,7 @@ Há um caso em que o Kargo grava a tag de imagem resolvida como parâmetro diret
 
 Nesse caso, a aplicação nova precisa declarar esse mesmo parâmetro (`spec.source.helm.parameters`) com o valor atual logo na criação.
 
-Esse parâmetro vive em mais de um dono ao mesmo tempo, o git e o Kargo, então a aplicação root declara `ignoreDifferences` para `/spec/source/helm/parameters` da aplicação `blog`.
+Esse parâmetro vive em mais de um dono ao mesmo tempo, o git e o Kargo, então a aplicação `satellites-launcher` declara `ignoreDifferences` para `/spec/source/helm/parameters` da aplicação `blog`.
 
 Essa declaração usa `RespectIgnoreDifferences=true`: sem isso, o `selfHeal` do root devolvia a tag do git a cada reconciliação e desfazia toda promoção de imagem, o que só apareceu quando uma imagem nova do blog ficou presa na tag antiga.
 

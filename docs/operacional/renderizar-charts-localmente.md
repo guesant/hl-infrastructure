@@ -28,7 +28,6 @@ O PostgreSQL do Keycloak não é mais renderizado como um chart separado. A inst
 | --- | --- |
 | `argocd/apps/satellites/launcher` | emite a `Application` de cada satélite a partir de uma lista |
 | `argocd/apps/satellites/delivery` | faz o mesmo para a entrega do Kargo |
-| `argocd/apps/satellites/blog/delivery` | entrega antiga do blog, mantida até a migração para o chart de lista terminar |
 
 O conjunto exato do que é renderizado muda com o tempo, à medida que componentes novos entram no cluster; [.tools/render-charts.sh](https://github.com/guesant/hl-infrastructure/blob/main/.tools/render-charts.sh) é a fonte da verdade de quais. O resultado é um arquivo YAML por componente dentro de `.build/rendered/`, que fica fora do git.
 

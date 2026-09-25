@@ -60,7 +60,7 @@ Commitar neste repositório exigiria uma credencial de escrita guardada no clust
 
 Nenhuma dessas alternativas paga o benefício de ter o digest corrente no git, porque ele já fica em lugares consultáveis: no Freight promovido, que o Kargo guarda com data e resultado, e no status da própria aplicação.
 
-O custo dessa escolha é o parâmetro ter mais de um dono, o git e o Kargo, e é por isso que a aplicação root declara um `ignoreDifferences` sobre o parâmetro Helm da aplicação do blog, com `RespectIgnoreDifferences=true`: sem isso, o [selfHeal](../aprender/argocd.md) do root devolveria a tag do git a cada reconciliação e desfaria toda promoção.
+O custo dessa escolha é o parâmetro ter mais de um dono, o git e o Kargo, e é por isso que a aplicação `satellites-launcher` declara um `ignoreDifferences` sobre o parâmetro Helm da aplicação do blog, com `RespectIgnoreDifferences=true`: sem isso, o [selfHeal](../aprender/argocd.md) do launcher devolveria a tag do git a cada reconciliação e desfaria toda promoção.
 
 O valor em `argocd/apps/satellites/blog/blog/values.yaml` continua real, mas é só o ponto de partida de um cluster novo; a primeira promoção o deixa para trás. Um cluster reconstruído do zero sobe, portanto, na imagem commitada, e só converge para o digest corrente quando o Warehouse faz a primeira consulta ao registry.
 
@@ -85,7 +85,7 @@ O primeiro lugar a olhar é o Warehouse: `kubectl -n blog-delivery describe ware
 
 Se há Freight novo e nenhuma promoção, a política de promoção automática da configuração do projeto é a suspeita. Se há promoção com falha, a mensagem dela diz o motivo, e os mais prováveis são a anotação de stage autorizado ausente na aplicação e um nome ou namespace de aplicação diferente do que o passo declara.
 
-Se a promoção teve sucesso mas o pod não mudou, o problema já é do Argo: consultar a aplicação pelo `kubectl` mostra o parâmetro gravado, e um parâmetro certo com manifesto antigo significa que o root devolveu o valor do git, ou seja, o `ignoreDifferences` foi perdido.
+Se a promoção teve sucesso mas o pod não mudou, o problema já é do Argo: consultar a aplicação pelo `kubectl` mostra o parâmetro gravado, e um parâmetro certo com manifesto antigo significa que o launcher devolveu o valor do git, ou seja, o `ignoreDifferences` foi perdido.
 
 Voltar atrás é promover de novo: a UI lista os Freight anteriores e qualquer um deles pode ser promovido para produção, o que grava o digest antigo na aplicação do mesmo jeito. Não há reversão de commit a fazer, porque nada foi commitado; o histórico da promoção fica nos objetos Promotion do namespace de entrega do blog.
 
@@ -93,4 +93,4 @@ Como as demais aplicações do Argo daqui, o Kargo e a entrega do blog carregam 
 
 ## Continue por aqui
 
-[Adicionar um satélite novo](../operacional/adicionar-um-satelite.md) mostra os campos que um satélite novo preenche para ganhar entrega automática; [GitOps: root e satélites](gitops-root-e-satelites.md) explica por que o parâmetro Helm da `Application` é o ponto de escrita e o que o `ignoreDifferences` do root protege.
+[Adicionar um satélite novo](../operacional/adicionar-um-satelite.md) mostra os campos que um satélite novo preenche para ganhar entrega automática; [GitOps: root e satélites](gitops-root-e-satelites.md) explica por que o parâmetro Helm da `Application` é o ponto de escrita e o que o `ignoreDifferences` do launcher protege.

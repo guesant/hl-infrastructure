@@ -9,17 +9,25 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/sync-wave: {{ .syncWave | default "10" | quote }}
+    {{- range $key, $value := .annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
 spec:
   project: satellites
   source:
     repoURL: {{ .repoURL | quote }}
-    targetRevision: main
+    targetRevision: {{ .targetRevision | default "main" | quote }}
     path: {{ .path | quote }}
+    {{- if .helmReleaseName }}
+    helm:
+      releaseName: {{ .helmReleaseName | quote }}
+    {{- else }}
     directory:
       recurse: true
+    {{- end }}
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: {{ .destinationNamespace | default "argocd" | quote }}
   revisionHistoryLimit: 3
   syncPolicy:
     automated:
@@ -28,6 +36,7 @@ spec:
       allowEmpty: false
     syncOptions:
       - ServerSideApply=true
+      - SkipDryRunOnMissingResource=true
       - FailOnSharedResource=true
       - PruneLast=true
       - PrunePropagationPolicy=foreground

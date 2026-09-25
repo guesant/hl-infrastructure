@@ -1,7 +1,0 @@
-images:
-  - imageRepo: ghcr.io/guesant/blog
-    imageTagValue: main@${{ imageFrom("ghcr.io/guesant/blog").Digest }}
-    valuesPath: application.deployment.image.tag
-  - imageRepo: ghcr.io/guesant/blog-laravel
-    imageTagValue: main@${{ imageFrom("ghcr.io/guesant/blog-laravel").Digest }}
-    valuesPath: laravel.image.tag

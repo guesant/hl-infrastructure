@@ -1,1 +1,9 @@
-satellites: []
+satellites:
+  - name: blog
+    repoURL: https://github.com/guesant/hl-infrastructure.git
+    path: argocd/apps/satellites/blog/blog
+    destinationNamespace: blog
+    helmReleaseName: blog
+    syncWave: "2"
+    annotations:
+      kargo.akuity.io/authorized-stage: blog-delivery:prod

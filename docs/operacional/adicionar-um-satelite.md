@@ -2,7 +2,7 @@
 
 Um satélite é uma aplicação do ArgoCD que aponta para a pasta de GitOps de outro repositório, dentro do projeto de satélites. A aplicação raiz em [argocd/root](https://github.com/guesant/hl-infrastructure/tree/main/argocd/root) sincroniza sozinha tudo que existir dentro de [argocd/applications](https://github.com/guesant/hl-infrastructure/tree/main/argocd/applications); a aplicação de um satélite novo, porém, não é mais um arquivo próprio, é um item numa lista, gerado pelo chart `argocd/apps/satellites/launcher` a partir do arquivo de values. Nenhum passo manual no cluster é necessário para essa parte.
 
-Este formato existe para um satélite que vive num repositório de terceiro; o único satélite deste cluster, o blog, vive direto neste repositório (veja "Por que o blog não é um satélite de verdade" em [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md)) e não segue esse formato.
+Este formato existe para um satélite que vive num repositório de terceiro. O blog também usa o mesmo chart, mas aponta para a pasta Helm deste repositório e permanece no values do launcher como exemplo completo.
 
 Um satélite novo, de um repositório separado, se cria com a recipe abaixo. Ela roda num contêiner e só edita um arquivo de values no seu clone, sem falar com o cluster, então rodá-la não compromete nada antes de você decidir se vai commitar o resultado.
 
@@ -14,13 +14,16 @@ A recipe acrescenta um item à lista de satélites do arquivo de values do launc
 
 O template do launcher itera essa lista e emite, para cada item, a mesma aplicação que antes era escrita à mão por arquivo; [gerar várias instâncias de um recurso com Helm](../aprender/helm-templating-de-lista.md) explica o mecanismo geral, e [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md#satelites-e-entrega-do-kargo-um-chart-com-array-nao-um-arquivo-por-instancia) explica por que esse desenho venceu a alternativa nativa do ArgoCD, o ApplicationSet.
 
-O item da lista tem os quatro campos da tabela abaixo. O campo de onda de sincronização tem um padrão que coloca todo satélite depois de tudo o que o root instala, cujas ondas vão da que cria as classes de armazenamento e os namespaces até a mais tardia; mexer nele só faz sentido para ordenar um satélite em relação a outro.
+O item da lista tem os campos da tabela abaixo. O campo de onda de sincronização tem um padrão que coloca todo satélite depois de tudo o que o root instala, cujas ondas vão da que cria as classes de armazenamento e os namespaces até a mais tardia; mexer nele só faz sentido para ordenar um satélite em relação a outro.
 
 | Campo | O que é |
 | --- | --- |
 | `name` | nome do satélite |
 | `repoURL` | URL do repositório de terceiro |
 | `path` | pasta, dentro do outro repositório, com só os objetos de controle do Argo daquele satélite |
+| `destinationNamespace` | namespace da aplicação filha, `argocd` por padrão |
+| `helmReleaseName` | nome da release Helm quando a fonte não é um diretório de manifests |
+| `annotations` | anotações adicionais da `Application`, como a autorização do Stage do Kargo |
 | `syncWave` | opcional, `10` por padrão |
 
 O projeto e o bloco de política de sincronização que o template emite são os mesmos de toda aplicação deste repositório; [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md) explica o que cada opção resolve e por que o projeto de satélites é restrito a recursos de namespace, com namespace, classe de armazenamento e o projeto do Kargo como exceções de escopo de cluster liberadas.
@@ -70,11 +73,11 @@ A recipe preenche o item inteiro a partir dos quatro argumentos, completando os 
 | Campo | O que é |
 | --- | --- |
 | `name` | o nome do satélite, que dá nome ao namespace `<nome>-delivery` |
-| `imageRepo` | o repositório da imagem publicada |
 | `childApp` | o nome da `Application` que a promoção atualiza |
-| `valuesPath` | o caminho do values Helm que recebe a tag, por exemplo `application.deployment.image.tag` |
-| `imageTagValue` | a expressão `main@${{ imageFrom("...").Digest }}` já montada com o repositório certo |
-| `imageSelectionStrategy`, `constraint`, `strictSemvers`, `discoveryLimit` | os campos do `Warehouse`, todos com um valor padrão sensato |
+| `images[].imageRepo` | o repositório da imagem publicada |
+| `images[].valuesPath` | o caminho do values Helm que recebe a tag, por exemplo `application.deployment.image.tag` |
+| `images[].imageTagValue` | a expressão `main@${{ imageFrom("...").Digest }}` já montada com o repositório certo |
+| `images[].imageSelectionStrategy`, `images[].constraint`, `images[].strictSemvers`, `images[].discoveryLimit` | os campos do `Warehouse`, todos com um valor padrão sensato |
 
 O Warehouse acompanha a tag do branch principal pela estratégia de digest: cada vez que a pipeline do outro repositório publica e o digest atrás da tag muda, nasce um Freight novo, e a política de promoção automática o leva ao estágio de produção.
 
@@ -90,10 +93,11 @@ Nos dois casos o teste barato é renderizar e ler o estágio gerado, onde o valo
 | `allowTagsRegexes` | `["^sha-[0-9a-f]{40}$"]` |
 | `imageTagValue` | usa `imageFrom(...).Tag` em vez do digest |
 
-A recipe recusa um nome já existente e termina imprimindo as edições que continuam manuais, porque tocam arquivos fora da lista. Elas ficaram de fora do chart por morarem em arquivos de outro dono, um no repositório do satélite e outro no root deste. A saída da recipe já traz as duas preenchidas com o nome da `Application` filha, prontas para copiar; são estas:
+A recipe recusa um nome já existente e termina imprimindo a edição que continua manual, porque toca um arquivo no repositório do satélite. A saída da recipe já traz essa edição preenchida com o nome da `Application` filha, pronta para copiar:
 
 1. A `Application` filha (a que a recipe chamou de `childApp`) precisa carregar a anotação `kargo.akuity.io/authorized-stage: <nome>-delivery:prod`, a prova de que quem pode editar aquela `Application` consentiu com aquele `Stage` a editar; sem ela a promoção falha com erro explícito.
-2. A `Application` `root` deste repositório precisa de um `ignoreDifferences` para `/spec/source/helm/parameters` dessa `Application`, como já existe para o blog em `argocd/root/application.yaml`, senão o `selfHeal` do root devolve a tag do git a cada reconciliação.
+
+O `satellites-launcher` já ignora genericamente `spec.source.helm.parameters` das aplicações filhas que ele gera. Esse campo é o ponto de escrita do Kargo e não deve ser duplicado em cada novo satélite.
 
 Depois dessas edições, o fluxo de commit é o mesmo do satélite: renderizar para conferir, commitar, dar push e checar o status. Na conferência, olhe se o estágio renderizado aponta para a aplicação filha certa, porque um valor errado nesse campo não quebra nada na sincronização e só aparece quando a primeira promoção falha. A partir do sync, o Warehouse já começa a observar o registry sozinho, sem nenhum passo adicional.
 

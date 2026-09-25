@@ -16,6 +16,11 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
+  ignoreDifferences:
+    - group: argoproj.io
+      kind: Application
+      jqPathExpressions:
+        - .spec.source.helm.parameters
   syncPolicy:
     automated:
       selfHeal: true
@@ -25,6 +30,7 @@ spec:
       - FailOnSharedResource=true
       - PruneLast=true
       - PrunePropagationPolicy=foreground
+      - RespectIgnoreDifferences=true
     retry:
       limit: 5
       backoff:

@@ -65,6 +65,11 @@ helm template sops-secrets-operator "$repo_root/argocd/apps/operators/sops-secre
   --values "$repo_root/argocd/apps/operators/sops-secrets-operator/values.yaml" \
   --include-crds >"$out_dir/sops-secrets-operator.yaml"
 
+helm template external-secrets "$repo_root/argocd/apps/operators/external-secrets" \
+  --namespace external-secrets \
+  --values "$repo_root/argocd/apps/operators/external-secrets/values.yaml" \
+  --include-crds >"$out_dir/external-secrets.yaml"
+
 helm template monitoring "$repo_root/argocd/apps/platform/monitoring" \
   --namespace monitoring \
   --include-crds >"$out_dir/monitoring.yaml"
@@ -90,10 +95,6 @@ helm template dashy "$repo_root/argocd/apps/platform/dashy" \
 
 helm template portainer "$repo_root/argocd/apps/platform/portainer" \
   --namespace portainer >"$out_dir/portainer.yaml"
-
-helm template blog-delivery "$repo_root/argocd/apps/satellites/blog/delivery" \
-  --values "$repo_root/argocd/apps/satellites/blog/delivery/values.yaml" \
-  --namespace blog-delivery >"$out_dir/blog-delivery.yaml"
 
 helm template satellites-launcher "$repo_root/argocd/apps/satellites/launcher" \
   --namespace argocd >"$out_dir/satellites-launcher.yaml"

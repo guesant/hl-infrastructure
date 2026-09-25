@@ -46,14 +46,12 @@ new_entry="$(jq -n \
   --arg imageTagValue "$image_tag_value" \
   '{
     name: $name,
-    imageRepo: $imageRepo,
     childApp: $childApp,
-    valuesPath: $valuesPath,
-    imageTagValue: $imageTagValue,
-    imageSelectionStrategy: "Digest",
-    constraint: "main",
-    strictSemvers: true,
-    discoveryLimit: 5
+    images: [{
+      imageRepo: $imageRepo,
+      valuesPath: $valuesPath,
+      imageTagValue: $imageTagValue
+    }]
   }')"
 
 yq -i ".satellites += [$new_entry]" "$values_file"
@@ -62,19 +60,9 @@ delivery_ns="${name}-delivery"
 
 echo "added $name to $values_file" >&2
 echo >&2
-echo "two hand-reviewed edits still needed:" >&2
+echo "one hand-reviewed edit still needed:" >&2
 echo >&2
 echo "1. add this annotation to the $child_app Application's metadata.annotations:" >&2
 echo "   kargo.akuity.io/authorized-stage: ${delivery_ns}:prod" >&2
-echo >&2
-echo "2. add an ignoreDifferences entry to argocd/root/application.yaml, alongside the existing ones:" >&2
-cat >&2 <<EOF
-   - group: argoproj.io
-     kind: Application
-     name: $child_app
-     namespace: argocd
-     jsonPointers:
-       - /spec/source/helm/parameters
-EOF
 echo >&2
 echo "then: just infra-render-charts (confirm the chart renders), git add, commit, push, just status" >&2

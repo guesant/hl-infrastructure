@@ -1,4 +1,0 @@
-apiVersion: v2
-name: blog-delivery
-description: Kargo project that promotes the blog image into the Argo CD Application
-version: 0.1.0
