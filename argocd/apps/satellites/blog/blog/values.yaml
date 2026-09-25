@@ -32,6 +32,14 @@ application:
       periodSeconds: 30
       timeoutSeconds: 5
       failureThreshold: 3
+    startupProbe:
+      enabled: true
+      httpGet:
+        path: /health
+        port: 3000
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 30
     readinessProbe:
       enabled: true
       httpGet:
