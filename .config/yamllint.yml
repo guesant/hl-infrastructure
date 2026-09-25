@@ -9,6 +9,8 @@ ignore:
   - argocd/apps/satellites/launcher/templates/
   - argocd/apps/satellites/delivery/templates/
   - argocd/apps/satellites/blog/blog/templates/
+  - argocd/apps/platform/ingress/templates/middlewares.yaml
+  - argocd/apps/platform/ingress/templates/routes.yaml
 
 rules:
   braces:
