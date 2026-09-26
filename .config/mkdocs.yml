@@ -396,6 +396,7 @@ nav:
               - Visão geral: aprender/rede/wireless/index.md
               - Gerações de Wi-Fi: aprender/rede/wireless/wifi-generations.md
               - Redes mesh: aprender/rede/wireless/mesh.md
+              - Radiofrequência, ruído cósmico e ionosfera: aprender/rede/wireless/radiofrequencia-ruido-cosmico-e-ionosfera.md
           - Redes móveis:
               - Gerações e arquitetura: aprender/rede/redes-moveis/index.md
           - Arquitetura da Internet:
