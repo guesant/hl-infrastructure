@@ -346,6 +346,12 @@ nav:
               - Heroku: aprender/plataforma/cloud/heroku.md
           - Edge e entrega de aplicações:
               - Cloudflare: aprender/plataforma/cloud/cloudflare.md
+              - Cloudflare Pages: aprender/plataforma/cloud/cloudflare-pages.md
+              - Cloudflare Workers: aprender/plataforma/cloud/cloudflare-workers.md
+              - Cloudflare Tunnel: aprender/plataforma/cloud/cloudflare-tunnels.md
+              - Netlify: aprender/plataforma/cloud/netlify.md
+              - GitHub Pages: aprender/plataforma/cloud/github-pages.md
+              - ngrok: aprender/plataforma/cloud/ngrok.md
       - Build e toolchains:
           - Visão geral: aprender/build/index.md
           - Bazel: aprender/build/bazel.md
