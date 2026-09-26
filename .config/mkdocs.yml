@@ -339,6 +339,9 @@ nav:
               - Dokploy: aprender/plataforma/cloud/dokploy.md
               - CapRover: aprender/plataforma/cloud/caprover.md
               - Railway: aprender/plataforma/cloud/railway.md
+              - Surge.sh: aprender/plataforma/cloud/surge-sh.md
+              - ZEIT: aprender/plataforma/cloud/zeit.md
+              - now.sh: aprender/plataforma/cloud/now-sh.md
               - Vercel: aprender/plataforma/cloud/vercel.md
               - Heroku: aprender/plataforma/cloud/heroku.md
           - Edge e entrega de aplicações:
