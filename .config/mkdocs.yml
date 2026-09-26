@@ -90,6 +90,7 @@ nav:
               - Shells e scripts: aprender/shells-e-scripts.md
               - GNU Coreutils: aprender/sistemas/linux/coreutils.md
               - Documentação de comandos: aprender/sistemas/linux/documentacao.md
+              - Inspeção de binários e bibliotecas: aprender/sistemas/linux/inspecao-de-binarios.md
               - Processamento de texto:
                   - Visão geral: aprender/sistemas/linux/text-processing/index.md
                   - grep: aprender/sistemas/linux/text-processing/grep.md
