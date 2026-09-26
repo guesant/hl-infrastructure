@@ -750,6 +750,8 @@ nav:
               - Feature flags: aprender/feature-flags.md
       - Segurança:
           - Visão geral: aprender/seguranca/index.md
+          - Segurança contra incêndio:
+              - Extintores, classes e resfriamento: aprender/seguranca/extintores-classes-e-resfriamento.md
           - Segurança de aplicações:
               - Visão geral: aprender/seguranca/appsec/index.md
               - SAST:
