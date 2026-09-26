@@ -131,6 +131,7 @@ nav:
               - Wake-on-LAN: aprender/sistemas/hardware/wake-on-lan.md
               - Clima espacial, indução e eletrônica: aprender/sistemas/hardware/clima-espacial-e-eletronica.md
               - Segurança elétrica e ESD: aprender/sistemas/hardware/seguranca-eletrica-e-esd.md
+              - COP, PTC e turbulência na refrigeração: aprender/sistemas/hardware/cop-ptc-e-turbulencia-na-refrigeracao.md
           - Instalação, boot e recuperação:
               - Visão geral: aprender/sistemas/boot/index.md
               - UEFI: aprender/sistemas/boot/uefi.md
