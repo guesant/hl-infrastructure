@@ -25,7 +25,7 @@
 | `kubectl port-forward svc/<service> 8080:80` | Acessar um serviço interno via localhost sem expô-lo publicamente. | Por padrão escuta só em `127.0.0.1`; `--address 0.0.0.0` amplia quem pode acessar, use com o mesmo cuidado de qualquer porta exposta. |
 | `curl http://<service>.<namespace>.svc.cluster.local:<porta>` | Testar conectividade entre serviços dentro do cluster. | De dentro de um Pod no mesmo namespace, o namespace pode ser omitido no nome. |
 | `kubectl top pod --sort-by=memory` | Diagnosticar um `OOMKilled` ou identificar throttling de CPU. | Mostra uso atual, não série histórica; para tendência ao longo do tempo, uma stack de métricas como a descrita em [Stack Prometheus, Loki e Grafana](../aprender/stack-prometheus-loki-grafana.md) é o caminho certo. |
-| `kubectl describe pod <pod> \| grep -A3 "Limits\|Requests"` | Confirmar se um Pod tem limites de recursos definidos. | Ver [Requests, limits e QoS de um Pod](../aprender/requests-limits-e-qos-de-um-pod.md) para o que cada um efetivamente controla. |
+| `kubectl describe pod <pod> \| grep -A3 "Limits\|Requests"` | Confirmar se um Pod tem limites de recursos definidos. | Ver [requests](../aprender/kubernetes/recursos/requests.md), [limits](../aprender/kubernetes/recursos/limits.md) e [QoS](../aprender/kubernetes/recursos/qos.md) para o que cada um efetivamente controla. |
 
 ## PostgreSQL (CloudNativePG)
 
@@ -563,4 +563,4 @@ spec:
 
 ## Continue por aqui
 
-[Diagnóstico de Pod, nó, certificado e Argo CD](../aprender/diagnostico-de-pod-no-cluster-e-do-argocd.md) e [Requests, limits e QoS de um Pod](../aprender/requests-limits-e-qos-de-um-pod.md) explicam o que está por trás de vários desses comandos.
+[Diagnóstico de Pod, nó, certificado e Argo CD](../operacional/diagnostico-de-pod-no-cluster-e-do-argocd.md), [requests](../aprender/kubernetes/recursos/requests.md), [limits](../aprender/kubernetes/recursos/limits.md) e [QoS](../aprender/kubernetes/recursos/qos.md) explicam o que está por trás de vários desses comandos.

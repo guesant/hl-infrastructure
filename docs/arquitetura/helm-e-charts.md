@@ -50,7 +50,7 @@ O padrão está descrito por extenso em [GitOps: root e satélites](gitops-root-
 
 Os dois preenchem essa lista de formas diferentes: a delivery a traz commitada no próprio arquivo de values, enquanto o launcher entra com a lista vazia e recebe a lista real pelos values inline da aplicação wrapper que o sincroniza.
 
-O Keycloak (`argocd/apps/platform/keycloak`), o Portainer e o kube-bench são outra variante ainda, sem chart upstream nenhum: manifestos próprios e curtos, escritos porque o projeto não publica chart Helm ou porque o chart oficial não expõe o [securityContext](../aprender/jobs-cronjobs-e-securitycontext.md) que as políticas de admissão exigem.
+O Keycloak (`argocd/apps/platform/keycloak`), o Portainer e o kube-bench são outra variante ainda, sem chart upstream nenhum: manifestos próprios e curtos, escritos porque o projeto não publica chart Helm ou porque o chart oficial não expõe o [securityContext](../aprender/kubernetes/seguranca/security-context.md) que as políticas de admissão exigem.
 
 São charts pequenos o bastante para caber em poucos templates: o Keycloak tem um StatefulSet, um Service e um ServiceAccount; o kube-bench, um CronJob e o RBAC dele. Escrever o manifesto à mão aqui custa menos do que embrulhar um chart upstream e depois lutar contra os valores que ele não deixa sobrescrever, e o contexto de segurança fica explícito no arquivo em vez de depender de um value do autor original.
 

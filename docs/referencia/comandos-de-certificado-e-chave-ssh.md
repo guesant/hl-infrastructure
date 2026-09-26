@@ -12,4 +12,4 @@
 
 ## Continue por aqui
 
-[TLS, mTLS e confiança de rede](../aprender/tls-mtls-e-confianca-de-rede.md) e [TLS automático](../aprender/tls-automatico.md) cobrem o mecanismo de emissão e confiança por trás desses comandos.
+[TLS](../aprender/seguranca/tls/index.md), [mTLS](../aprender/seguranca/tls/mtls.md) e [TLS automático](../aprender/tls-automatico.md) cobrem o mecanismo de emissão e confiança por trás desses comandos.

@@ -34,4 +34,4 @@
 
 ## Continue por aqui
 
-[Coreutils e documentação](../aprender/coreutils-e-documentacao.md) cobre a família de utilitários por trás desses comandos e onde procurar ajuda antes de adivinhar uma flag. [Manutenção de nó: cordon, drain e disco](../aprender/manutencao-de-no-cordon-drain-e-disco.md) explica por que os dois consumidores de disco de um nó de cluster merecem monitoramento separado.
+[Coreutils](../aprender/sistemas/linux/coreutils.md) e [documentação de comandos](../aprender/sistemas/linux/documentacao.md) cobrem a família de utilitários por trás desses comandos e onde procurar ajuda antes de adivinhar uma flag. [Manutenção de nó: cordon, drain e disco](../operacional/manutencao-de-no-cordon-drain-e-disco.md) explica por que os dois consumidores de disco de um nó de cluster merecem monitoramento separado.

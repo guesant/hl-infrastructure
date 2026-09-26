@@ -32,4 +32,4 @@ Referência rápida de comandos de diagnóstico de rede e DNS. Os conceitos por 
 
 ## Continue por aqui
 
-[Resolução, zonas e registros DNS](../aprender/resolucao-zonas-e-registros-dns.md) e [DNSSEC, mDNS e registro de domínio](../aprender/dnssec-mdns-e-registro-de-dominio.md) explicam o mecanismo por trás de cada comando acima.
+[Resolução, zonas e registros DNS](../aprender/resolucao-zonas-e-registros-dns.md), [DNSSEC](../aprender/rede/dns/dnssec.md), [mDNS](../aprender/rede/dns/mdns.md) e [registro de domínio](../aprender/rede/dns/registro-de-dominio.md) explicam o mecanismo por trás de cada comando acima.

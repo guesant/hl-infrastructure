@@ -132,4 +132,4 @@ MemoryMax=1G
 
 ## Continue por aqui
 
-[Fail2ban, atualizações automáticas e journal persistente](../aprender/fail2ban-atualizacoes-automaticas-e-journal.md) cobre timers do systemd como alternativa ao cron com mais profundidade conceitual.
+[Fail2ban](../aprender/sistemas/linux/fail2ban.md), [atualizações automáticas](../aprender/sistemas/linux/automatic-updates.md) e [journal persistente](../aprender/sistemas/linux/journald.md) cobrem timers do systemd como alternativa ao cron com mais profundidade conceitual.

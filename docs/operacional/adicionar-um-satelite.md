@@ -50,7 +50,7 @@ A onda neles é livre, porque o Argo só compara ondas entre irmãos da mesma ap
 
 ### Atualização automática de imagem
 
-O Kargo já roda no cluster, e a promoção de imagem de um satélite é declarada num projeto de entrega, com o mesmo tratamento em lista: o arquivo de values desse chart tem uma lista de satélites, e os cinco templates da tabela abaixo emitem, por item, o namespace correspondente já com o label de projeto do Kargo e as labels de [Pod Security](../aprender/jobs-cronjobs-e-securitycontext.md), mais os demais objetos que esses templates declaram.
+O Kargo já roda no cluster, e a promoção de imagem de um satélite é declarada num projeto de entrega, com o mesmo tratamento em lista: o arquivo de values desse chart tem uma lista de satélites, e os cinco templates da tabela abaixo emitem, por item, o namespace correspondente já com o label de projeto do Kargo e as labels de [Pod Security](../aprender/kubernetes/seguranca/security-context.md), mais os demais objetos que esses templates declaram.
 
 | Template | Emite |
 | --- | --- |
