@@ -25,7 +25,7 @@ if [ -n "$matches" ]; then
 fi
 
 tofu_hostname="$(sed -nE 's/^blog_hostname[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' tofu/cloudflare/terraform.tfvars)"
-site_url="$(sed -nE 's/^[[:space:]]{4}PUBLIC_SITE_BASE_URL:[[:space:]]*"?([^"[:space:]]+).*/\1/p' argocd/apps/secrets/satellites/blog/values.yaml)"
+site_url="$(sed -nE 's/^[[:space:]]{2}PUBLIC_SITE_BASE_URL:[[:space:]]*"?([^"[:space:]]+).*/\1/p' argocd/apps/secrets/satellites/blog/laravel-configmap.yaml)"
 site_hostname="${site_url#https://}"
 site_hostname="${site_hostname%%/*}"
 if [ -z "$tofu_hostname" ] || [ "$tofu_hostname" != "$site_hostname" ]; then

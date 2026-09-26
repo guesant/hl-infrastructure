@@ -131,7 +131,7 @@ O `kube-system` fica de fora, porque o Cilium e os componentes do k3s precisam d
 
 O job `pod-security` da CI falha se um namespace novo nascer sem o label de `enforce`.
 
-Cada peça que precisa de segredo declara o próprio `SopsSecret` no chart wrapper local.
+Cada peça que precisa de segredo referencia um `SopsSecret` no diretório centralizado de secrets correspondente ao destino. Esses manifests são sincronizados diretamente pelo Argo CD, sem um chart intermediário.
 
 Nenhuma delas usa mais `SealedSecret`, o mecanismo antigo, removido junto com o controller que o cifrava.
 
@@ -405,7 +405,7 @@ O `oauth2-proxy`, em `argocd/apps/platform/oauth2-proxy`, é o login dos serviç
 
 É um processo pequeno, sem raiz gravável e sem token de `ServiceAccount`.
 
-O client secret e o segredo do cookie ficam no próprio `SopsSecret` do chart, com a anotação do Reloader para reiniciar quando eles mudarem.
+O client secret e o segredo do cookie ficam nos `SopsSecret` centralizados, com a anotação do Reloader para reiniciar quando eles mudarem.
 
 Como o Traefik o consulta a cada requisição, e por que o `Deployment` do Traefik usa `Recreate`, está descrito em [Ingress](ingress.md).
 

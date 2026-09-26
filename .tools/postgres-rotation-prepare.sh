@@ -3,7 +3,7 @@ set -euo pipefail
 
 app="${1:-}"
 slot="${2:-}"
-values_file="argocd/apps/secrets/data/postgres/values.yaml"
+shared_values_file="argocd/apps/data/shared-postgres/values.yaml"
 
 case "$app" in
 portfolio)
@@ -31,14 +31,8 @@ a|b)
   ;;
 esac
 
-active_slot="$(yq -r ".rotation.${app}.activeSlot" "$values_file")"
-test "$active_slot" != "$slot" || {
-  echo "$app slot $slot is already active" >&2
-  exit 1
-}
-
 user="${user_prefix}_${slot}"
-output="argocd/apps/secrets/data/postgres/templates/${source_prefix}-${slot}.sops-secret.yaml"
+output="argocd/apps/secrets/data/postgres/${source_prefix}-${slot}.sops-secret.yaml"
 secret_name="${source_prefix}-${slot}"
 password="$(head -c 48 /dev/urandom | base64 | tr -d '\n')"
 temporary="$(mktemp "${output}.XXXXXX")"
@@ -74,5 +68,5 @@ trap 'rm -f "$temporary"; unset password' EXIT
 mv "$temporary" "$output"
 trap - EXIT
 unset password
-yq -i ".rotation.${app}.retiredSlot = \"\"" "$values_file"
+yq -i ".rotation.${app}.retiredSlot = \"\"" "$shared_values_file"
 printf '%s slot %s prepared\n' "$app" "$slot"

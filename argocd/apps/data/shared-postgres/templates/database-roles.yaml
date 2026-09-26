@@ -1,0 +1,30 @@
+# yamllint disable-file
+{{- range .Values.databaseRoles }}
+apiVersion: postgresql.cnpg.io/v1
+kind: DatabaseRole
+metadata:
+  name: {{ .resourceName }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .syncWave | quote }}
+    argocd.argoproj.io/sync-options: {{ $.Values.databaseRoleDefaults.syncOptions | quote }}
+spec:
+  cluster:
+    name: {{ $.Values.cluster.name }}
+  name: {{ .roleName }}
+  {{- if .rotationKey }}
+  login: {{ ne (default "" (index $.Values.rotation .rotationKey).retiredSlot) .slot }}
+  {{- else }}
+  login: {{ .login }}
+  disablePassword: {{ .disablePassword }}
+  {{- end }}
+  {{- with .parentRole }}
+  inRoles:
+    - {{ . }}
+  {{- end }}
+  {{- with .passwordSecret }}
+  passwordSecret:
+    name: {{ . }}
+  {{- end }}
+  databaseRoleReclaimPolicy: {{ $.Values.databaseRoleDefaults.reclaimPolicy }}
+---
+{{- end }}

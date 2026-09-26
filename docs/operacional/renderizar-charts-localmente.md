@@ -20,11 +20,11 @@ Os downloads dos charts têm retries limitados para absorver falhas transitória
 
 Um digest que não bate aborta a renderização com a instrução de revisar o chart antes de atualizar o valor em `versions.yml`, em vez de seguir e produzir manifestos a partir de um tarball diferente do que o node instalaria.
 
-Praticamente todo o resto vem direto da fonte local, sem depender de repositório Helm nem de versão vinda de versions.yml: os wrappers de `argocd/apps/secrets/operators/`, `argocd/apps/secrets/platform/`, `argocd/apps/secrets/data/` e `argocd/apps/secrets/satellites/`, além dos charts de workload e satélite restantes.
+Praticamente todo o resto vem direto da fonte local, sem depender de repositório Helm nem de versão vinda de versions.yml: os charts de operadores em `argocd/apps/secrets/operators/`, além dos charts de workload e satélite restantes. Os manifests de secrets em `argocd/apps/secrets/platform/`, `argocd/apps/secrets/data/` e `argocd/apps/secrets/satellites/` são diretórios YAML puros.
 
-Os recursos de credenciais e configuração não secreta ficam centralizados sob `argocd/apps/secrets/`, organizados pela camada e pelo destino. Um chart de destino pode renderizar `SopsSecret`, `ExternalSecret`, `ConfigMap` e recursos auxiliares juntos, enquanto o chart do workload mantém somente a execução da aplicação.
+Os recursos de credenciais e configuração não secreta ficam centralizados sob `argocd/apps/secrets/`, organizados pela camada e pelo destino. Os manifests cifrados e os `ConfigMap` são lidos diretamente pelo Argo CD, sem um chart intermediário e sem `SopsSecret` dentro de `templates`. A exceção é `argocd/apps/secrets/data/postgres-consumers`, um chart pequeno para os `ExternalSecret`, o `ClusterSecretStore` e o RBAC repetitivo de replicação. O chart do workload mantém somente a execução da aplicação.
 
-O PostgreSQL do Keycloak não é mais renderizado como um chart separado. A instância compartilhada de `argocd/apps/data/shared-postgres` é a única fonte de manifesto do banco, e os consumidores usam bancos e credenciais distintos dentro dela. Os recursos de roles, replicação de secrets e credenciais do PostgreSQL são renderizados pelo chart de destino em `argocd/apps/secrets/data/postgres`. Por isso a saída não contém mais `keycloak-postgres.yaml`.
+O PostgreSQL do Keycloak não é mais renderizado como um chart separado. A instância compartilhada de `argocd/apps/data/shared-postgres` é a única fonte de manifesto do banco, e os consumidores usam bancos e credenciais distintos dentro dela. As `DatabaseRole` pertencem ao chart do cluster compartilhado; a replicação e os `ExternalSecret` ficam no chart local de `argocd/apps/secrets/data/postgres-consumers`, enquanto as credenciais cifradas ficam nos manifests puros de `argocd/apps/secrets/data/postgres`. Por isso a saída não contém mais `keycloak-postgres.yaml`.
 
 | Caminho | O que faz |
 | --- | --- |

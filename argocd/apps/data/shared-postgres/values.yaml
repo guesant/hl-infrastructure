@@ -23,6 +23,12 @@ cluster:
       cpu: 750m
       memory: 768Mi
 
+rotation:
+  portfolio:
+    retiredSlot: ""
+  keycloak:
+    retiredSlot: ""
+
 databases:
   - name: portfolio
     owner: portfolio
@@ -33,6 +39,50 @@ databaseDefaults:
     argocd.argoproj.io/sync-wave: "3"
     argocd.argoproj.io/sync-options: Prune=false,Delete=false
   reclaimPolicy: retain
+
+databaseRoleDefaults:
+  syncOptions: Prune=false,Delete=false
+  reclaimPolicy: retain
+
+databaseRoles:
+  - resourceName: portfolio
+    roleName: portfolio
+    syncWave: "1"
+    login: false
+    disablePassword: true
+  - resourceName: portfolio-a
+    roleName: portfolio_a
+    syncWave: "2"
+    rotationKey: portfolio
+    slot: a
+    parentRole: portfolio
+    passwordSecret: portfolio-postgres-app-a
+  - resourceName: portfolio-b
+    roleName: portfolio_b
+    syncWave: "2"
+    rotationKey: portfolio
+    slot: b
+    parentRole: portfolio
+    passwordSecret: portfolio-postgres-app-b
+  - resourceName: keycloak
+    roleName: keycloak
+    syncWave: "1"
+    login: false
+    disablePassword: true
+  - resourceName: keycloak-a
+    roleName: keycloak_a
+    syncWave: "2"
+    rotationKey: keycloak
+    slot: a
+    parentRole: keycloak
+    passwordSecret: keycloak-postgres-app-a
+  - resourceName: keycloak-b
+    roleName: keycloak_b
+    syncWave: "2"
+    rotationKey: keycloak
+    slot: b
+    parentRole: keycloak
+    passwordSecret: keycloak-postgres-app-b
 
 networkPolicy:
   databaseClientsName: allow-database-clients

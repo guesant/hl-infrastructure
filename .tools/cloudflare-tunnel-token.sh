@@ -4,7 +4,7 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
-secret_file="argocd/apps/secrets/satellites/cloudflared/templates/tunnel-token.sops-secret.yaml"
+secret_file="argocd/apps/secrets/satellites/cloudflared/tunnel-token.sops-secret.yaml"
 token_path='["spec"]["secretTemplates"][0]["stringData"]["token"]'
 
 for name in CLOUDFLARE_API_TOKEN TF_VAR_cloudflare_account_id TF_VAR_state_passphrase TOFU_IMAGE OPS_IMAGE SOPS_AGE_KEY_FILE; do

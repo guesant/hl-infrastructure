@@ -1,31 +1,35 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sso
+  name: postgres-consumers
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   project: infra
   source:
     repoURL: https://github.com/guesant/hl-infrastructure.git
     targetRevision: main
-    path: argocd/apps/secrets/platform/sso
-    directory:
-      recurse: true
+    path: argocd/apps/secrets/data/postgres-consumers
+    helm:
+      releaseName: postgres-consumers
+      valueFiles:
+        - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: data
   syncPolicy:
     automated:
       selfHeal: true
       prune: true
     syncOptions:
       - ServerSideApply=true
+      - SkipDryRunOnMissingResource=true
       - FailOnSharedResource=true
       - PruneLast=true
+      - PrunePropagationPolicy=foreground
     retry:
       limit: 5
       backoff:

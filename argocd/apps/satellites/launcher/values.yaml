@@ -29,7 +29,6 @@ satellites:
     repoURL: https://github.com/guesant/hl-infrastructure.git
     path: argocd/apps/secrets/satellites/blog
     destinationNamespace: blog
-    helmReleaseName: blog-secrets
     syncWave: "1"
     targetRevision: main
   - name: blog
