@@ -29,3 +29,5 @@ Um catálogo comunitário do tipo `awesome-*` é útil para descoberta, nunca pa
 ## Continue por aqui
 
 [Certificações de infraestrutura e nuvem](../aprender/certificacoes-de-infraestrutura-e-nuvem.md) cobre a distinção entre certificação, badge e avaliação prática que fundamenta as escolhas desta trilha. [Avaliar ferramentas de operação](../aprender/avaliar-ferramentas-de-operacao.md) detalha os critérios aplicados aqui aos catálogos comunitários.
+
+Para fundamentos de matemática, algoritmos, estruturas de dados, bancos de dados, engenharia de software e system design, consulte [Livros e referências de matemática, computação e engenharia de software](livros-e-referencias.md).

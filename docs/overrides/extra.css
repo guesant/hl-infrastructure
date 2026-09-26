@@ -1,0 +1,11 @@
+[data-md-color-scheme="default"] {
+  --md-default-fg-color: #111;
+  --md-typeset-color: #111;
+}
+
+[data-md-color-scheme="default"] .md-typeset h1,
+[data-md-color-scheme="default"] .md-typeset h2,
+[data-md-color-scheme="default"] .md-typeset h3 {
+  color: #000;
+  font-weight: 700;
+}
