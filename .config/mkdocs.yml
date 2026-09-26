@@ -47,23 +47,27 @@ nav:
       - Visão geral: aprender/index.md
       - Educação, pesquisa e formação:
           - Visão geral: aprender/educacao-pesquisa/index.md
-          - Aprender, pesquisar e perguntar: aprender/educacao-pesquisa/aprender-e-pesquisar.md
-          - Plataformas de conhecimento e formação: aprender/educacao-pesquisa/plataformas-de-conhecimento.md
-          - RNP: aprender/educacao-pesquisa/rnp.md
-          - C3SL: aprender/educacao-pesquisa/c3sl.md
-          - UFPR: aprender/educacao-pesquisa/ufpr.md
-          - Fundep: aprender/educacao-pesquisa/fundep.md
-          - SUFRAMA e PD&I na Amazônia: aprender/educacao-pesquisa/suframa-pdi.md
-          - OBI: aprender/educacao-pesquisa/obi.md
-          - USP: aprender/educacao-pesquisa/usp.md
-          - Unicamp: aprender/educacao-pesquisa/unicamp.md
-          - PUCPR: aprender/educacao-pesquisa/pucpr.md
-          - PUC-Rio: aprender/educacao-pesquisa/puc-rio.md
-          - NEPEN: aprender/educacao-pesquisa/nepen.md
-          - Instituto Evolução: aprender/educacao-pesquisa/instituto-evolucao.md
-          - MCTI: aprender/educacao-pesquisa/mcti.md
-          - SERPRO: aprender/educacao-pesquisa/serpro.md
-          - DATAPREV: aprender/educacao-pesquisa/dataprev.md
+          - Formação e aprendizagem:
+              - Aprender, pesquisar e perguntar: aprender/educacao-pesquisa/aprender-e-pesquisar.md
+              - Plataformas de conhecimento e formação: aprender/educacao-pesquisa/plataformas-de-conhecimento.md
+              - OBI: aprender/educacao-pesquisa/obi.md
+          - Universidades e apoio à pesquisa:
+              - UFPR: aprender/educacao-pesquisa/ufpr.md
+              - USP: aprender/educacao-pesquisa/usp.md
+              - Unicamp: aprender/educacao-pesquisa/unicamp.md
+              - PUCPR: aprender/educacao-pesquisa/pucpr.md
+              - PUC-Rio: aprender/educacao-pesquisa/puc-rio.md
+              - Fundep: aprender/educacao-pesquisa/fundep.md
+          - Redes, centros e institutos de pesquisa:
+              - RNP: aprender/educacao-pesquisa/rnp.md
+              - C3SL: aprender/educacao-pesquisa/c3sl.md
+              - NEPEN: aprender/educacao-pesquisa/nepen.md
+              - Instituto Evolução: aprender/educacao-pesquisa/instituto-evolucao.md
+          - Políticas e tecnologia pública:
+              - SUFRAMA e PD&I na Amazônia: aprender/educacao-pesquisa/suframa-pdi.md
+              - MCTI: aprender/educacao-pesquisa/mcti.md
+              - SERPRO: aprender/educacao-pesquisa/serpro.md
+              - DATAPREV: aprender/educacao-pesquisa/dataprev.md
       - Sistemas e Linux:
           - Visão geral: aprender/sistemas/index.md
           - CPU e kernel:
@@ -188,43 +192,45 @@ nav:
               - X.Org: aprender/sistemas/desktop/xorg.md
               - Fundações e governança: aprender/sistemas/desktop/fundacoes-e-governanca.md
               - D-Bus: aprender/sistemas/systemd/dbus.md
-          - Runtimes de execução:
-              - Visão geral: aprender/sistemas/runtime/index.md
-              - Event loop: aprender/sistemas/runtime/event-loop.md
-              - V8: aprender/sistemas/runtime/v8.md
-              - libuv: aprender/sistemas/runtime/libuv.md
-      - Comunicação entre processos e APIs:
-          - Visão geral: aprender/comunicacao/index.md
-          - IPC: aprender/comunicacao/ipc.md
-          - RPC: aprender/comunicacao/rpc.md
-          - Comunicação assíncrona: aprender/comunicacao/comunicacao-assincrona.md
-          - Event bus: aprender/comunicacao/event-bus.md
-          - RPC e comunicação assíncrona: aprender/comunicacao/rpc-e-comunicacao-assincrona.md
-          - gRPC: aprender/comunicacao/grpc.md
-          - JSON: aprender/comunicacao/json.md
-          - GraphQL: aprender/comunicacao/graphql.md
-          - WebRTC: aprender/comunicacao/webrtc.md
-          - ReactiveX e Rx: aprender/comunicacao/reactivex.md
-          - Kotlin Flow: aprender/comunicacao/kotlin-flow.md
-      - Arquitetura de aplicações:
-          - Visão geral: aprender/arquitetura-aplicacoes/index.md
-          - Frontend: aprender/arquitetura-aplicacoes/frontend.md
-          - Backend: aprender/arquitetura-aplicacoes/backend.md
-          - Sistemas centralizados: aprender/arquitetura-aplicacoes/sistemas-centralizados.md
-          - Sistemas distribuídos: aprender/arquitetura-aplicacoes/sistemas-distribuidos.md
-          - Self-stabilization e autoestabilização: aprender/arquitetura-aplicacoes/self-stabilization.md
-          - Monólito: aprender/arquitetura-aplicacoes/monolito.md
-          - Monólito modular: aprender/arquitetura-aplicacoes/monolito-modular.md
-          - Barramento interno: aprender/arquitetura-aplicacoes/bus-interno.md
-          - Erlang/OTP: aprender/arquitetura-aplicacoes/erlang-otp.md
-          - Microsserviços: aprender/arquitetura-aplicacoes/microsservicos.md
-          - Microfrontend: aprender/arquitetura-aplicacoes/microfrontend.md
-          - Comparativo: aprender/arquitetura-aplicacoes/comparativo.md
-          - Centralizado, distribuído e microsserviços: aprender/arquitetura-aplicacoes/centralizado-distribuido-microservicos.md
-      - Ecossistema .NET:
-          - Visão geral: aprender/dotnet/index.md
-          - Hangfire: aprender/dotnet/hangfire.md
-          - Polly: aprender/dotnet/polly.md
+      - Desenvolvimento de software:
+          - Comunicação entre processos e APIs:
+              - Visão geral: aprender/comunicacao/index.md
+              - IPC: aprender/comunicacao/ipc.md
+              - RPC: aprender/comunicacao/rpc.md
+              - Comunicação assíncrona: aprender/comunicacao/comunicacao-assincrona.md
+              - Event bus: aprender/comunicacao/event-bus.md
+              - RPC e comunicação assíncrona: aprender/comunicacao/rpc-e-comunicacao-assincrona.md
+              - gRPC: aprender/comunicacao/grpc.md
+              - JSON: aprender/comunicacao/json.md
+              - GraphQL: aprender/comunicacao/graphql.md
+              - WebRTC: aprender/comunicacao/webrtc.md
+              - ReactiveX e Rx: aprender/comunicacao/reactivex.md
+              - Kotlin Flow: aprender/comunicacao/kotlin-flow.md
+          - Arquitetura de aplicações:
+              - Visão geral: aprender/arquitetura-aplicacoes/index.md
+              - Frontend: aprender/arquitetura-aplicacoes/frontend.md
+              - Backend: aprender/arquitetura-aplicacoes/backend.md
+              - Sistemas centralizados: aprender/arquitetura-aplicacoes/sistemas-centralizados.md
+              - Sistemas distribuídos: aprender/arquitetura-aplicacoes/sistemas-distribuidos.md
+              - Self-stabilization e autoestabilização: aprender/arquitetura-aplicacoes/self-stabilization.md
+              - Monólito: aprender/arquitetura-aplicacoes/monolito.md
+              - Monólito modular: aprender/arquitetura-aplicacoes/monolito-modular.md
+              - Barramento interno: aprender/arquitetura-aplicacoes/bus-interno.md
+              - Erlang/OTP: aprender/arquitetura-aplicacoes/erlang-otp.md
+              - Microsserviços: aprender/arquitetura-aplicacoes/microsservicos.md
+              - Microfrontend: aprender/arquitetura-aplicacoes/microfrontend.md
+              - Comparativo: aprender/arquitetura-aplicacoes/comparativo.md
+              - Centralizado, distribuído e microsserviços: aprender/arquitetura-aplicacoes/centralizado-distribuido-microservicos.md
+          - Plataformas e runtimes:
+              - Ecossistema .NET:
+                  - Visão geral: aprender/dotnet/index.md
+                  - Hangfire: aprender/dotnet/hangfire.md
+                  - Polly: aprender/dotnet/polly.md
+              - Runtimes de execução:
+                  - Visão geral: aprender/sistemas/runtime/index.md
+                  - Event loop: aprender/sistemas/runtime/event-loop.md
+                  - V8: aprender/sistemas/runtime/v8.md
+                  - libuv: aprender/sistemas/runtime/libuv.md
       - Sistemas embarcados e IoT:
           - Visão geral: aprender/embarcados/index.md
           - Arduino: aprender/embarcados/arduino.md
@@ -492,14 +498,17 @@ nav:
               - Split-horizon DNS: aprender/rede/dns/split-horizon.md
           - Governança e organizações:
               - Visão geral: aprender/rede/governanca/index.md
-              - CGI.br: aprender/rede/governanca/cgi-br.md
-              - NIC.br: aprender/rede/governanca/nic-br.md
-              - Registro.br: aprender/rede/governanca/registro-br.md
-              - IX.br: aprender/rede/governanca/ix-br.md
-              - LACNIC: aprender/rede/governanca/lacnic.md
-              - Alocação de endereços IP: aprender/rede/governanca/alocacao-de-enderecos-ip.md
-              - Anatel: aprender/rede/governanca/anatel.md
-              - ANPD: aprender/rede/governanca/anpd.md
+              - Governança e operação nacional:
+                  - CGI.br: aprender/rede/governanca/cgi-br.md
+                  - NIC.br: aprender/rede/governanca/nic-br.md
+                  - Registro.br: aprender/rede/governanca/registro-br.md
+                  - IX.br: aprender/rede/governanca/ix-br.md
+              - Recursos de numeração:
+                  - LACNIC: aprender/rede/governanca/lacnic.md
+                  - Alocação de endereços IP: aprender/rede/governanca/alocacao-de-enderecos-ip.md
+              - Regulação e proteção:
+                  - Anatel: aprender/rede/governanca/anatel.md
+                  - ANPD: aprender/rede/governanca/anpd.md
           - Censura de rede:
               - Visão geral: aprender/rede/censura/index.md
               - Great Firewall: aprender/rede/censura/great-firewall.md
