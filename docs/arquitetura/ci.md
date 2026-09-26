@@ -153,7 +153,7 @@ Cada estágio deste Dockerfile é uma imagem efêmera de CI, não um artefato pu
 
 `prose/spelling/markdownlint` cuidam da documentação.
 
-O primeiro é o [.tools/check-prose.sh](https://github.com/guesant/hl-infrastructure/blob/main/.tools/check-prose.sh), que falha se houver travessão, meia-risca ou seta Unicode em qualquer Markdown, a convenção descrita em [convenções de escrita](../contribuindo/convencoes-de-escrita.md).
+O primeiro é o [.tools/check-prose.sh](https://github.com/guesant/hl-infrastructure/blob/main/.tools/check-prose.sh), que falha se houver travessão, meia-risca, seta Unicode ou aspas tipográficas sem justificativa em qualquer Markdown, a convenção descrita em [convenções de escrita](../contribuindo/convencoes-de-escrita.md). Aspas tipográficas só são aceitas quando registradas com justificativa no arquivo de exceções.
 
 `cspell` confere a ortografia em português e inglês, com o dicionário do projeto em [.config/cspell-words.txt](https://github.com/guesant/hl-infrastructure/blob/main/.config/cspell-words.txt) para o jargão que nenhum dicionário conhece.
 
