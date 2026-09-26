@@ -527,6 +527,12 @@ nav:
               - Regulação e proteção:
                   - Anatel: aprender/rede/governanca/anatel.md
                   - ANPD: aprender/rede/governanca/anpd.md
+          - Organizações e provedores regionais:
+              - Visão geral: aprender/rede/organizacoes-regionais/index.md
+              - SETIC/RO: aprender/rede/organizacoes-regionais/setic-ro.md
+              - NBS Telecom: aprender/rede/organizacoes-regionais/nbs-telecom.md
+              - Uni Internet: aprender/rede/organizacoes-regionais/uni-internet.md
+              - Ollá Telecom: aprender/rede/organizacoes-regionais/olla-telecom.md
           - Censura de rede:
               - Visão geral: aprender/rede/censura/index.md
               - Great Firewall: aprender/rede/censura/great-firewall.md
