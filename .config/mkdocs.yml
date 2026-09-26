@@ -328,11 +328,17 @@ nav:
               - Brasa Cloud: aprender/plataforma/cloud/brasa-cloud.md
               - Saphir: aprender/plataforma/cloud/saphir.md
               - 4B Digital: aprender/plataforma/cloud/4b-digital.md
+              - AbraCloud: aprender/plataforma/cloud/abracloud.md
           - Hospedagem gerenciada:
               - Hostinger: aprender/plataforma/cloud/hostinger.md
               - Hostnet: aprender/plataforma/cloud/hostnet.md
               - HostGator: aprender/plataforma/cloud/hostgator.md
           - Plataformas de aplicações:
+              - PaaS autohospedado e plataformas de deploy: aprender/plataforma/cloud/paas-autohospedado-e-deploy.md
+              - Coolify: aprender/plataforma/cloud/coolify.md
+              - Dokploy: aprender/plataforma/cloud/dokploy.md
+              - CapRover: aprender/plataforma/cloud/caprover.md
+              - Railway: aprender/plataforma/cloud/railway.md
               - Vercel: aprender/plataforma/cloud/vercel.md
               - Heroku: aprender/plataforma/cloud/heroku.md
           - Edge e entrega de aplicações:
