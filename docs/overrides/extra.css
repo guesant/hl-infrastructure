@@ -9,3 +9,10 @@
   color: #000;
   font-weight: 700;
 }
+
+.md-typeset p,
+.md-typeset li,
+.md-typeset blockquote {
+  text-align: justify;
+  hyphens: auto;
+}
