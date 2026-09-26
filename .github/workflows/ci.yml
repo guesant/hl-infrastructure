@@ -262,7 +262,7 @@ jobs:
           target: shell
           smoke: bash --version
 
-      - name: No em dash, en dash or Unicode arrow
+      - name: No em dash, en dash, Unicode arrow or unjustified typographic quote
         run: docker run --rm -v "$PWD":/repo -w /repo --entrypoint bash hl-infra/shell .tools/check-prose.sh
 
   placeholders:

@@ -154,7 +154,7 @@ lint-hadolint: (_build "hadolint")
 lint-markdown: (_build "markdownlint")
     {{run}} hl-infra/markdownlint:{{tools_hash}} markdownlint-cli2 --config .config/.markdownlint-cli2.jsonc README.md SECURITY.md SUPPORT.md CONTRIBUTING.md 'docs/**/*.md'
 
-[doc("Fail on em dash, en dash or Unicode arrow in the prose")]
+[doc("Fail on em dash, en dash, Unicode arrow or unjustified typographic quote in the prose")]
 lint-prose: (_build "shell")
     {{run}} --entrypoint bash hl-infra/shell:{{tools_hash}} .tools/check-prose.sh
 
