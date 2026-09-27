@@ -1456,6 +1456,8 @@ nav:
               - Proveniência:
                   - Proveniência: aprender/seguranca/supply-chain/provenance.md
                   - Atestação: aprender/seguranca/supply-chain/attestation.md
+              - Construção:
+                  - Builds reproduzíveis: aprender/seguranca/supply-chain/reproducible-builds.md
               - Assinatura:
                   - Conceitos:
                       - Assinatura de artefatos: aprender/seguranca/supply-chain/artifact-signing.md
@@ -1743,9 +1745,16 @@ nav:
           - Mapa de smoke tests e checklists: aprender/smoke-test-e-o-limite-da-automacao-de-checklist.md
           - Scripts operacionais defensivos: aprender/padroes-defensivos-de-script-operacional.md
       - Governança:
-          - Mapa de padrões e governança da internet: aprender/padroes-e-governanca-da-internet.md
-          - Mapa de fundações do software livre e aberto: aprender/fundacoes-do-software-livre-e-aberto.md
-          - Mapa de auditoria e abordagens de auditoria: aprender/auditoria-e-abordagens.md
+          - Visão geral: aprender/governanca/index.md
+          - Fundações de software aberto:
+              - Visão geral: aprender/governanca/fundacoes/index.md
+              - Linux Foundation: aprender/governanca/fundacoes/linux-foundation.md
+              - Cloud Native Computing Foundation: aprender/governanca/fundacoes/cncf.md
+              - Open Source Security Foundation: aprender/governanca/fundacoes/openssf.md
+          - Mapas relacionados:
+              - Mapa de padrões e governança da internet: aprender/padroes-e-governanca-da-internet.md
+              - Mapa de fundações do software livre e aberto: aprender/fundacoes-do-software-livre-e-aberto.md
+              - Mapa de auditoria e abordagens de auditoria: aprender/auditoria-e-abordagens.md
       - Padrões:
           - Mapa de normas e frameworks de boas práticas: aprender/normas-e-frameworks-de-boas-praticas.md
       - Diagnóstico:
@@ -1826,6 +1835,7 @@ nav:
               - Visão geral: aprender/comparacoes/criterios/index.md
           - Plataforma:
               - Comparação de Compose, Swarm e Kubernetes: aprender/comparacoes/plataforma/orquestracao.md
+              - Comparação entre Docker Compose e Podman Quadlet: aprender/comparacoes/plataforma/docker-compose-quadlet.md
               - Comparação entre distribuições Kubernetes: aprender/comparacoes/plataforma/distribuicoes-kubernetes.md
           - Rede:
               - Comparação de Cilium e Calico: aprender/comparacoes/rede/cilium-calico.md
