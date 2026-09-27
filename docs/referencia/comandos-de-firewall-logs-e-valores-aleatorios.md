@@ -28,4 +28,4 @@
 
 ## Continue por aqui
 
-[UFW e portas publicadas pelo Docker](../aprender/ufw-e-portas-publicadas-pelo-docker.md), [firewalld](../aprender/firewalld.md) e [Netfilter, nftables e diagnóstico de rede](../aprender/netfilter-nftables-e-diagnostico.md) cobrem o mecanismo por trás dos comandos de firewall acima.
+[UFW e portas publicadas pelo Docker](../aprender/ufw-e-portas-publicadas-pelo-docker.md), [firewalld](../aprender/firewalld.md), [Netfilter](../aprender/rede/firewall/netfilter.md) e [nftables](../aprender/rede/firewall/nftables.md) cobrem o mecanismo por trás dos comandos de firewall acima.

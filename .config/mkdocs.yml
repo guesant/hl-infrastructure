@@ -128,12 +128,16 @@ nav:
               - Privilégios:
                   - Capabilities: aprender/sistemas/linux/capabilities.md
                   - seccomp: aprender/sistemas/linux/seccomp.md
+              - Segurança do kernel:
+                  - Linux Security Modules: aprender/sistemas/linux/lsm.md
           - Unix:
               - Fundamentos Unix:
                   - Serviços:
                       - Comparação entre modelos de exposição de serviços: aprender/como-os-expoe-servicos.md
                   - Famílias:
                       - Mapa de famílias Unix: aprender/unix-familias-e-padroes.md
+                      - POSIX: aprender/sistemas/unix/posix.md
+                      - BSD: aprender/sistemas/unix/bsd.md
               - Shell:
                   - Portabilidade de scripts shell: aprender/shells-e-scripts.md
               - Ferramentas:
@@ -304,7 +308,10 @@ nav:
           - Distribuições Linux:
               - Visão geral: aprender/sistemas/distribuicoes-linux/index.md
               - Ciclo de vida:
-                  - Mapa de ciclo de vida, bugs e CVEs: aprender/sistemas/distribuicoes-linux/ciclo-de-vida-e-seguranca.md
+                  - Mapa de ciclo de vida: aprender/sistemas/distribuicoes-linux/ciclo-de-vida-e-seguranca.md
+                  - LTS: aprender/sistemas/distribuicoes-linux/lts.md
+                  - LTSC: aprender/sistemas/distribuicoes-linux/ltsc.md
+                  - Canais de release: aprender/sistemas/distribuicoes-linux/canais-de-release.md
               - Empacotamento:
                   - Mapa de segurança e empacotamento: aprender/sistemas/distribuicoes-linux/seguranca-e-empacotamento.md
               - Família Debian:
@@ -529,6 +536,10 @@ nav:
                       - Firecracker: aprender/sistemas/virtualizacao/firecracker.md
                       - gVisor: aprender/sistemas/virtualizacao/gvisor.md
                       - Containers de sistema: aprender/sistemas/virtualizacao/system-containers.md
+                      - Kata Containers: aprender/sistemas/virtualizacao/kata-containers.md
+                      - bubblewrap: aprender/sistemas/virtualizacao/bubblewrap.md
+                      - BSD Jail: aprender/sistemas/virtualizacao/bsd-jail.md
+                      - Solaris Zones: aprender/sistemas/virtualizacao/solaris-zones.md
                   - Relações:
                       - Comparação entre Solaris Zones e BSD Jails: aprender/sistemas/virtualizacao/zones-jails.md
                       - Mapa de MicroVMs e sandboxes: aprender/sistemas/virtualizacao/microvms-e-sandboxes.md
@@ -592,7 +603,8 @@ nav:
               - Bazel: aprender/build/bazel.md
               - Meson: aprender/build/meson.md
               - CMake: aprender/build/cmake.md
-              - Mapa de Makefile e GNU Make: aprender/build/makefile.md
+              - Makefile: aprender/build/makefile.md
+              - GNU Make: aprender/build/gnu-make.md
               - Ninja: aprender/build/ninja.md
           - Toolchains:
               - Visão geral: aprender/build/toolchains/index.md
@@ -868,7 +880,8 @@ nav:
                   - Deep Packet Inspection: aprender/rede/firewall/deep-packet-inspection.md
               - Implementações:
                   - firewalld: aprender/firewalld.md
-                  - Mapa de Netfilter e nftables: aprender/netfilter-nftables-e-diagnostico.md
+                  - Netfilter: aprender/rede/firewall/netfilter.md
+                  - nftables: aprender/rede/firewall/nftables.md
                   - Mapa de UFW e portas Docker: aprender/ufw-e-portas-publicadas-pelo-docker.md
           - API gateways:
               - Visão geral: aprender/rede/api-gateway/index.md
@@ -879,7 +892,7 @@ nav:
                   - Consumer: aprender/rede/api-gateway/consumer.md
                   - Mapa de upstream e target: aprender/rede/api-gateway/upstream.md
               - Implementações:
-                  - Mapa de Kong e catálogo: aprender/kong-e-o-catalogo-de-um-api-gateway.md
+                  - Kong Gateway: aprender/rede/api-gateway/kong.md
           - Rate limiting:
               - Visão geral: aprender/rede/rate-limiting/index.md
               - Estratégias:
@@ -1211,6 +1224,11 @@ nav:
                   - DAST: aprender/seguranca/appsec/dast.md
               - Segredos:
                   - Secret scanning: aprender/seguranca/appsec/secret-scanning/index.md
+          - Vulnerabilidades:
+              - CVE: aprender/seguranca/cve.md
+          - MAC:
+              - AppArmor: aprender/seguranca/mac-apparmor.md
+              - SELinux: aprender/seguranca/mac-selinux.md
           - Proteção de endpoints:
               - Visão geral: aprender/seguranca/endpoint/index.md
               - Sophos Intercept X for Server: aprender/seguranca/endpoint/sophos.md

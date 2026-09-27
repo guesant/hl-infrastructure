@@ -88,6 +88,18 @@ Negrito e itálico não deveriam ser usados como decoração. Negrito cabe em um
 
 Um heading deve representar uma divisão real do assunto e ajudar alguém a navegar pela página. Não crie uma subseção porque surgiu um parágrafo novo, nem deixe uma seção crescer até discutir vários assuntos independentes sob um título que só descreve o primeiro deles. Um conteúdo que não cabe em nenhum heading da página é sinal de que a página, e não o parágrafo, precisa ser reorganizada.
 
+## Restrições de estrutura documental
+
+Uma página canônica deve tratar de uma unidade de conhecimento com identidade própria. Se dois conceitos, ferramentas, técnicas, protocolos ou modos operacionais possuem funcionamento, limitações, alternativas ou fontes próprias, eles devem receber páginas separadas, mesmo quando são frequentemente usados juntos. Títulos que juntam assuntos com "e" ou vírgulas são um sinal de revisão obrigatória, e só permanecem quando representam uma relação explícita, como uma comparação ou um mapa.
+
+Categorias também devem ser semanticamente homogêneas. Conceitos de domínios diferentes não devem aparecer como filhos diretos da mesma categoria quando uma categoria intermediária puder representar a distinção; nesse caso, identifique o pai conceitual comum e crie categorias filhas para cada domínio. Não crie uma categoria apenas para reduzir visualmente a quantidade de itens da navegação, e não use uma página canônica como irmã direta de uma categoria que representa o mesmo nível de classificação.
+
+Uma categoria pode conter diretamente páginas canônicas homogêneas ou pode conter categorias filhas acompanhadas de uma página índice da própria categoria. Quando houver categorias filhas, a página índice deve explicar o vocabulário, as fronteiras e as relações do espaço, além de encaminhar o leitor para os filhos. Ela não pode ser uma lista vazia, e as páginas filhas não devem ser reduzidas a stubs só para preservar um endereço antigo quando seu conteúdo já foi migrado para páginas canônicas.
+
+Mapas, comparações, composições e páginas de cenário são páginas relacionais, não substitutos das páginas canônicas. Um mapa organiza o espaço, uma comparação contrasta alternativas, uma composição explica interfaces entre unidades e um cenário aplica essas unidades a restrições concretas. Cada uma deve resumir apenas o necessário para orientar o leitor e linkar a explicação profunda, sem duplicar o conteúdo das páginas especializadas.
+
+A hierarquia da navegação deve acompanhar a taxonomia semântica: seção, domínio, categoria, abordagem ou conceito, ferramenta ou implementação. O caminho do arquivo e a navegação devem convergir sempre que isso melhorar a previsibilidade, e páginas movidas devem ter seus links revisados antes da validação. A regra completa de classificação, atomicidade recursiva e páginas relacionais está em [Organização documental](categorizacao-e-organizacao.md).
+
 ## Vocabulário de obrigatoriedade
 
 Estas convenções usam deve, deveria e pode com o mesmo peso que a RFC 2119 dá a esses termos numa especificação técnica. Deve marca uma regra sem exceção, cuja violação é um erro a corrigir onde for encontrado. Deveria marca uma prática recomendada, com exceção possível quando há um motivo concreto e melhor documentado que ela naquele lugar específico.
