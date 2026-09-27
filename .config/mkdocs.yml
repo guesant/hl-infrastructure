@@ -116,6 +116,11 @@ nav:
                       - Níveis de privilégio: aprender/sistemas/cpu/niveis-de-privilegio.md
                   - Interface:
                       - System calls: aprender/sistemas/kernel/system-calls.md
+                      - netlink: aprender/sistemas/kernel/netlink.md
+                      - sysfs: aprender/sistemas/kernel/sysfs.md
+                      - VDSO: aprender/sistemas/kernel/vdso.md
+                  - Arquitetura:
+                      - Microkernel: aprender/sistemas/kernel/microkernel.md
           - Processos:
               - Fundamentos:
                   - Processo Linux: aprender/sistemas/linux/process.md
@@ -130,6 +135,10 @@ nav:
                   - seccomp: aprender/sistemas/linux/seccomp.md
               - Segurança do kernel:
                   - Linux Security Modules: aprender/sistemas/linux/lsm.md
+              - Auditoria:
+                  - auditd: aprender/sistemas/linux/auditd.md
+              - Privilégios:
+                  - setuid: aprender/sistemas/linux/setuid.md
           - Unix:
               - Fundamentos Unix:
                   - Serviços:
@@ -146,12 +155,21 @@ nav:
                   - Documentação:
                       - Documentação de comandos: aprender/sistemas/linux/documentacao.md
                   - Binários:
-                      - Mapa de inspeção de binários e bibliotecas: aprender/sistemas/linux/inspecao-de-binarios.md
+                      - Mapa de inspeção de binários e bibliotecas: aprender/sistemas/linux/binarios/index.md
+                      - Ferramentas:
+                          - strip: aprender/sistemas/linux/binarios/strip.md
+                          - xxd: aprender/sistemas/linux/binarios/xxd.md
+                  - Depuração:
+                      - GDB: aprender/sistemas/linux/debug/gdb.md
               - Processamento de texto:
                   - Visão geral: aprender/sistemas/linux/text-processing/index.md
                   - grep: aprender/sistemas/linux/text-processing/grep.md
                   - sed: aprender/sistemas/linux/text-processing/sed.md
                   - awk: aprender/sistemas/linux/text-processing/awk.md
+              - Runtime:
+                  - libc: aprender/sistemas/unix/libc.md
+                  - pthread: aprender/sistemas/unix/pthread.md
+                  - malloc: aprender/sistemas/unix/malloc.md
           - Serviços:
               - systemd:
                   - Visão geral: aprender/systemd-units-timers-e-dependencias.md
@@ -302,9 +320,11 @@ nav:
                           - rpool: aprender/sistemas/armazenamento/rpool.md
               - Filesystems:
                   - Visão geral: aprender/sistemas/armazenamento/filesystems/index.md
+                  - inodes: aprender/sistemas/armazenamento/filesystems/inodes.md
                   - Btrfs: aprender/sistemas/armazenamento/btrfs.md
                   - XFS: aprender/sistemas/armazenamento/xfs.md
                   - ZFS: aprender/sistemas/armazenamento/zfs.md
+                  - LUKS: aprender/seguranca/criptografia/luks.md
           - Distribuições Linux:
               - Visão geral: aprender/sistemas/distribuicoes-linux/index.md
               - Ciclo de vida:
@@ -361,6 +381,8 @@ nav:
                   - IPC: aprender/comunicacao/ipc.md
               - APIs:
                   - Visão geral: aprender/comunicacao/apis/index.md
+                  - Paginação:
+                      - Visão geral: aprender/comunicacao/apis/paginacao.md
                   - Protocolos:
                       - Visão geral: aprender/comunicacao/apis/protocolos/index.md
                       - RPC:
@@ -424,19 +446,57 @@ nav:
                   - CQRS: aprender/arquitetura-aplicacoes/cqrs/cqrs.md
               - Event Sourcing:
                   - Event Sourcing: aprender/arquitetura-aplicacoes/event-sourcing/event-sourcing.md
-          - Plataformas:
-              - Ecossistema .NET:
+          - Linguagens:
+              - Visão geral: aprender/linguagens/index.md
+              - Web:
+                  - JavaScript: aprender/linguagens/javascript.md
+              - Scripting:
+                  - Lua: aprender/linguagens/lua.md
+              - JVM:
+                  - Java: aprender/linguagens/java.md
+                  - JVM: aprender/linguagens/jvm.md
+                  - Kotlin: aprender/linguagens/kotlin.md
+                  - Scala: aprender/linguagens/scala.md
+              - Funcionais:
+                  - Haskell: aprender/linguagens/haskell.md
+              - BEAM:
+                  - Elixir: aprender/linguagens/elixir.md
+                  - Erlang: aprender/linguagens/erlang.md
+              - .NET:
                   - Visão geral: aprender/dotnet/index.md
+                  - C#: aprender/dotnet/csharp.md
+                  - F#: aprender/dotnet/fsharp.md
+                  - ASP.NET: aprender/dotnet/asp-net.md
                   - Hangfire: aprender/dotnet/hangfire.md
                   - Polly: aprender/dotnet/polly.md
+              - Compiladas:
+                  - D: aprender/linguagens/d.md
+                  - Go: aprender/linguagens/go.md
+                  - Rust: aprender/linguagens/rust.md
+                  - V: aprender/linguagens/v.md
           - Runtimes:
               - Execução:
                   - Visão geral: aprender/sistemas/runtime/index.md
                   - Modelo de execução:
                       - Event loop: aprender/sistemas/runtime/event-loop.md
                   - Implementações:
-                      - V8: aprender/sistemas/runtime/v8.md
-                      - libuv: aprender/sistemas/runtime/libuv.md
+                      - Engines JavaScript:
+                          - V8: aprender/sistemas/runtime/v8.md
+                          - QuickJS: aprender/sistemas/runtime/javascript/quickjs.md
+                          - SpiderMonkey: aprender/sistemas/runtime/javascript/spidermonkey.md
+                      - Engines de navegador:
+                          - Blink: aprender/sistemas/runtime/browser/blink.md
+                          - WebKit: aprender/sistemas/runtime/browser/webkit.md
+                          - Servo: aprender/sistemas/runtime/browser/servo.md
+                      - Hosts JavaScript:
+                          - Node.js: aprender/sistemas/runtime/javascript/node.md
+                          - Bun: aprender/sistemas/runtime/javascript/bun.md
+                      - Ambiente GNOME:
+                          - GJS: aprender/sistemas/runtime/gnome/gjs.md
+                          - GLib: aprender/sistemas/runtime/gnome/glib.md
+                          - GObject: aprender/sistemas/runtime/gnome/gobject.md
+                      - Bibliotecas de I/O:
+                          - libuv: aprender/sistemas/runtime/libuv.md
       - Sistemas embarcados:
           - Visão geral: aprender/embarcados/index.md
           - Microcontroladores:
@@ -524,18 +584,22 @@ nav:
                   - Compose Specification: aprender/containers/compose/specification.md
                   - Docker Compose: aprender/containers/compose/docker-compose.md
                   - Podman Compose: aprender/containers/compose/podman-compose.md
+              - Segurança:
+                  - Hardening de containers Docker: aprender/containers/seguranca/hardening-docker.md
           - Virtualização:
               - Visão geral: aprender/plataforma/virtualizacao/index.md
               - Máquinas virtuais:
                   - Máquinas virtuais: aprender/vms-e-hipervisores.md
                   - Hypervisor: aprender/sistemas/virtualizacao/hypervisor.md
                   - CPU virtual no Proxmox: aprender/sistemas/virtualizacao/proxmox-cpu.md
+                  - IOMMU: aprender/sistemas/virtualizacao/iommu.md
               - Isolamento leve:
                   - Implementações:
                       - MicroVM: aprender/sistemas/virtualizacao/microvm.md
                       - Firecracker: aprender/sistemas/virtualizacao/firecracker.md
                       - gVisor: aprender/sistemas/virtualizacao/gvisor.md
                       - Containers de sistema: aprender/sistemas/virtualizacao/system-containers.md
+                      - systemd-nspawn: aprender/sistemas/virtualizacao/systemd-nspawn.md
                       - Kata Containers: aprender/sistemas/virtualizacao/kata-containers.md
                       - bubblewrap: aprender/sistemas/virtualizacao/bubblewrap.md
                       - BSD Jail: aprender/sistemas/virtualizacao/bsd-jail.md
@@ -550,9 +614,20 @@ nav:
       - Nuvem:
           - Visão geral: aprender/plataforma/cloud/index.md
           - Nuvens hyperscale:
-              - AWS: aprender/plataforma/cloud/aws.md
-              - Google Cloud: aprender/plataforma/cloud/gcp.md
-              - Microsoft Azure: aprender/plataforma/cloud/azure.md
+              - Visão geral: aprender/plataforma/cloud/hyperscale/index.md
+              - AWS:
+                  - Visão geral: aprender/plataforma/cloud/aws/index.md
+                  - Rede:
+                      - Balanceadores: aprender/plataforma/cloud/aws/load-balancing.md
+                      - NAT: aprender/plataforma/cloud/aws/nat.md
+                      - Network ACL: aprender/plataforma/cloud/aws/nacl.md
+                  - Contêineres:
+                      - Amazon EKS: aprender/plataforma/cloud/aws/eks.md
+                      - Amazon ECS: aprender/plataforma/cloud/aws/ecs.md
+              - Google Cloud:
+                  - Visão geral: aprender/plataforma/cloud/gcp.md
+              - Microsoft Azure:
+                  - Visão geral: aprender/plataforma/cloud/azure.md
           - IaaS:
               - Comparação entre Linode e Akamai Cloud: aprender/plataforma/cloud/linode.md
               - Akamai: aprender/plataforma/cloud/akamai.md
@@ -666,6 +741,33 @@ nav:
           - Compatibilidade web:
               - Visão geral: aprender/web/compatibilidade/index.md
               - Can I Use: aprender/web/caniuse.md
+      - Artefatos digitais:
+          - Visão geral: aprender/artefatos/index.md
+          - Arquivos:
+              - Visão geral: aprender/artefatos/arquivos/index.md
+              - Formato de arquivo: aprender/artefatos/arquivos/formato-de-arquivo.md
+              - Estrutura binária: aprender/artefatos/arquivos/estrutura-binaria.md
+              - Arquivo executável: aprender/artefatos/arquivos/executavel.md
+              - Metadados binários: aprender/artefatos/arquivos/metadados-binarios.md
+              - Arquivo poliglota: aprender/artefatos/arquivos/arquivo-poliglota.md
+          - Imagens:
+              - Visão geral: aprender/artefatos/imagens/index.md
+              - Formatos de imagem: aprender/artefatos/imagens/formatos-de-imagem.md
+              - EXIF: aprender/artefatos/imagens/exif.md
+              - ImageMagick: aprender/artefatos/imagens/imagemagick.md
+              - Sharp: aprender/artefatos/imagens/sharp.md
+          - Áudio:
+              - Visão geral: aprender/artefatos/audio/index.md
+              - Formatos de áudio: aprender/artefatos/audio/formatos-de-audio.md
+          - Vídeo:
+              - Visão geral: aprender/artefatos/video/index.md
+              - Formatos de vídeo: aprender/artefatos/video/formatos-de-video.md
+              - FFmpeg: aprender/artefatos/video/ffmpeg.md
+          - Compressão:
+              - Visão geral: aprender/artefatos/compressao/index.md
+              - Compressão de dados: aprender/artefatos/compressao/compressao-de-dados.md
+              - Algoritmos de compressão: aprender/artefatos/compressao/algoritmos.md
+              - Formatos de compressão: aprender/artefatos/compressao/formatos.md
       - Portais:
           - Visão geral: aprender/portais/index.md
           - Dashboards:
@@ -683,6 +785,7 @@ nav:
               - Endereçamento:
                   - IPv4: aprender/rede/fundamentos/ipv4.md
                   - IPv6: aprender/rede/fundamentos/ipv6.md
+                  - SLAAC: aprender/rede/fundamentos/slaac.md
                   - Mapa de CIDR e subnetting: aprender/rede/fundamentos/cidr-e-subnetting.md
                   - Mapa de broadcast e multicast: aprender/rede/fundamentos/broadcast-multicast.md
                   - Dual stack: aprender/rede/fundamentos/dual-stack.md
@@ -703,6 +806,7 @@ nav:
               - Visão geral: aprender/rede/wireless/index.md
               - Wi-Fi:
                   - Gerações de Wi-Fi: aprender/rede/wireless/wifi-generations.md
+                  - Bluetooth: aprender/rede/wireless/bluetooth.md
               - Topologias:
                   - Redes mesh: aprender/rede/wireless/mesh.md
               - Radiofrequência:
@@ -757,6 +861,8 @@ nav:
                   - dnsmasq: aprender/rede/dns/dnsmasq.md
               - Segurança:
                   - DNSSEC: aprender/rede/dns/dnssec.md
+                  - DNSKEY: aprender/rede/dns/dnskey.md
+                  - RRSIG: aprender/rede/dns/rrsig.md
               - Descoberta local:
                   - mDNS: aprender/rede/dns/mdns.md
               - Registro:
@@ -794,6 +900,7 @@ nav:
               - Políticas:
                   - BCP 38: aprender/rede/roteamento/bcp38.md
                   - Policy routing: aprender/rede/roteamento/policy-routing.md
+                  - RPDB: aprender/rede/roteamento/rpdb.md
               - Plataformas:
                   - OPNsense: aprender/rede/roteamento/opnsense.md
                   - pfSense: aprender/rede/roteamento/pfsense.md
@@ -825,12 +932,15 @@ nav:
               - Implementações:
                   - Squid: aprender/rede/proxy/squid.md
                   - HAProxy: aprender/rede/proxy/haproxy.md
+                  - Nginx com PROXY protocol: aprender/rede/proxy/nginx-proxy-protocol.md
               - Funções:
                   - Forward proxy: aprender/rede/proxy/forward-proxy.md
                   - Reverse proxy: aprender/rede/proxy/reverse-proxy.md
               - Roteamento HTTP:
                   - Host-based routing: aprender/rede/proxy/host-routing.md
                   - Path-based routing: aprender/rede/proxy/path-routing.md
+              - Transporte:
+                  - PROXY protocol: aprender/rede/proxy/proxy-protocol.md
           - Entrega de conteúdo:
               - CDN: aprender/rede/cdn.md
           - Governança da Internet:
@@ -846,6 +956,7 @@ nav:
                   - Recursos de numeração:
                       - LACNIC: aprender/rede/governanca/lacnic.md
                       - Mapa de alocação e reserva de endereços IP: aprender/rede/governanca/alocacao-de-enderecos-ip.md
+                      - RDAP: aprender/rede/governanca/rdap.md
                   - Regulação:
                       - Anatel: aprender/rede/governanca/anatel.md
                   - Proteção de dados:
@@ -882,6 +993,7 @@ nav:
                   - firewalld: aprender/firewalld.md
                   - Netfilter: aprender/rede/firewall/netfilter.md
                   - nftables: aprender/rede/firewall/nftables.md
+                  - conntrack: aprender/rede/firewall/conntrack.md
                   - Mapa de UFW e portas Docker: aprender/ufw-e-portas-publicadas-pelo-docker.md
           - API gateways:
               - Visão geral: aprender/rede/api-gateway/index.md
@@ -959,6 +1071,30 @@ nav:
                   - etcd: aprender/kubernetes/control-plane/etcd.md
           - Agentes de nó:
               - Kubelet: aprender/kubernetes/control-plane/kubelet.md
+          - Segurança do cluster:
+              - Visão geral: aprender/kubernetes/seguranca/cluster/index.md
+              - Acesso ao control plane:
+                  - API server: aprender/kubernetes/seguranca/cluster/api-access.md
+                  - Kubelet: aprender/kubernetes/seguranca/cluster/kubelet-access.md
+              - Workloads:
+                  - Controles de workloads: aprender/kubernetes/seguranca/cluster/workload-controls.md
+                  - SecurityContext: aprender/kubernetes/seguranca/security-context.md
+                  - ServiceAccount token: aprender/kubernetes/seguranca/service-account-token.md
+                  - Run as non-root: aprender/kubernetes/seguranca/run-as-non-root.md
+                  - Privilege escalation: aprender/kubernetes/seguranca/allow-privilege-escalation.md
+                  - Linux capabilities: aprender/kubernetes/seguranca/linux-capabilities.md
+                  - seccomp: aprender/kubernetes/seguranca/seccomp.md
+                  - Read-only root filesystem: aprender/kubernetes/seguranca/read-only-root-filesystem.md
+              - Isolamento:
+                  - Isolamento de nós: aprender/kubernetes/seguranca/cluster/node-isolation.md
+                  - Metadados de cloud: aprender/kubernetes/seguranca/cluster/cloud-metadata.md
+              - Componentes do cluster:
+                  - Segurança do etcd: aprender/kubernetes/seguranca/cluster/etcd-security.md
+                  - Auditoria: aprender/kubernetes/seguranca/cluster/audit.md
+                  - Criptografia em repouso: aprender/kubernetes/seguranca/cluster/encryption-at-rest.md
+                  - Integrações de terceiros: aprender/kubernetes/seguranca/cluster/third-party-integrations.md
+              - Operação:
+                  - Credenciais do cluster: aprender/kubernetes/seguranca/cluster/credentials-and-updates.md
           - Rede:
               - Políticas:
                   - NetworkPolicy: aprender/kubernetes/networking/network-policy.md
@@ -992,17 +1128,6 @@ nav:
                   - Starting deadline: aprender/kubernetes/workloads/starting-deadline.md
               - Semântica:
                   - Idempotência: aprender/kubernetes/workloads/idempotencia.md
-          - Segurança de workload:
-              - Identidade:
-                  - SecurityContext: aprender/kubernetes/seguranca/security-context.md
-                  - ServiceAccount token: aprender/kubernetes/seguranca/service-account-token.md
-              - Privilégios:
-                  - Run as non-root: aprender/kubernetes/seguranca/run-as-non-root.md
-                  - Privilege escalation: aprender/kubernetes/seguranca/allow-privilege-escalation.md
-                  - Linux capabilities: aprender/kubernetes/seguranca/linux-capabilities.md
-                  - seccomp: aprender/kubernetes/seguranca/seccomp.md
-              - Filesystem:
-                  - Read-only root filesystem: aprender/kubernetes/seguranca/read-only-root-filesystem.md
           - Recursos:
               - Recursos de workload:
                   - Visão geral: aprender/kubernetes/recursos/index.md
@@ -1169,8 +1294,10 @@ nav:
                   - orches: aprender/entrega/orches.md
                   - materia: aprender/entrega/materia.md
               - Kargo:
-                  - Visão geral: aprender/entrega/kargo.md
-                  - Tutorial completo: aprender/entrega/kargo-tutorial.md
+                  - Visão geral: aprender/entrega/kargo/index.md
+                  - Tutorial completo: aprender/entrega/kargo/tutorial.md
+                  - Freight: aprender/entrega/kargo/freight.md
+                  - Warehouse: aprender/entrega/kargo/warehouse.md
           - Pipelines:
               - CI/CD: aprender/ci-cd.md
           - GitLab Runner:
@@ -1271,6 +1398,7 @@ nav:
                   - Visão geral: aprender/seguranca/tls/index.md
                   - TLS 1.3: aprender/seguranca/tls/tls13.md
                   - mTLS: aprender/seguranca/tls/mtls.md
+                  - mTLS no Nginx: aprender/seguranca/tls/nginx-mtls.md
                   - SNI: aprender/seguranca/tls/sni.md
                   - TLS termination: aprender/seguranca/tls/termination.md
                   - TLS passthrough: aprender/seguranca/tls/passthrough.md
@@ -1284,6 +1412,8 @@ nav:
                   - step-ca: aprender/seguranca/pki/step-ca.md
               - Distribuição:
                   - trust-manager: aprender/seguranca/pki/trust-manager.md
+              - Ferramentas:
+                  - OpenSSL para PKI: aprender/seguranca/pki/openssl.md
           - Criptografia:
               - Fundamentos:
                   - Visão geral: aprender/seguranca/criptografia/hash.md
@@ -1345,6 +1475,7 @@ nav:
                       - SOPS: aprender/seguranca/secrets/sops.md
                       - age: aprender/seguranca/secrets/age.md
                       - SOPS keyservice: aprender/seguranca/secrets/sops-keyservice.md
+                      - Shamir Secret Sharing: aprender/seguranca/secrets/shamir-secret-sharing.md
                       - Criptografia de segredos no Git: aprender/criptografia-de-segredos-no-git.md
                   - Controladores:
                       - Sealed Secrets: aprender/seguranca/secrets/sealed-secrets.md
@@ -1364,6 +1495,39 @@ nav:
                   - Entregar segredo ao consumidor: aprender/entregar-segredo-a-um-consumidor.md
           - Autorização:
               - Visão geral: aprender/seguranca/autorizacao/index.md
+              - Conceitos:
+                  - Visão geral: aprender/seguranca/autorizacao/conceitos/index.md
+                  - Vocabulário:
+                      - Subject: aprender/seguranca/autorizacao/conceitos/subject.md
+                      - Resource: aprender/seguranca/autorizacao/conceitos/resource.md
+                      - Action: aprender/seguranca/autorizacao/conceitos/action.md
+                      - Context: aprender/seguranca/autorizacao/conceitos/context.md
+                      - Relation: aprender/seguranca/autorizacao/conceitos/relation.md
+                      - Relationship Tuple: aprender/seguranca/autorizacao/conceitos/relationship-tuple.md
+                      - Permission: aprender/seguranca/autorizacao/conceitos/permission.md
+                      - Entitlements: aprender/seguranca/autorizacao/conceitos/entitlements.md
+                  - Decisão:
+                      - PDP: aprender/seguranca/autorizacao/conceitos/pdp.md
+                      - PEP: aprender/seguranca/autorizacao/conceitos/pep.md
+                      - PAP: aprender/seguranca/autorizacao/conceitos/pap.md
+                      - PIP: aprender/seguranca/autorizacao/conceitos/pip.md
+                      - Policy Store: aprender/seguranca/autorizacao/conceitos/policy-store.md
+                      - Decision Engine: aprender/seguranca/autorizacao/conceitos/decision-engine.md
+                      - Enforcement: aprender/seguranca/autorizacao/conceitos/enforcement.md
+                  - Granularidade:
+                      - Fine-Grained Authorization: aprender/seguranca/autorizacao/conceitos/fine-grained-authorization.md
+                      - FGA: aprender/seguranca/autorizacao/conceitos/fga.md
+                      - Object-level authorization: aprender/seguranca/autorizacao/conceitos/object-level-authorization.md
+                      - Row-Level Security: aprender/seguranca/autorizacao/conceitos/row-level-security.md
+                      - Field-Level Authorization: aprender/seguranca/autorizacao/conceitos/field-level-authorization.md
+                      - Tenant isolation: aprender/seguranca/autorizacao/conceitos/tenant-isolation.md
+                  - Decisões condicionais:
+                      - Contextual authorization: aprender/seguranca/autorizacao/conceitos/contextual-authorization.md
+                      - Conditional access: aprender/seguranca/autorizacao/conceitos/conditional-access.md
+                      - Default deny: aprender/seguranca/autorizacao/conceitos/default-deny.md
+                      - Least privilege: aprender/seguranca/autorizacao/conceitos/least-privilege.md
+                      - Deny-overrides: aprender/seguranca/autorizacao/conceitos/deny-overrides.md
+                      - Allow-overrides: aprender/seguranca/autorizacao/conceitos/allow-overrides.md
               - Modelos:
                   - Visão geral: aprender/seguranca/autorizacao/modelos/index.md
                   - Modelos gerais:
@@ -1388,11 +1552,101 @@ nav:
                       - Bell-LaPadula: aprender/seguranca/autorizacao/modelos/especializados/bell-lapadula.md
                       - Biba: aprender/seguranca/autorizacao/modelos/especializados/biba.md
               - Implementações:
-                  - Casbin: aprender/seguranca/autorizacao/casbin.md
-                  - Casdoor: aprender/seguranca/autorizacao/casdoor.md
-                  - Cedar: aprender/seguranca/autorizacao/cedar.md
-                  - CASL: aprender/seguranca/autorizacao/casl.md
-                  - OpenFGA: aprender/seguranca/autorizacao/openfga.md
+                  - Visão geral: aprender/seguranca/autorizacao/implementacoes/index.md
+                  - Policy engines:
+                      - Cedar: aprender/seguranca/autorizacao/cedar.md
+                      - AuthzForce: aprender/seguranca/autorizacao/implementacoes/authzforce.md
+                      - Balana: aprender/seguranca/autorizacao/implementacoes/balana.md
+                      - WSO2 Balana: aprender/seguranca/autorizacao/implementacoes/wso2-balana.md
+                      - Cerbos: aprender/seguranca/autorizacao/implementacoes/cerbos.md
+                      - Cerbos PDP: aprender/seguranca/autorizacao/implementacoes/cerbos-pdp.md
+                      - Open Policy Agent: aprender/seguranca/autorizacao/implementacoes/opa.md
+                      - Rego: aprender/seguranca/autorizacao/implementacoes/rego.md
+                      - OPAL: aprender/seguranca/autorizacao/implementacoes/opal.md
+                      - Styra: aprender/seguranca/autorizacao/implementacoes/styra.md
+                      - Permit.io: aprender/seguranca/autorizacao/implementacoes/permit.md
+                      - Permit PDP: aprender/seguranca/autorizacao/implementacoes/permit-pdp.md
+                      - Sentinel: aprender/seguranca/autorizacao/implementacoes/sentinel.md
+                      - Open Policy Containers: aprender/seguranca/autorizacao/implementacoes/open-policy-containers.md
+                  - ReBAC:
+                      - OpenFGA: aprender/seguranca/autorizacao/openfga.md
+                      - SpiceDB: aprender/seguranca/autorizacao/implementacoes/spicedb.md
+                      - Authzed: aprender/seguranca/autorizacao/implementacoes/authzed.md
+                      - Permify: aprender/seguranca/autorizacao/implementacoes/permify.md
+                      - Ory Keto: aprender/seguranca/autorizacao/implementacoes/ory-keto.md
+                      - Auth0 FGA: aprender/seguranca/autorizacao/implementacoes/auth0-fga.md
+                      - Google Zanzibar: aprender/seguranca/autorizacao/implementacoes/google-zanzibar.md
+                      - Zanzibar-style authorization: aprender/seguranca/autorizacao/implementacoes/zanzibar-style.md
+                      - Warrant: aprender/seguranca/autorizacao/implementacoes/warrant.md
+                      - WorkOS FGA: aprender/seguranca/autorizacao/implementacoes/workos-fga.md
+                  - Kubernetes:
+                      - OPA Gatekeeper: aprender/seguranca/autorizacao/implementacoes/gatekeeper.md
+                      - Kyverno: aprender/seguranca/autorizacao/implementacoes/kyverno.md
+                      - Kubewarden: aprender/seguranca/autorizacao/implementacoes/kubewarden.md
+                      - jsPolicy: aprender/seguranca/autorizacao/implementacoes/jspolicy.md
+                      - ValidatingAdmissionPolicy: aprender/seguranca/autorizacao/implementacoes/validating-admission-policy.md
+                      - Terrascan: aprender/seguranca/autorizacao/implementacoes/terrascan.md
+                  - Cloud:
+                      - Cloud Custodian: aprender/seguranca/autorizacao/implementacoes/cloud-custodian.md
+                      - AWS Verified Permissions: aprender/seguranca/autorizacao/implementacoes/aws-verified-permissions.md
+                      - AWS IAM: aprender/seguranca/autorizacao/implementacoes/aws-iam.md
+                      - Google Cloud IAM Conditions: aprender/seguranca/autorizacao/implementacoes/google-iam-conditions.md
+                      - Azure RBAC: aprender/seguranca/autorizacao/implementacoes/azure-rbac.md
+                      - Azure ABAC: aprender/seguranca/autorizacao/implementacoes/azure-abac.md
+                  - Linguagens:
+                      - Common Expression Language: aprender/seguranca/autorizacao/implementacoes/cel.md
+                  - Aplicação:
+                      - Casbin: aprender/seguranca/autorizacao/casbin.md
+                      - CASL: aprender/seguranca/autorizacao/casl.md
+                      - Oso: aprender/seguranca/autorizacao/implementacoes/oso.md
+                      - Polar: aprender/seguranca/autorizacao/implementacoes/polar.md
+                      - AccessControl: aprender/seguranca/autorizacao/implementacoes/accesscontrol.md
+                      - Ladon: aprender/seguranca/autorizacao/implementacoes/ladon.md
+                      - CanCanCan: aprender/seguranca/autorizacao/implementacoes/cancan-can.md
+                      - Pundit: aprender/seguranca/autorizacao/implementacoes/pundit.md
+                      - Action Policy: aprender/seguranca/autorizacao/implementacoes/action-policy.md
+                      - django-guardian: aprender/seguranca/autorizacao/implementacoes/django-guardian.md
+                      - django-rules: aprender/seguranca/autorizacao/implementacoes/django-rules.md
+                      - django-role-permissions: aprender/seguranca/autorizacao/implementacoes/django-role-permissions.md
+                      - Symfony Security Voters: aprender/seguranca/autorizacao/implementacoes/symfony-security-voters.md
+                      - Laravel Gates: aprender/seguranca/autorizacao/implementacoes/laravel-gates.md
+                      - Laravel Policies: aprender/seguranca/autorizacao/implementacoes/laravel-policies.md
+                      - Spatie Laravel Permission: aprender/seguranca/autorizacao/implementacoes/spatie-laravel-permission.md
+                      - Bouncer: aprender/seguranca/autorizacao/implementacoes/bouncer.md
+                      - Spring Security Authorization: aprender/seguranca/autorizacao/implementacoes/spring-security-authorization.md
+                      - Apache Shiro: aprender/seguranca/autorizacao/implementacoes/apache-shiro.md
+                  - IAM:
+                      - Casdoor: aprender/seguranca/autorizacao/casdoor.md
+                      - Keycloak: aprender/seguranca/autorizacao/implementacoes/keycloak.md
+                      - Keycloak Authorization Services: aprender/seguranca/autorizacao/implementacoes/keycloak-authorization-services.md
+                      - Zitadel: aprender/seguranca/autorizacao/implementacoes/zitadel.md
+                      - Ory: aprender/seguranca/autorizacao/implementacoes/ory.md
+                      - Ory Hydra: aprender/seguranca/autorizacao/implementacoes/ory-hydra.md
+                      - Ory Kratos: aprender/seguranca/autorizacao/implementacoes/ory-kratos.md
+                      - Clerk Organizations Roles: aprender/seguranca/autorizacao/implementacoes/clerk-organizations-roles.md
+                      - WorkOS Authorization: aprender/seguranca/autorizacao/implementacoes/workos-authorization.md
+                  - Dados:
+                      - Supabase RLS: aprender/seguranca/autorizacao/implementacoes/supabase-rls.md
+                      - PostgreSQL RLS: aprender/seguranca/autorizacao/implementacoes/postgresql-rls.md
+                      - PostgreSQL GRANT: aprender/seguranca/autorizacao/implementacoes/postgresql-grant.md
+                      - Hasura Authorization: aprender/seguranca/autorizacao/implementacoes/hasura-authorization.md
+                      - Firebase Security Rules: aprender/seguranca/autorizacao/implementacoes/firebase-security-rules.md
+                      - Firestore Security Rules: aprender/seguranca/autorizacao/implementacoes/firestore-security-rules.md
+                      - Appwrite Permissions: aprender/seguranca/autorizacao/implementacoes/appwrite-permissions.md
+                      - Nhost permissions: aprender/seguranca/autorizacao/implementacoes/nhost-permissions.md
+                  - SDKs:
+                      - Casbin Go: aprender/seguranca/autorizacao/implementacoes/casbin-go.md
+                      - Casbin Node: aprender/seguranca/autorizacao/implementacoes/casbin-node.md
+                      - Casbin Rust: aprender/seguranca/autorizacao/implementacoes/casbin-rust.md
+                      - Casbin Java: aprender/seguranca/autorizacao/implementacoes/casbin-java.md
+                      - OpenFGA SDK: aprender/seguranca/autorizacao/implementacoes/openfga-sdk.md
+                      - SpiceDB Zed: aprender/seguranca/autorizacao/implementacoes/spicedb-zed.md
+                      - Authzed Schema Language: aprender/seguranca/autorizacao/implementacoes/authzed-schema-language.md
+                      - OpenFGA DSL: aprender/seguranca/autorizacao/implementacoes/openfga-dsl.md
+                  - Geral:
+                      - Topaz: aprender/seguranca/autorizacao/implementacoes/topaz.md
+                      - Aserto: aprender/seguranca/autorizacao/implementacoes/aserto.md
+                      - oso-cloud: aprender/seguranca/autorizacao/implementacoes/oso-cloud.md
               - Comparações:
                   - Comparativo: aprender/seguranca/autorizacao/comparativo.md
           - Identidade:
@@ -1407,6 +1661,10 @@ nav:
                   - Visão geral: aprender/seguranca/identidade/autenticacao-sem-senha.md
                   - FIDO2: aprender/seguranca/identidade/fido2.md
                   - WebAuthn: aprender/seguranca/identidade/webauthn.md
+              - Autenticação multifator:
+                  - TOTP: aprender/seguranca/identidade/totp.md
+              - Proteção de clientes OAuth:
+                  - PKCE: aprender/seguranca/identidade/pkce.md
               - Agentes de chave:
                   - Visão geral: aprender/seguranca/identidade/agentes/index.md
                   - SSH agent: aprender/seguranca/identidade/agentes/ssh-agent.md
@@ -1416,6 +1674,8 @@ nav:
                   - OAuth 2.0: aprender/seguranca/identidade/oauth2.md
                   - OpenID Connect: aprender/seguranca/identidade/openid-connect.md
                   - UMA: aprender/seguranca/identidade/uma.md
+              - Identidade de workload:
+                  - SPIFFE: aprender/seguranca/identidade/spiffe.md
               - Federação:
                   - SAML: aprender/seguranca/identidade/saml.md
               - Diretórios:
@@ -1442,6 +1702,7 @@ nav:
                   - Normas:
                       - PCI DSS: aprender/seguranca/compliance/pci-dss.md
                       - HIPAA: aprender/seguranca/compliance/hipaa.md
+                      - FIPS: aprender/seguranca/compliance/fips.md
                   - Comparações:
                       - Comparação entre SOC 2 e ISO 27001: aprender/frameworks-de-compliance.md
           - Supply chain:
@@ -1555,6 +1816,8 @@ nav:
                       - Chave-valor: aprender/dados/bancos/key-value.md
                       - Documentos: aprender/dados/bancos/documentos.md
                       - Bancos de dados em tempo real: aprender/dados/bancos/realtime-database.md
+                  - Implementações:
+                      - Redis: aprender/dados/bancos/redis.md
                   - Migrações:
                       - Visão geral: aprender/dados/migracoes-schema-locking.md
                       - Migrações de schema: aprender/dados/migracoes-schema.md
@@ -1651,6 +1914,19 @@ nav:
                   - Idempotência: aprender/confiabilidade/idempotencia.md
               - Mapas:
                   - Mapa de fail-safe, fault tolerance e error handling: aprender/confiabilidade/fail-safe-fault-tolerance-e-error-handling.md
+          - Análises de incidentes:
+              - Visão geral: aprender/confiabilidade/analises-de-incidentes/index.md
+              - Casos:
+                  - Incidente do GitHub em 2018: aprender/confiabilidade/analises-de-incidentes/github-2018.md
+                  - Incidente do GitLab em 2017: aprender/confiabilidade/analises-de-incidentes/gitlab-2017.md
+                  - Cloudflare 1.1.1.1 em 2024: aprender/confiabilidade/analises-de-incidentes/cloudflare-2024.md
+                  - Vazamento da Verizon em 2019: aprender/confiabilidade/analises-de-incidentes/verizon-2019.md
+                  - Telegram na Índia em 2026: aprender/confiabilidade/analises-de-incidentes/telegram-2026.md
+                  - Meta em 2021: aprender/confiabilidade/analises-de-incidentes/meta-2021.md
+                  - Bloqueios silenciosos: aprender/confiabilidade/analises-de-incidentes/bloqueios-silenciosos.md
+              - Síntese:
+                  - Lições comuns: aprender/confiabilidade/analises-de-incidentes/licoes.md
+                  - Inventário de casos de engenharia: aprender/confiabilidade/analises-de-incidentes/inventario-de-casos.md
           - Capacidade:
               - Visão geral: aprender/confiabilidade/testes/index.md
               - Métodos:
@@ -1694,8 +1970,12 @@ nav:
                   - Semáforos: aprender/engenharia-software/concorrencia/semaforos.md
                   - Deadlock: aprender/engenharia-software/concorrencia/deadlock.md
           - Algoritmos:
-              - Edsger W. Dijkstra: aprender/engenharia-software/dijkstra.md
-              - Mapa de algoritmos e estruturas de dados: aprender/engenharia-software/algoritmos-e-estruturas-de-dados.md
+              - Visão geral: aprender/engenharia-software/algoritmos/index.md
+              - Fundamentos:
+                  - Edsger W. Dijkstra: aprender/engenharia-software/dijkstra.md
+                  - Mapa de algoritmos e estruturas de dados: aprender/engenharia-software/algoritmos-e-estruturas-de-dados.md
+              - Prática:
+                  - LeetCode: aprender/engenharia-software/algoritmos/leetcode.md
           - Estruturas:
               - Comparação entre arrays fixos e dinâmicos: aprender/engenharia-software/arrays-fixos-e-dinamicos.md
           - Engenharia de requisitos:
@@ -1765,6 +2045,7 @@ nav:
               - iperf3: aprender/ferramentas/diagnostico/iperf3.md
               - tcpdump: aprender/ferramentas/diagnostico/tcpdump.md
               - termshark: aprender/ferramentas/diagnostico/termshark.md
+              - Wireshark: aprender/ferramentas/diagnostico/wireshark.md
               - strace: aprender/ferramentas/diagnostico/strace.md
               - tls.peet.ws: aprender/ferramentas/diagnostico/tls-peet-ws.md
               - TrackMe: aprender/ferramentas/diagnostico/trackme.md
@@ -1792,6 +2073,18 @@ nav:
               - Azure DevOps: aprender/ferramentas/gestao/azure-devops.md
               - Redmine: aprender/ferramentas/gestao/redmine.md
               - OpenProject: aprender/ferramentas/gestao/openproject.md
+          - Colaboração:
+              - Visão geral: aprender/ferramentas/colaboracao/index.md
+              - Forjas:
+                  - Visão geral: aprender/ferramentas/colaboracao/forjas/index.md
+                  - Gitea: aprender/ferramentas/colaboracao/forjas/gitea.md
+                  - GitLab: aprender/ferramentas/colaboracao/forjas/gitlab.md
+                  - Codeberg: aprender/ferramentas/colaboracao/forjas/codeberg.md
+                  - SourceForge: aprender/ferramentas/colaboracao/forjas/sourceforge.md
+                  - Bitbucket: aprender/ferramentas/colaboracao/forjas/bitbucket.md
+              - Ecossistemas:
+                  - Atlassian: aprender/ferramentas/colaboracao/ecossistemas/atlassian.md
+                  - Confluence: aprender/ferramentas/colaboracao/ecossistemas/confluence.md
           - Transferência:
               - Visão geral: aprender/ferramentas/transferencia/index.md
               - Transferência de arquivos:
@@ -1803,6 +2096,11 @@ nav:
                   - Ferramentas:
                       - rsync: aprender/ferramentas/transferencia/rsync.md
                       - rclone: aprender/ferramentas/transferencia/rclone.md
+              - Clientes gráficos:
+                  - WinSCP: aprender/ferramentas/transferencia/winscp.md
+                  - FileZilla: aprender/ferramentas/transferencia/filezilla.md
+                  - Cyberduck: aprender/ferramentas/transferencia/cyberduck.md
+                  - Dolphin: aprender/ferramentas/transferencia/dolphin.md
               - Acesso a arquivos remotos:
                   - Visão geral: aprender/ferramentas/transferencia/acesso/index.md
                   - SSHFS: aprender/ferramentas/transferencia/sshfs.md
