@@ -1,4 +1,4 @@
-# Revisão periódica de permissões e exposição
+# Revisão periódica de segurança
 
 Os gates de CI conferem o que está no git, mas não enxergam o que mudou fora dele nem o que ficou velho sem ninguém notar: uma porta que alguém abriu à mão no firewall, um token com permissão demais, uma `ClusterRole` que um chart novo trouxe. Esta revisão existe para isso, e o prazo dela é declarado em [.config/security-review.conf](https://github.com/guesant/hl-infrastructure/blob/main/.config/security-review.conf).
 

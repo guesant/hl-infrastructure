@@ -1,4 +1,4 @@
-# Comandos de shell e troubleshooting genérico
+# Mapa de comandos de shell e troubleshooting genérico
 
 | Comando | Quando usar | Observação |
 | --- | --- | --- |

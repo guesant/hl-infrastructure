@@ -1,4 +1,4 @@
-# Categorização e organização
+# Organização documental
 
 Esta página é a fonte canônica de duas perguntas que antes viviam espalhadas, sem endereço próprio: qual conteúdo pertence a qual seção, e como cada seção se organiza fisicamente por dentro. Antes, o critério de categorização estava fragmentado entre um parágrafo em [Contribuindo](index.md) e a segunda metade de [Diátaxis](../aprender/diataxis.md); essa segunda metade só fazia sentido para quem já conhecia este repositório, o que contradizia a própria regra de que uma página de [Aprender](../aprender/index.md) deve fazer sentido para qualquer pessoa de fora dele. Ela foi movida para cá.
 

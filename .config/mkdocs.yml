@@ -49,9 +49,12 @@ nav:
           - Visão geral: aprender/educacao-pesquisa/index.md
           - Formação:
               - Visão geral: aprender/educacao-pesquisa/formacao/index.md
-              - Aprender, pesquisar e perguntar: aprender/educacao-pesquisa/aprender-e-pesquisar.md
-              - Plataformas de conhecimento e formação: aprender/educacao-pesquisa/plataformas-de-conhecimento.md
-              - OBI: aprender/educacao-pesquisa/obi.md
+              - Aprendizagem:
+                  - Mapa de aprendizagem, pesquisa e perguntas: aprender/educacao-pesquisa/aprender-e-pesquisar.md
+              - Plataformas:
+                  - Mapa de plataformas de conhecimento: aprender/educacao-pesquisa/plataformas-de-conhecimento.md
+              - Competições:
+                  - OBI: aprender/educacao-pesquisa/obi.md
           - Pesquisa:
               - Visão geral: aprender/educacao-pesquisa/pesquisa/index.md
               - Universidades:
@@ -60,6 +63,7 @@ nav:
                   - Unicamp: aprender/educacao-pesquisa/unicamp.md
                   - PUCPR: aprender/educacao-pesquisa/pucpr.md
                   - PUC-Rio: aprender/educacao-pesquisa/puc-rio.md
+              - Fundações:
                   - Fundep: aprender/educacao-pesquisa/fundep.md
               - Institutos federais:
                   - IFRO Campus Ji-Paraná: aprender/educacao-pesquisa/ifro-campus-ji-parana.md
@@ -71,41 +75,74 @@ nav:
               - Institutos:
                   - Instituto Evolução: aprender/educacao-pesquisa/instituto-evolucao.md
               - Políticas públicas:
-                  - SUFRAMA e PD&I na Amazônia: aprender/educacao-pesquisa/suframa-pdi.md
-                  - MCTI: aprender/educacao-pesquisa/mcti.md
-                  - SERPRO: aprender/educacao-pesquisa/serpro.md
-                  - DATAPREV: aprender/educacao-pesquisa/dataprev.md
+                  - Desenvolvimento regional:
+                      - Mapa de SUFRAMA e PD&I na Amazônia: aprender/educacao-pesquisa/suframa-pdi.md
+                  - Ciência:
+                      - MCTI: aprender/educacao-pesquisa/mcti.md
+                  - Empresas públicas:
+                      - SERPRO: aprender/educacao-pesquisa/serpro.md
+                      - DATAPREV: aprender/educacao-pesquisa/dataprev.md
+              - Instituições globais:
+                  - Mapa global de instituições de computação: aprender/educacao-pesquisa/instituicoes-globais-computacao.md
       - Sistemas:
           - Visão geral: aprender/sistemas/index.md
           - CPU:
               - Visão geral: aprender/sistemas/cpu/index.md
               - Arquitetura:
                   - Visão geral: aprender/sistemas/cpu/arquitetura/index.md
-                  - Conjunto de instruções e microarquitetura: aprender/sistemas/cpu/isa-e-microarquitetura.md
-                  - Ciclo de instrução: aprender/sistemas/cpu/ciclo-de-instrucao.md
-                  - CPU, RAM, GPU e SoC: aprender/sistemas/cpu/cpu-ram-gpu-e-soc.md
-                  - Famílias e gerações de processadores: aprender/sistemas/cpu/familias-de-processadores.md
-                  - Barramento do sistema: aprender/sistemas/cpu/barramento-do-sistema.md
-              - Níveis de privilégio: aprender/sistemas/cpu/niveis-de-privilegio.md
-              - System calls: aprender/sistemas/kernel/system-calls.md
+                  - Fundamentos:
+                      - Ciclo de instrução: aprender/sistemas/cpu/ciclo-de-instrucao.md
+                      - Barramento do sistema: aprender/sistemas/cpu/barramento-do-sistema.md
+                  - ISA:
+                      - Arquitetura de conjunto de instruções: aprender/sistemas/cpu/isa.md
+                  - Microarquitetura:
+                      - Microarquitetura: aprender/sistemas/cpu/microarquitetura.md
+                  - Componentes:
+                      - CPU: aprender/sistemas/cpu/cpu.md
+                      - RAM: aprender/sistemas/cpu/ram.md
+                      - GPU: aprender/sistemas/cpu/gpu.md
+                      - System on a chip: aprender/sistemas/cpu/soc.md
+                  - Topologia:
+                      - Cores: aprender/sistemas/cpu/cores.md
+                      - Sockets: aprender/sistemas/cpu/sockets.md
+                  - Famílias:
+                      - Visão geral: aprender/sistemas/cpu/familias-de-processadores.md
+                      - Intel: aprender/sistemas/cpu/intel.md
+                      - AMD: aprender/sistemas/cpu/amd.md
+                      - Arm: aprender/sistemas/cpu/arm.md
+                      - Apple Silicon: aprender/sistemas/cpu/apple-silicon.md
+              - Kernel:
+                  - Proteção:
+                      - Níveis de privilégio: aprender/sistemas/cpu/niveis-de-privilegio.md
+                  - Interface:
+                      - System calls: aprender/sistemas/kernel/system-calls.md
           - Processos:
-              - Processo Linux: aprender/sistemas/linux/process.md
+              - Fundamentos:
+                  - Processo Linux: aprender/sistemas/linux/process.md
               - Isolamento:
                   - Namespaces: aprender/sistemas/linux/namespaces.md
                   - User namespaces: aprender/sistemas/linux/user-namespaces.md
-                  - Mapeamento de UID e GID: aprender/sistemas/linux/uid-gid-mapping.md
+                  - Mapa de UID e GID: aprender/sistemas/linux/uid-gid-mapping.md
               - Recursos:
                   - Cgroups: aprender/sistemas/linux/cgroups.md
               - Privilégios:
                   - Capabilities: aprender/sistemas/linux/capabilities.md
                   - seccomp: aprender/sistemas/linux/seccomp.md
           - Unix:
-              - Como os SOs expõem serviços: aprender/como-os-expoe-servicos.md
-              - Famílias e padrões Unix: aprender/unix-familias-e-padroes.md
-              - Shells e scripts: aprender/shells-e-scripts.md
-              - GNU Coreutils: aprender/sistemas/linux/coreutils.md
-              - Documentação de comandos: aprender/sistemas/linux/documentacao.md
-              - Inspeção de binários e bibliotecas: aprender/sistemas/linux/inspecao-de-binarios.md
+              - Fundamentos Unix:
+                  - Serviços:
+                      - Comparação entre modelos de exposição de serviços: aprender/como-os-expoe-servicos.md
+                  - Famílias:
+                      - Mapa de famílias Unix: aprender/unix-familias-e-padroes.md
+              - Shell:
+                  - Portabilidade de scripts shell: aprender/shells-e-scripts.md
+              - Ferramentas:
+                  - Coreutils:
+                      - GNU Coreutils: aprender/sistemas/linux/coreutils.md
+                  - Documentação:
+                      - Documentação de comandos: aprender/sistemas/linux/documentacao.md
+                  - Binários:
+                      - Mapa de inspeção de binários e bibliotecas: aprender/sistemas/linux/inspecao-de-binarios.md
               - Processamento de texto:
                   - Visão geral: aprender/sistemas/linux/text-processing/index.md
                   - grep: aprender/sistemas/linux/text-processing/grep.md
@@ -114,58 +151,114 @@ nav:
           - Serviços:
               - systemd:
                   - Visão geral: aprender/systemd-units-timers-e-dependencias.md
-                  - Unit: aprender/sistemas/systemd/unit.md
-                  - Service: aprender/sistemas/systemd/service.md
-              - Timer: aprender/sistemas/systemd/timer.md
-              - Target: aprender/sistemas/systemd/target.md
-              - Dependências: aprender/sistemas/systemd/dependencies.md
-              - Daemons e serviços: aprender/sistemas/systemd/daemon.md
-              - Schedulers e timers: aprender/sistemas/systemd/scheduler.md
-              - Eventos e ativação: aprender/sistemas/systemd/events.md
+              - Agendamento:
+                  - Visão geral: aprender/sistemas/systemd/agendamento/index.md
+                  - Schedulers:
+                      - Schedulers: aprender/sistemas/systemd/schedulers.md
+                  - Timers:
+                      - Timer: aprender/sistemas/systemd/timer.md
+              - Inicialização:
+                  - Target: aprender/sistemas/systemd/target.md
+                  - Dependências: aprender/sistemas/systemd/dependencies.md
+              - Execução:
+                  - Visão geral: aprender/sistemas/systemd/execucao/index.md
+                  - Daemons:
+                      - Daemons: aprender/sistemas/systemd/daemons.md
+                  - Services:
+                      - Service: aprender/sistemas/systemd/service.md
+                  - Units:
+                      - Unit: aprender/sistemas/systemd/unit.md
+                  - Eventos:
+                      - Ativação orientada a eventos: aprender/sistemas/systemd/events.md
           - Manutenção do host:
-              - Fail2ban: aprender/sistemas/linux/fail2ban.md
-              - Journal persistente: aprender/sistemas/linux/journald.md
-              - Logrotate: aprender/sistemas/linux/logrotate.md
-              - Atualizações automáticas: aprender/sistemas/linux/automatic-updates.md
-              - NTP e sincronização de tempo: aprender/sistemas/linux/ntp.md
+              - Segurança:
+                  - Fail2ban: aprender/sistemas/linux/fail2ban.md
+              - Logs:
+                  - Journal persistente: aprender/sistemas/linux/journald.md
+                  - Logrotate: aprender/sistemas/linux/logrotate.md
+              - Ciclo de vida:
+                  - Atualizações automáticas: aprender/sistemas/linux/automatic-updates.md
+              - Tempo:
+                  - NTP: aprender/sistemas/linux/ntp.md
           - Tempo:
               - Visão geral: aprender/sistemas/tempo/index.md
               - Fusos:
                   - Visão geral: aprender/sistemas/tempo/fusos/index.md
-                  - Fusos horários, UTC e IANA: aprender/sistemas/tempo/fusos-horarios.md
+                  - Fusos horários: aprender/sistemas/tempo/fusos-horarios.md
               - Relógios:
                   - Visão geral: aprender/sistemas/tempo/relogios/index.md
-                  - Relógio do sistema e firmware: aprender/sistemas/tempo/relogio-do-sistema-e-firmware.md
+                  - Relógio de tempo real: aprender/sistemas/tempo/relogio-do-sistema-e-firmware.md
               - Timestamps:
-                  - Timestamps e tipos de data: aprender/sistemas/tempo/timestamps.md
+                  - Modelagem temporal: aprender/sistemas/tempo/timestamps.md
                   - Problemas de modelagem temporal: aprender/sistemas/tempo/problemas-de-modelagem-temporal.md
           - Hardware:
               - Visão geral: aprender/sistemas/hardware/index.md
+              - Semicondutores:
+                  - Visão geral: aprender/sistemas/hardware/semicondutores/index.md
+                  - Fundamentos:
+                      - Litografia EUV: aprender/sistemas/hardware/semicondutores/litografia-euv.md
+                  - Empresas:
+                      - Equipamentos:
+                          - ASML: aprender/sistemas/hardware/semicondutores/asml.md
+                      - Foundries:
+                          - TSMC: aprender/sistemas/hardware/semicondutores/tsmc.md
+                      - Fabricantes integrados:
+                          - Samsung Semiconductor: aprender/sistemas/hardware/semicondutores/samsung-semiconductor.md
+                      - Memória:
+                          - Micron: aprender/sistemas/hardware/semicondutores/micron.md
+                          - SK hynix: aprender/sistemas/hardware/semicondutores/sk-hynix.md
+                  - Contexto:
+                      - Geopolítica:
+                          - Geopolítica dos semicondutores: aprender/sistemas/hardware/semicondutores/geopolitica.md
+                      - Regulação:
+                          - Regulação dos semicondutores: aprender/sistemas/hardware/semicondutores/regulacao.md
+                      - Ambiente:
+                          - Impacto ambiental dos semicondutores: aprender/sistemas/hardware/semicondutores/impacto-ambiental.md
+                      - Resiliência:
+                          - Crises de chips: aprender/sistemas/hardware/semicondutores/crises-de-chips.md
               - Gerenciamento local:
-                  - IPMI: aprender/sistemas/hardware/ipmi.md
-                  - OpenIPMI: aprender/sistemas/hardware/openipmi.md
-                  - FreeIPMI: aprender/sistemas/hardware/freeipmi.md
-                  - iDRAC: aprender/sistemas/hardware/idrac.md
-                  - Wake-on-LAN: aprender/sistemas/hardware/wake-on-lan.md
+                  - BMC:
+                      - Protocolo:
+                          - IPMI: aprender/sistemas/hardware/ipmi.md
+                      - Implementações:
+                          - OpenIPMI: aprender/sistemas/hardware/openipmi.md
+                          - FreeIPMI: aprender/sistemas/hardware/freeipmi.md
+                      - Fabricantes:
+                          - iDRAC: aprender/sistemas/hardware/idrac.md
+                  - Energia remota:
+                      - Wake-on-LAN: aprender/sistemas/hardware/wake-on-lan.md
               - Boot remoto:
                   - Visão geral: aprender/sistemas/hardware/boot-remoto/index.md
-              - Segurança elétrica:
-                  - Clima espacial, indução e eletrônica: aprender/sistemas/hardware/clima-espacial-e-eletronica.md
-                  - Segurança elétrica e ESD: aprender/sistemas/hardware/seguranca-eletrica-e-esd.md
+              - Proteção elétrica:
+                  - Visão geral: aprender/sistemas/hardware/protecao-eletrica/index.md
+                  - Clima espacial:
+                      - Mapa de clima espacial, indução e eletrônica: aprender/sistemas/hardware/clima-espacial-e-eletronica.md
+                  - Instalações:
+                      - Segurança elétrica: aprender/sistemas/hardware/seguranca-eletrica.md
+                  - ESD:
+                      - Descarga eletrostática: aprender/sistemas/hardware/esd.md
               - Refrigeração:
-                  - COP, PTC e turbulência na refrigeração: aprender/sistemas/hardware/cop-ptc-e-turbulencia-na-refrigeracao.md
-          - Boot:
-              - Visão geral: aprender/sistemas/boot/index.md
-              - Firmware:
-                  - Visão geral: aprender/sistemas/boot/firmware/index.md
-                  - UEFI: aprender/sistemas/boot/uefi.md
-                  - EFI: aprender/sistemas/boot/efi.md
-                  - BIOS: aprender/sistemas/boot/bios.md
-                  - Secure Boot:
-                      - Visão geral: aprender/sistemas/boot/firmware/secure-boot/index.md
-                      - Secure Boot: aprender/sistemas/boot/secure-boot.md
-                  - Chaves e bancos do Secure Boot: aprender/sistemas/boot/secure-boot-keys.md
-                  - fwupd: aprender/sistemas/boot/fwupd.md
+                  - Visão geral: aprender/sistemas/hardware/refrigeracao/index.md
+                  - COP:
+                      - Coeficiente de performance: aprender/sistemas/hardware/cop.md
+                  - PTC:
+                      - Termistor PTC: aprender/sistemas/hardware/ptc.md
+                  - Turbulência:
+                      - Turbulência na refrigeração: aprender/sistemas/hardware/turbulencia.md
+              - Boot:
+                  - Visão geral: aprender/sistemas/boot/index.md
+                  - Firmware:
+                      - Visão geral: aprender/sistemas/boot/firmware/index.md
+                      - Firmware de plataforma:
+                          - UEFI: aprender/sistemas/boot/uefi.md
+                          - EFI: aprender/sistemas/boot/efi.md
+                          - BIOS: aprender/sistemas/boot/bios.md
+                      - Secure Boot:
+                          - Visão geral: aprender/sistemas/boot/firmware/secure-boot/index.md
+                          - Secure Boot: aprender/sistemas/boot/secure-boot.md
+                          - Mapa de chaves e bancos do Secure Boot: aprender/sistemas/boot/secure-boot-keys.md
+                      - Atualização:
+                          - fwupd: aprender/sistemas/boot/fwupd.md
               - Instalação:
                   - Visão geral: aprender/sistemas/boot/instalacao/index.md
                   - Inicialização:
@@ -183,19 +276,26 @@ nav:
                       - UNetbootin: aprender/sistemas/boot/unetbootin.md
               - Recuperação:
                   - Visão geral: aprender/sistemas/boot/recuperacao/index.md
-                  - GParted Live: aprender/sistemas/boot/gparted-live.md
-                  - Hiren's BootCD PE: aprender/sistemas/boot/hirens-bootcd-pe.md
-                  - MemTest86 e Memtest86+: aprender/sistemas/boot/memtest.md
-          - Armazenamento:
-              - Visão geral: aprender/sistemas/armazenamento/index.md
-              - Volumes:
-                  - Visão geral: aprender/sistemas/armazenamento/volumes/index.md
-                  - LVM: aprender/sistemas/armazenamento/lvm.md
-                  - Redundância:
-                      - Visão geral: aprender/sistemas/armazenamento/volumes/redundancia/index.md
-                      - RAID: aprender/sistemas/armazenamento/raid.md
-                      - zpool: aprender/sistemas/armazenamento/zpool.md
-                      - rpool: aprender/sistemas/armazenamento/rpool.md
+                  - Ferramentas de recuperação:
+                      - Inicialização:
+                          - Troubleshooting de inicialização Linux: aprender/sistemas/boot/troubleshooting-linux.md
+                      - Mídias:
+                          - GParted Live: aprender/sistemas/boot/gparted-live.md
+                          - Hiren's BootCD PE: aprender/sistemas/boot/hirens-bootcd-pe.md
+                  - Memória:
+                      - Comparação entre MemTest86 e Memtest86+: aprender/sistemas/boot/memtest.md
+              - Armazenamento:
+                  - Visão geral: aprender/sistemas/armazenamento/index.md
+                  - Volumes:
+                      - Visão geral: aprender/sistemas/armazenamento/volumes/index.md
+                      - Gerenciamento:
+                          - LVM: aprender/sistemas/armazenamento/lvm.md
+                      - Redundância:
+                          - Visão geral: aprender/sistemas/armazenamento/volumes/redundancia/index.md
+                          - RAID: aprender/sistemas/armazenamento/raid.md
+                      - Pools ZFS:
+                          - zpool: aprender/sistemas/armazenamento/zpool.md
+                          - rpool: aprender/sistemas/armazenamento/rpool.md
               - Filesystems:
                   - Visão geral: aprender/sistemas/armazenamento/filesystems/index.md
                   - Btrfs: aprender/sistemas/armazenamento/btrfs.md
@@ -203,35 +303,49 @@ nav:
                   - ZFS: aprender/sistemas/armazenamento/zfs.md
           - Distribuições Linux:
               - Visão geral: aprender/sistemas/distribuicoes-linux/index.md
-              - Ciclo de vida, bugs e CVEs: aprender/sistemas/distribuicoes-linux/ciclo-de-vida-e-seguranca.md
-              - Segurança e empacotamento: aprender/sistemas/distribuicoes-linux/seguranca-e-empacotamento.md
-              - Ubuntu: aprender/sistemas/distribuicoes-linux/ubuntu.md
-              - Debian: aprender/sistemas/distribuicoes-linux/debian.md
-              - openSUSE: aprender/sistemas/distribuicoes-linux/opensuse.md
-              - Red Hat Enterprise Linux: aprender/sistemas/distribuicoes-linux/rhel.md
-              - Fedora: aprender/sistemas/distribuicoes-linux/fedora.md
-              - CentOS: aprender/sistemas/distribuicoes-linux/centos.md
-              - Manjaro: aprender/sistemas/distribuicoes-linux/manjaro.md
-              - Linux Mint: aprender/sistemas/distribuicoes-linux/linux-mint.md
-              - Alpine Linux: aprender/sistemas/distribuicoes-linux/alpine.md
-              - Arch Linux: aprender/sistemas/distribuicoes-linux/arch.md
-              - KDE neon: aprender/sistemas/distribuicoes-linux/kde-neon.md
-              - Kubuntu: aprender/sistemas/distribuicoes-linux/kubuntu.md
-              - Governança e distribuição: aprender/sistemas/distribuicoes-linux/governanca-e-distribuicao.md
+              - Ciclo de vida:
+                  - Mapa de ciclo de vida, bugs e CVEs: aprender/sistemas/distribuicoes-linux/ciclo-de-vida-e-seguranca.md
+              - Empacotamento:
+                  - Mapa de segurança e empacotamento: aprender/sistemas/distribuicoes-linux/seguranca-e-empacotamento.md
+              - Família Debian:
+                  - Debian: aprender/sistemas/distribuicoes-linux/debian.md
+                  - Ubuntu: aprender/sistemas/distribuicoes-linux/ubuntu.md
+                  - Linux Mint: aprender/sistemas/distribuicoes-linux/linux-mint.md
+                  - Kubuntu: aprender/sistemas/distribuicoes-linux/kubuntu.md
+              - Família Red Hat:
+                  - Red Hat Enterprise Linux: aprender/sistemas/distribuicoes-linux/rhel.md
+                  - Fedora: aprender/sistemas/distribuicoes-linux/fedora.md
+                  - CentOS: aprender/sistemas/distribuicoes-linux/centos.md
+              - Família SUSE:
+                  - openSUSE: aprender/sistemas/distribuicoes-linux/opensuse.md
+              - Independentes:
+                  - Manjaro: aprender/sistemas/distribuicoes-linux/manjaro.md
+                  - Alpine Linux: aprender/sistemas/distribuicoes-linux/alpine.md
+                  - Arch Linux: aprender/sistemas/distribuicoes-linux/arch.md
+                  - KDE neon: aprender/sistemas/distribuicoes-linux/kde-neon.md
+              - Governança:
+                  - Mapa de governança e distribuição: aprender/sistemas/distribuicoes-linux/governanca-e-distribuicao.md
           - Desktop Linux:
               - Visão geral: aprender/sistemas/desktop/index.md
-              - Ambientes de desktop: aprender/sistemas/desktop/desktop-environments.md
-              - GNOME: aprender/sistemas/desktop/gnome.md
-              - KDE Plasma: aprender/sistemas/desktop/kde-plasma.md
-              - Window managers: aprender/sistemas/desktop/window-managers.md
-              - Tiling: aprender/sistemas/desktop/tiling.md
-              - freedesktop.org: aprender/sistemas/desktop/freedesktop.md
-              - XDG: aprender/sistemas/desktop/xdg.md
-              - Wayland: aprender/sistemas/desktop/wayland.md
-              - X11: aprender/sistemas/desktop/x11.md
-              - X.Org: aprender/sistemas/desktop/xorg.md
-              - Fundações e governança: aprender/sistemas/desktop/fundacoes-e-governanca.md
-              - D-Bus: aprender/sistemas/systemd/dbus.md
+              - Ambientes:
+                  - Ambientes de desktop: aprender/sistemas/desktop/desktop-environments.md
+                  - GNOME: aprender/sistemas/desktop/gnome.md
+                  - KDE Plasma: aprender/sistemas/desktop/kde-plasma.md
+              - Gerenciamento de janelas:
+                  - Window managers: aprender/sistemas/desktop/window-managers.md
+                  - Tiling: aprender/sistemas/desktop/tiling.md
+              - Plataforma gráfica:
+                  - Padrões:
+                      - freedesktop.org: aprender/sistemas/desktop/freedesktop.md
+                      - XDG: aprender/sistemas/desktop/xdg.md
+                  - Sistemas de display:
+                      - Wayland: aprender/sistemas/desktop/wayland.md
+                      - X11: aprender/sistemas/desktop/x11.md
+                      - X.Org: aprender/sistemas/desktop/xorg.md
+              - Governança:
+                  - Mapa de fundações e governança: aprender/sistemas/desktop/fundacoes-e-governanca.md
+              - IPC:
+                  - D-Bus: aprender/sistemas/systemd/dbus.md
       - Desenvolvimento de software:
           - Comunicação:
               - Visão geral: aprender/comunicacao/index.md
@@ -242,37 +356,67 @@ nav:
                   - Visão geral: aprender/comunicacao/apis/index.md
                   - Protocolos:
                       - Visão geral: aprender/comunicacao/apis/protocolos/index.md
-                      - RPC: aprender/comunicacao/rpc.md
-                      - gRPC: aprender/comunicacao/grpc.md
-                      - JSON: aprender/comunicacao/json.md
-                      - GraphQL: aprender/comunicacao/graphql.md
+                      - RPC:
+                          - RPC: aprender/comunicacao/rpc.md
+                          - gRPC: aprender/comunicacao/grpc.md
+                      - Formatos:
+                          - JSON: aprender/comunicacao/json.md
+                          - JSON Canônico: aprender/comunicacao/json-canonico.md
+                      - Consultas:
+                          - GraphQL: aprender/comunicacao/graphql.md
               - Comunicação assíncrona:
                   - Visão geral: aprender/comunicacao/assinc/index.md
-                  - Comunicação assíncrona: aprender/comunicacao/comunicacao-assincrona.md
-                  - Event bus: aprender/comunicacao/event-bus.md
-                  - RPC e comunicação assíncrona: aprender/comunicacao/rpc-e-comunicacao-assincrona.md
+                  - Fundamentos:
+                      - Comunicação assíncrona: aprender/comunicacao/comunicacao-assincrona.md
+                  - Composição:
+                      - Event bus: aprender/comunicacao/event-bus.md
+                  - Comparações:
+                      - Comparação entre RPC e comunicação assíncrona: aprender/comunicacao/rpc-e-comunicacao-assincrona.md
               - Streams reativos:
                   - Visão geral: aprender/comunicacao/streams/index.md
-                  - ReactiveX e Rx: aprender/comunicacao/reactivex.md
+                  - ReactiveX: aprender/comunicacao/reactivex.md
                   - Kotlin Flow: aprender/comunicacao/kotlin-flow.md
               - Comunicação em tempo real:
                   - Visão geral: aprender/comunicacao/tempo-real/index.md
                   - WebRTC: aprender/comunicacao/webrtc.md
+                  - WebSocket: aprender/comunicacao/websocket.md
           - Arquitetura de aplicações:
               - Visão geral: aprender/arquitetura-aplicacoes/index.md
-              - Frontend: aprender/arquitetura-aplicacoes/frontend.md
-              - Backend: aprender/arquitetura-aplicacoes/backend.md
-              - Sistemas centralizados: aprender/arquitetura-aplicacoes/sistemas-centralizados.md
-              - Sistemas distribuídos: aprender/arquitetura-aplicacoes/sistemas-distribuidos.md
-              - Self-stabilization e autoestabilização: aprender/arquitetura-aplicacoes/self-stabilization.md
-              - Monólito: aprender/arquitetura-aplicacoes/monolito.md
-              - Monólito modular: aprender/arquitetura-aplicacoes/monolito-modular.md
-              - Barramento interno: aprender/arquitetura-aplicacoes/bus-interno.md
-              - Erlang/OTP: aprender/arquitetura-aplicacoes/erlang-otp.md
-              - Microsserviços: aprender/arquitetura-aplicacoes/microsservicos.md
-              - Microfrontend: aprender/arquitetura-aplicacoes/microfrontend.md
-              - Comparativo: aprender/arquitetura-aplicacoes/comparativo.md
-              - Centralizado, distribuído e microsserviços: aprender/arquitetura-aplicacoes/centralizado-distribuido-microservicos.md
+              - Interfaces:
+                  - Frontend: aprender/arquitetura-aplicacoes/frontend.md
+                  - Backend: aprender/arquitetura-aplicacoes/backend.md
+                  - Microfrontend: aprender/arquitetura-aplicacoes/microfrontend.md
+              - Estruturas de execução:
+                  - Sistemas centralizados: aprender/arquitetura-aplicacoes/sistemas-centralizados.md
+                  - Sistemas distribuídos: aprender/arquitetura-aplicacoes/sistemas-distribuidos.md
+                  - Microsserviços: aprender/arquitetura-aplicacoes/microsservicos.md
+              - Estruturas internas:
+                  - Monólito: aprender/arquitetura-aplicacoes/monolito.md
+                  - Monólito modular: aprender/arquitetura-aplicacoes/monolito-modular.md
+              - Comunicação interna:
+                  - Barramento interno: aprender/arquitetura-aplicacoes/bus-interno.md
+              - Distribuição:
+                  - Erlang/OTP: aprender/arquitetura-aplicacoes/erlang-otp.md
+              - Tolerância:
+                  - Self-stabilization: aprender/arquitetura-aplicacoes/self-stabilization.md
+              - Comparações:
+                  - Comparativo: aprender/arquitetura-aplicacoes/comparativo.md
+                  - Comparação entre sistemas centralizados, distribuídos e microsserviços: aprender/arquitetura-aplicacoes/centralizado-distribuido-microservicos.md
+              - Modelagem de domínio:
+                  - DDD: aprender/arquitetura-aplicacoes/modelagem/ddd.md
+              - Camadas:
+                  - Arquitetura em camadas: aprender/arquitetura-aplicacoes/fronteiras/arquitetura-em-camadas.md
+              - Fronteiras:
+                  - Arquitetura Hexagonal: aprender/arquitetura-aplicacoes/fronteiras/arquitetura-hexagonal.md
+                  - Arquitetura Limpa: aprender/engenharia-software/arquitetura-limpa.md
+              - Composição:
+                  - Componentes de aplicação: aprender/arquitetura-aplicacoes/componentes.md
+              - Organização:
+                  - Vertical Slice Architecture: aprender/arquitetura-aplicacoes/organizacao/vertical-slice.md
+              - CQRS:
+                  - CQRS: aprender/arquitetura-aplicacoes/cqrs/cqrs.md
+              - Event Sourcing:
+                  - Event Sourcing: aprender/arquitetura-aplicacoes/event-sourcing/event-sourcing.md
           - Plataformas:
               - Ecossistema .NET:
                   - Visão geral: aprender/dotnet/index.md
@@ -281,39 +425,50 @@ nav:
           - Runtimes:
               - Execução:
                   - Visão geral: aprender/sistemas/runtime/index.md
-                  - Event loop: aprender/sistemas/runtime/event-loop.md
-                  - V8: aprender/sistemas/runtime/v8.md
-                  - libuv: aprender/sistemas/runtime/libuv.md
+                  - Modelo de execução:
+                      - Event loop: aprender/sistemas/runtime/event-loop.md
+                  - Implementações:
+                      - V8: aprender/sistemas/runtime/v8.md
+                      - libuv: aprender/sistemas/runtime/libuv.md
       - Sistemas embarcados:
           - Visão geral: aprender/embarcados/index.md
           - Microcontroladores:
               - Visão geral: aprender/embarcados/microcontroladores/index.md
-              - Arduino: aprender/embarcados/arduino.md
-              - Famílias de placas Arduino: aprender/embarcados/arduino-familias.md
-              - Arduino CLI: aprender/embarcados/arduino-cli.md
+              - Arduino:
+                  - Arduino: aprender/embarcados/arduino.md
+                  - Famílias de placas Arduino: aprender/embarcados/arduino-familias.md
+                  - Arduino CLI: aprender/embarcados/arduino-cli.md
               - ESP32:
                   - Visão geral: aprender/embarcados/esp32/index.md
-                  - Famílias de SoCs: aprender/embarcados/esp32/familias.md
-                  - ESP32 original: aprender/embarcados/esp32/serie-original.md
-                  - Série ESP32-S: aprender/embarcados/esp32/serie-s.md
-                  - Série ESP32-C: aprender/embarcados/esp32/serie-c.md
-                  - Série ESP32-H: aprender/embarcados/esp32/serie-h.md
-                  - Série ESP32-P: aprender/embarcados/esp32/serie-p.md
-                  - Série ESP32-E: aprender/embarcados/esp32/serie-e.md
-                  - Software: aprender/embarcados/esp32/software.md
-                  - Módulos e placas: aprender/embarcados/esp32/modulos-e-placas.md
-              - Arduino Core for ESP32: aprender/embarcados/arduino-esp32.md
+                  - Hardware:
+                      - SoCs:
+                          - Famílias de SoCs: aprender/embarcados/esp32/familias.md
+                          - ESP32 original: aprender/embarcados/esp32/serie-original.md
+                          - Série ESP32-S: aprender/embarcados/esp32/serie-s.md
+                          - Série ESP32-C: aprender/embarcados/esp32/serie-c.md
+                          - Série ESP32-H: aprender/embarcados/esp32/serie-h.md
+                          - Série ESP32-P: aprender/embarcados/esp32/serie-p.md
+                          - Série ESP32-E: aprender/embarcados/esp32/serie-e.md
+                      - Placas:
+                          - Mapa de módulos e placas: aprender/embarcados/esp32/modulos-e-placas.md
+                  - Software:
+                      - Software: aprender/embarcados/esp32/software.md
+                      - Arduino Core for ESP32: aprender/embarcados/arduino-esp32.md
           - Computadores de placa única:
               - Visão geral: aprender/embarcados/computadores-de-placa-unica/index.md
               - Raspberry Pi:
                   - Visão geral: aprender/embarcados/raspberry-pi/index.md
-                  - Computadores de placa única: aprender/embarcados/raspberry-pi/computadores.md
-                  - Computadores de teclado: aprender/embarcados/raspberry-pi/computadores-de-teclado.md
-                  - Compute Modules: aprender/embarcados/raspberry-pi/compute-modules.md
-                  - Pico: aprender/embarcados/raspberry-pi/pico.md
-                  - Microcontroladores: aprender/embarcados/raspberry-pi/microcontroladores.md
-                  - Software e ferramentas: aprender/embarcados/raspberry-pi/software.md
-                  - Acessórios e expansão: aprender/embarcados/raspberry-pi/acessorios-e-expansao.md
+                  - Hardware:
+                      - Computadores:
+                          - Computadores de placa única: aprender/embarcados/raspberry-pi/computadores.md
+                          - Computadores de teclado: aprender/embarcados/raspberry-pi/computadores-de-teclado.md
+                          - Compute Modules: aprender/embarcados/raspberry-pi/compute-modules.md
+                      - Microcontroladores:
+                          - Pico: aprender/embarcados/raspberry-pi/pico.md
+                          - Microcontroladores: aprender/embarcados/raspberry-pi/microcontroladores.md
+                  - Ecossistema:
+                      - Mapa de software: aprender/embarcados/raspberry-pi/software.md
+                      - Mapa de acessórios: aprender/embarcados/raspberry-pi/acessorios-e-expansao.md
       - Plataformas de execução:
           - Visão geral: aprender/plataforma/index.md
           - Containers:
@@ -333,13 +488,15 @@ nav:
                   - Distribution Specification: aprender/containers/oci/distribution-spec.md
                   - Runtime Specification: aprender/containers/oci/runtime-spec.md
               - Runtimes:
-                  - High-level runtime: aprender/containers/runtimes/high-level-runtime.md
-                  - Low-level runtime: aprender/containers/runtimes/low-level-runtime.md
-                  - CRI: aprender/containers/runtimes/cri.md
-                  - containerd: aprender/containers/runtimes/containerd.md
-                  - CRI-O: aprender/containers/runtimes/cri-o.md
-                  - runc: aprender/containers/runtimes/runc.md
-                  - crun: aprender/containers/runtimes/crun.md
+                  - Abstrações:
+                      - High-level runtime: aprender/containers/runtimes/high-level-runtime.md
+                      - Low-level runtime: aprender/containers/runtimes/low-level-runtime.md
+                      - CRI: aprender/containers/runtimes/cri.md
+                  - Implementações:
+                      - containerd: aprender/containers/runtimes/containerd.md
+                      - CRI-O: aprender/containers/runtimes/cri-o.md
+                      - runc: aprender/containers/runtimes/runc.md
+                      - crun: aprender/containers/runtimes/crun.md
               - Engines:
                   - Visão geral: aprender/containers/engines/index.md
                   - Docker Engine: aprender/containers/engines/docker-engine.md
@@ -349,26 +506,36 @@ nav:
                   - BuildKit: aprender/containers/build/buildkit.md
                   - Buildah: aprender/containers/build/buildah.md
               - Distribuição:
-                  - Registry OCI: aprender/containers/distribuicao/registry.md
-                  - Quay: aprender/containers/distribuicao/quay.md
-                  - Repositório de artefatos: aprender/containers/distribuicao/artifact-repository.md
-                  - Skopeo: aprender/containers/distribuicao/skopeo.md
+                  - Conceitos:
+                      - Registry OCI: aprender/containers/distribuicao/registry.md
+                      - Repositório de artefatos: aprender/containers/distribuicao/artifact-repository.md
+                  - Implementações:
+                      - Quay: aprender/containers/distribuicao/quay.md
+                  - Ferramentas:
+                      - Skopeo: aprender/containers/distribuicao/skopeo.md
               - Compose:
                   - Compose Specification: aprender/containers/compose/specification.md
                   - Docker Compose: aprender/containers/compose/docker-compose.md
                   - Podman Compose: aprender/containers/compose/podman-compose.md
           - Virtualização:
               - Visão geral: aprender/plataforma/virtualizacao/index.md
-              - Máquinas virtuais: aprender/vms-e-hipervisores.md
-              - Hypervisor: aprender/sistemas/virtualizacao/hypervisor.md
-              - MicroVM: aprender/sistemas/virtualizacao/microvm.md
-              - Firecracker: aprender/sistemas/virtualizacao/firecracker.md
-              - gVisor: aprender/sistemas/virtualizacao/gvisor.md
-              - Containers de sistema: aprender/sistemas/virtualizacao/system-containers.md
-              - Solaris Zones e BSD Jails: aprender/sistemas/virtualizacao/zones-jails.md
-              - MicroVMs e sandboxes: aprender/sistemas/virtualizacao/microvms-e-sandboxes.md
-          - Wine e compatibilidade: aprender/wine-e-compatibilidade.md
-          - Podman Quadlets: aprender/podman-quadlets.md
+              - Máquinas virtuais:
+                  - Máquinas virtuais: aprender/vms-e-hipervisores.md
+                  - Hypervisor: aprender/sistemas/virtualizacao/hypervisor.md
+                  - CPU virtual no Proxmox: aprender/sistemas/virtualizacao/proxmox-cpu.md
+              - Isolamento leve:
+                  - Implementações:
+                      - MicroVM: aprender/sistemas/virtualizacao/microvm.md
+                      - Firecracker: aprender/sistemas/virtualizacao/firecracker.md
+                      - gVisor: aprender/sistemas/virtualizacao/gvisor.md
+                      - Containers de sistema: aprender/sistemas/virtualizacao/system-containers.md
+                  - Relações:
+                      - Comparação entre Solaris Zones e BSD Jails: aprender/sistemas/virtualizacao/zones-jails.md
+                      - Mapa de MicroVMs e sandboxes: aprender/sistemas/virtualizacao/microvms-e-sandboxes.md
+          - Compatibilidade:
+              - Mapa de Wine e compatibilidade: aprender/wine-e-compatibilidade.md
+          - Composição:
+              - Podman Quadlets: aprender/podman-quadlets.md
       - Nuvem:
           - Visão geral: aprender/plataforma/cloud/index.md
           - Nuvens hyperscale:
@@ -376,7 +543,7 @@ nav:
               - Google Cloud: aprender/plataforma/cloud/gcp.md
               - Microsoft Azure: aprender/plataforma/cloud/azure.md
           - IaaS:
-              - Linode: aprender/plataforma/cloud/linode.md
+              - Comparação entre Linode e Akamai Cloud: aprender/plataforma/cloud/linode.md
               - Akamai: aprender/plataforma/cloud/akamai.md
           - Cloud brasileira:
               - Magalu Cloud: aprender/plataforma/cloud/magalu-cloud.md
@@ -392,24 +559,31 @@ nav:
               - HostGator: aprender/plataforma/cloud/hostgator.md
       - Plataformas:
           - Aplicações:
-              - PaaS autohospedado e plataformas de deploy: aprender/plataforma/cloud/paas-autohospedado-e-deploy.md
-              - Coolify: aprender/plataforma/cloud/coolify.md
-              - Dokploy: aprender/plataforma/cloud/dokploy.md
-              - CapRover: aprender/plataforma/cloud/caprover.md
-              - Railway: aprender/plataforma/cloud/railway.md
-              - Surge.sh: aprender/plataforma/cloud/surge-sh.md
-              - ZEIT: aprender/plataforma/cloud/zeit.md
-              - now.sh: aprender/plataforma/cloud/now-sh.md
-              - Vercel: aprender/plataforma/cloud/vercel.md
-              - Heroku: aprender/plataforma/cloud/heroku.md
+              - Conceitos:
+                  - Mapa de PaaS autohospedado e plataformas de deploy: aprender/plataforma/cloud/paas-autohospedado-e-deploy.md
+              - PaaS autohospedado:
+                  - Coolify: aprender/plataforma/cloud/coolify.md
+                  - Dokploy: aprender/plataforma/cloud/dokploy.md
+                  - CapRover: aprender/plataforma/cloud/caprover.md
+              - PaaS gerenciado:
+                  - Railway: aprender/plataforma/cloud/railway.md
+                  - Vercel: aprender/plataforma/cloud/vercel.md
+                  - Heroku: aprender/plataforma/cloud/heroku.md
+              - Hospedagem estática:
+                  - Surge.sh: aprender/plataforma/cloud/surge-sh.md
+                  - ZEIT: aprender/plataforma/cloud/zeit.md
+                  - now.sh: aprender/plataforma/cloud/now-sh.md
       - Edge:
-          - Provedores:
-              - Cloudflare: aprender/plataforma/cloud/cloudflare.md
+          - Hospedagem:
               - Cloudflare Pages: aprender/plataforma/cloud/cloudflare-pages.md
-              - Cloudflare Workers: aprender/plataforma/cloud/cloudflare-workers.md
-              - Cloudflare Tunnel: aprender/plataforma/cloud/cloudflare-tunnels.md
               - Netlify: aprender/plataforma/cloud/netlify.md
               - GitHub Pages: aprender/plataforma/cloud/github-pages.md
+          - CDN:
+              - Cloudflare: aprender/plataforma/cloud/cloudflare.md
+          - Computação:
+              - Cloudflare Workers: aprender/plataforma/cloud/cloudflare-workers.md
+          - Conectividade:
+              - Cloudflare Tunnel: aprender/plataforma/cloud/cloudflare-tunnels.md
               - ngrok: aprender/plataforma/cloud/ngrok.md
       - Build:
           - Visão geral: aprender/build/index.md
@@ -418,34 +592,41 @@ nav:
               - Bazel: aprender/build/bazel.md
               - Meson: aprender/build/meson.md
               - CMake: aprender/build/cmake.md
-              - Makefile: aprender/build/makefile.md
+              - Mapa de Makefile e GNU Make: aprender/build/makefile.md
               - Ninja: aprender/build/ninja.md
           - Toolchains:
               - Visão geral: aprender/build/toolchains/index.md
-              - Hermit: aprender/build/hermit.md
-              - pkgx: aprender/build/pkgx.md
-              - Nix: aprender/build/nix.md
-              - LLVM: aprender/build/llvm.md
+              - Gerenciamento de ambientes:
+                  - Hermit: aprender/build/hermit.md
+                  - pkgx: aprender/build/pkgx.md
+                  - Nix: aprender/build/nix.md
+              - Compiladores:
+                  - LLVM: aprender/build/llvm.md
           - Orquestração de monorepos:
               - Visão geral: aprender/build/monorepos/index.md
               - moon: aprender/build/moon.md
               - Nx: aprender/build/nx.md
               - Turborepo: aprender/build/turborepo.md
-          - justfile: aprender/just-executor-de-tarefas.md
+          - Executores de tarefas:
+              - justfile: aprender/just-executor-de-tarefas.md
       - Distribuição de aplicações:
           - Visão geral: aprender/distribuicao-de-aplicacoes/index.md
-          - AppImage: aprender/distribuicao-de-aplicacoes/appimage.md
-          - Snap: aprender/distribuicao-de-aplicacoes/snap.md
-          - Flatpak: aprender/distribuicao-de-aplicacoes/flatpak.md
-          - WinGet: aprender/distribuicao-de-aplicacoes/winget.md
-          - Chocolatey: aprender/distribuicao-de-aplicacoes/chocolatey.md
+          - Formatos de pacote:
+              - AppImage: aprender/distribuicao-de-aplicacoes/appimage.md
+              - Snap: aprender/distribuicao-de-aplicacoes/snap.md
+              - Flatpak: aprender/distribuicao-de-aplicacoes/flatpak.md
+          - Gerenciadores:
+              - WinGet: aprender/distribuicao-de-aplicacoes/winget.md
+              - Chocolatey: aprender/distribuicao-de-aplicacoes/chocolatey.md
       - Windows:
           - Visão geral: aprender/windows/index.md
           - Administração do Windows:
-              - Workgroups: aprender/windows/workgroups.md
-              - Registro do Windows: aprender/windows/registry.md
-              - System Configuration e msconfig: aprender/windows/msconfig.md
-              - Edições do Windows: aprender/windows/editions.md
+              - Configuração:
+                  - Workgroups: aprender/windows/workgroups.md
+                  - System Configuration: aprender/windows/msconfig.md
+              - Sistema:
+                  - Registro do Windows: aprender/windows/registry.md
+                  - Edições do Windows: aprender/windows/editions.md
           - Filesystems:
               - Visão geral: aprender/windows/filesystems/index.md
               - Linux:
@@ -454,14 +635,17 @@ nav:
               - Windows:
                   - Visão geral: aprender/windows/filesystems/windows/index.md
                   - Filesystems Windows: aprender/windows/filesystems/windows-filesystems.md
-              - Organização de diretórios: aprender/windows/filesystems/diretorios.md
+              - Organização:
+                  - Organização de diretórios: aprender/windows/filesystems/diretorios.md
           - Compatibilidade Unix:
               - Visão geral: aprender/windows/compatibilidade-unix/index.md
-              - Cygwin: aprender/windows/cygwin.md
-              - MinGW: aprender/windows/mingw.md
-              - MSYS2: aprender/windows/msys2.md
-              - WSL: aprender/windows/wsl.md
-              - WSL 1 e WSL 2: aprender/windows/wsl1-e-wsl2.md
+              - Implementações:
+                  - Cygwin: aprender/windows/cygwin.md
+                  - MinGW: aprender/windows/mingw.md
+                  - MSYS2: aprender/windows/msys2.md
+                  - WSL: aprender/windows/wsl.md
+              - Comparações:
+                  - Comparação entre WSL 1 e WSL 2: aprender/windows/wsl1-e-wsl2.md
       - Web:
           - Visão geral: aprender/web/index.md
           - Plataforma web:
@@ -480,28 +664,39 @@ nav:
       - Redes:
           - Visão geral: aprender/rede/index.md
           - Fundamentos:
-              - Modelo OSI: aprender/rede/fundamentos/osi.md
-              - Modelo TCP/IP: aprender/rede/fundamentos/tcp-ip.md
-              - Comparação entre OSI e TCP/IP: aprender/rede/fundamentos/comparativo-osi-tcp-ip.md
-              - IPv4: aprender/rede/fundamentos/ipv4.md
-              - IPv6: aprender/rede/fundamentos/ipv6.md
-              - CIDR e subnetting: aprender/rede/fundamentos/cidr-e-subnetting.md
-              - Broadcast e multicast: aprender/rede/fundamentos/broadcast-multicast.md
-              - Dual stack: aprender/rede/fundamentos/dual-stack.md
-              - TCP e UDP: aprender/rede/tcp-udp.md
-              - Interface: aprender/rede/interface.md
-              - Rota: aprender/rede/route.md
-              - NDP e vizinhança: aprender/rede/neighbor.md
-              - VLAN: aprender/rede/fundamentos/vlan.md
-              - VXLAN: aprender/rede/fundamentos/vxlan.md
-              - Interfaces, rotas e camada 2: aprender/interfaces-rotas-e-l2-no-linux.md
+              - Modelos:
+                  - Modelo OSI: aprender/rede/fundamentos/osi.md
+                  - Modelo TCP/IP: aprender/rede/fundamentos/tcp-ip.md
+                  - Comparação entre OSI e TCP/IP: aprender/rede/fundamentos/comparativo-osi-tcp-ip.md
+              - Endereçamento:
+                  - IPv4: aprender/rede/fundamentos/ipv4.md
+                  - IPv6: aprender/rede/fundamentos/ipv6.md
+                  - Mapa de CIDR e subnetting: aprender/rede/fundamentos/cidr-e-subnetting.md
+                  - Mapa de broadcast e multicast: aprender/rede/fundamentos/broadcast-multicast.md
+                  - Dual stack: aprender/rede/fundamentos/dual-stack.md
+              - Transporte:
+                  - Comparação entre TCP e UDP: aprender/rede/tcp-udp.md
+              - Enlace:
+                  - Interfaces:
+                      - Interface: aprender/rede/interface.md
+                      - Mapa de interfaces, rotas e camada 2: aprender/interfaces-rotas-e-l2-no-linux.md
+                  - Segmentação:
+                      - VLAN: aprender/rede/fundamentos/vlan.md
+                      - VXLAN: aprender/rede/fundamentos/vxlan.md
+              - Vizinhança:
+                  - Neighbor Discovery Protocol: aprender/rede/neighbor.md
+              - Roteamento:
+                  - Rota: aprender/rede/route.md
           - Redes sem fio:
               - Visão geral: aprender/rede/wireless/index.md
-              - Gerações de Wi-Fi: aprender/rede/wireless/wifi-generations.md
-              - Redes mesh: aprender/rede/wireless/mesh.md
-              - Radiofrequência, ruído cósmico e ionosfera: aprender/rede/wireless/radiofrequencia-ruido-cosmico-e-ionosfera.md
+              - Wi-Fi:
+                  - Gerações de Wi-Fi: aprender/rede/wireless/wifi-generations.md
+              - Topologias:
+                  - Redes mesh: aprender/rede/wireless/mesh.md
+              - Radiofrequência:
+                  - Mapa de radiofrequência, ruído cósmico e ionosfera: aprender/rede/wireless/radiofrequencia-ruido-cosmico-e-ionosfera.md
           - Redes móveis:
-              - Gerações e arquitetura: aprender/rede/redes-moveis/index.md
+              - Arquitetura de redes móveis: aprender/rede/redes-moveis/index.md
           - Arquitetura da Internet:
               - Visão geral: aprender/rede/arquitetura/index.md
               - Rede física:
@@ -512,11 +707,15 @@ nav:
                   - Software de rede: aprender/rede/equipamentos/software-de-rede.md
           - Equipamentos de rede:
               - Visão geral: aprender/rede/equipamentos/index.md
-              - Access point, modem, switch e roteador: aprender/rede/equipamentos/comparativo.md
-              - Access point: aprender/rede/equipamentos/access-point.md
-              - Modem: aprender/rede/equipamentos/modem.md
-              - Switch: aprender/rede/equipamentos/switch.md
-              - Roteador: aprender/rede/equipamentos/roteador.md
+              - Comparação:
+                  - Comparação entre access point, modem, switch e roteador: aprender/rede/equipamentos/comparativo.md
+              - Acesso:
+                  - Access point: aprender/rede/equipamentos/access-point.md
+                  - Modem: aprender/rede/equipamentos/modem.md
+              - Interconexão:
+                  - Switch: aprender/rede/equipamentos/switch.md
+              - Roteamento:
+                  - Roteador: aprender/rede/equipamentos/roteador.md
           - Escopos de rede:
               - Visão geral: aprender/rede/escopos/index.md
               - LAN: aprender/rede/escopos/lan.md
@@ -528,56 +727,78 @@ nav:
           - Cabeamento:
               - Categorias de cabos: aprender/rede/cabeamento/categorias-de-cabos.md
           - DNS:
-              - Resolver: aprender/rede/dns/resolver.md
-              - Servidor autoritativo: aprender/rede/dns/authoritative.md
-              - BIND 9: aprender/rede/dns/bind.md
-              - PowerDNS Authoritative Server: aprender/rede/dns/powerdns-authoritative.md
-              - PowerDNS Recursor: aprender/rede/dns/powerdns-recursor.md
-              - CoreDNS: aprender/rede/dns/coredns.md
-              - Technitium DNS: aprender/rede/dns/technitium.md
-              - dnsmasq: aprender/rede/dns/dnsmasq.md
-              - Zona: aprender/rede/dns/zone.md
-              - Registros: aprender/rede/dns/records.md
-              - Resolução, zonas e registros: aprender/resolucao-zonas-e-registros-dns.md
-              - Servidores DNS: aprender/rede/dns/servers.md
-              - DNSSEC: aprender/rede/dns/dnssec.md
-              - mDNS: aprender/rede/dns/mdns.md
-              - Registro de domínio: aprender/rede/dns/registro-de-dominio.md
-              - Reverse DNS: aprender/rede/dns/reverse-dns.md
+              - Fundamentos:
+                  - Resolução:
+                      - Resolver: aprender/rede/dns/resolver.md
+                      - Servidor autoritativo: aprender/rede/dns/authoritative.md
+                      - Servidores DNS: aprender/rede/dns/servers.md
+                  - Dados de zona:
+                      - Zona: aprender/rede/dns/zone.md
+                      - Registros: aprender/rede/dns/records.md
+                      - Mapa de resolução, zonas e registros DNS: aprender/resolucao-zonas-e-registros-dns.md
+              - Implementações:
+                  - BIND 9: aprender/rede/dns/bind.md
+                  - PowerDNS Authoritative Server: aprender/rede/dns/powerdns-authoritative.md
+                  - PowerDNS Recursor: aprender/rede/dns/powerdns-recursor.md
+                  - CoreDNS: aprender/rede/dns/coredns.md
+                  - Technitium DNS: aprender/rede/dns/technitium.md
+                  - dnsmasq: aprender/rede/dns/dnsmasq.md
+              - Segurança:
+                  - DNSSEC: aprender/rede/dns/dnssec.md
+              - Descoberta local:
+                  - mDNS: aprender/rede/dns/mdns.md
+              - Registro:
+                  - Registro de domínio: aprender/rede/dns/registro-de-dominio.md
+              - Atualização:
+                  - DNS dinâmico: aprender/rede/dns/ddns.md
+                  - No-IP: aprender/rede/dns/no-ip.md
+              - Diagnóstico:
+                  - Reverse DNS: aprender/rede/dns/reverse-dns.md
+              - Arquiteturas:
+                  - Split-horizon DNS: aprender/rede/dns/split-horizon.md
           - Correio eletrônico:
               - Visão geral: aprender/rede/email/index.md
-              - SMTP: aprender/rede/email/smtp.md
-              - POP3: aprender/rede/email/pop3.md
-              - IMAP: aprender/rede/email/imap.md
-              - DKIM: aprender/rede/email/dkim.md
-              - SPF: aprender/rede/email/spf.md
-              - DMARC: aprender/rede/email/dmarc.md
+              - Protocolos de caixa postal:
+                  - SMTP: aprender/rede/email/smtp.md
+                  - POP3: aprender/rede/email/pop3.md
+                  - IMAP: aprender/rede/email/imap.md
+              - Autenticação de domínio:
+                  - DKIM: aprender/rede/email/dkim.md
+                  - SPF: aprender/rede/email/spf.md
+                  - DMARC: aprender/rede/email/dmarc.md
           - Topologias:
               - Visão geral: aprender/rede/topologias/index.md
           - Roteamento:
               - Visão geral: aprender/rede/roteamento/index.md
-              - BGP: aprender/rede/roteamento/bgp.md
-              - Autonomous System: aprender/rede/roteamento/autonomous-system.md
-              - ASN: aprender/rede/roteamento/asn.md
-              - RPKI: aprender/rede/roteamento/rpki.md
-              - ROA: aprender/rede/roteamento/roa.md
-              - uRPF: aprender/rede/roteamento/urpf.md
-              - BCP 38: aprender/rede/roteamento/bcp38.md
-              - Policy routing: aprender/rede/roteamento/policy-routing.md
-              - OPNsense: aprender/rede/roteamento/opnsense.md
-              - pfSense: aprender/rede/roteamento/pfsense.md
-              - OpenWrt: aprender/rede/roteamento/openwrt.md
-              - Proxmox SDN: aprender/rede/roteamento/proxmox-sdn.md
+              - Protocolos:
+                  - BGP:
+                      - BGP: aprender/rede/roteamento/bgp.md
+                      - Autonomous System: aprender/rede/roteamento/autonomous-system.md
+                      - ASN: aprender/rede/roteamento/asn.md
+                  - Segurança:
+                      - RPKI: aprender/rede/roteamento/rpki.md
+                      - ROA: aprender/rede/roteamento/roa.md
+                      - uRPF: aprender/rede/roteamento/urpf.md
+              - Políticas:
+                  - BCP 38: aprender/rede/roteamento/bcp38.md
+                  - Policy routing: aprender/rede/roteamento/policy-routing.md
+              - Plataformas:
+                  - OPNsense: aprender/rede/roteamento/opnsense.md
+                  - pfSense: aprender/rede/roteamento/pfsense.md
+                  - OpenWrt: aprender/rede/roteamento/openwrt.md
+                  - Proxmox SDN: aprender/rede/roteamento/proxmox-sdn.md
           - Fabricantes:
               - Visão geral: aprender/rede/fabricantes/index.md
-              - Plataformas:
-                  - Visão geral: aprender/rede/fabricantes/plataformas/index.md
+              - Empresas:
                   - Cisco: aprender/rede/fabricantes/cisco.md
-                  - TP-Link e Omada: aprender/rede/fabricantes/tp-link-omada.md
+                  - TP-Link Omada: aprender/rede/fabricantes/tp-link-omada.md
                   - Netgate: aprender/rede/fabricantes/netgate.md
                   - MikroTik: aprender/rede/fabricantes/mikrotik.md
                   - Ubiquiti: aprender/rede/fabricantes/ubiquiti.md
-                  - Comparativo: aprender/rede/fabricantes/comparativo.md
+              - Plataformas:
+                  - Visão geral: aprender/rede/fabricantes/plataformas/index.md
+              - Comparações:
+                  - Comparação de fabricantes e plataformas de rede: aprender/rede/fabricantes/comparativo.md
           - Service mesh:
               - Visão geral: aprender/rede/service-mesh/index.md
               - Arquiteturas:
@@ -589,15 +810,17 @@ nav:
                   - Cilium Service Mesh: aprender/rede/service-mesh/cilium-service-mesh.md
           - Proxies:
               - Visão geral: aprender/rede/proxy/index.md
-              - Squid: aprender/rede/proxy/squid.md
-              - HAProxy: aprender/rede/proxy/haproxy.md
-              - Forward proxy: aprender/rede/proxy/forward-proxy.md
-              - Reverse proxy: aprender/rede/proxy/reverse-proxy.md
-              - Host-based routing: aprender/rede/proxy/host-routing.md
-              - Path-based routing: aprender/rede/proxy/path-routing.md
-          - CDN: aprender/rede/cdn.md
-          - DNS:
-              - Split-horizon DNS: aprender/rede/dns/split-horizon.md
+              - Implementações:
+                  - Squid: aprender/rede/proxy/squid.md
+                  - HAProxy: aprender/rede/proxy/haproxy.md
+              - Funções:
+                  - Forward proxy: aprender/rede/proxy/forward-proxy.md
+                  - Reverse proxy: aprender/rede/proxy/reverse-proxy.md
+              - Roteamento HTTP:
+                  - Host-based routing: aprender/rede/proxy/host-routing.md
+                  - Path-based routing: aprender/rede/proxy/path-routing.md
+          - Entrega de conteúdo:
+              - CDN: aprender/rede/cdn.md
           - Governança da Internet:
               - Visão geral: aprender/rede/governanca/index.md
               - Organizações:
@@ -610,7 +833,7 @@ nav:
                       - IX.br: aprender/rede/governanca/ix-br.md
                   - Recursos de numeração:
                       - LACNIC: aprender/rede/governanca/lacnic.md
-                      - Alocação de endereços IP: aprender/rede/governanca/alocacao-de-enderecos-ip.md
+                      - Mapa de alocação e reserva de endereços IP: aprender/rede/governanca/alocacao-de-enderecos-ip.md
                   - Regulação:
                       - Anatel: aprender/rede/governanca/anatel.md
                   - Proteção de dados:
@@ -630,122 +853,164 @@ nav:
               - Great Firewall: aprender/rede/censura/great-firewall.md
               - Snowflake: aprender/rede/censura/snowflake.md
           - Conectividade:
-              - VPN: aprender/rede/conectividade/vpn.md
-              - Túneis: aprender/rede/conectividade/tunel.md
-              - Borda de rede: aprender/rede/conectividade/borda.md
-              - WAN: aprender/rede/conectividade/wan.md
-              - Internet Exchange Point: aprender/rede/conectividade/ixp.md
-              - VPNs, túneis e bordas: aprender/vpns-tuneis-e-bordas-de-rede.md
+              - Túneis:
+                  - VPN: aprender/rede/conectividade/vpn.md
+                  - Túneis: aprender/rede/conectividade/tunel.md
+              - Borda:
+                  - Borda de rede: aprender/rede/conectividade/borda.md
+                  - WAN: aprender/rede/conectividade/wan.md
+                  - Internet Exchange Point: aprender/rede/conectividade/ixp.md
+              - Composição:
+                  - Mapa de VPNs, túneis e bordas: aprender/vpns-tuneis-e-bordas-de-rede.md
           - Firewalls:
-              - Tipos de firewall: aprender/rede/firewall/index.md
-              - Deep Packet Inspection: aprender/rede/firewall/deep-packet-inspection.md
-              - firewalld: aprender/firewalld.md
-              - Netfilter e nftables: aprender/netfilter-nftables-e-diagnostico.md
-              - UFW e portas Docker: aprender/ufw-e-portas-publicadas-pelo-docker.md
+              - Fundamentos:
+                  - Tipos de firewall: aprender/rede/firewall/index.md
+                  - Deep Packet Inspection: aprender/rede/firewall/deep-packet-inspection.md
+              - Implementações:
+                  - firewalld: aprender/firewalld.md
+                  - Mapa de Netfilter e nftables: aprender/netfilter-nftables-e-diagnostico.md
+                  - Mapa de UFW e portas Docker: aprender/ufw-e-portas-publicadas-pelo-docker.md
           - API gateways:
               - Visão geral: aprender/rede/api-gateway/index.md
-              - Service: aprender/rede/api-gateway/service.md
-              - Route: aprender/rede/api-gateway/route.md
-              - Plugin: aprender/rede/api-gateway/plugin.md
-              - Consumer: aprender/rede/api-gateway/consumer.md
-              - Upstream e target: aprender/rede/api-gateway/upstream.md
-              - Kong e catálogo: aprender/kong-e-o-catalogo-de-um-api-gateway.md
+              - Recursos:
+                  - Service: aprender/rede/api-gateway/service.md
+                  - Route: aprender/rede/api-gateway/route.md
+                  - Plugin: aprender/rede/api-gateway/plugin.md
+                  - Consumer: aprender/rede/api-gateway/consumer.md
+                  - Mapa de upstream e target: aprender/rede/api-gateway/upstream.md
+              - Implementações:
+                  - Mapa de Kong e catálogo: aprender/kong-e-o-catalogo-de-um-api-gateway.md
           - Rate limiting:
               - Visão geral: aprender/rede/rate-limiting/index.md
-              - Política local e compartilhada: aprender/rate-limiting-politica-local-e-compartilhada.md
-              - Fixed window: aprender/rede/rate-limiting/fixed-window.md
-              - Sliding window: aprender/rede/rate-limiting/sliding-window.md
-              - Token bucket: aprender/rede/rate-limiting/token-bucket.md
-              - Leaky bucket: aprender/rede/rate-limiting/leaky-bucket.md
-              - Falhas recorrentes e limitação adaptativa: aprender/rede/rate-limiting/falhas-recorrentes.md
+              - Estratégias:
+                  - Comparações:
+                      - Comparação entre políticas local e compartilhada: aprender/rate-limiting-politica-local-e-compartilhada.md
+                  - Janelas:
+                      - Fixed window: aprender/rede/rate-limiting/fixed-window.md
+                      - Sliding window: aprender/rede/rate-limiting/sliding-window.md
+                  - Baldes:
+                      - Token bucket: aprender/rede/rate-limiting/token-bucket.md
+                      - Leaky bucket: aprender/rede/rate-limiting/leaky-bucket.md
+              - Adaptação:
+                  - Mapa de falhas recorrentes e limitação adaptativa: aprender/rede/rate-limiting/falhas-recorrentes.md
           - Rede de cluster:
-              - Rede interna do cluster: aprender/rede-interna-do-cluster.md
+              - Fundamentos:
+                  - Rede interna do cluster: aprender/rede-interna-do-cluster.md
+                  - Mapa de topologias, rede e falhas num K3s multinó: aprender/topologias-rede-e-falhas-em-k3s-multino.md
               - CNI:
-                  - Visão geral: aprender/rede/cni/index.md
                   - Fundamentos:
                       - eBPF: aprender/rede/cni/ebpf.md
                       - Encapsulamento: aprender/rede/cni/encapsulamento.md
                       - Roteamento nativo: aprender/rede/cni/native-routing.md
+              - Implementações:
                   - Cilium:
                       - Visão geral: aprender/rede/cni/cilium.md
                       - Hubble: aprender/rede/cni/hubble.md
                       - Kube-proxy replacement: aprender/rede/cni/kube-proxy-replacement.md
-                  - Calico: aprender/rede/cni/calico.md
-              - Topologias K3s multinó: aprender/topologias-rede-e-falhas-em-k3s-multino.md
+                  - Calico:
+                      - Visão geral: aprender/rede/cni/calico.md
+                  - Visão geral: aprender/rede/cni/index.md
       - Kubernetes:
           - Visão geral: aprender/kubernetes/index.md
           - Distribuições:
-              - Kubernetes gerenciado e self-hosted: aprender/comparacoes/plataforma/gerenciado-self-hosted.md
+              - Comparação entre Kubernetes gerenciado e self-hosted: aprender/comparacoes/plataforma/gerenciado-self-hosted.md
               - K3s: aprender/k3s.md
           - Arquitetura:
               - Alta disponibilidade multizona: aprender/kubernetes/arquitetura/ha-multizona.md
               - Quorum: aprender/kubernetes/control-plane/quorum.md
               - Datastore do K3s: aprender/kubernetes/control-plane/datastore.md
           - Objetos fundamentais:
-              - Pod: aprender/kubernetes/core/pod.md
-              - ReplicaSet: aprender/kubernetes/core/replicaset.md
-              - Deployment: aprender/kubernetes/core/deployment.md
-              - StatefulSet: aprender/kubernetes/core/statefulset.md
-              - DaemonSet: aprender/kubernetes/core/daemonset.md
-              - Service: aprender/kubernetes/core/service.md
-              - Namespace: aprender/kubernetes/core/namespace.md
-              - ConfigMap: aprender/kubernetes/core/configmap.md
-              - Secret: aprender/kubernetes/core/secret.md
-              - ServiceAccount: aprender/kubernetes/core/serviceaccount.md
+              - Workloads:
+                  - Pod: aprender/kubernetes/core/pod.md
+                  - ReplicaSet: aprender/kubernetes/core/replicaset.md
+                  - Deployment: aprender/kubernetes/core/deployment.md
+                  - StatefulSet: aprender/kubernetes/core/statefulset.md
+                  - DaemonSet: aprender/kubernetes/core/daemonset.md
+              - Rede:
+                  - Service: aprender/kubernetes/core/service.md
+              - Escopo:
+                  - Namespace: aprender/kubernetes/core/namespace.md
+              - Configuração:
+                  - ConfigMap: aprender/kubernetes/core/configmap.md
+                  - Secret: aprender/kubernetes/core/secret.md
+              - Identidade:
+                  - ServiceAccount: aprender/kubernetes/core/serviceaccount.md
           - Control plane:
-              - API server: aprender/kubernetes/control-plane/api-server.md
-              - Scheduler: aprender/kubernetes/control-plane/scheduler.md
+              - API:
+                  - API server: aprender/kubernetes/control-plane/api-server.md
+              - Scheduling:
+                  - Scheduler: aprender/kubernetes/control-plane/scheduler.md
+              - Reconciliação:
+                  - Controller: aprender/kubernetes/control-plane/controller.md
+              - Datastore:
+                  - etcd: aprender/kubernetes/control-plane/etcd.md
+          - Agentes de nó:
               - Kubelet: aprender/kubernetes/control-plane/kubelet.md
-              - Controller: aprender/kubernetes/control-plane/controller.md
-              - etcd: aprender/kubernetes/control-plane/etcd.md
           - Rede:
-              - NetworkPolicy: aprender/kubernetes/networking/network-policy.md
-              - Ingress: aprender/kubernetes/networking/ingress.md
-              - CNI: aprender/kubernetes/networking/cni.md
-              - kube-proxy: aprender/kubernetes/networking/kube-proxy.md
+              - Políticas:
+                  - NetworkPolicy: aprender/kubernetes/networking/network-policy.md
+              - Entrada:
+                  - Ingress: aprender/kubernetes/networking/ingress.md
               - Gateway API:
                   - Visão geral: aprender/gateway-api.md
                   - GatewayClass: aprender/rede/gateway-api/gateway-class.md
                   - Gateway: aprender/rede/gateway-api/gateway.md
                   - HTTPRoute: aprender/rede/gateway-api/http-route.md
+              - Data plane:
+                  - CNI: aprender/kubernetes/networking/cni.md
+                  - kube-proxy: aprender/kubernetes/networking/kube-proxy.md
           - Scheduling:
               - Taints:
                   - Visão geral: aprender/kubernetes/scheduling/taints-tolerations.md
                   - Taints: aprender/kubernetes/scheduling/taints.md
                   - Tolerations: aprender/kubernetes/scheduling/tolerations.md
-              - Affinity: aprender/kubernetes/scheduling/affinity.md
-              - Topology spread constraints: aprender/kubernetes/scheduling/topology-spread.md
+              - Posicionamento:
+                  - Affinity: aprender/kubernetes/scheduling/affinity.md
+                  - Topology spread constraints: aprender/kubernetes/scheduling/topology-spread.md
           - Workloads batch:
-              - Job: aprender/kubernetes/workloads/job.md
-              - CronJob: aprender/kubernetes/workloads/cronjob.md
-              - Restart policy: aprender/kubernetes/workloads/restart-policy.md
-              - Backoff limit: aprender/kubernetes/workloads/backoff-limit.md
-              - Active deadline: aprender/kubernetes/workloads/active-deadline.md
-              - Concurrency policy: aprender/kubernetes/workloads/concurrency-policy.md
-              - Starting deadline: aprender/kubernetes/workloads/starting-deadline.md
-              - Idempotência: aprender/kubernetes/workloads/idempotencia.md
+              - Workloads:
+                  - Job: aprender/kubernetes/workloads/job.md
+                  - CronJob: aprender/kubernetes/workloads/cronjob.md
+              - Políticas de execução:
+                  - Restart policy: aprender/kubernetes/workloads/restart-policy.md
+                  - Backoff limit: aprender/kubernetes/workloads/backoff-limit.md
+                  - Active deadline: aprender/kubernetes/workloads/active-deadline.md
+                  - Concurrency policy: aprender/kubernetes/workloads/concurrency-policy.md
+                  - Starting deadline: aprender/kubernetes/workloads/starting-deadline.md
+              - Semântica:
+                  - Idempotência: aprender/kubernetes/workloads/idempotencia.md
           - Segurança de workload:
-              - SecurityContext: aprender/kubernetes/seguranca/security-context.md
-              - Run as non-root: aprender/kubernetes/seguranca/run-as-non-root.md
-              - Privilege escalation: aprender/kubernetes/seguranca/allow-privilege-escalation.md
-              - Linux capabilities: aprender/kubernetes/seguranca/linux-capabilities.md
-              - seccomp: aprender/kubernetes/seguranca/seccomp.md
-              - Read-only root filesystem: aprender/kubernetes/seguranca/read-only-root-filesystem.md
-              - ServiceAccount token: aprender/kubernetes/seguranca/service-account-token.md
+              - Identidade:
+                  - SecurityContext: aprender/kubernetes/seguranca/security-context.md
+                  - ServiceAccount token: aprender/kubernetes/seguranca/service-account-token.md
+              - Privilégios:
+                  - Run as non-root: aprender/kubernetes/seguranca/run-as-non-root.md
+                  - Privilege escalation: aprender/kubernetes/seguranca/allow-privilege-escalation.md
+                  - Linux capabilities: aprender/kubernetes/seguranca/linux-capabilities.md
+                  - seccomp: aprender/kubernetes/seguranca/seccomp.md
+              - Filesystem:
+                  - Read-only root filesystem: aprender/kubernetes/seguranca/read-only-root-filesystem.md
           - Recursos:
               - Recursos de workload:
                   - Visão geral: aprender/kubernetes/recursos/index.md
-                  - Requests: aprender/kubernetes/recursos/requests.md
-                  - Limits: aprender/kubernetes/recursos/limits.md
-                  - QoS: aprender/kubernetes/recursos/qos.md
-                  - Liveness probe: aprender/kubernetes/recursos/liveness-probe.md
-                  - Readiness probe: aprender/kubernetes/recursos/readiness-probe.md
-                  - Startup probe: aprender/kubernetes/recursos/startup-probe.md
-                  - PodDisruptionBudget: aprender/kubernetes/recursos/pdb.md
-                  - Graceful shutdown: aprender/kubernetes/recursos/graceful-shutdown.md
+                  - Alocação:
+                      - CPU no Kubernetes: aprender/kubernetes/recursos/cpu.md
+                      - Unidades de recursos: aprender/kubernetes/recursos/unidades.md
+                      - Requests: aprender/kubernetes/recursos/requests.md
+                      - Limits: aprender/kubernetes/recursos/limits.md
+                      - QoS: aprender/kubernetes/recursos/qos.md
+                  - Saúde:
+                      - Liveness probe: aprender/kubernetes/recursos/liveness-probe.md
+                      - Readiness probe: aprender/kubernetes/recursos/readiness-probe.md
+                      - Startup probe: aprender/kubernetes/recursos/startup-probe.md
+                  - Interrupção:
+                      - PodDisruptionBudget: aprender/kubernetes/recursos/pdb.md
+                      - Graceful shutdown: aprender/kubernetes/recursos/graceful-shutdown.md
           - Extensibilidade:
-              - CustomResourceDefinition: aprender/kubernetes/extensibility/crd.md
-              - Admission control: aprender/kubernetes/extensibility/admission-control.md
+              - Recursos:
+                  - CustomResourceDefinition: aprender/kubernetes/extensibility/crd.md
+              - Admission:
+                  - Admission control: aprender/kubernetes/extensibility/admission-control.md
               - Operators:
                   - Visão geral: aprender/kubernetes-operators.md
                   - CloudNativePG: aprender/kubernetes/extensibility/cloudnative-pg.md
@@ -756,47 +1021,66 @@ nav:
               - Finalizers: aprender/kubernetes/lifecycle/finalizers.md
               - Owner references: aprender/kubernetes/lifecycle/owner-references.md
           - Armazenamento:
-              - PersistentVolume: aprender/kubernetes/storage/persistent-volume.md
-              - PersistentVolumeClaim: aprender/kubernetes/storage/persistent-volume-claim.md
-              - StorageClass: aprender/kubernetes/storage/storage-class.md
-              - CSI: aprender/kubernetes/storage/csi.md
-              - Modos de acesso: aprender/kubernetes/storage/access-modes.md
-              - Reclaim policy: aprender/kubernetes/storage/reclaim-policy.md
-              - Armazenamento local e distribuído: aprender/kubernetes/storage/local-distributed.md
-              - Longhorn: aprender/kubernetes/storage/longhorn.md
-              - Estratégias de armazenamento: aprender/armazenamento-local-distribuido-e-longhorn.md
-              - Modelo de armazenamento: aprender/modelo-de-armazenamento-do-kubernetes.md
+              - Volumes:
+                  - PersistentVolume: aprender/kubernetes/storage/persistent-volume.md
+                  - PersistentVolumeClaim: aprender/kubernetes/storage/persistent-volume-claim.md
+                  - StorageClass: aprender/kubernetes/storage/storage-class.md
+              - Interface:
+                  - CSI: aprender/kubernetes/storage/csi.md
+              - Políticas:
+                  - Modos de acesso: aprender/kubernetes/storage/access-modes.md
+                  - Reclaim policy: aprender/kubernetes/storage/reclaim-policy.md
+              - Arquitetura:
+                  - Comparações:
+                      - Comparação entre armazenamento local e distribuído: aprender/kubernetes/storage/local-distributed.md
+                  - Implementações:
+                      - Longhorn: aprender/kubernetes/storage/longhorn.md
+                  - Modelos:
+                      - Estratégias de armazenamento: aprender/armazenamento-local-distribuido-e-longhorn.md
+                      - Modelo de armazenamento: aprender/modelo-de-armazenamento-do-kubernetes.md
           - Empacotamento:
               - Helm:
                   - Visão geral: aprender/containers/packaging/helm.md
                   - Chart: aprender/containers/packaging/chart.md
-              - Templating de listas: aprender/helm-templating-de-lista.md
+              - Templates:
+                  - Templating de listas: aprender/helm-templating-de-lista.md
       - Infraestrutura como código:
-          - Visão geral: aprender/iac-provisionamento.md
-          - DevOps, IaC e GitOps: aprender/devops-iac-gitops.md
-          - Estado desejado: aprender/iac/desired-state.md
-          - Idempotência: aprender/iac/idempotence.md
-          - State: aprender/iac/state.md
-          - State locking: aprender/iac/state-locking.md
-          - Drift: aprender/iac/drift.md
-          - Provider: aprender/iac/provider.md
-          - Resource: aprender/iac/resource.md
-          - Data source: aprender/iac/data-source.md
-          - HCL: aprender/iac/hcl.md
-          - OpenTofu:
-              - Visão geral: aprender/iac/opentofu.md
-              - Tutorial completo: aprender/iac/opentofu-tutorial.md
-              - Providers:
-                  - Visão geral: aprender/iac/providers/index.md
-                  - Cloudflare: aprender/iac/providers/cloudflare.md
-                  - Proxmox: aprender/iac/providers/proxmox.md
-                  - OPNsense: aprender/iac/providers/opnsense.md
-                  - Keycloak: aprender/iac/providers/keycloak.md
-                  - AWS: aprender/iac/providers/aws.md
-                  - GKE: aprender/iac/providers/gke.md
-                  - Azure: aprender/iac/providers/azure.md
-              - Terraform: aprender/iac/terraform.md
-          - Pulumi: aprender/iac/pulumi.md
+          - Visão geral: aprender/iac/index.md
+          - Conceitos:
+              - Mapas:
+                  - Mapa de DevOps, IaC e GitOps: aprender/devops-iac-gitops.md
+              - Princípios:
+                  - Estado desejado: aprender/iac/desired-state.md
+                  - Idempotência: aprender/iac/idempotence.md
+              - Estado:
+                  - State: aprender/iac/state.md
+                  - State locking: aprender/iac/state-locking.md
+                  - Drift: aprender/iac/drift.md
+          - Modelo de recursos:
+              - Recursos:
+                  - Provider: aprender/iac/provider.md
+                  - Resource: aprender/iac/resource.md
+                  - Data source: aprender/iac/data-source.md
+              - Linguagem:
+                  - HCL: aprender/iac/hcl.md
+          - Implementações:
+              - OpenTofu:
+                  - Visão geral: aprender/iac/opentofu/index.md
+                  - Guias:
+                      - Tutorial completo: aprender/iac/opentofu-tutorial.md
+                  - Providers:
+                      - Visão geral: aprender/iac/providers/index.md
+                      - Cloudflare: aprender/iac/providers/cloudflare.md
+                      - Proxmox: aprender/iac/providers/proxmox.md
+                      - OPNsense: aprender/iac/providers/opnsense.md
+                      - Keycloak: aprender/iac/providers/keycloak.md
+                      - AWS: aprender/iac/providers/aws.md
+                      - GKE: aprender/iac/providers/gke.md
+                      - Azure: aprender/iac/providers/azure.md
+                  - Compatibilidade:
+                      - Terraform: aprender/iac/terraform.md
+              - Pulumi:
+                  - Visão geral: aprender/iac/pulumi.md
       - Automação operacional:
           - Visão geral: aprender/automacao/index.md
           - Ansible:
@@ -806,24 +1090,31 @@ nav:
               - Visão geral: aprender/provisionamento/index.md
               - Imagens:
                   - Visão geral: aprender/provisionamento/imagens/index.md
-                  - Cloud image: aprender/provisionamento/cloud-image.md
-                  - cloud-init: aprender/provisionamento/cloud-init.md
-                  - Foreman: aprender/provisionamento/foreman.md
-          - Configuração de frotas: aprender/entregar-configuracao-a-uma-frota-de-hosts.md
+                  - Artefatos:
+                      - Cloud image: aprender/provisionamento/cloud-image.md
+                  - Inicialização:
+                      - cloud-init: aprender/provisionamento/cloud-init.md
+                  - Plataformas:
+                      - Foreman: aprender/provisionamento/foreman.md
+          - Frotas:
+              - Configuração de frotas: aprender/entregar-configuracao-a-uma-frota-de-hosts.md
           - Ferramentas de acesso remoto:
               - Visão geral: aprender/ferramentas/acesso-remoto/index.md
-              - Cockpit: aprender/ferramentas/acesso-remoto/cockpit.md
-              - Termius: aprender/ferramentas/acesso-remoto/termius.md
-              - RustConn: aprender/ferramentas/acesso-remoto/rustconn.md
+              - Ferramentas:
+                  - Cockpit: aprender/ferramentas/acesso-remoto/cockpit.md
+                  - Termius: aprender/ferramentas/acesso-remoto/termius.md
+                  - RustConn: aprender/ferramentas/acesso-remoto/rustconn.md
               - Protocolos:
                   - RDP: aprender/ferramentas/acesso-remoto/rdp.md
                   - Acesso remoto do Windows: aprender/ferramentas/acesso-remoto/windows-remote-desktop.md
                   - Telnet: aprender/ferramentas/acesso-remoto/telnet.md
               - Transportes:
-                  - SPICE: aprender/ferramentas/acesso-remoto/spice.md
-                  - VNC: aprender/ferramentas/acesso-remoto/vnc.md
-                  - xterm e X11 remoto: aprender/ferramentas/acesso-remoto/xterm.md
-                  - SOCKS5: aprender/ferramentas/acesso-remoto/socks5.md
+                  - Display remoto:
+                      - SPICE: aprender/ferramentas/acesso-remoto/spice.md
+                      - VNC: aprender/ferramentas/acesso-remoto/vnc.md
+                      - Mapa de xterm e X11 remoto: aprender/ferramentas/acesso-remoto/xterm.md
+                  - Proxy:
+                      - SOCKS5: aprender/ferramentas/acesso-remoto/socks5.md
               - Suporte remoto:
                   - RustDesk: aprender/ferramentas/acesso-remoto/rustdesk.md
                   - AnyDesk: aprender/ferramentas/acesso-remoto/anydesk.md
@@ -831,24 +1122,26 @@ nav:
           - Desenvolvimento remoto:
               - Visão geral: aprender/ferramentas/desenvolvimento-remoto/index.md
               - VS Code: aprender/ferramentas/desenvolvimento-remoto/vscode.md
-              - IntelliJ e JetBrains Gateway: aprender/ferramentas/desenvolvimento-remoto/intellij.md
+              - Desenvolvimento remoto com IntelliJ: aprender/ferramentas/desenvolvimento-remoto/intellij.md
               - Zed: aprender/ferramentas/desenvolvimento-remoto/zed.md
           - SSH:
               - Visão geral: aprender/ssh.md
               - Tunelamento de portas: aprender/ssh-port-forwarding.md
       - Entrega de software:
           - Visão geral: aprender/entrega/index.md
-          - Versionamento de releases e identificadores: aprender/entrega/versionamento-de-releases.md
+          - Releases:
+              - Mapa de versionamento de releases e identificadores: aprender/entrega/versionamento-de-releases.md
           - GitOps:
               - Visão geral: aprender/entrega/gitops/index.md
-              - GitOps: aprender/entrega/gitops.md
+              - Fundamentos:
+                  - GitOps: aprender/entrega/gitops.md
               - Reconciliação:
                   - Visão geral: aprender/entrega/gitops/reconciliacao/index.md
                   - Reconciliação: aprender/entrega/reconciliation.md
                   - Entrega pull-based: aprender/entrega/pull-based-delivery.md
                   - Entrega push-based: aprender/entrega/push-based-delivery.md
                   - Drift em GitOps: aprender/entrega/drift.md
-                  - Sync, prune e self-heal: aprender/entrega/sync-prune-self-heal.md
+                  - Mapa de sync, prune e self-heal: aprender/entrega/sync-prune-self-heal.md
               - Argo CD:
                   - Visão geral: aprender/argocd.md
                   - Tutorial completo: aprender/entrega/argocd-tutorial.md
@@ -857,14 +1150,16 @@ nav:
                   - AppProject: aprender/entrega/appproject.md
                   - ApplicationSet: aprender/entrega/applicationset.md
                   - App of apps: aprender/entrega/app-of-apps.md
-              - Flux: aprender/entrega/flux.md
+              - Implementações:
+                  - Flux: aprender/entrega/flux.md
               - GitOps para hosts Podman:
                   - orches: aprender/entrega/orches.md
                   - materia: aprender/entrega/materia.md
               - Kargo:
                   - Visão geral: aprender/entrega/kargo.md
                   - Tutorial completo: aprender/entrega/kargo-tutorial.md
-          - CI/CD: aprender/ci-cd.md
+          - Pipelines:
+              - CI/CD: aprender/ci-cd.md
           - GitLab Runner:
               - Docker executor: aprender/ci/gitlab-runner/docker-executor.md
               - Kubernetes executor: aprender/ci/gitlab-runner/kubernetes-executor.md
@@ -873,16 +1168,18 @@ nav:
               - Visão geral: aprender/entrega/rollouts/index.md
               - Entrega progressiva:
                   - Visão geral: aprender/entrega/rollouts/progressiva/index.md
-                  - Canary: aprender/entrega/progressiva/canary.md
-                  - Blue-green: aprender/entrega/progressiva/blue-green.md
-                  - Argo Rollouts: aprender/entrega/progressiva/argo-rollouts.md
+                  - Estratégias:
+                      - Canary: aprender/entrega/progressiva/canary.md
+                      - Blue-green: aprender/entrega/progressiva/blue-green.md
+                  - Implementações:
+                      - Argo Rollouts: aprender/entrega/progressiva/argo-rollouts.md
           - Ativação de funcionalidades:
               - Visão geral: aprender/entrega/ativacao/index.md
               - Feature flags: aprender/feature-flags.md
       - Segurança:
           - Visão geral: aprender/seguranca/index.md
           - Segurança contra incêndio:
-              - Extintores, classes e resfriamento: aprender/seguranca/extintores-classes-e-resfriamento.md
+              - Mapa de extintores, classes e resfriamento: aprender/seguranca/extintores-classes-e-resfriamento.md
           - Segurança de aplicações:
               - Visão geral: aprender/seguranca/appsec/index.md
               - SAST:
@@ -903,43 +1200,55 @@ nav:
                   - Visão geral: aprender/seguranca/appsec/fuzzing/index.md
                   - libFuzzer: aprender/seguranca/appsec/fuzzing/libfuzzer.md
                   - OSS-Fuzz: aprender/seguranca/appsec/fuzzing/oss-fuzz.md
-              - Segurança no ciclo de vida: aprender/seguranca/appsec/seguranca-no-ciclo-de-vida.md
-              - RASP: aprender/seguranca/appsec/rasp.md
+              - Ciclo de vida:
+                  - Segurança no ciclo de vida: aprender/seguranca/appsec/seguranca-no-ciclo-de-vida.md
+              - Runtime:
+                  - RASP: aprender/seguranca/appsec/rasp.md
               - SCA:
                   - Visão geral: aprender/seguranca/appsec/sca/index.md
                   - OSV-Scanner: aprender/seguranca/appsec/sca/osv-scanner.md
-              - DAST: aprender/seguranca/appsec/dast.md
-              - Secret scanning: aprender/seguranca/appsec/secret-scanning/index.md
+              - Runtime externo:
+                  - DAST: aprender/seguranca/appsec/dast.md
+              - Segredos:
+                  - Secret scanning: aprender/seguranca/appsec/secret-scanning/index.md
           - Proteção de endpoints:
               - Visão geral: aprender/seguranca/endpoint/index.md
               - Sophos Intercept X for Server: aprender/seguranca/endpoint/sophos.md
               - SentinelOne Singularity Endpoint: aprender/seguranca/endpoint/sentinelone.md
               - Symantec Endpoint Security: aprender/seguranca/endpoint/symantec.md
-          - Segurança de CI/CD:
-              - zizmor: aprender/seguranca/cicd/zizmor.md
-              - Pinagem por digest e hash: aprender/pinagem-por-digest-e-hash.md
+          - Segurança de pipeline:
+              - CI:
+                  - zizmor: aprender/seguranca/cicd/zizmor.md
+              - CD:
+                  - Mapa de pinagem por digest e hash: aprender/pinagem-por-digest-e-hash.md
           - Segurança de IaC:
               - Visão geral: aprender/seguranca/iac/index.md
-              - Checkov: aprender/seguranca/iac/checkov.md
-              - KubeLinter: aprender/seguranca/iac/kubelinter.md
+              - Scanners:
+                  - Checkov: aprender/seguranca/iac/checkov.md
+                  - KubeLinter: aprender/seguranca/iac/kubelinter.md
               - Policy enforcement:
                   - Visão geral: aprender/seguranca/iac/policy-enforcement.md
                   - Kubescape: aprender/seguranca/iac/kubescape.md
           - PKI:
               - Visão geral: aprender/seguranca/pki/index.md
-              - Certificado X.509: aprender/seguranca/pki/certificate.md
-              - CSR: aprender/seguranca/pki/csr.md
-              - SAN: aprender/seguranca/pki/san.md
+              - Identidade de certificado:
+                  - Certificado X.509: aprender/seguranca/pki/certificate.md
+                  - CSR: aprender/seguranca/pki/csr.md
+                  - SAN: aprender/seguranca/pki/san.md
               - Confiança:
                   - Visão geral: aprender/seguranca/pki/confianca/index.md
-                  - Certificate Authority: aprender/seguranca/pki/ca.md
-                  - Root CA: aprender/seguranca/pki/root-ca.md
-                  - Intermediate CA: aprender/seguranca/pki/intermediate-ca.md
-                  - Cadeia de certificados: aprender/seguranca/pki/certificate-chain.md
-                  - Trust store: aprender/seguranca/pki/trust-store.md
-                  - ACME: aprender/seguranca/pki/acme.md
-                  - cert-manager: aprender/seguranca/pki/cert-manager.md
-                  - Dogtag: aprender/seguranca/pki/dogtag.md
+                  - Autoridades:
+                      - Certificate Authority: aprender/seguranca/pki/ca.md
+                      - Root CA: aprender/seguranca/pki/root-ca.md
+                      - Intermediate CA: aprender/seguranca/pki/intermediate-ca.md
+                  - Cadeias:
+                      - Cadeia de certificados: aprender/seguranca/pki/certificate-chain.md
+                      - Trust store: aprender/seguranca/pki/trust-store.md
+                      - ICP-Brasil: aprender/seguranca/pki/icp-brasil.md
+                  - Automação:
+                      - ACME: aprender/seguranca/pki/acme.md
+                      - cert-manager: aprender/seguranca/pki/cert-manager.md
+                      - Dogtag: aprender/seguranca/pki/dogtag.md
               - TLS:
                   - Visão geral: aprender/seguranca/tls/index.md
                   - TLS 1.3: aprender/seguranca/tls/tls13.md
@@ -948,51 +1257,108 @@ nav:
                   - TLS termination: aprender/seguranca/tls/termination.md
                   - TLS passthrough: aprender/seguranca/tls/passthrough.md
                   - Forward secrecy: aprender/seguranca/tls/forward-secrecy.md
-                  - Fingerprinting de TLS e HTTP: aprender/seguranca/tls/fingerprinting.md
+                  - Mapa de fingerprinting de TLS e HTTP: aprender/seguranca/tls/fingerprinting.md
               - Revogação:
                   - Visão geral: aprender/seguranca/pki/revocation.md
                   - OCSP: aprender/seguranca/pki/ocsp.md
-              - TLS automático: aprender/tls-automatico.md
-              - step-ca: aprender/seguranca/pki/step-ca.md
-              - trust-manager: aprender/seguranca/pki/trust-manager.md
-          - Hashing de senhas:
-              - Visão geral: aprender/seguranca/criptografia/index.md
-              - Argon2: aprender/seguranca/criptografia/argon2.md
-              - bcrypt: aprender/seguranca/criptografia/bcrypt.md
+              - Emissão:
+                  - TLS automático: aprender/tls-automatico.md
+                  - step-ca: aprender/seguranca/pki/step-ca.md
+              - Distribuição:
+                  - trust-manager: aprender/seguranca/pki/trust-manager.md
+          - Criptografia:
+              - Fundamentos:
+                  - Visão geral: aprender/seguranca/criptografia/hash.md
+              - Hash:
+                  - Hashing de senhas: aprender/seguranca/criptografia/index.md
+                  - Argon2: aprender/seguranca/criptografia/argon2.md
+                  - bcrypt: aprender/seguranca/criptografia/bcrypt.md
+              - Autenticação de mensagens:
+                  - HMAC: aprender/seguranca/criptografia/hmac.md
+              - Cifras:
+                  - Simétrica: aprender/seguranca/criptografia/criptografia-simetrica.md
+                  - Assimétrica: aprender/seguranca/criptografia/criptografia-assimetrica.md
+                  - Comparação entre hash e criptografia: aprender/seguranca/criptografia/comparativo-hash-cifras.md
+          - Hardware de confiança:
+              - Visão geral: aprender/seguranca/hardware/index.md
+              - Módulos de confiança:
+                  - TPM: aprender/seguranca/hardware/tpm.md
+                  - Secure Enclave: aprender/seguranca/hardware/secure-enclave.md
+              - YubiKey:
+                  - Visão geral: aprender/seguranca/hardware/yubikey/index.md
+                  - YubiKey 5:
+                      - Visão geral: aprender/seguranca/hardware/yubikey/series-5.md
+                      - YubiKey 5 NFC: aprender/seguranca/hardware/yubikey/yubikey-5-nfc.md
+                      - YubiKey 5C NFC: aprender/seguranca/hardware/yubikey/yubikey-5c-nfc.md
+                      - YubiKey 5C: aprender/seguranca/hardware/yubikey/yubikey-5c.md
+                      - YubiKey 5 Nano: aprender/seguranca/hardware/yubikey/yubikey-5-nano.md
+                      - YubiKey 5C Nano: aprender/seguranca/hardware/yubikey/yubikey-5c-nano.md
+                      - YubiKey 5Ci: aprender/seguranca/hardware/yubikey/yubikey-5ci.md
+                  - YubiKey 5 FIPS:
+                      - Visão geral: aprender/seguranca/hardware/yubikey/series-5-fips.md
+                      - YubiKey 5 NFC FIPS: aprender/seguranca/hardware/yubikey/yubikey-5-nfc-fips.md
+                      - YubiKey 5C NFC FIPS: aprender/seguranca/hardware/yubikey/yubikey-5c-nfc-fips.md
+                      - YubiKey 5C FIPS: aprender/seguranca/hardware/yubikey/yubikey-5c-fips.md
+                      - YubiKey 5 Nano FIPS: aprender/seguranca/hardware/yubikey/yubikey-5-nano-fips.md
+                      - YubiKey 5C Nano FIPS: aprender/seguranca/hardware/yubikey/yubikey-5c-nano-fips.md
+                      - YubiKey 5Ci FIPS: aprender/seguranca/hardware/yubikey/yubikey-5ci-fips.md
+                  - YubiKey Bio:
+                      - Visão geral: aprender/seguranca/hardware/yubikey/bio.md
+                      - YubiKey Bio: aprender/seguranca/hardware/yubikey/yubikey-bio.md
+                      - YubiKey C Bio: aprender/seguranca/hardware/yubikey/yubikey-c-bio.md
+                  - Security Key:
+                      - Visão geral: aprender/seguranca/hardware/yubikey/security-key.md
+                      - Security Key NFC: aprender/seguranca/hardware/yubikey/security-key-nfc.md
+                      - Security Key C NFC: aprender/seguranca/hardware/yubikey/security-key-c-nfc.md
+                      - Security Key NFC Enterprise: aprender/seguranca/hardware/yubikey/security-key-nfc-enterprise.md
+                      - Security Key C NFC Enterprise: aprender/seguranca/hardware/yubikey/security-key-c-nfc-enterprise.md
+                  - Operação:
+                      - Firmware: aprender/seguranca/hardware/yubikey/firmware.md
+                      - Modelos legados: aprender/seguranca/hardware/yubikey/legado.md
           - Segredos:
               - Gerenciamento de segredos:
                   - Visão geral: aprender/seguranca/secrets/index.md
-                  - Secret: aprender/seguranca/secrets/secret.md
-                  - Bootstrap: aprender/seguranca/secrets/bootstrap.md
-                  - Rotação: aprender/seguranca/secrets/rotation.md
-                  - SOPS e age: aprender/seguranca/secrets/sops-age.md
-                  - SOPS keyservice: aprender/seguranca/secrets/sops-keyservice.md
-                  - Sealed Secrets: aprender/seguranca/secrets/sealed-secrets.md
-                  - External Secrets Operator: aprender/seguranca/secrets/external-secrets.md
-                  - Vault: aprender/seguranca/secrets/vault.md
-                  - OpenBao: aprender/seguranca/secrets/openbao.md
-                  - Infisical: aprender/seguranca/secrets/infisical.md
-                  - Auto-unseal e KMS: aprender/seguranca/secrets/auto-unseal.md
-                  - Comparação entre Vault e OpenBao: aprender/seguranca/secrets/vault-openbao.md
-              - Secret stores externos: aprender/secret-store-externo.md
-              - Criptografia de segredos no Git: aprender/criptografia-de-segredos-no-git.md
-              - Bootstrap e rotação no ambiente: aprender/bootstrap-e-rotacao-de-segredos.md
-              - Entregar segredo ao consumidor: aprender/entregar-segredo-a-um-consumidor.md
-              - Cofre cifrado em repouso: aprender/cifrar-um-cofre-de-segredos-em-repouso.md
+                  - Fundamentos:
+                      - Secret: aprender/seguranca/secrets/secret.md
+                      - Bootstrap: aprender/seguranca/secrets/bootstrap.md
+                      - Rotação: aprender/seguranca/secrets/rotation.md
+                      - Auto-unseal: aprender/seguranca/secrets/auto-unseal.md
+                  - Criptografia:
+                      - SOPS: aprender/seguranca/secrets/sops.md
+                      - age: aprender/seguranca/secrets/age.md
+                      - SOPS keyservice: aprender/seguranca/secrets/sops-keyservice.md
+                      - Criptografia de segredos no Git: aprender/criptografia-de-segredos-no-git.md
+                  - Controladores:
+                      - Sealed Secrets: aprender/seguranca/secrets/sealed-secrets.md
+                      - External Secrets Operator: aprender/seguranca/secrets/external-secrets.md
+                  - Cofres:
+                      - Vault: aprender/seguranca/secrets/vault.md
+                      - OpenBao: aprender/seguranca/secrets/openbao.md
+                      - Infisical: aprender/seguranca/secrets/infisical.md
+                  - Custódia:
+                      - Custódia de chaves fora do host: aprender/seguranca/secrets/custodia-de-chaves-fora-do-host.md
+                      - Cofre cifrado em repouso: aprender/cifrar-um-cofre-de-segredos-em-repouso.md
+                  - Comparações:
+                      - Comparação entre Vault e OpenBao: aprender/seguranca/secrets/vault-openbao.md
+              - Operação:
+                  - Secret stores externos: aprender/secret-store-externo.md
+                  - Mapa de bootstrap e rotação no ambiente: aprender/bootstrap-e-rotacao-de-segredos.md
+                  - Entregar segredo ao consumidor: aprender/entregar-segredo-a-um-consumidor.md
           - Autorização:
               - Visão geral: aprender/seguranca/autorizacao/index.md
               - Modelos:
                   - Visão geral: aprender/seguranca/autorizacao/modelos/index.md
-                  - ACL: aprender/seguranca/autorizacao/modelos/acl.md
-                  - DAC: aprender/seguranca/autorizacao/modelos/dac.md
-                  - MAC: aprender/seguranca/autorizacao/modelos/mac.md
-                  - RBAC: aprender/seguranca/autorizacao/modelos/rbac.md
-                  - ABAC: aprender/seguranca/autorizacao/modelos/abac.md
-                  - ReBAC: aprender/seguranca/autorizacao/modelos/rebac.md
-                  - Capability-based access control: aprender/seguranca/autorizacao/modelos/capability-based.md
-                  - Policy-based access control: aprender/seguranca/autorizacao/modelos/pbac.md
-                  - Usage control: aprender/seguranca/autorizacao/modelos/ucon.md
-                  - Risk-adaptive access control: aprender/seguranca/autorizacao/modelos/radac.md
+                  - Modelos gerais:
+                      - ACL: aprender/seguranca/autorizacao/modelos/acl.md
+                      - DAC: aprender/seguranca/autorizacao/modelos/dac.md
+                      - MAC: aprender/seguranca/autorizacao/modelos/mac.md
+                      - RBAC: aprender/seguranca/autorizacao/modelos/rbac.md
+                      - ABAC: aprender/seguranca/autorizacao/modelos/abac.md
+                      - ReBAC: aprender/seguranca/autorizacao/modelos/rebac.md
+                      - Capability-based access control: aprender/seguranca/autorizacao/modelos/capability-based.md
+                      - Policy-based access control: aprender/seguranca/autorizacao/modelos/pbac.md
+                      - Usage control: aprender/seguranca/autorizacao/modelos/ucon.md
+                      - Risk-adaptive access control: aprender/seguranca/autorizacao/modelos/radac.md
                   - Modelos especializados:
                       - Visão geral: aprender/seguranca/autorizacao/modelos/especializados/index.md
                       - Task-Based Access Control: aprender/seguranca/autorizacao/modelos/especializados/tbac.md
@@ -1003,16 +1369,31 @@ nav:
                       - Chinese Wall: aprender/seguranca/autorizacao/modelos/especializados/chinese-wall.md
                       - Bell-LaPadula: aprender/seguranca/autorizacao/modelos/especializados/bell-lapadula.md
                       - Biba: aprender/seguranca/autorizacao/modelos/especializados/biba.md
-              - Casbin: aprender/seguranca/autorizacao/casbin.md
-              - Casdoor: aprender/seguranca/autorizacao/casdoor.md
-              - Cedar: aprender/seguranca/autorizacao/cedar.md
-              - CASL: aprender/seguranca/autorizacao/casl.md
-              - OpenFGA: aprender/seguranca/autorizacao/openfga.md
-              - Comparativo: aprender/seguranca/autorizacao/comparativo.md
+              - Implementações:
+                  - Casbin: aprender/seguranca/autorizacao/casbin.md
+                  - Casdoor: aprender/seguranca/autorizacao/casdoor.md
+                  - Cedar: aprender/seguranca/autorizacao/cedar.md
+                  - CASL: aprender/seguranca/autorizacao/casl.md
+                  - OpenFGA: aprender/seguranca/autorizacao/openfga.md
+              - Comparações:
+                  - Comparativo: aprender/seguranca/autorizacao/comparativo.md
           - Identidade:
               - Visão geral: aprender/seguranca/identidade/index.md
               - Fundamentos:
-                  - Autenticação e autorização: aprender/seguranca/identidade/auth.md
+                  - Visão geral: aprender/seguranca/identidade/fundamentos/index.md
+                  - Autenticação:
+                      - Autenticação: aprender/seguranca/identidade/autenticacao.md
+                  - Autorização:
+                      - Autorização: aprender/seguranca/identidade/autorizacao.md
+              - Autenticação sem senha:
+                  - Visão geral: aprender/seguranca/identidade/autenticacao-sem-senha.md
+                  - FIDO2: aprender/seguranca/identidade/fido2.md
+                  - WebAuthn: aprender/seguranca/identidade/webauthn.md
+              - Agentes de chave:
+                  - Visão geral: aprender/seguranca/identidade/agentes/index.md
+                  - SSH agent: aprender/seguranca/identidade/agentes/ssh-agent.md
+                  - GnuPG agent: aprender/seguranca/identidade/agentes/gpg-agent.md
+                  - Agente remoto: aprender/seguranca/identidade/agentes/remote-agent.md
               - OAuth:
                   - OAuth 2.0: aprender/seguranca/identidade/oauth2.md
                   - OpenID Connect: aprender/seguranca/identidade/openid-connect.md
@@ -1021,207 +1402,309 @@ nav:
                   - SAML: aprender/seguranca/identidade/saml.md
               - Diretórios:
                   - Visão geral: aprender/seguranca/identidade/diretorios/index.md
-                  - LDAP: aprender/seguranca/identidade/ldap.md
-                  - FreeIPA: aprender/seguranca/identidade/freeipa.md
-                  - OpenLDAP: aprender/seguranca/identidade/openldap.md
-                  - 389 Directory Server: aprender/seguranca/identidade/389-directory-server.md
-                  - MIT Kerberos: aprender/seguranca/identidade/kerberos.md
-                  - SSSD: aprender/seguranca/identidade/sssd.md
+                  - Protocolos:
+                      - LDAP: aprender/seguranca/identidade/ldap.md
+                  - Servidores:
+                      - FreeIPA: aprender/seguranca/identidade/freeipa.md
+                      - OpenLDAP: aprender/seguranca/identidade/openldap.md
+                      - 389 Directory Server: aprender/seguranca/identidade/389-directory-server.md
+                  - Integração:
+                      - MIT Kerberos: aprender/seguranca/identidade/kerberos.md
+                      - SSSD: aprender/seguranca/identidade/sssd.md
           - Postura:
-              - Zero trust: aprender/zero-trust.md
-              - Threat modeling: aprender/threat-modeling.md
-              - MITRE ATT&CK: aprender/mitre-attack.md
-              - OWASP: aprender/owasp.md
+              - Estratégias:
+                  - Zero trust: aprender/zero-trust.md
+                  - Threat modeling: aprender/threat-modeling.md
+              - Referenciais:
+                  - MITRE ATT&CK: aprender/mitre-attack.md
+                  - OWASP: aprender/owasp.md
           - Governança:
               - Conformidade:
                   - Visão geral: aprender/seguranca/compliance/index.md
-                  - PCI DSS: aprender/seguranca/compliance/pci-dss.md
-                  - HIPAA: aprender/seguranca/compliance/hipaa.md
-                  - SOC 2 e ISO 27001: aprender/frameworks-de-compliance.md
+                  - Normas:
+                      - PCI DSS: aprender/seguranca/compliance/pci-dss.md
+                      - HIPAA: aprender/seguranca/compliance/hipaa.md
+                  - Comparações:
+                      - Comparação entre SOC 2 e ISO 27001: aprender/frameworks-de-compliance.md
           - Supply chain:
               - Visão geral: aprender/seguranca/supply-chain/index.md
-              - SBOM: aprender/seguranca/supply-chain/sbom.md
-              - OpenSSF Scorecard: aprender/seguranca/supply-chain/openssf-scorecard.md
-              - SPDX: aprender/seguranca/supply-chain/spdx.md
-              - CycloneDX: aprender/seguranca/supply-chain/cyclonedx.md
-              - VEX: aprender/seguranca/supply-chain/vex.md
-              - Proveniência: aprender/seguranca/supply-chain/provenance.md
-              - Atestação: aprender/seguranca/supply-chain/attestation.md
-              - Assinatura de artefatos: aprender/seguranca/supply-chain/artifact-signing.md
-              - Checksum: aprender/seguranca/supply-chain/checksum.md
-              - SLSA: aprender/seguranca/supply-chain/slsa.md
-              - Cosign: aprender/seguranca/supply-chain/cosign.md
-              - Sigstore: aprender/seguranca/supply-chain/sigstore.md
-              - Fulcio: aprender/seguranca/supply-chain/fulcio.md
-              - Rekor: aprender/seguranca/supply-chain/rekor.md
-              - Renovate: aprender/renovate-atualizacao-automatica-de-dependencia.md
+              - Inventário:
+                  - SBOM:
+                      - SBOM: aprender/seguranca/supply-chain/sbom.md
+                      - SPDX: aprender/seguranca/supply-chain/spdx.md
+                      - CycloneDX: aprender/seguranca/supply-chain/cyclonedx.md
+                  - Vulnerabilidades:
+                      - VEX: aprender/seguranca/supply-chain/vex.md
+              - Proveniência:
+                  - Proveniência: aprender/seguranca/supply-chain/provenance.md
+                  - Atestação: aprender/seguranca/supply-chain/attestation.md
+              - Assinatura:
+                  - Conceitos:
+                      - Assinatura de artefatos: aprender/seguranca/supply-chain/artifact-signing.md
+                      - Checksum: aprender/seguranca/supply-chain/checksum.md
+                      - SLSA: aprender/seguranca/supply-chain/slsa.md
+                  - Ferramentas:
+                      - Cosign: aprender/seguranca/supply-chain/cosign.md
+                      - Sigstore: aprender/seguranca/supply-chain/sigstore.md
+                      - Fulcio: aprender/seguranca/supply-chain/fulcio.md
+                      - Rekor: aprender/seguranca/supply-chain/rekor.md
+              - Governança:
+                  - OpenSSF Scorecard: aprender/seguranca/supply-chain/openssf-scorecard.md
+                  - Renovate: aprender/renovate-atualizacao-automatica-de-dependencia.md
       - Observabilidade:
           - Visão geral: aprender/observabilidade/index.md
           - Sinais:
-              - Métricas: aprender/observabilidade/metricas.md
-              - Counter: aprender/observabilidade/metric-types/counter.md
-              - Gauge: aprender/observabilidade/metric-types/gauge.md
-              - Histogram: aprender/observabilidade/metric-types/histogram.md
-              - Exemplars: aprender/observabilidade/metric-types/exemplars.md
-              - Logs: aprender/observabilidade/logs.md
-              - Distributed tracing: aprender/observabilidade/tracing.md
-              - Profiling: aprender/observabilidade/profiling.md
+              - Métricas:
+                  - Métricas: aprender/observabilidade/metricas.md
+                  - Counter: aprender/observabilidade/metric-types/counter.md
+                  - Gauge: aprender/observabilidade/metric-types/gauge.md
+                  - Histogram: aprender/observabilidade/metric-types/histogram.md
+                  - Exemplars: aprender/observabilidade/metric-types/exemplars.md
+              - Logs:
+                  - Logs: aprender/observabilidade/logs.md
+              - Tracing:
+                  - Distributed tracing: aprender/observabilidade/tracing.md
+              - Profiling:
+                  - Profiling: aprender/observabilidade/profiling.md
           - Modelos:
               - RED: aprender/observabilidade/red.md
               - USE: aprender/observabilidade/use.md
               - Golden signals: aprender/observabilidade/golden-signals.md
           - Propriedades:
-              - Cardinalidade: aprender/observabilidade/cardinalidade.md
-              - Correlation ID: aprender/observabilidade/correlation-id.md
-              - Retenção: aprender/observabilidade/retencao.md
-              - Saúde de aplicação: aprender/observabilidade/application-health.md
-          - Sinais de observabilidade: aprender/sinais-de-observabilidade-e-saude-de-aplicacao.md
+              - Dados de telemetria:
+                  - Cardinalidade: aprender/observabilidade/cardinalidade.md
+                  - Correlation ID: aprender/observabilidade/correlation-id.md
+                  - Retenção: aprender/observabilidade/retencao.md
+              - Saúde:
+                  - Saúde de aplicação: aprender/observabilidade/application-health.md
+                  - Sinais de observabilidade: aprender/sinais-de-observabilidade-e-saude-de-aplicacao.md
           - Ferramentas:
               - Prometheus:
                   - Visão geral: aprender/observabilidade/prometheus.md
                   - Regras: aprender/observabilidade/prometheus/rules.md
                   - Remote write: aprender/observabilidade/prometheus/remote-write.md
                   - Alertmanager: aprender/observabilidade/prometheus/alertmanager.md
-              - Loki: aprender/observabilidade/loki.md
-              - Grafana: aprender/observabilidade/grafana.md
               - OpenTelemetry:
                   - Visão geral: aprender/observabilidade/opentelemetry/index.md
                   - Collector: aprender/observabilidade/opentelemetry/collector.md
                   - Instrumentação: aprender/observabilidade/opentelemetry/instrumentation.md
-                  - Contexto e propagação: aprender/observabilidade/opentelemetry/context.md
+                  - Contexto no OpenTelemetry: aprender/observabilidade/opentelemetry/context.md
                   - Sampling: aprender/observabilidade/opentelemetry/sampling.md
-              - Grafana Alloy: aprender/observabilidade/alloy.md
-              - Netdata: aprender/observabilidade/netdata.md
-              - Zabbix: aprender/observabilidade/zabbix.md
-              - Glances: aprender/observabilidade/glances.md
-              - Checkmk: aprender/observabilidade/checkmk.md
-              - Beszel: aprender/observabilidade/beszel.md
-              - Sentry: aprender/observabilidade/sentry.md
+              - Logs:
+                  - Loki: aprender/observabilidade/loki.md
+              - Dashboards:
+                  - Grafana: aprender/observabilidade/grafana.md
+              - Agentes:
+                  - Grafana Alloy: aprender/observabilidade/alloy.md
+              - Hosts:
+                  - Netdata: aprender/observabilidade/netdata.md
+                  - Zabbix: aprender/observabilidade/zabbix.md
+                  - Glances: aprender/observabilidade/glances.md
+                  - Checkmk: aprender/observabilidade/checkmk.md
+                  - Beszel: aprender/observabilidade/beszel.md
+              - APM:
+                  - Sentry: aprender/observabilidade/sentry.md
           - Alertas:
               - Alertas acionáveis: aprender/observabilidade/alertas-acionaveis.md
-              - Crescimento de erros e alertas: aprender/observabilidade/crescimento-de-erros-e-alertas.md
+              - Alertas por crescimento de erros: aprender/observabilidade/crescimento-de-erros-e-alertas.md
       - Validação:
           - Validação declarativa:
               - Visão geral: aprender/qualidade/validacao/index.md
-              - Schema validation: aprender/qualidade/validacao/schema-validation.md
-              - Policy as code: aprender/qualidade/validacao/policy-as-code.md
-              - kubeconform: aprender/qualidade/validacao/kubeconform.md
-              - Conftest: aprender/qualidade/validacao/conftest.md
-      - Manutenção:
-          - Manutenção de repositório:
-              - Visão geral: aprender/qualidade/repositorio/index.md
-              - commitlint: aprender/qualidade/repositorio/commitlint.md
-              - Lychee: aprender/qualidade/repositorio/lychee.md
-              - jscpd: aprender/qualidade/repositorio/jscpd.md
-              - Tipos de clone: aprender/qualidade/repositorio/clone-types.md
+              - Conceitos:
+                  - Schema validation: aprender/qualidade/validacao/schema-validation.md
+                  - Policy as code: aprender/qualidade/validacao/policy-as-code.md
+              - Ferramentas:
+                  - kubeconform: aprender/qualidade/validacao/kubeconform.md
+                  - Conftest: aprender/qualidade/validacao/conftest.md
+          - Manutenção:
+              - Manutenção de repositório:
+                  - Visão geral: aprender/qualidade/repositorio/index.md
+                  - Linters:
+                      - commitlint: aprender/qualidade/repositorio/commitlint.md
+                      - Lychee: aprender/qualidade/repositorio/lychee.md
+                  - Duplicação:
+                      - jscpd: aprender/qualidade/repositorio/jscpd.md
+                      - Tipos de clone: aprender/qualidade/repositorio/clone-types.md
       - Dados:
           - Visão geral: aprender/dados/index.md
           - Bancos:
               - Visão geral: aprender/dados/bancos/index.md
               - Persistência:
                   - Visão geral: aprender/dados/bancos/persistencia/index.md
-                  - Chave-valor: aprender/dados/bancos/key-value.md
-                  - Documentos: aprender/dados/bancos/documentos.md
-                  - Bancos de dados em tempo real: aprender/dados/bancos/realtime-database.md
-                  - Migrações de schema, locks e transações: aprender/dados/migracoes-schema-locking.md
-                  - "Locks e transações no PostgreSQL": aprender/dados/postgresql-locks-e-transacoes.md
-                  - "PostgreSQL: pg_stat, índices e otimização": aprender/dados/postgresql-pg-stat-indices-e-otimizacao.md
-                  - "PostgreSQL: WAL e capacidade": aprender/dados/postgresql-wal-e-capacidade.md
-                  - "PostgreSQL: checkpoints": aprender/dados/postgresql-checkpoints.md
-                  - Transações e ACID: aprender/dados/transacoes-acid.md
+                  - Modelos:
+                      - Chave-valor: aprender/dados/bancos/key-value.md
+                      - Documentos: aprender/dados/bancos/documentos.md
+                      - Bancos de dados em tempo real: aprender/dados/bancos/realtime-database.md
+                  - Migrações:
+                      - Visão geral: aprender/dados/migracoes-schema-locking.md
+                      - Migrações de schema: aprender/dados/migracoes-schema.md
+                  - Locks:
+                      - Fundamentos:
+                          - Locks de banco de dados: aprender/dados/locks.md
+                      - PostgreSQL:
+                          - Mapa de concorrência PostgreSQL: aprender/dados/postgresql-locks-e-transacoes.md
+                  - Transações:
+                      - Transações de banco de dados: aprender/dados/modos-de-transacao.md
+                      - ACID: aprender/dados/transacoes-acid.md
+                  - PostgreSQL:
+                      - Mapa de diagnóstico e otimização: aprender/dados/postgresql-pg-stat-indices-e-otimizacao.md
+                      - Mapa de WAL e capacidade: aprender/dados/postgresql-wal-e-capacidade.md
+                      - Checkpoints: aprender/dados/postgresql-checkpoints.md
           - Consistência:
               - Visão geral: aprender/dados/consistencia/index.md
               - Distribuição:
                   - Visão geral: aprender/dados/consistencia/distribuicao/index.md
-                  - Clustering, redundância e distribuição: aprender/dados/clustering-redundancia-e-distribuicao.md
-                  - Quorum e consenso: aprender/dados/quorum-e-consenso.md
-                  - Sharding: aprender/dados/sharding.md
-                  - Replicação: aprender/dados/replicacao.md
-                  - Replicação em cascata: aprender/dados/replicacao-em-cascata.md
-                  - Comparação PostgreSQL, MySQL, MariaDB e Galera: aprender/comparacoes/dados/postgresql-mysql-mariadb-e-galera.md
+                  - Clustering:
+                      - Topologias:
+                          - Mapa de clustering, redundância e distribuição: aprender/dados/clustering-redundancia-e-distribuicao.md
+                      - Consenso:
+                          - Mapa de quorum e consenso: aprender/dados/quorum-e-consenso.md
+                  - Particionamento:
+                      - Sharding: aprender/dados/sharding.md
+                  - Replicação:
+                      - Replicação: aprender/dados/replicacao.md
+                      - Replicação em cascata: aprender/dados/replicacao-em-cascata.md
+                  - Sistemas relacionais:
+                      - Comparação PostgreSQL, MySQL, MariaDB e Galera: aprender/comparacoes/dados/postgresql-mysql-mariadb-e-galera.md
           - Armazenamento:
               - Visão geral: aprender/dados/armazenamento/index.md
-              - Silo: aprender/dados/armazenamento-objetos/silo.md
-              - Cache: aprender/dados/cache.md
-              - TTL e expiração: aprender/dados/ttl.md
-              - Exclusão, edição, revisões e WAL: aprender/dados/revisoes-exclusao-e-wal.md
+              - Armazenamento de objetos:
+                  - Silo: aprender/dados/armazenamento-objetos/silo.md
+              - Cache:
+                  - Cache: aprender/dados/cache.md
+                  - TTL: aprender/dados/ttl.md
+          - Mutações:
+              - Mapas:
+                  - Mapa de mutações e recuperação: aprender/dados/revisoes-exclusao-e-wal.md
+              - Estado editorial:
+                  - Exclusão: aprender/dados/exclusao.md
+                  - Revisões: aprender/dados/revisoes.md
+              - Durabilidade:
+                  - WAL: aprender/dados/wal.md
           - Colaboração:
               - Visão geral: aprender/dados/colaboracao/index.md
               - Local-first:
                   - Visão geral: aprender/dados/colaboracao/local-first/index.md
-                  - Local-first e offline-first: aprender/dados/colaboracao/local-first-e-offline-first.md
-                  - CRDT: aprender/dados/colaboracao/crdt.md
-                  - ShareDB: aprender/dados/colaboracao/sharedb.md
-                  - JSON Joy: aprender/dados/colaboracao/json-joy.md
-                  - PouchDB e CouchDB: aprender/dados/colaboracao/pouchdb-couchdb.md
-                  - Yjs: aprender/dados/colaboracao/yjs.md
-                  - Loro: aprender/dados/colaboracao/loro.md
-                  - Diamond Types: aprender/dados/colaboracao/diamond-types.md
-                  - Jazz: aprender/dados/colaboracao/jazz.md
-                  - Algoritmos de diff: aprender/dados/colaboracao/algoritmos-de-diff.md
-                  - Resolução de conflitos: aprender/dados/colaboracao/resolucao-de-conflitos.md
+                  - Fundamentos:
+                      - Mapa de local-first e offline-first: aprender/dados/colaboracao/local-first-e-offline-first.md
+                  - Modelos:
+                      - CRDT: aprender/dados/colaboracao/crdt.md
+                      - Algoritmos de diff: aprender/dados/colaboracao/algoritmos-de-diff.md
+                      - Resolução de conflitos: aprender/dados/colaboracao/resolucao-de-conflitos.md
+                  - Implementações:
+                      - ShareDB: aprender/dados/colaboracao/sharedb.md
+                      - JSON Joy: aprender/dados/colaboracao/json-joy.md
+                      - Yjs: aprender/dados/colaboracao/yjs.md
+                      - Loro: aprender/dados/colaboracao/loro.md
+                      - Diamond Types: aprender/dados/colaboracao/diamond-types.md
+                      - Jazz: aprender/dados/colaboracao/jazz.md
+                  - Comparações:
+                      - Comparação entre PouchDB e CouchDB: aprender/dados/colaboracao/pouchdb-couchdb.md
           - Mensageria:
               - Visão geral: aprender/dados/mensageria/index.md
-              - Filas: aprender/dados/mensageria/filas.md
-              - Fila de prioridade: aprender/dados/mensageria/fila-de-prioridade.md
-              - Event streaming: aprender/dados/mensageria/event-streaming.md
-              - Jobs e workers: aprender/dados/mensageria/jobs-e-workers.md
-              - Outbox: aprender/dados/mensageria/outbox.md
-              - BullMQ: aprender/dados/mensageria/bullmq.md
-              - ActiveMQ: aprender/dados/mensageria/activemq.md
-              - MQTT: aprender/dados/mensageria/mqtt.md
-              - RabbitMQ: aprender/dados/mensageria/rabbitmq.md
-              - Amazon SQS: aprender/dados/mensageria/sqs.md
-              - Apache Kafka: aprender/dados/mensageria/kafka.md
+              - Filas:
+                  - Filas: aprender/dados/mensageria/filas.md
+                  - Fila de prioridade: aprender/dados/mensageria/fila-de-prioridade.md
+              - Eventos:
+                  - Event streaming: aprender/dados/mensageria/event-streaming.md
+                  - Outbox: aprender/dados/mensageria/outbox.md
+              - Jobs:
+                  - Mapa de jobs persistentes e workers: aprender/dados/mensageria/jobs-e-workers.md
+              - Brokers:
+                  - Bibliotecas de filas:
+                      - BullMQ: aprender/dados/mensageria/bullmq.md
+                  - Brokers de mensagens:
+                      - ActiveMQ: aprender/dados/mensageria/activemq.md
+                      - RabbitMQ: aprender/dados/mensageria/rabbitmq.md
+                  - Protocolos:
+                      - MQTT: aprender/dados/mensageria/mqtt.md
+                  - Serviços de filas:
+                      - Amazon SQS: aprender/dados/mensageria/sqs.md
+                  - Event streaming:
+                      - Apache Kafka: aprender/dados/mensageria/kafka.md
       - Confiabilidade:
           - Visão geral: aprender/confiabilidade/resiliencia/index.md
           - Resiliência:
-              - Resiliência: aprender/confiabilidade/resiliencia.md
-              - Fail-safe, fault tolerance e error handling: aprender/confiabilidade/fail-safe-fault-tolerance-e-error-handling.md
-              - Heartbeat: aprender/confiabilidade/heartbeat.md
-              - Idempotência: aprender/confiabilidade/idempotencia.md
+              - Fundamentos:
+                  - Resiliência: aprender/confiabilidade/resiliencia.md
+                  - Heartbeat: aprender/confiabilidade/heartbeat.md
+                  - Idempotência: aprender/confiabilidade/idempotencia.md
+              - Mapas:
+                  - Mapa de fail-safe, fault tolerance e error handling: aprender/confiabilidade/fail-safe-fault-tolerance-e-error-handling.md
           - Capacidade:
               - Visão geral: aprender/confiabilidade/testes/index.md
-              - Teste de carga: aprender/confiabilidade/testes/load-testing.md
-              - Stress testing: aprender/confiabilidade/testes/stress-testing.md
-              - Soak testing: aprender/confiabilidade/testes/soak-testing.md
-              - Spike testing: aprender/confiabilidade/testes/spike-testing.md
-              - Chaos engineering: aprender/confiabilidade/testes/chaos-engineering.md
-              - k6: aprender/confiabilidade/testes/k6.md
-              - Apache JMeter: aprender/confiabilidade/testes/jmeter.md
+              - Métodos:
+                  - Teste de carga: aprender/confiabilidade/testes/load-testing.md
+                  - Stress testing: aprender/confiabilidade/testes/stress-testing.md
+                  - Soak testing: aprender/confiabilidade/testes/soak-testing.md
+                  - Spike testing: aprender/confiabilidade/testes/spike-testing.md
+              - Ferramentas:
+                  - k6: aprender/confiabilidade/testes/k6.md
+                  - Apache JMeter: aprender/confiabilidade/testes/jmeter.md
+              - Experimentação:
+                  - Chaos engineering: aprender/confiabilidade/testes/chaos-engineering.md
       - Engenharia de software:
           - Visão geral: aprender/engenharia-software/index.md
-          - Ciclo de vida de aplicações: aprender/engenharia-software/ciclo-de-vida-de-aplicacoes.md
+          - Ciclo de vida:
+              - Ciclo de vida de aplicações: aprender/engenharia-software/ciclo-de-vida-de-aplicacoes.md
+          - Testes de software:
+              - Visão geral: aprender/engenharia-software/testes/index.md
+              - Práticas:
+                  - TDD: aprender/engenharia-software/testes/tdd.md
+              - Tipos:
+                  - Testes unitários: aprender/engenharia-software/testes/testes-unitarios.md
+                  - Testes end-to-end: aprender/engenharia-software/testes/testes-end-to-end.md
+              - Ferramentas:
+                  - Cypress: aprender/engenharia-software/testes/cypress.md
+                  - Playwright: aprender/engenharia-software/testes/playwright.md
           - Concorrência:
               - Visão geral: aprender/engenharia-software/concorrencia/index.md
+              - Modelos de execução:
+                  - Concorrência: aprender/engenharia-software/concorrencia/modelos/concorrencia.md
+                  - Paralelismo: aprender/engenharia-software/concorrencia/modelos/paralelismo.md
+              - Comparações:
+                  - Comparação entre concorrência e paralelismo: aprender/comparacoes/engenharia-software/concorrencia-paralelismo.md
+              - Threads:
+                  - Threads: aprender/engenharia-software/concorrencia/threads.md
+                  - Virtual threads: aprender/engenharia-software/concorrencia/virtual-threads.md
               - Sincronização:
                   - Visão geral: aprender/engenharia-software/concorrencia/sincronizacao/index.md
                   - Condição de corrida: aprender/engenharia-software/concorrencia/race-condition.md
                   - Mutex: aprender/engenharia-software/concorrencia/mutex.md
                   - Semáforos: aprender/engenharia-software/concorrencia/semaforos.md
                   - Deadlock: aprender/engenharia-software/concorrencia/deadlock.md
-          - Edsger W. Dijkstra: aprender/engenharia-software/dijkstra.md
+          - Algoritmos:
+              - Edsger W. Dijkstra: aprender/engenharia-software/dijkstra.md
+              - Mapa de algoritmos e estruturas de dados: aprender/engenharia-software/algoritmos-e-estruturas-de-dados.md
+          - Estruturas:
+              - Comparação entre arrays fixos e dinâmicos: aprender/engenharia-software/arrays-fixos-e-dinamicos.md
           - Engenharia de requisitos:
               - Visão geral: aprender/engenharia-software/requisitos/index.md
-              - Engenharia de requisitos: aprender/engenharia-software/requisitos/engenharia-de-requisitos.md
-              - Requisitos funcionais e regras de negócio: aprender/engenharia-software/requisitos/requisitos-funcionais-e-regras-de-negocio.md
-              - Requisitos não funcionais: aprender/engenharia-software/requisitos/requisitos-nao-funcionais.md
-              - Use Cases: aprender/engenharia-software/requisitos/use-cases.md
-              - BDD e Gherkin: aprender/engenharia-software/requisitos/bdd-e-gherkin.md
-              - Backlog e hierarquia de trabalho: aprender/engenharia-software/requisitos/backlog-e-hierarquia.md
-              - Descoberta e priorização: aprender/engenharia-software/requisitos/descoberta-e-priorizacao.md
-              - Descoberta, MVP e evolução: aprender/engenharia-software/requisitos/descoberta-mvp-evolucao.md
-          - Algoritmos e estruturas de dados: aprender/engenharia-software/algoritmos-e-estruturas-de-dados.md
-          - Análise de complexidade: aprender/engenharia-software/analise-de-complexidade.md
-          - Arrays fixos e dinâmicos: aprender/engenharia-software/arrays-fixos-e-dinamicos.md
-          - Clean Code: aprender/engenharia-software/clean-code.md
-          - Arquitetura Limpa: aprender/engenharia-software/arquitetura-limpa.md
-          - Complexidade ciclomática: aprender/engenharia-software/complexidade-ciclomatica.md
-          - Complexidade cognitiva: aprender/engenharia-software/complexidade-cognitiva.md
-          - SOLID: aprender/engenharia-software/solid.md
+              - Especificação:
+                  - Fundamentos:
+                      - Engenharia de requisitos: aprender/engenharia-software/requisitos/engenharia-de-requisitos.md
+                      - Requisitos não funcionais: aprender/engenharia-software/requisitos/requisitos-nao-funcionais.md
+                  - Modelos:
+                      - Mapa de requisitos funcionais e regras de negócio: aprender/engenharia-software/requisitos/requisitos-funcionais-e-regras-de-negocio.md
+                      - Use Cases: aprender/engenharia-software/requisitos/use-cases.md
+                  - BDD:
+                      - Mapa de BDD e Gherkin: aprender/engenharia-software/requisitos/bdd-e-gherkin.md
+              - Produto:
+                  - Hierarquia de backlog: aprender/engenharia-software/requisitos/backlog-e-hierarquia.md
+                  - Mapa de descoberta e priorização: aprender/engenharia-software/requisitos/descoberta-e-priorizacao.md
+                  - Mapa de descoberta, MVP e evolução: aprender/engenharia-software/requisitos/descoberta-mvp-evolucao.md
+          - Complexidade:
+              - Análise de complexidade: aprender/engenharia-software/analise-de-complexidade.md
+              - Complexidade ciclomática: aprender/engenharia-software/complexidade-ciclomatica.md
+              - Complexidade cognitiva: aprender/engenharia-software/complexidade-cognitiva.md
+          - Princípios:
+              - Clean Code: aprender/engenharia-software/clean-code.md
+              - SOLID: aprender/engenharia-software/solid.md
       - Backup:
           - Visão geral: aprender/confiabilidade/backup/index.md
-          - Backup: aprender/confiabilidade/backup/backup.md
+          - Conceitos:
+              - Backup: aprender/confiabilidade/backup/backup.md
+              - Replicação: aprender/confiabilidade/backup/replicacao.md
           - Recuperação:
               - Visão geral: aprender/confiabilidade/backup/recuperacao/index.md
               - Tipos de backup: aprender/confiabilidade/backup/tipos-de-backup.md
@@ -1230,26 +1713,27 @@ nav:
               - RTO: aprender/confiabilidade/backup/rto.md
               - Retenção: aprender/confiabilidade/backup/retencao.md
               - Teste de restauração: aprender/confiabilidade/backup/teste-de-restauracao.md
-          - Replicação: aprender/confiabilidade/backup/replicacao.md
-          - Velero: aprender/confiabilidade/backup/velero.md
-          - Backup do etcd: aprender/confiabilidade/backup/etcd.md
-          - Backup do CloudNativePG: aprender/confiabilidade/backup/cloudnative-pg.md
-          - Backup da chave age: aprender/seguranca/secrets/age-key-backup.md
-          - Estratégia de backup de cluster: aprender/backup-do-etcd-cnpg-e-chave-age.md
-          - Reconstrução single-node e segredos: operacional/reconstrucao-de-cluster-single-node-e-recuperacao-de-segredos.md
+          - Implementações:
+              - Velero: aprender/confiabilidade/backup/velero.md
+              - Backup do etcd: aprender/confiabilidade/backup/etcd.md
+              - Backup do CloudNativePG: aprender/confiabilidade/backup/cloudnative-pg.md
+              - Backup da chave age: aprender/seguranca/secrets/age-key-backup.md
+          - Estratégias:
+              - Estratégia de backup de cluster: aprender/backup-do-etcd-cnpg-e-chave-age.md
       - Qualidade:
           - Linters de artefato: aprender/linters-de-qualidade-de-artefato.md
-          - Smoke tests e checklists: aprender/smoke-test-e-o-limite-da-automacao-de-checklist.md
+          - Mapa de smoke tests e checklists: aprender/smoke-test-e-o-limite-da-automacao-de-checklist.md
           - Scripts operacionais defensivos: aprender/padroes-defensivos-de-script-operacional.md
       - Governança:
-          - Padrões e governança da internet: aprender/padroes-e-governanca-da-internet.md
-          - Fundações do software livre: aprender/fundacoes-do-software-livre-e-aberto.md
-          - Auditoria e abordagens de auditoria: aprender/auditoria-e-abordagens.md
+          - Mapa de padrões e governança da internet: aprender/padroes-e-governanca-da-internet.md
+          - Mapa de fundações do software livre e aberto: aprender/fundacoes-do-software-livre-e-aberto.md
+          - Mapa de auditoria e abordagens de auditoria: aprender/auditoria-e-abordagens.md
       - Padrões:
-          - Normas e frameworks de boas práticas: aprender/normas-e-frameworks-de-boas-praticas.md
+          - Mapa de normas e frameworks de boas práticas: aprender/normas-e-frameworks-de-boas-praticas.md
       - Diagnóstico:
           - Visão geral: aprender/diagnostico/index.md
-          - Diagnóstico de rede: aprender/diagnostico/rede.md
+          - Rede:
+              - Diagnóstico de rede: aprender/diagnostico/rede.md
           - Ferramentas:
               - iperf3: aprender/ferramentas/diagnostico/iperf3.md
               - tcpdump: aprender/ferramentas/diagnostico/tcpdump.md
@@ -1263,13 +1747,16 @@ nav:
               - yq: aprender/ferramentas/dados-estruturados/yq.md
           - Bancos:
               - Visão geral: aprender/ferramentas/bancos/index.md
-              - CloudBeaver: aprender/ferramentas/bancos/cloudbeaver.md
-              - Adminer: aprender/ferramentas/bancos/adminer.md
-              - phpMyAdmin: aprender/ferramentas/bancos/phpmyadmin.md
-              - SchemaSpy: aprender/ferramentas/bancos/schemaspy.md
-              - SchemaCrawler: aprender/ferramentas/bancos/schemacrawler.md
-              - Pgpool-II: aprender/ferramentas/bancos/pgpool-ii.md
-              - pgBackRest: aprender/ferramentas/bancos/pgbackrest.md
+              - Interfaces:
+                  - CloudBeaver: aprender/ferramentas/bancos/cloudbeaver.md
+                  - Adminer: aprender/ferramentas/bancos/adminer.md
+                  - phpMyAdmin: aprender/ferramentas/bancos/phpmyadmin.md
+              - Schema:
+                  - SchemaSpy: aprender/ferramentas/bancos/schemaspy.md
+                  - SchemaCrawler: aprender/ferramentas/bancos/schemacrawler.md
+              - PostgreSQL:
+                  - Pgpool-II: aprender/ferramentas/bancos/pgpool-ii.md
+                  - pgBackRest: aprender/ferramentas/bancos/pgbackrest.md
           - Gestão de projetos:
               - Visão geral: aprender/ferramentas/gestao/index.md
               - GitHub Projects: aprender/ferramentas/gestao/github-projects.md
@@ -1282,11 +1769,13 @@ nav:
               - Visão geral: aprender/ferramentas/transferencia/index.md
               - Transferência de arquivos:
                   - Visão geral: aprender/ferramentas/transferencia/transferencia/index.md
-                  - FTP: aprender/ferramentas/transferencia/ftp.md
-                  - FTPS: aprender/ferramentas/transferencia/ftps.md
-                  - rsync: aprender/ferramentas/transferencia/rsync.md
-                  - SFTP: aprender/ferramentas/transferencia/sftp.md
-                  - rclone: aprender/ferramentas/transferencia/rclone.md
+                  - Protocolos:
+                      - FTP: aprender/ferramentas/transferencia/ftp.md
+                      - FTPS: aprender/ferramentas/transferencia/ftps.md
+                      - SFTP: aprender/ferramentas/transferencia/sftp.md
+                  - Ferramentas:
+                      - rsync: aprender/ferramentas/transferencia/rsync.md
+                      - rclone: aprender/ferramentas/transferencia/rclone.md
               - Acesso a arquivos remotos:
                   - Visão geral: aprender/ferramentas/transferencia/acesso/index.md
                   - SSHFS: aprender/ferramentas/transferencia/sshfs.md
@@ -1301,56 +1790,56 @@ nav:
       - Composições:
           - Visão geral: aprender/composicoes/index.md
           - Kubernetes:
-              - CNI, Service, Gateway e service mesh: aprender/composicoes/kubernetes/rede-e-trafego.md
+              - Mapa da composição de CNI, Service, Gateway e service mesh: aprender/composicoes/kubernetes/rede-e-trafego.md
           - Entrega:
-              - IaC, configuração e GitOps: aprender/composicoes/entrega/iac-configuracao-gitops.md
+              - Mapa da composição de IaC, configuração e GitOps: aprender/composicoes/entrega/iac-configuracao-gitops.md
           - Observabilidade:
               - Pipeline de observabilidade: aprender/composicoes/observabilidade/pipeline.md
-              - Stack Prometheus, Loki e Grafana: aprender/stack-prometheus-loki-grafana.md
+              - Mapa da composição de stack Prometheus, Loki e Grafana: aprender/stack-prometheus-loki-grafana.md
           - CI:
               - Cache de GitLab Runner: aprender/composicoes/ci/gitlab-runner-cache.md
           - Segurança:
-              - Emissão e distribuição de confiança: aprender/composicoes/seguranca/pki.md
+              - Mapa da composição de emissão e distribuição de confiança: aprender/composicoes/seguranca/pki.md
           - Confiabilidade:
-              - Cache, CDN, replicação e jobs: aprender/composicoes/confiabilidade/cache-cdn-replicacao-jobs.md
+              - Mapa da composição de cache, CDN, replicação e jobs: aprender/composicoes/confiabilidade/cache-cdn-replicacao-jobs.md
       - Comparações:
           - Visão geral: aprender/comparacoes/index.md
           - Critérios de seleção:
               - Visão geral: aprender/comparacoes/criterios/index.md
           - Plataforma:
-              - Compose, Swarm e Kubernetes: aprender/comparacoes/plataforma/orquestracao.md
-              - Distribuições Kubernetes: aprender/comparacoes/plataforma/distribuicoes-kubernetes.md
+              - Comparação de Compose, Swarm e Kubernetes: aprender/comparacoes/plataforma/orquestracao.md
+              - Comparação entre distribuições Kubernetes: aprender/comparacoes/plataforma/distribuicoes-kubernetes.md
           - Rede:
-              - Cilium e Calico: aprender/comparacoes/rede/cilium-calico.md
-              - Ingress e Gateway API: aprender/comparacoes/rede/ingress-gateway-api.md
-              - Istio, Linkerd e Cilium Service Mesh: aprender/comparacoes/rede/service-mesh.md
+              - Comparação de Cilium e Calico: aprender/comparacoes/rede/cilium-calico.md
+              - Comparação de Ingress e Gateway API: aprender/comparacoes/rede/ingress-gateway-api.md
+              - Comparação de Istio, Linkerd e Cilium Service Mesh: aprender/comparacoes/rede/service-mesh.md
           - Entrega:
-              - Argo CD e Flux: aprender/comparacoes/entrega/argocd-flux.md
+              - Comparação de Argo CD e Flux: aprender/comparacoes/entrega/argocd-flux.md
           - IaC:
-              - Terraform, OpenTofu e Pulumi: aprender/comparacoes/iac/declarativo-programavel.md
+              - Comparação de Terraform, OpenTofu e Pulumi: aprender/comparacoes/iac/declarativo-programavel.md
           - Ferramentas:
               - Plataformas de gestão de trabalho: aprender/comparacoes/ferramentas/gestao-de-trabalho.md
-              - Redmine e OpenProject: aprender/comparacoes/ferramentas/redmine-openproject.md
+              - Comparação de Redmine e OpenProject: aprender/comparacoes/ferramentas/redmine-openproject.md
               - Particionamento no Linux: aprender/comparacoes/ferramentas/particionamento-linux.md
           - Segurança:
               - Proteção de endpoint Linux: aprender/comparacoes/seguranca/linux-endpoint.md
       - Estudo:
           - Diátaxis: aprender/diataxis.md
           - Avaliar ferramentas de operação: aprender/avaliar-ferramentas-de-operacao.md
-          - Certificações de infraestrutura e nuvem: aprender/certificacoes-de-infraestrutura-e-nuvem.md
+          - Mapa de certificações de infraestrutura e nuvem: aprender/certificacoes-de-infraestrutura-e-nuvem.md
   - Arquitetura:
       - arquitetura/index.md
       - Bootstrap:
           - "Ansible: as roles do bootstrap": arquitetura/ansible.md
-          - Helm e os charts: arquitetura/helm-e-charts.md
+          - Helm no ambiente: arquitetura/helm-e-charts.md
       - Entrega:
-          - "GitOps: root e satélites": arquitetura/gitops-root-e-satelites.md
+          - Arquitetura GitOps do projeto: arquitetura/gitops-root-e-satelites.md
           - Rollout de imagens: arquitetura/rollout-de-imagens.md
           - A pipeline de CI: arquitetura/ci.md
       - Dados:
           - PostgreSQL compartilhado: arquitetura/postgresql-compartilhado.md
       - Rede:
-          - "Tailscale: acesso remoto e DNS interno": arquitetura/tailscale.md
+          - Tailscale no ambiente: arquitetura/tailscale.md
           - "Ingress: os nomes internos pela tailnet": arquitetura/ingress.md
       - Terceiros:
           - "OpenTofu: a camada da Cloudflare": arquitetura/opentofu.md
@@ -1365,47 +1854,72 @@ nav:
       - Bootstrap inicial:
           - Primeiro bootstrap: operacional/primeiro-bootstrap.md
           - Mapa do bootstrap e das credenciais: operacional/mapa-do-bootstrap-e-das-credenciais.md
-          - Preflight e dry-run do bootstrap: operacional/preflight-e-dry-run.md
+          - Mapa de preflight e dry-run do bootstrap: operacional/preflight-e-dry-run.md
       - Rotina de mudança:
-          - Metodologia de mudança: operacional/metodologia-de-mudanca.md
-          - Checklist operacional: operacional/checklist.md
-          - Rotacionar credenciais: operacional/rotacionar-credenciais.md
-          - Renderizar os charts localmente: operacional/renderizar-charts-localmente.md
-          - Rodar os quality gates localmente: operacional/rodar-quality-gates-localmente.md
-          - Adicionar um satélite novo: operacional/adicionar-um-satelite.md
-          - Manutenção de nó: operacional/manutencao-de-no-cordon-drain-e-disco.md
+          - Mudanças:
+              - Metodologia de mudança: operacional/metodologia-de-mudanca.md
+              - Checklist operacional: operacional/checklist.md
+              - Rotacionar credenciais: operacional/rotacionar-credenciais.md
+              - Renderizar os charts localmente: operacional/renderizar-charts-localmente.md
+              - Rodar os quality gates localmente: operacional/rodar-quality-gates-localmente.md
+              - Adicionar um satélite novo: operacional/adicionar-um-satelite.md
+          - Manutenção de nó:
+              - Mapa de manutenção de nó: operacional/manutencao-de-no-cordon-drain-e-disco.md
+              - Evacuação de nó: operacional/manutencao-de-no-cordon-drain.md
+              - Quorum de control plane: operacional/manutencao-de-no-quorum.md
+              - Pressão de disco: operacional/manutencao-de-no-disco.md
       - Recuperação:
-          - Estado fora do git: operacional/estado-fora-do-git.md
-          - Restaurar um volume retido: operacional/restaurar-um-volume-retido.md
-          - Restaurar o node do zero: operacional/restaurar-o-node.md
+          - Cluster:
+              - Estado fora do git: operacional/estado-fora-do-git.md
+              - Restaurar o node do zero: operacional/restaurar-o-node.md
+              - Mapa de reconstrução de cluster e recuperação de segredos: operacional/reconstrucao-de-cluster-single-node-e-recuperacao-de-segredos.md
+              - Reconstruir um cluster de nó único: operacional/reconstrucao-de-cluster-single-node.md
+          - Dados:
+              - Restaurar um volume retido: operacional/restaurar-um-volume-retido.md
+          - Segredos:
+              - Recuperar a capacidade de decifrar segredos: operacional/recuperacao-de-segredos.md
       - Resposta:
-          - Resposta a incidente: operacional/resposta-a-incidente.md
-          - Revisão periódica: operacional/revisao-periodica.md
-          - Diagnóstico de Pod, nó, certificado e Argo CD: operacional/diagnostico-de-pod-no-cluster-e-do-argocd.md
+          - Incidentes:
+              - Resposta a incidente: operacional/resposta-a-incidente.md
+              - Revisão periódica de segurança: operacional/revisao-periodica.md
+          - Diagnóstico:
+              - Mapa de diagnóstico do cluster: operacional/diagnostico-de-pod-no-cluster-e-do-argocd.md
+              - Pod Pending: operacional/diagnostico-de-pod-pending.md
+              - Nó NotReady: operacional/diagnostico-de-no-notready.md
+              - Certificate não Ready: operacional/diagnostico-de-certificate.md
+              - Argo CD OutOfSync: operacional/diagnostico-de-argo-cd.md
   - Referência:
       - referencia/index.md
       - Comandos do dia a dia:
-          - Comandos de rede e DNS: referencia/comandos-de-rede-e-dns.md
-          - Comandos de processos, disco e arquivos: referencia/comandos-de-processos-disco-e-arquivos.md
-          - Comandos de containers e Kubernetes: referencia/comandos-de-containers-e-kubernetes.md
-          - Comandos de firewall, logs e valores aleatórios: referencia/comandos-de-firewall-logs-e-valores-aleatorios.md
-          - Comandos de certificado e chave SSH: referencia/comandos-de-certificado-e-chave-ssh.md
-          - Comandos de Git: referencia/comandos-de-git.md
-          - tmux e systemd: referencia/tmux-e-systemd.md
-          - Comandos de shell e troubleshooting genérico: referencia/comandos-de-shell-e-troubleshooting.md
+          - Rede:
+              - Mapa de comandos de rede e DNS: referencia/comandos-de-rede-e-dns.md
+          - Sistema:
+              - Mapa de comandos de processos, disco e arquivos: referencia/comandos-de-processos-disco-e-arquivos.md
+              - Mapa de tmux e systemd: referencia/tmux-e-systemd.md
+          - Containers:
+              - Mapa de comandos de containers e Kubernetes: referencia/comandos-de-containers-e-kubernetes.md
+          - Segurança:
+              - Mapa de comandos de firewall, logs e valores aleatórios: referencia/comandos-de-firewall-logs-e-valores-aleatorios.md
+              - Mapa de comandos de certificado e chave SSH: referencia/comandos-de-certificado-e-chave-ssh.md
+          - Git:
+              - Comandos de Git: referencia/comandos-de-git.md
+          - Shell:
+              - Mapa de comandos de shell e troubleshooting genérico: referencia/comandos-de-shell-e-troubleshooting.md
       - Estudo:
-          - Blogs de engenharia: referencia/blogs-de-engenharia.md
-          - Trilha de estudo e materiais: referencia/trilha-de-estudo-e-materiais.md
-          - Livros e referências de matemática, computação e engenharia de software: referencia/livros-e-referencias.md
-          - Detalhes por certificadora: referencia/detalhes-por-certificadora.md
+          - Fontes:
+              - Blogs de engenharia: referencia/blogs-de-engenharia.md
+              - Mapa de livros e referências de matemática, computação e engenharia de software: referencia/livros-e-referencias.md
+          - Planejamento:
+              - Trilha de estudo: referencia/trilha-de-estudo-e-materiais.md
+              - Detalhes por certificadora: referencia/detalhes-por-certificadora.md
       - Comunidade:
-          - Eventos e conferências: referencia/eventos-e-conferencias.md
+          - Eventos técnicos: referencia/eventos-e-conferencias.md
   - Contribuindo:
       - contribuindo/index.md
-      - Categorização e organização: contribuindo/categorizacao-e-organizacao.md
+      - Organização documental: contribuindo/categorizacao-e-organizacao.md
       - Convenções de escrita: contribuindo/convencoes-de-escrita.md
       - Normas de redação técnica: contribuindo/normas-de-redacao-tecnica.md
-      - Voz e tom: contribuindo/voz-e-tom.md
+      - Voz editorial: contribuindo/voz-e-tom.md
       - Aviso sobre conteúdo assistido por IA: contribuindo/aviso-sobre-ia.md
 
 markdown_extensions:

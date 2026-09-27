@@ -1,4 +1,4 @@
-# Eventos e conferências
+# Eventos técnicos
 
 Uma lista de eventos individuais escrita numa data específica é uma foto de um momento, datas mudam e edições são canceladas sem que a lista acompanhe. Por isso, para descoberta contínua, um agregador mantido ativamente vale mais que uma lista estática; a listagem de conferências individuais abaixo se justifica só para eventos grandes e estáveis ao longo dos anos, cujo formato e área de cobertura raramente mudam de uma edição para outra.
 

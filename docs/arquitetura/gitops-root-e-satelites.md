@@ -1,4 +1,4 @@
-# GitOps: root e satélites
+# Arquitetura GitOps do projeto
 
 <!-- source-of-trust paths="argocd" -->
 

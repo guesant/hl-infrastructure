@@ -1,4 +1,4 @@
-# Tailscale: acesso remoto e DNS interno
+# Tailscale no ambiente
 
 <!-- source-of-trust paths="ansible/roles/tailscale ansible/group_vars/all/tailscale.yml tofu/tailscale" -->
 

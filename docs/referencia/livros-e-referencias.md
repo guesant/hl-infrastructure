@@ -1,4 +1,4 @@
-# Livros e referências de matemática, computação e engenharia de software
+# Mapa de livros e referências de matemática, computação e engenharia de software
 
 Esta página reúne livros, cursos, catálogos de padrões e fontes primárias para estudar matemática, ciência da computação, algoritmos, estruturas de dados, bancos de dados, engenharia de software e system design. Ela é um catálogo de referência, não uma lista de leituras obrigatórias nem uma substituição para a documentação das ferramentas.
 

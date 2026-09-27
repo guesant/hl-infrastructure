@@ -1,4 +1,4 @@
-# Helm e os charts
+# Helm no ambiente
 
 Nenhum dos componentes instalados via Helm pelo Ansible (Cilium e ArgoCD) tem manifesto vendorizado. Cada role é um wrapper fino sobre o chart Helm oficial do próprio projeto: ela adiciona o repositório Helm, roda `helm template` com a versão pinada no arquivo de versões e as customizações necessárias via flags ou um arquivo de values, e aplica o resultado com `k3s kubectl apply --server-side --force-conflicts`.
 

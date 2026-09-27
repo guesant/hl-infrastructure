@@ -1,4 +1,4 @@
-# Voz e tom
+# Voz editorial
 
 As [convenções de escrita](convencoes-de-escrita.md) tratam de mecânica: quando usar crase, quando usar lista, como terminar uma página. Voz e tom é sobre outra coisa, o jeito de dizer as coisas dentro dessas regras mecânicas, e varia um pouco por seção.
 

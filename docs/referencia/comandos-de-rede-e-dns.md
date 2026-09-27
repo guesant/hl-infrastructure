@@ -1,4 +1,4 @@
-# Comandos de rede e DNS
+# Mapa de comandos de rede e DNS
 
 Referência rápida de comandos de diagnóstico de rede e DNS. Os conceitos por trás de cada um (o caminho de uma resolução, split-horizon, DNSSEC, mDNS) estão em [aprender](../aprender/index.md); esta página é só o comando e a ressalva prática de usá-lo.
 

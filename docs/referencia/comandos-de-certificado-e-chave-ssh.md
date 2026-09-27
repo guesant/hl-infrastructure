@@ -1,4 +1,4 @@
-# Comandos de certificado e chave SSH
+# Mapa de comandos de certificado e chave SSH
 
 | Comando | Quando usar | Observação |
 | --- | --- | --- |

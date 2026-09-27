@@ -1,4 +1,4 @@
-# Comandos de firewall, logs e valores aleatórios
+# Mapa de comandos de firewall, logs e valores aleatórios
 
 ## Firewall
 

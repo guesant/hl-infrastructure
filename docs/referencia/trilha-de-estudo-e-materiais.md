@@ -1,4 +1,4 @@
-# Trilha de estudo e materiais
+# Trilha de estudo
 
 ## Fundamento antes de nuvem
 

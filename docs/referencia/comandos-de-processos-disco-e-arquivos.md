@@ -1,4 +1,4 @@
-# Comandos de processos, disco e arquivos
+# Mapa de comandos de processos, disco e arquivos
 
 ## Processos
 
