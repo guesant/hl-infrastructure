@@ -598,6 +598,12 @@ jobs:
           --check CKV_K8S_16,CKV_K8S_18,CKV_K8S_19 --skip-path .build/rendered/cilium.yaml
           --output sarif --output-file-path results --soft-fail
 
+      - name: Remove suppressed findings from SARIF
+        run: >-
+          jq '(.runs[].results) |= map(select((.suppressions // []) | length == 0))'
+          results/results_sarif.sarif > results/results_sarif.filtered.json
+          && mv results/results_sarif.filtered.json results/results_sarif.sarif
+
       - name: Upload SARIF
         if: always()
         uses: github/codeql-action/upload-sarif@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
