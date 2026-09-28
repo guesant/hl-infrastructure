@@ -16,22 +16,26 @@ run_trivy() {
   docker run --rm -v "$repo_root":/repo -w /repo -v trivy-cache:/root/.cache/trivy "$trivy_image" "$@"
 }
 
-# A FATAL trivy error (a truncated layer left behind by an interrupted
-# cross-platform pull into the shared cache volume) is an infra flake, not
-# a scan result; wipe the cache and retry once, so exit code 1 always means
-# a real finding, never a corrupted blob.
 run_trivy_retrying() {
-  local output rc
-  output="$(run_trivy "$@" 2>&1)" && { printf '%s\n' "$output"; return 0; }
-  rc=$?
-  printf '%s\n' "$output"
-  if grep -qw FATAL <<<"$output"; then
-    echo "trivy hit a fatal error, likely a truncated layer in the shared cache; clearing it and retrying once" >&2
+  local attempt max_attempts=3 output rc
+
+  for ((attempt = 1; attempt <= max_attempts; attempt++)); do
+    if output="$(run_trivy "$@" 2>&1)"; then
+      printf '%s\n' "$output"
+      return 0
+    fi
+
+    rc=$?
+    printf '%s\n' "$output"
+    if ! grep -qw FATAL <<<"$output" || [ "$attempt" -eq "$max_attempts" ]; then
+      return "$rc"
+    fi
+
+    echo "trivy hit a fatal error; clearing its cache before retry $((attempt + 1))/$max_attempts" >&2
     docker volume rm -f trivy-cache >/dev/null 2>&1 || true
-    run_trivy "$@"
-    return $?
-  fi
-  return "$rc"
+  done
+
+  return 1
 }
 
 status=0
