@@ -3,6 +3,8 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: silo-policies
+  annotations:
+    silo.guesant.net/policy-revision: oidc-only
 data:
   admins.json: |-
     {
