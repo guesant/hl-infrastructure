@@ -109,13 +109,12 @@ Ele é a única peça desta lista que precisa de um token de `ServiceAccount`, p
 
 O schema do banco do blog nunca é tocado pelo processo web.
 
-O chart declara um Job `PreSync` (`job.jobs.migrate` nos values).
+O chart declara um Job `Sync` (`laravel.migration` nos values).
 
 Ele roda na mesma imagem e com o mesmo `Secret` do CNPG.
 
-Esse Job roda o bundle de migrações do EF Core que a imagem traz em `/app/migrate`, e o Argo só troca o `Deployment` depois que ele termina, como descrito em [Rollout de imagens](rollout-de-imagens.md).
+Esse Job executa somente `php artisan migrate --force` na mesma imagem Laravel que será promovida, e o Argo só troca o `Deployment` depois que ele termina, como descrito em [Rollout de imagens](rollout-de-imagens.md). A geração do PDF do currículo fica fora deste hook, porque depende de conteúdo editorial completo e não deve bloquear o rollout.
 
-Durante a transição, o Job aceita tanto o bundle EF legado em `/app/migrate` quanto `php artisan migrate --force` da imagem Laravel, dependendo de qual imagem está de fato entrando.
 
 As sondas de vida e prontidão do app Laravel, no endpoint `/up`, também levam um atraso inicial maior do que a imagem anterior usava, porque o boot no Raspberry Pi demora mais do que os poucos segundos que bastavam antes; o mesmo padrão já vale para a sonda de startup do Grafana, descrita adiante.
 
