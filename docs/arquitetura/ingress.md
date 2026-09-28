@@ -55,9 +55,11 @@ A tabela lista o nome, o serviço de destino e como o login é resolvido em cada
 | `kargo.guesant.internal` | `kargo-api`, porta 80 | OIDC próprio com o Keycloak |
 | `hubble.guesant.internal` | Hubble UI do Cilium | `Middleware` `keycloak-login`, copiado para `kube-system` |
 | `dashy.guesant.internal` e o apex `guesant.internal` | Dashy, a página inicial com o link de cada um dos outros | `Middleware` `keycloak-login` |
-| `silo.guesant.internal` | Console administrativo do Silo, porta 9001 | `Middleware` `keycloak-login` |
+| `silo.guesant.internal` | Console administrativo do Silo, porta 9001 | OIDC próprio com o Keycloak |
 
 Prometheus, Alertmanager, Hubble UI e Dashy não têm autenticação própria, então o Traefik pede o login por eles quando a rota está habilitada. Hubble UI e Dashy carregam um filtro para o middleware `keycloak-login`, declarado em [middlewares.yaml](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/platform/ingress/templates/middlewares.yaml) uma vez por namespace, porque a Gateway API só aceita referência a um middleware do mesmo namespace da rota. As rotas e o middleware do namespace `monitoring` só são renderizados quando a stack de monitoramento está habilitada.
+
+O Silo é uma exceção entre os consoles internos: a rota permanece sem `forwardAuth`, e o próprio Silo executa o Authorization Code do client `silo` no realm `management`. O callback é `/oauth_callback`, o token traz o claim `groups` e o Silo transforma o valor `admins` na policy de mesmo nome criada pelo job de inicialização. Assim, o Traefik apenas encaminha a conexão, sem duplicar a sessão OIDC nem esconder a autorização do serviço que a aplica.
 
 Ele é um forwardAuth que encaminha cada requisição à raiz do oauth2-proxy: com uma sessão válida a resposta é 202 (o upstream dele é `static://202`) e o Traefik deixa passar, repassando o usuário e o e-mail em cabeçalhos; sem sessão a resposta é o 302 para o Keycloak, que o Traefik devolve ao navegador tal como veio.
 

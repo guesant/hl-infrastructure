@@ -300,7 +300,7 @@ O Keycloak tem realms com papéis distintos, e o repositório tem um módulo par
 
 `homelab` é o realm do blog: quem administra `guesant.net`, e o client blog.
 
-`management` é o realm das ferramentas internas: quem opera o node entra ali, e os clients `argocd, grafana, portainer, oauth2-proxy` autenticam contra ele.
+`management` é o realm das ferramentas internas: quem opera o node entra ali, e os clients `argocd, grafana, portainer, oauth2-proxy, silo` autenticam contra ele.
 
 Separar quem lê o blog de quem administra o cluster é o motivo da divisão: são populações diferentes, com políticas de sessão e de acesso que podem divergir sem afetar uma à outra, e um comprometimento de um client do blog não dá a ninguém um token válido nas ferramentas.
 
@@ -363,6 +363,8 @@ Cada um autentica com a sua conta de serviço (`client_credentials`, sem senha d
 Cada um declara o conteúdo: o grupo `admins`, a required action que obriga TOTP a todo usuário, e a required action `webauthn-register-passwordless` (não obrigatória, fica disponível para o usuário registrar um passkey por conta própria no Account Console).
 
 Cada um também declara o escopo `groups` com o mapper de pertencimento, e os clients com seus redirects e escopos padrão.
+
+O client `silo` é confidencial e usa o Authorization Code no realm `management`, com callback em `https://silo.<internal_domain>/oauth_callback` e logout na raiz do console. O segredo é lido pelo `secrets.map` diretamente do `SopsSecret` do Silo, enquanto a autorização fica no claim `groups`: o valor `admins` precisa corresponder à policy `admins` que o job do Silo cria no armazenamento.
 
 O client do blog é o client administrativo do `admin.guesant.net`. Seu `base_url` é `https://admin.<blog_hostname>`, o callback de login é `/auth/keycloak/callback` e o logout retorna para a raiz desse mesmo hostname. O site público não participa desse callback: a autenticação do painel e a sessão editorial ficam isoladas no domínio administrativo.
 

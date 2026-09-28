@@ -62,6 +62,7 @@ O conjunto de destinatários é declarado uma vez no topo desse arquivo e reapro
 | `argocd/apps/secrets/platform/portainer/portainer-oidc.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator; `tofu/keycloak-management`; o Job de OAuth do Portainer | Sync; `plan` e `apply` do `management` | client secret do `portainer` e senha do admin local do Portainer |
 | `argocd/apps/secrets/satellites/cloudflared/tunnel-token.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator | Sync | token do túnel Cloudflare |
 | `argocd/apps/secrets/satellites/blog/admin-oidc.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator; `tofu/keycloak-homelab` (pelo `secrets.map`) | Sync; `plan` e `apply` do `homelab` | client secret do `blog` no realm `homelab`, montado no blog como `/secrets/app/PORTFOLIO_ADMIN_OIDC_CLIENT_SECRET` |
+| `argocd/apps/secrets/data/silo/oidc.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator; `tofu/keycloak-management` (pelo `secrets.map`) | Sync; `plan` e `apply` do `management` | client secret do `silo` no realm `management`, replicado para `data/silo-oidc-credentials` |
 
 A regra que organiza a tabela: um segredo vive ao lado de quem o consome no cluster, e quem mais precisar dele o lê dali. O OpenTofu nunca guarda cópia de um segredo de client; `secrets.map`, em cada módulo do Keycloak, diz de qual arquivo e chave o valor vem, e `tofu-run.sh` o extrai em memória na hora do planejamento.
 
@@ -77,7 +78,7 @@ Os módulos homelab e management, sem arquivo de segredos próprio, caem direto 
 - `tailscale`: `state.sops.env` e `tailscale.sops.env`, mais o endereço do node lido da API da tailnet.
 - `keycloak-master`: `state.sops.env` e `keycloak-master.sops.env`. Escreve no Keycloak: realms, administrador permanente, contas de serviço.
 - `keycloak-homelab`: `state.sops.env`; pelo `secrets.map`, o segredo de `tofu-homelab` do `keycloak-master.sops.env` e o segredo do client `blog` do `SopsSecret` `app-secret` do próprio blog. Não tem `.sops.env` próprio.
-- `keycloak-management`: `state.sops.env`; pelo `secrets.map`, o segredo de `tofu-management` do `keycloak-master.sops.env` e os client secrets dos `SopsSecret` de `sso`, `oauth2-proxy` e `portainer`. Também sem `.sops.env` próprio.
+- `keycloak-management`: `state.sops.env`; pelo `secrets.map`, o segredo de `tofu-management` do `keycloak-master.sops.env` e os client secrets dos `SopsSecret` de `sso`, `oauth2-proxy`, `portainer` e `silo`. Também sem `.sops.env` próprio.
 
 Os states de cada módulo em `tofu/` são commitados cifrados com a passphrase do state; perder essa passphrase não derruba nada, só obriga a reimportar os recursos. Commitar o state é o que permite rodar o planejamento de qualquer módulo a partir de um clone limpo, sem backend remoto e sem serviço de locking, o que num operador só é o arranjo mais simples que funciona.
 
