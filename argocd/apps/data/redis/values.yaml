@@ -1,7 +1,7 @@
 image:
   repository: docker.io/library/redis
   tag: "7.4.5"
-  digest: sha256:1feed93082d872fa051fb6b5787a247d39e9c0d00357404c3a6554ba5e4a5315
+  digest: sha256:a453e4f3589f65cf289ba418b4f31e53826b4c11d82c01cb0968634b581f1a63
 
 service:
   name: redis
