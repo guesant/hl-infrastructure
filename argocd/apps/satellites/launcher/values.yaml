@@ -36,7 +36,7 @@ satellites:
     path: argocd/apps/satellites/blog/blog
     destinationNamespace: blog
     helmReleaseName: blog
-    syncWave: "2"
+    syncWave: "3"
     targetRevision: main
     annotations:
       kargo.akuity.io/authorized-stage: blog-delivery:prod

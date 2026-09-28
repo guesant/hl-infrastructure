@@ -32,7 +32,10 @@ spec:
             - /bin/sh
             - -c
           args:
-            - mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs storage/app/private storage/app/public storage/app/resume-pdf && php artisan migrate --force
+            - >-
+              mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs storage/app/private storage/app/public storage/app/resume-pdf &&
+              php artisan migrate --force &&
+              php artisan portfolio:generate-resume-pdf
           envFrom:
             - secretRef:
                 name: {{ .Values.laravel.secretNames.bootstrap }}
