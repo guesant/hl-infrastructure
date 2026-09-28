@@ -83,6 +83,8 @@ Essa separação mantém o dado fora das aplicações que o consomem sem criar u
 
 As imagens do blog ficam registradas no chart por digest, incluindo o public-app e o Laravel. O Kargo resolve a imagem publicada pela branch `main` e o Argo aplica a revisão promovida, sem depender de uma tag mutável durante a execução.
 
+Quando uma promoção precisa ser reestabelecida a partir do Git, os dois pins do blog devem ser atualizados juntos: o digest do public-app e o digest do Laravel. Esse valor é o ponto de partida de um cluster novo; durante a operação normal, o parâmetro promovido pelo Kargo continua sendo a autoridade do rollout. Manter os dois pins alinhados evita iniciar o frontend e a API em revisões incompatíveis.
+
 O servidor Silo e o cliente usado pelo job de políticas são publicados pelo mesmo projeto `pgsty`, com a mesma versão de release e com digest explícito. O job usa o `mc` separado para criar a política e o bucket porque a imagem do servidor não deve ser tratada como uma ferramenta administrativa genérica. Fixar os dois artefatos por digest evita que uma alteração de tag mude o storage ou o job de inicialização sem revisão no git.
 
 O critério que separa a pasta do satélite da camada de dado é a política de remoção, não a titularidade: um banco exclusivo de uma aplicação continua sendo dado, e dado sai do cluster por um caminho mais conservador do que o resto.
