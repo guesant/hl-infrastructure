@@ -15,6 +15,14 @@ spec:
         app.kubernetes.io/name: silo-policy-job
     spec:
       restartPolicy: Never
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: mc
           image: {{ .Values.policyJob.image.repository }}:{{ .Values.policyJob.image.tag }}@{{ .Values.policyJob.image.digest }}
@@ -28,6 +36,11 @@ spec:
           env:
             - name: MC_CONFIG_DIR
               value: /mc
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -ec
