@@ -39,6 +39,7 @@ authMiddleware:
     - X-Auth-Request-User
     - X-Auth-Request-Email
   alwaysNamespaces:
+    - data
     - dashy
     - kube-system
   monitoringNamespace: monitoring
