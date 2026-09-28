@@ -17,6 +17,7 @@ secrets:
   root: silo-root-credentials
   operator: silo-operator-credentials
   portfolio: silo-portfolio-credentials
+  oidc: silo-oidc-credentials
 
 rootAccess: "on"
 

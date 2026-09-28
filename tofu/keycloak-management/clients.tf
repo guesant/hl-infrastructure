@@ -29,6 +29,13 @@ locals {
       redirect_uris       = ["https://kargo.${var.internal_domain}/login", "http://localhost/auth/callback"]
       logout_redirect_uri = "https://kargo.${var.internal_domain}/*"
     }
+    silo = {
+      name                = "Silo console"
+      base_url            = "https://silo.${var.internal_domain}"
+      redirect_uris       = ["https://silo.${var.internal_domain}/oauth_callback"]
+      logout_redirect_uri = "https://silo.${var.internal_domain}/"
+      secret              = var.silo_client_secret
+    }
     oauth2-proxy = {
       name                = "oauth2-proxy"
       base_url            = "https://auth.${var.internal_domain}"

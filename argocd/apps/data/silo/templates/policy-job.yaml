@@ -46,6 +46,7 @@ spec:
             - -ec
             - |
               mc alias set silo http://{{ .Values.service.name }}:{{ .Values.service.s3Port }} "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
+              mc admin policy create silo admins /policies/admins.json || true
               mc admin policy create silo portfolio-policy /policies/portfolio.json || true
               mc admin user add silo "$SILO_OPERATOR_ACCESS_KEY" "$SILO_OPERATOR_SECRET_KEY" || true
               mc admin policy attach silo consoleAdmin --user "$SILO_OPERATOR_ACCESS_KEY" || true

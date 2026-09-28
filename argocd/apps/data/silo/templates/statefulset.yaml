@@ -36,6 +36,8 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ .Values.secrets.root }}
+            - secretRef:
+                name: {{ .Values.secrets.oidc }}
           env:
             - name: MINIO_API_ROOT_ACCESS
               value: {{ .Values.rootAccess | quote }}

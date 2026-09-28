@@ -152,7 +152,7 @@ routes:
     serviceName: silo
     servicePort: 9001
     path: /
-    auth: true
+    auth: false
 
 traefik-crds:
   traefik: false
