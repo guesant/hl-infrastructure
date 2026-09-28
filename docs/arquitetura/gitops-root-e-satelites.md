@@ -115,7 +115,6 @@ Ele roda na mesma imagem e com o mesmo `Secret` do CNPG.
 
 Esse Job executa somente `php artisan migrate --force` na mesma imagem Laravel que será promovida, e o Argo só troca o `Deployment` depois que ele termina, como descrito em [Rollout de imagens](rollout-de-imagens.md). A geração do PDF do currículo fica fora deste hook, porque depende de conteúdo editorial completo e não deve bloquear o rollout.
 
-
 As sondas de vida e prontidão do app Laravel, no endpoint `/up`, também levam um atraso inicial maior do que a imagem anterior usava, porque o boot no Raspberry Pi demora mais do que os poucos segundos que bastavam antes; o mesmo padrão já vale para a sonda de startup do Grafana, descrita adiante.
 
 Um detalhe do chart `application` que já custou um sync: no template de `Job` ele escreve o comando como texto simples, não como lista YAML.
