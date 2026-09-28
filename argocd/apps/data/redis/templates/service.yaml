@@ -1,0 +1,14 @@
+# yamllint disable-file
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.name }}
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/component: cache
+  ports:
+    - name: redis
+      port: {{ .Values.service.port }}
+      targetPort: redis

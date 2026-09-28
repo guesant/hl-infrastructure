@@ -144,6 +144,14 @@ routes:
     servicePort: 80
     path: /
     auth: false
+  - name: silo
+    namespace: data
+    hostnames:
+      - silo.guesant.internal
+    serviceName: silo
+    servicePort: 9001
+    path: /
+    auth: true
 
 traefik-crds:
   traefik: false

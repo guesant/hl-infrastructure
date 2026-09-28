@@ -47,6 +47,8 @@ spec:
             - secretRef:
                 name: {{ .Values.laravel.secretNames.application }}
             - secretRef:
+                name: {{ .Values.laravel.secretNames.data }}
+            - secretRef:
                 name: {{ .Values.laravel.secretNames.ogImage }}
             - configMapRef:
                 name: {{ .Values.laravel.configMapName }}

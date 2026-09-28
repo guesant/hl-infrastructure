@@ -1336,6 +1336,7 @@ nav:
                       - CodeQL: aprender/seguranca/appsec/sast/codeql.md
                       - Checkmarx SAST: aprender/seguranca/appsec/sast/checkmarx.md
                       - SonarQube: aprender/seguranca/appsec/sast/sonarqube.md
+                      - SAST em Laravel: aprender/seguranca/appsec/sast/laravel-static-analysis.md
               - Fuzzing:
                   - Visão geral: aprender/seguranca/appsec/fuzzing/index.md
                   - libFuzzer: aprender/seguranca/appsec/fuzzing/libfuzzer.md

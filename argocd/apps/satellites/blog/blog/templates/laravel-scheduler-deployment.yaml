@@ -46,6 +46,8 @@ spec:
                 name: {{ .Values.laravel.secretNames.bootstrap }}
             - secretRef:
                 name: {{ .Values.laravel.secretNames.application }}
+            - secretRef:
+                name: {{ .Values.laravel.secretNames.data }}
             - configMapRef:
                 name: {{ .Values.laravel.configMapName }}
           env:

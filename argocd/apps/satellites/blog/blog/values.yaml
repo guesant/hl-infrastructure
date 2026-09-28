@@ -199,6 +199,7 @@ laravel:
   secretNames:
     bootstrap: app-secret
     application: laravel-secret
+    data: laravel-data-credentials
     ogImage: og-secret
     database: portfolio-postgres-app
   configMapName: laravel-config

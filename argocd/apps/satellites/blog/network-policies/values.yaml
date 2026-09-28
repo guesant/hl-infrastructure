@@ -102,6 +102,24 @@ policies: |-
           - ports:
               - port: "5432"
                 protocol: TCP
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: data
+              app.kubernetes.io/name: silo
+              app.kubernetes.io/component: object-storage
+        toPorts:
+          - ports:
+              - port: "9000"
+                protocol: TCP
+      - toEndpoints:
+          - matchLabels:
+              k8s:io.kubernetes.pod.namespace: data
+              app.kubernetes.io/name: redis
+              app.kubernetes.io/component: cache
+        toPorts:
+          - ports:
+              - port: "6379"
+                protocol: TCP
       - toEntities:
           - world
         toPorts:

@@ -1,0 +1,5 @@
+apiVersion: v2
+name: redis
+description: Shared Redis cache for application workloads
+type: application
+version: 0.1.0

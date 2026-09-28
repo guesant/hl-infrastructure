@@ -1,0 +1,86 @@
+# yamllint disable-file
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: silo
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
+spec:
+  serviceName: {{ .Values.service.name }}
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: silo
+      app.kubernetes.io/component: object-storage
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: silo
+        app.kubernetes.io/component: object-storage
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: silo
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.digest }}
+          args:
+            - server
+            - /data
+            - --console-address
+            - ":{{ .Values.service.consolePort }}"
+          envFrom:
+            - secretRef:
+                name: {{ .Values.secrets.root }}
+          env:
+            - name: MINIO_API_ROOT_ACCESS
+              value: {{ .Values.rootAccess | quote }}
+          ports:
+            - name: s3
+              containerPort: {{ .Values.service.s3Port }}
+            - name: console
+              containerPort: {{ .Values.service.consolePort }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: s3
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /minio/health/ready
+              port: s3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 6
+          resources:
+{{ toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        volumeMode: Filesystem
+        storageClassName: {{ .Values.storage.storageClass }}
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}

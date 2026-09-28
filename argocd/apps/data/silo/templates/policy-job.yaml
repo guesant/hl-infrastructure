@@ -1,0 +1,56 @@
+# yamllint disable-file
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: silo-policies
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+spec:
+  backoffLimit: 5
+  activeDeadlineSeconds: 300
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: silo-policy-job
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: mc
+          image: {{ .Values.policyJob.image.repository }}:{{ .Values.policyJob.image.tag }}@{{ .Values.policyJob.image.digest }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.secrets.root }}
+            - secretRef:
+                name: {{ .Values.secrets.operator }}
+            - secretRef:
+                name: {{ .Values.secrets.portfolio }}
+          env:
+            - name: MC_CONFIG_DIR
+              value: /mc
+          command:
+            - sh
+            - -ec
+            - |
+              mc alias set silo http://{{ .Values.service.name }}:{{ .Values.service.s3Port }} "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
+              mc admin policy create silo portfolio-policy /policies/portfolio.json || true
+              mc admin user add silo "$SILO_OPERATOR_ACCESS_KEY" "$SILO_OPERATOR_SECRET_KEY" || true
+              mc admin policy attach silo consoleAdmin --user "$SILO_OPERATOR_ACCESS_KEY" || true
+              mc admin user add silo "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" || true
+              mc admin policy attach silo portfolio-policy --user "$AWS_ACCESS_KEY_ID"
+              mc mb --ignore-existing silo/portfolio
+              mc version enable silo/portfolio
+          resources:
+{{ toYaml .Values.policyJob.resources | nindent 12 }}
+          volumeMounts:
+            - name: policies
+              mountPath: /policies
+              readOnly: true
+            - name: mc-config
+              mountPath: /mc
+      volumes:
+        - name: policies
+          configMap:
+            name: silo-policies
+        - name: mc-config
+          emptyDir: {}

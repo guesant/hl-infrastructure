@@ -1,0 +1,23 @@
+image:
+  repository: docker.io/library/redis
+  tag: "7.4.5"
+  digest: sha256:1feed93082d872fa051fb6b5787a247d39e9c0d00357404c3a6554ba5e4a5315
+
+service:
+  name: redis
+  port: 6379
+
+secrets:
+  name: redis-credentials
+
+storage:
+  storageClass: local-path
+  size: 2Gi
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 250m
+    memory: 512Mi

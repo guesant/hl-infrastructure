@@ -1,0 +1,17 @@
+# yamllint disable-file
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.name }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app.kubernetes.io/name: silo
+    app.kubernetes.io/component: object-storage
+  ports:
+    - name: s3
+      port: {{ .Values.service.s3Port }}
+      targetPort: s3
+    - name: console
+      port: {{ .Values.service.consolePort }}
+      targetPort: console
