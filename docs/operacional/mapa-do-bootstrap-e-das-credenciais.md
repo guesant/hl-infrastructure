@@ -62,9 +62,12 @@ O conjunto de destinatários é declarado uma vez no topo desse arquivo e reapro
 | `argocd/apps/secrets/platform/portainer/portainer-oidc.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator; `tofu/keycloak-management`; o Job de OAuth do Portainer | Sync; `plan` e `apply` do `management` | client secret do `portainer` e senha do admin local do Portainer |
 | `argocd/apps/secrets/satellites/cloudflared/tunnel-token.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator | Sync | token do túnel Cloudflare |
 | `argocd/apps/secrets/satellites/blog/admin-oidc.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator; `tofu/keycloak-homelab` (pelo `secrets.map`) | Sync; `plan` e `apply` do `homelab` | client secret do `blog` no realm `homelab`, montado no blog como `/secrets/app/PORTFOLIO_ADMIN_OIDC_CLIENT_SECRET` |
+| `argocd/apps/secrets/data/silo/credentials.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator; StatefulSet e Job de policies do Silo | Sync | credencial root de break-glass, credencial técnica `portfolio-silo` do Laravel e credenciais do Redis |
 | `argocd/apps/secrets/data/silo/oidc.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator; `tofu/keycloak-management` (pelo `secrets.map`) | Sync; `plan` e `apply` do `management` | client secret do `silo` no realm `management`, replicado para `data/silo-oidc-credentials` |
 
 A regra que organiza a tabela: um segredo vive ao lado de quem o consome no cluster, e quem mais precisar dele o lê dali. O OpenTofu nunca guarda cópia de um segredo de client; `secrets.map`, em cada módulo do Keycloak, diz de qual arquivo e chave o valor vem, e `tofu-run.sh` o extrai em memória na hora do planejamento.
+
+No Silo, `MINIO_ROOT_USER` e `MINIO_ROOT_PASSWORD` não representam o login humano normal. Permanecem disponíveis somente para o StatefulSet e para o Job administrativo, como credencial de break-glass e bootstrap. O login humano usa exclusivamente OIDC no realm `management`, com o grupo `admins` associado à policy `admins`. A credencial `portfolio-silo` é técnica e serve apenas para o Laravel acessar o bucket `portfolio`; não existe uma credencial local de operador provisionada.
 
 Só o arquivo de segredos do master guarda segredos que não pertencem a consumidor nenhum, porque o administrador e as contas de serviço são do próprio Keycloak.
 

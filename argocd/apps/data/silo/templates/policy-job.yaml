@@ -30,8 +30,6 @@ spec:
             - secretRef:
                 name: {{ .Values.secrets.root }}
             - secretRef:
-                name: {{ .Values.secrets.operator }}
-            - secretRef:
                 name: {{ .Values.secrets.portfolio }}
           env:
             - name: MC_CONFIG_DIR
@@ -48,14 +46,6 @@ spec:
               mc alias set silo http://{{ .Values.service.name }}:{{ .Values.service.s3Port }} "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
               mc admin policy create silo admins /policies/admins.json || true
               mc admin policy create silo portfolio-policy /policies/portfolio.json || true
-              if mc admin user info silo "$SILO_OPERATOR_ACCESS_KEY" >/dev/null 2>&1; then
-                mc admin user disable silo "$SILO_OPERATOR_ACCESS_KEY" || true
-                mc admin user remove silo "$SILO_OPERATOR_ACCESS_KEY"
-              fi
-              if mc admin user info silo "$SILO_OPERATOR_ACCESS_KEY" >/dev/null 2>&1; then
-                echo "local Silo operator account still exists" >&2
-                exit 1
-              fi
               mc admin user add silo "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" || true
               mc admin policy attach silo portfolio-policy --user "$AWS_ACCESS_KEY_ID"
               mc mb --ignore-existing silo/portfolio
