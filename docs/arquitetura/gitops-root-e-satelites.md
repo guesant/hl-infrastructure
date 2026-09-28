@@ -77,9 +77,9 @@ A razão não é técnica, é organizacional: como o mesmo operador administra a
 
 O padrão de satélite continua existindo e documentado para o cenário em que ele resolve um problema real, um futuro colaborador ou uma automação com acesso de escrita só ao repositório da aplicação, não a este.
 
-O banco é mantido pela aplicação `shared-postgres`, em `argocd/applications/data/shared-postgres.yaml` e `argocd/apps/data/shared-postgres/`. Ela cria um único `Cluster` do CloudNativePG no namespace `data`, com bancos e roles separados para o portfólio e o Keycloak.
+Os dados compartilhados são mantidos pelas aplicações `shared-postgres`, `silo` e `redis`, em `argocd/applications/data/` e nos charts correspondentes. `shared-postgres` cria um único `Cluster` do CloudNativePG no namespace `data`, com bancos e roles separados para o portfólio e o Keycloak. `silo` fornece o storage S3 compatível para assets e PDFs, e `redis` fornece o cache compartilhado do Laravel.
 
-Essa separação mantém o dado fora das aplicações que o consomem sem criar um cluster por aplicação. Os objetos `Database` e `DatabaseRole` têm política de retenção, enquanto cada consumidor recebe seu próprio Secret por `ExternalSecret` no namespace correspondente.
+Essa separação mantém o dado fora das aplicações que o consomem sem criar um cluster por aplicação. Os objetos `Database` e `DatabaseRole` têm política de retenção, enquanto cada consumidor recebe seu próprio Secret por `ExternalSecret` no namespace correspondente. O Silo e o Redis também recebem credenciais por `SopsSecret`, e o `ExternalSecret` de consumidores replica somente as chaves necessárias para o namespace `blog`.
 
 As imagens do blog ficam registradas no chart por digest, incluindo o public-app e o Laravel. O Kargo resolve a imagem publicada pela branch `main` e o Argo aplica a revisão promovida, sem depender de uma tag mutável durante a execução.
 
@@ -188,7 +188,7 @@ O Argo aplica as ondas em ordem crescente e só avança para a próxima quando t
 | --- | --- | --- |
 | `operators/` | `0` | Controllers que gerenciam CRD ou recurso de outro componente: cert-manager (certificados), CNPG (`Cluster` do Postgres) e o sops-secrets-operator (`SopsSecret`); todos no projeto `infra` |
 | `platform/` | `0` | Ferramentas de plataforma de uso direto, que não existem para gerenciar CRD de outra coisa: o Kargo, que promove imagens dos satélites editando a própria `Application` do Argo (veja [Rollout de imagens](rollout-de-imagens.md)), os namespaces, as políticas de rede, o kube-bench, as políticas de admissão, o [ingress](ingress.md) (Traefik com Gateway API, as `HTTPRoute` dos nomes internos e a CA interna), o Portainer, o Dashy, o Reloader, os segredos de OIDC (`sso`) e o `oauth2-proxy`; também no projeto `infra` |
-| `data/` | `1` | Dados com estado, dedicados ou compartilhados, mantidos fora das aplicações que os consomem; hoje `shared-postgres`, um `Cluster` do CNPG com bancos separados para o portfólio e o Keycloak, no projeto `infra` |
+| `data/` | `1` | Dados com estado, dedicados ou compartilhados, mantidos fora das aplicações que os consomem; hoje `shared-postgres`, `silo` e `redis`, no projeto `infra` |
 | `satellites/<nome>/` | `0` a `3` | As `Application` de um satélite consolidado neste repositório, no projeto `satellites`; hoje só `satellites/blog/`, com onda própria por peça (rede na onda `0`, antes do app na `2`, antes do túnel na `3`) |
 | `satellites/launcher/` e `satellites/delivery/` | `0` e `1` | Exceção à regra de uma pasta por satélite: charts com array de instâncias em `values.yaml`, descritos na seção seguinte |
 

@@ -55,6 +55,7 @@ A tabela lista o nome, o serviço de destino e como o login é resolvido em cada
 | `kargo.guesant.internal` | `kargo-api`, porta 80 | OIDC próprio com o Keycloak |
 | `hubble.guesant.internal` | Hubble UI do Cilium | `Middleware` `keycloak-login`, copiado para `kube-system` |
 | `dashy.guesant.internal` e o apex `guesant.internal` | Dashy, a página inicial com o link de cada um dos outros | `Middleware` `keycloak-login` |
+| `silo.guesant.internal` | Console administrativo do Silo, porta 9001 | `Middleware` `keycloak-login` |
 
 Prometheus, Alertmanager, Hubble UI e Dashy não têm autenticação própria, então o Traefik pede o login por eles quando a rota está habilitada. Hubble UI e Dashy carregam um filtro para o middleware `keycloak-login`, declarado em [middlewares.yaml](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/platform/ingress/templates/middlewares.yaml) uma vez por namespace, porque a Gateway API só aceita referência a um middleware do mesmo namespace da rota. As rotas e o middleware do namespace `monitoring` só são renderizados quando a stack de monitoramento está habilitada.
 

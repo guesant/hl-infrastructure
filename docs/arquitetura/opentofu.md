@@ -50,7 +50,7 @@ O certificado do `argocd-server` é autoassinado, por isso a regra liga `no_tls_
 
 O túnel não reescreve caminho: ele escolhe esquema, host e porta do destino, mas encaminha o caminho do jeito que chegou.
 
-O hostname da API encaminha tanto `/api/v1` quanto `/docs` para o serviço Laravel. Assim, a API pública e a documentação OpenAPI permanecem no mesmo origin sem expor a interface administrativa.
+O hostname da API encaminha tanto `/api/v1` quanto `/docs` para o serviço Laravel. A rota `/og` usa o mesmo destino, porque as imagens Open Graph são geradas pelo Laravel e persistidas no storage S3 compatível do Silo. Assim, a API pública, as imagens e a documentação OpenAPI permanecem no mesmo origin sem expor a interface administrativa.
 
 Qualquer outro caminho nesse hostname cai no 404, então a interface e a API do Argo CD nunca ficam expostas; apontar o hostname inteiro para o `argocd-server` publicaria interface e API na internet.
 
@@ -106,7 +106,7 @@ Ele não cobre os endpoints de token e de descoberta, porque o Argo CD, o Grafan
 
 Esse é o limite real de um rate limit por IP num cluster de um nó só: todo tráfego servidor a servidor sai com o mesmo endereço, e o que seria proteção passa a bloquear o próprio cluster. Restringir a regra aos caminhos que só um navegador de pessoa percorre é o que mantém a proteção onde ela faz diferença, na tentativa repetida de senha.
 
-Esse desenho cria um acoplamento que nenhum gate pega: os destinos do ingress são nomes de `Service` do cluster (`app.blog.svc.cluster.local, argocd-server.argocd.svc.cluster.local`), declarados em outro sistema.
+Esse desenho cria um acoplamento que nenhum gate pega: os destinos do ingress são nomes de `Service` do cluster (`app.blog.svc.cluster.local, argocd-server.argocd.svc.cluster.local`), declarados em outro sistema. A regra de `/og` também depende do serviço `app.blog.svc.cluster.local`, mas não depende do Silo diretamente, porque o acesso ao storage ocorre dentro do Laravel.
 
 Renomear um desses `Service` num chart do Argo sem mudar `tunnel.tf` quebra o túnel sem nenhum erro de CI; a mudança precisa ir para ambos os lados no mesmo commit.
 
