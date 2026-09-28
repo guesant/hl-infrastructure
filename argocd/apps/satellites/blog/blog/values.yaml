@@ -14,7 +14,7 @@ application:
     reloadOnChange: false
     image:
       repository: ghcr.io/guesant/blog
-      tag: main@sha256:7c9a5174bee6381fc40833d42fe9fa21fff4c8bde1f2016d87fb09fce779d7f8
+      tag: main@sha256:d75ecfd739acd29ca6491ef3cced070425a3c8de5b88ff29c228b3c87c2b712b
     ports:
       - containerPort: 3000
         name: http
@@ -217,7 +217,7 @@ laravel:
       memory: 256Mi
   image:
     repository: ghcr.io/guesant/blog-laravel
-    tag: main@sha256:2dbfa2f4588237c73737dd88afc0856bfb14a8a348ec665021d10e47dc36a571
+    tag: main@sha256:7e34bf67614330a32e12a029323c87fc6908034be085f160ee05298ada3ab072
   replicas: 2
   worker:
     enabled: true
