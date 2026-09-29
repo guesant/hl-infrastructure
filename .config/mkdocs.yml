@@ -1940,6 +1940,10 @@ nav:
                   - Apache JMeter: aprender/confiabilidade/testes/jmeter.md
               - Experimentação:
                   - Chaos engineering: aprender/confiabilidade/testes/chaos-engineering.md
+          - Manutenção:
+              - Manutenção preventiva: aprender/confiabilidade/manutencao-preventiva.md
+              - Manutenção preditiva: aprender/confiabilidade/manutencao-preditiva.md
+              - Manutenção corretiva: aprender/confiabilidade/manutencao-corretiva.md
       - Engenharia de software:
           - Visão geral: aprender/engenharia-software/index.md
           - Ciclo de vida:
@@ -2022,9 +2026,17 @@ nav:
           - Estratégias:
               - Estratégia de backup de cluster: aprender/backup-do-etcd-cnpg-e-chave-age.md
       - Qualidade:
-          - Linters de artefato: aprender/linters-de-qualidade-de-artefato.md
-          - Mapa de smoke tests e checklists: aprender/smoke-test-e-o-limite-da-automacao-de-checklist.md
-          - Scripts operacionais defensivos: aprender/padroes-defensivos-de-script-operacional.md
+          - Visão geral: aprender/qualidade/index.md
+          - Estratégias:
+              - Qualidade proativa: aprender/qualidade/proativa.md
+              - Qualidade preventiva: aprender/qualidade/preventiva.md
+              - Qualidade preditiva: aprender/qualidade/preditiva.md
+              - Qualidade reativa: aprender/qualidade/reativa.md
+          - Práticas:
+              - Smoke tests de áreas protegidas: aprender/qualidade/smoke-tests-de-areas-protegidas.md
+              - Linters de artefato: aprender/linters-de-qualidade-de-artefato.md
+              - Mapa de smoke tests e checklists: aprender/smoke-test-e-o-limite-da-automacao-de-checklist.md
+              - Scripts operacionais defensivos: aprender/padroes-defensivos-de-script-operacional.md
       - Governança:
           - Visão geral: aprender/governanca/index.md
           - Fundações de software aberto:
