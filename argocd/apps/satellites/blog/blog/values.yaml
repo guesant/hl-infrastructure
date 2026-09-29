@@ -8,8 +8,10 @@ application:
     annotations:
       reloader.stakater.com/auto: "true"
     strategy:
-      type: Recreate
-      rollingUpdate: null
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1
     replicas: 1
     reloadOnChange: false
     image:
@@ -95,7 +97,10 @@ laravel:
     reloader.stakater.com/auto: "true"
     argocd.argoproj.io/sync-wave: "4"
   strategy:
-    type: Recreate
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   pod:
     automountServiceAccountToken: false
     securityContext:
