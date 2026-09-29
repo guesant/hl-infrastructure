@@ -244,7 +244,7 @@ policies: |-
     namespace: blog
   spec:
     hard:
-      requests.cpu: 550m
+      requests.cpu: 750m
       requests.memory: 1100Mi
-      limits.cpu: 4200m
+      limits.cpu: 5200m
       limits.memory: 2200Mi
