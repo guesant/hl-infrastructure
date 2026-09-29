@@ -49,6 +49,7 @@ spec:
               mc admin user add silo "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" || true
               mc admin policy attach silo portfolio-policy --user "$AWS_ACCESS_KEY_ID"
               mc mb --ignore-existing silo/portfolio
+              mc cors set silo/portfolio /policies/portfolio-cors.xml
               mc version enable silo/portfolio
           resources:
 {{ toYaml .Values.policyJob.resources | nindent 12 }}

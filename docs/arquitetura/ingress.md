@@ -56,10 +56,13 @@ A tabela lista o nome, o serviço de destino e como o login é resolvido em cada
 | `hubble.guesant.internal` | Hubble UI do Cilium | `Middleware` `keycloak-login`, copiado para `kube-system` |
 | `dashy.guesant.internal` e o apex `guesant.internal` | Dashy, a página inicial com o link de cada um dos outros | `Middleware` `keycloak-login` |
 | `silo.guesant.internal` | Console administrativo do Silo, porta 9001 | OIDC próprio com o Keycloak |
+| `silo-s3.guesant.internal` | Endpoint S3 do Silo, porta 9000 | Sem login na borda, autenticação S3 no cliente |
 
 Prometheus, Alertmanager, Hubble UI e Dashy não têm autenticação própria, então o Traefik pede o login por eles quando a rota está habilitada. Hubble UI e Dashy carregam um filtro para o middleware `keycloak-login`, declarado em [middlewares.yaml](https://github.com/guesant/hl-infrastructure/blob/main/argocd/apps/platform/ingress/templates/middlewares.yaml) uma vez por namespace, porque a Gateway API só aceita referência a um middleware do mesmo namespace da rota. As rotas e o middleware do namespace `monitoring` só são renderizados quando a stack de monitoramento está habilitada.
 
 O Silo é uma exceção entre os consoles internos: a rota permanece sem `forwardAuth`, e o próprio Silo executa o Authorization Code do client `silo` no realm `management`. O callback é `/oauth_callback`, o token traz o claim `groups` e o Silo transforma o valor `admins` na policy de mesmo nome criada pelo job de inicialização. Assim, o Traefik apenas encaminha a conexão, sem duplicar a sessão OIDC nem esconder a autorização do serviço que a aplica.
+
+O endpoint `silo-s3.guesant.internal` também permanece sem `forwardAuth`, mas por uma razão diferente. Ele existe para que o navegador do painel administrativo envie uploads temporários e para que o cliente público leia objetos por URLs assinadas ou pelo proxy de mídia da API. O endpoint não transforma o bucket em público: o Silo continua exigindo as credenciais S3 nas operações autenticadas, e a política de CORS limita as origens e métodos aceitos pelo navegador. O serviço interno `silo.data.svc.cluster.local:9000` continua sendo usado pelos pods do Laravel, enquanto o hostname interno da tailnet é o endereço acessível ao navegador.
 
 Ele é um forwardAuth que encaminha cada requisição à raiz do oauth2-proxy: com uma sessão válida a resposta é 202 (o upstream dele é `static://202`) e o Traefik deixa passar, repassando o usuário e o e-mail em cabeçalhos; sem sessão a resposta é o 302 para o Keycloak, que o Traefik devolve ao navegador tal como veio.
 

@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: silo-policies
   annotations:
-    silo.guesant.net/policy-revision: oidc-only
+    silo.guesant.net/policy-revision: browser-upload-v1
 data:
   admins.json: |-
     {
@@ -42,3 +42,16 @@ data:
         }
       ]
     }
+  portfolio-cors.xml: |-
+    <CORSConfiguration>
+      <CORSRule>
+        <AllowedOrigin>https://admin.guesant.net</AllowedOrigin>
+        <AllowedMethod>GET</AllowedMethod>
+        <AllowedMethod>HEAD</AllowedMethod>
+        <AllowedMethod>PUT</AllowedMethod>
+        <AllowedMethod>POST</AllowedMethod>
+        <AllowedHeader>*</AllowedHeader>
+        <ExposeHeader>ETag</ExposeHeader>
+        <MaxAgeSeconds>3600</MaxAgeSeconds>
+      </CORSRule>
+    </CORSConfiguration>

@@ -42,11 +42,7 @@ O webhook do GitHub chega por `ops.guesant.net`.
 
 A regra casa só o caminho exato `^/api/webhook$` antes de mandar para o `argocd-server`.
 
-O destino é `https://argocd-server.argocd.svc.cluster.local:443`, e não a porta 80, por um motivo que não aparece em nenhum lint.
-
-Sem o modo `server.insecure`, o argocd-server responde a qualquer requisição HTTP com um redirect 307 para HTTPS, e o GitHub não segue redirect em webhook, então toda entrega falharia.
-
-O certificado do `argocd-server` é autoassinado, por isso a regra liga `no_tls_verify`, só nela e num trecho que não sai do cluster.
+O destino é `http://argocd-server.argocd.svc.cluster.local:80`, porque o Argo CD está configurado com `server.insecure: true` e o Service expõe o servidor HTTP nessa porta. O tráfego continua dentro da rede do cluster, e o webhook não depende de um redirect que o GitHub não seguiria.
 
 O túnel não reescreve caminho: ele escolhe esquema, host e porta do destino, mas encaminha o caminho do jeito que chegou.
 

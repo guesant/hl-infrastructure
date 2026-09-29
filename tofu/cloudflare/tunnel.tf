@@ -13,10 +13,7 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "blog" {
       {
         hostname = var.ops_hostname
         path     = "^/api/webhook$"
-        service  = "https://argocd-server.argocd.svc.cluster.local:443"
-        origin_request = {
-          no_tls_verify = true
-        }
+        service  = "http://argocd-server.argocd.svc.cluster.local:80"
       },
       {
         hostname = var.auth_hostname

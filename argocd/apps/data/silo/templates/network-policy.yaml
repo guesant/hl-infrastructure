@@ -30,6 +30,8 @@ spec:
         - remote-node
       toPorts:
         - ports:
+            - port: {{ .Values.service.s3Port | quote }}
+              protocol: TCP
             - port: {{ .Values.service.consolePort | quote }}
               protocol: TCP
   egress:

@@ -153,6 +153,14 @@ routes:
     servicePort: 9001
     path: /
     auth: false
+  - name: silo-s3
+    namespace: data
+    hostnames:
+      - silo-s3.guesant.internal
+    serviceName: silo
+    servicePort: 9000
+    path: /
+    auth: false
 
 traefik-crds:
   traefik: false
