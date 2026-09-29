@@ -220,13 +220,11 @@ Um `request` maior que esse default torna o pod inválido na criação, como aco
 
 A sequência explica por que o limite existe mesmo sem concorrência por CPU: ele não está lá para proteger vizinhos, e sim porque o namespace exige que todo contêiner tenha um. Declarar o valor certo é melhor do que herdar o default, que foi escolhido para um workload qualquer e não para um que renderiza página sob demanda.
 
-Os `Deployment` do frontend e do Laravel rodam com `strategy.type: Recreate`. O Laravel usa duas réplicas para atender a leitura pública e mantém o PVC compartilhado do cache do currículo, que exige `ReadWriteOnce`; a estratégia evita uma sobreposição de pods durante uma atualização.
+Os `Deployment` do frontend e do Laravel usam `strategy.type: RollingUpdate`, com `maxUnavailable: 0` e `maxSurge: 1`. Assim, cada atualização cria um pod novo antes de remover o antigo, mantendo uma réplica disponível durante a troca. A prontidão precisa ser verificada antes de o Service encaminhar tráfego para o novo pod.
 
-O `PVC` de `/data/resume-cache` não suporta dois pods montando o mesmo volume ao mesmo tempo.
+O Laravel mantém duas réplicas e usa o PVC compartilhado de `/data/resume-cache`, que exige `ReadWriteOnce`. Como o cluster de produção roda no Raspberry Pi, os pods precisam continuar sendo agendados no mesmo node para compartilhar esse volume. O rollout não deve ser interpretado como suporte a múltiplos nodes sem mudar o armazenamento para uma classe compatível com acesso compartilhado.
 
-O chart wrapper precisa declarar `rollingUpdate: null` junto desse tipo, pelo mesmo motivo descrito adiante para o Grafana.
-
-O server-side apply do Argo recusa trocar o tipo da estratégia enquanto o `Deployment` vivo ainda carrega o bloco `rollingUpdate` de uma renderização anterior.
+O valor de `maxUnavailable: 0` protege a disponibilidade, enquanto `maxSurge: 1` limita a capacidade adicional durante a atualização. Esses limites também mantêm previsível o consumo de CPU e memória no node pequeno. Se o novo pod não ficar pronto, o Deployment conserva o pod antigo e a promoção pode ser investigada ou revertida sem retirar a última réplica saudável.
 
 O `readinessProbe` do app aponta para `/health/ready`, não para o endpoint que continua servindo só a sonda de vida.
 
