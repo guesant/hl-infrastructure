@@ -362,6 +362,8 @@ Cada um também declara o escopo `groups` com o mapper de pertencimento, e os cl
 
 O client `silo` é confidencial e usa o Authorization Code no realm `management`, com callback em `https://silo.<internal_domain>/oauth_callback` e logout na raiz do console. O segredo é lido pelo `secrets.map` diretamente do `SopsSecret` do Silo, enquanto a autorização fica no claim `groups`: o valor `admins` precisa corresponder à policy `admins` que o job do Silo cria no armazenamento.
 
+Esse client não exige PKCE porque o console do Silo não envia `code_challenge` nem `code_challenge_method` no fluxo de autorização. A exigência permanece habilitada nos clients cujos consumidores suportam PKCE; a exceção do Silo é uma decisão de compatibilidade limitada ao console, não uma mudança no método de autenticação ou na autorização por grupos.
+
 O client do blog é o client administrativo do `admin.guesant.net`. Seu `base_url` é `https://admin.<blog_hostname>`, o callback de login é `/auth/keycloak/callback` e o logout retorna para a raiz desse mesmo hostname. O site público não participa desse callback: a autenticação do painel e a sessão editorial ficam isoladas no domínio administrativo.
 
 Todos os clients exigem PKCE exceto o `portainer`, porque a edição livre do Portainer não o envia.
