@@ -1,27 +1,7 @@
-# Transferência de arquivos
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/ferramentas/transferencia/transferencia/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/ferramentas/transferencia/transferencia/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/ferramentas/transferencia/transferencia/");</script>
 
-Transferir arquivos significa mover ou sincronizar dados entre sistemas sem
-necessariamente expor o filesystem remoto como parte do sistema local. O
-protocolo precisa definir autenticação, confidencialidade, integridade,
-retomada, atomicidade aparente e o comportamento diante de uma interrupção.
+# Conteúdo movido
 
-## Ferramentas
-
-- [FTP](../ftp.md) e [FTPS](../ftps.md) mantêm o modelo de canais do FTP, com
-  FTPS adicionando TLS.
-- [SFTP](../sftp.md) oferece uma sessão de transferência sobre SSH.
-- [rsync](../rsync.md) sincroniza árvores de arquivos e transmite somente o
-  que precisa ser atualizado.
-- [rclone](../rclone.md) abstrai múltiplos backends de storage.
-- [WinSCP](../winscp.md), [FileZilla](../filezilla.md) e [Cyberduck](../cyberduck.md)
-  oferecem interfaces gráficas para conexões e transferências.
-- [Dolphin](../dolphin.md) integra navegação remota ao desktop KDE por meio do
-  KIO.
-
-## Escolha
-
-Para uma cópia autenticada sobre SSH, SFTP costuma ser suficiente. Para
-sincronização repetida de árvores, rsync expõe semântica mais adequada. FTP e
-FTPS permanecem relevantes para sistemas legados e integrações que já dependem
-do modelo de transferência, mas exigem análise cuidadosa de autenticação,
-separação de canais e exposição de portas.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/ferramentas/transferencia/transferencia/)

@@ -1,21 +1,7 @@
-# Ladon
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ladon/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ladon/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ladon/");</script>
 
-Ladon é uma biblioteca de autorização em Go associada ao ecossistema Ory. Ela
-modela políticas com subjects, resources, actions e condições para decidir se
-uma operação é permitida.
+# Conteúdo movido
 
-## Uso
-
-Uma biblioteca local é adequada quando o serviço possui o contexto necessário
-e a decisão precisa ter baixa latência. A política deve ser versionada junto
-com o código ou distribuída por um mecanismo controlado.
-
-## Limites
-
-Ladon não é um diretório nem um provedor de login. A aplicação deve fornecer
-identidade confiável, carregar políticas corretamente e registrar decisões
-relevantes.
-
-## Fonte
-
-- [Ladon](https://github.com/ory/ladon)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ladon/)

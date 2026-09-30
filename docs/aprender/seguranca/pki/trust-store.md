@@ -1,13 +1,7 @@
-# Trust store
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/pki/trust-store/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/pki/trust-store/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/pki/trust-store/");</script>
 
-Um trust store contém âncoras que um sistema aceita para determinados processos de validação.
+# Conteúdo movido
 
-Sistemas operacionais, runtimes, browsers e aplicações podem usar stores diferentes. Instalar uma CA no sistema não garante que toda aplicação use automaticamente esse store.
-
-## Operação
-
-Distribuir confiança é uma responsabilidade distinta de emitir certificados. Rotação pode exigir período de sobreposição em que clientes confiam simultaneamente na cadeia antiga e na nova.
-
-## Continue por aqui
-
-[trust-manager](trust-manager.md) automatiza distribuição em Kubernetes. [Cadeia de certificados](certificate-chain.md) explica como a âncora participa da validação.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/pki/trust-store/)

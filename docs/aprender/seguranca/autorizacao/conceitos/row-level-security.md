@@ -1,15 +1,7 @@
-# Row-Level Security
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/row-level-security/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/row-level-security/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/row-level-security/");</script>
 
-Row-Level Security, RLS, restringe quais linhas uma role pode ler ou alterar.
-É um mecanismo de autorização no armazenamento, útil para isolamento de
-tenants e defesa em profundidade.
+# Conteúdo movido
 
-## PostgreSQL
-
-No PostgreSQL, policies definem condições para SELECT, INSERT, UPDATE e DELETE.
-O resultado também depende de owner, superuser, BYPASSRLS, functions e views.
-
-## Relações
-
-RLS protege linhas. Não substitui autorização por campo, por objeto fora do
-banco ou por operação de negócio.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/row-level-security/)

@@ -1,16 +1,7 @@
-# Default deny
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/default-deny/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/default-deny/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/default-deny/");</script>
 
-Default deny significa negar uma operação quando nenhuma policy aplicável
-concede explicitamente o acesso. É uma base para evitar que novos recursos ou
-ações sejam expostos por omissão.
+# Conteúdo movido
 
-## Aplicação
-
-O padrão deve valer para rotas, roles, policies, buckets, filas e operações de
-banco. Exceções precisam ser explícitas, revisadas e cobertas por testes.
-
-## Falhas
-
-Default deny não corrige uma policy que autoriza o sujeito errado ou um PEP que
-não aplica a decisão. Ele apenas define o comportamento quando não existe uma
-concessão.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/default-deny/)

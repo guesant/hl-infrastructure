@@ -1,10 +1,7 @@
-# Arquitetura de CPU
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/arquitetura/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/arquitetura/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/arquitetura/");</script>
 
-Arquitetura de CPU define o contrato entre software e processador: instruções,
-registradores, memória observável, exceções e modos de execução. Microarquitetura
-é a implementação interna que busca cumprir esse contrato.
+# Conteúdo movido
 
-[CPU](../index.md) apresenta o ciclo de instrução. [ISA e microarquitetura]
-(../isa-e-microarquitetura.md), [gerações de processadores]
-(../familias-de-processadores.md) e [CPU, RAM, GPU e SoC]
-(../cpu-ram-gpu-e-soc.md) aprofundam dimensões diferentes.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/arquitetura/)

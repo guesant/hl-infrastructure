@@ -1,20 +1,7 @@
-# Security Key C NFC
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/hardware/yubikey/security-key-c-nfc/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/hardware/yubikey/security-key-c-nfc/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/hardware/yubikey/security-key-c-nfc/");</script>
 
-Security Key C NFC é o autenticador FIDO com USB-C e NFC. A Yubico identifica
-a geração atual a partir de 2023.
+# Conteúdo movido
 
-## O que há de especial
-
-O modelo atende endpoints USB-C e autenticação FIDO por aproximação. Ele é
-adequado quando a organização quer passkeys e U2F, mas não precisa dos
-protocolos adicionais da YubiKey 5.
-
-## O que não está incluído
-
-Não oferece OATH, PIV, OpenPGP ou Yubico OTP. NFC continua sendo somente um
-transporte e depende do suporte do telefone, do navegador e do serviço.
-
-## Fontes
-
-- [Security Key Series](https://www.yubico.com/products/security-key/)
-- [Identificação de modelos](https://www.yubico.com/products/identifying-your-yubikey/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/hardware/yubikey/security-key-c-nfc/)

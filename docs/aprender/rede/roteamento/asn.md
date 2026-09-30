@@ -1,7 +1,7 @@
-# Autonomous System Number
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/asn/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/asn/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/asn/");</script>
 
-Autonomous System Number, ASN, identifica um Autonomous System no BGP.
+# Conteúdo movido
 
-Existem faixas destinadas a uso privado, úteis quando BGP é empregado internamente sem anunciar essas identidades na Internet pública.
-
-Veja [Autonomous System](autonomous-system.md) e [BGP](bgp.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/asn/)

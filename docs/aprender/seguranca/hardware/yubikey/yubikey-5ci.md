@@ -1,22 +1,7 @@
-# YubiKey 5Ci
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/hardware/yubikey/yubikey-5ci/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/hardware/yubikey/yubikey-5ci/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/hardware/yubikey/yubikey-5ci/");</script>
 
-YubiKey 5Ci é o modelo multi-protocolo com conectores USB-C e Lightning. A
-Yubico o identifica como parte da linha em operação desde 2019.
+# Conteúdo movido
 
-## O que há de especial
-
-Os dois conectores atendem equipamentos USB-C e dispositivos Apple que ainda
-usam Lightning. O modelo mantém a proposta multi-protocolo da YubiKey 5, com
-FIDO2, U2F, OATH, PIV, OpenPGP, OTP e senha estática conforme firmware e
-integração.
-
-## Limites
-
-O 5Ci não substitui um modelo NFC. A compatibilidade com Lightning depende do
-sistema operacional e do aplicativo, e não deve ser presumida apenas pelo
-formato do conector.
-
-## Fontes
-
-- [YubiKey 5 Series](https://www.yubico.com/store/yubikey-5-series/)
-- [Identificação de modelos](https://www.yubico.com/products/identifying-your-yubikey/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/hardware/yubikey/yubikey-5ci/)

@@ -1,7 +1,7 @@
-# SecurityContext
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/security-context/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/security-context/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/security-context/");</script>
 
-SecurityContext configura propriedades de segurança de Pods e containers, como identidade de usuário, privilege escalation, capabilities, seccomp e filesystem.
+# Conteúdo movido
 
-Ele é um agrupador de configuração. Cada mecanismo subjacente possui semântica própria e não deve ser tratado como uma única proteção.
-
-Veja [run as non-root](run-as-non-root.md), [allowPrivilegeEscalation](allow-privilege-escalation.md), [capabilities](linux-capabilities.md), [seccomp](seccomp.md) e [read-only root filesystem](read-only-root-filesystem.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/security-context/)

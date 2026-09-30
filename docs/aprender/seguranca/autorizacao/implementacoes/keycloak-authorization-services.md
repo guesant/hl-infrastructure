@@ -1,21 +1,7 @@
-# Keycloak Authorization Services
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/keycloak-authorization-services/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/keycloak-authorization-services/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/keycloak-authorization-services/");</script>
 
-Keycloak Authorization Services fornece recursos para modelar recursos,
-escopos, permissões e políticas em um servidor Keycloak. Ele pode atuar como
-um ponto de administração e decisão para aplicações protegidas.
+# Conteúdo movido
 
-## Modelo
-
-Uma aplicação registra recursos e escopos. Políticas podem combinar papéis,
-grupos, atributos e contextos. O resultado pode ser aplicado por um resource
-server integrado ou por uma camada de enforcement da própria aplicação.
-
-## Limites
-
-Keycloak também é um provedor de identidade. Autenticar um usuário não concede
-automaticamente acesso a todos os recursos. As policies precisam ser avaliadas
-no contexto correto e os tokens devem conter apenas claims necessários.
-
-## Fonte
-
-- [Keycloak Authorization Services](https://www.keycloak.org/docs/latest/authorization_services/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/keycloak-authorization-services/)

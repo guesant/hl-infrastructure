@@ -1,7 +1,7 @@
-# RAM
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/ram/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/ram/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/ram/");</script>
 
-RAM é a memória volátil usada para armazenar código, dados, pilhas, heaps, buffers e páginas que o sistema operacional mantém disponíveis. Ela não executa instruções por conta própria. A CPU e dispositivos fazem leituras e escritas por meio do controlador de memória e do sistema de coerência e ordenação.
+# Conteúdo movido
 
-Mais RAM permite manter mais dados ativos e reduzir pressão de paginação, mas não aumenta automaticamente o desempenho de um algoritmo que já cabe na memória. Capacidade, largura de banda, latência, canais, tecnologia, frequência e consumo também importam.
-
-Quando a RAM acaba, o sistema pode usar armazenamento como backing store, mas isso é muito mais lento e não transforma armazenamento em RAM.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/ram/)

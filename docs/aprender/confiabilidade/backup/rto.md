@@ -1,7 +1,7 @@
-# Recovery Time Objective
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/rto/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/rto/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/rto/");</script>
 
-Recovery Time Objective, RTO, é o tempo máximo tolerável entre o incidente e a restauração do serviço ao nível funcional exigido.
+# Conteúdo movido
 
-Copiar arquivos de volta não encerra necessariamente o RTO. Banco, índices, dependências, DNS, secrets e validação funcional podem fazer parte da recuperação.
-
-Veja [teste de restauração](teste-de-restauracao.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/rto/)

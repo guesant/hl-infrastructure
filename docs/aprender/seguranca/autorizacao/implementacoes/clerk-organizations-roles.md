@@ -1,15 +1,7 @@
-# Clerk Organizations Roles
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/clerk-organizations-roles/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/clerk-organizations-roles/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/clerk-organizations-roles/");</script>
 
-Clerk Organizations and Roles oferece membership, organizações e papéis para
-aplicações que usam Clerk como camada de identidade. É uma forma de organizar
-autorização administrativa e isolamento inicial entre organizações.
+# Conteúdo movido
 
-## Limites
-
-Um role de organização não substitui autorização por objeto, por campo ou por
-linha. O backend deve validar a organização ativa e aplicar suas próprias
-policies antes de executar a operação.
-
-## Fonte
-
-- [Clerk Organizations](https://clerk.com/docs/organizations/overview)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/clerk-organizations-roles/)

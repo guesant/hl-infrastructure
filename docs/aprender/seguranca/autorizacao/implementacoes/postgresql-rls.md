@@ -1,20 +1,7 @@
-# PostgreSQL RLS
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/postgresql-rls/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/postgresql-rls/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/postgresql-rls/");</script>
 
-PostgreSQL Row-Level Security, RLS, restringe quais linhas podem ser lidas ou
-alteradas por uma role. O banco avalia policies junto da operação SQL.
+# Conteúdo movido
 
-## Uso
-
-RLS é útil para isolamento de tenants e proteção de dados mesmo quando várias
-camadas acessam as mesmas tabelas. A policy deve cobrir SELECT, INSERT, UPDATE
-e DELETE conforme a semântica do domínio.
-
-## Cuidados
-
-Owners, superusers, roles com BYPASSRLS, funções SECURITY DEFINER e views podem
-alterar o resultado esperado. O desenho deve incluir testes de autorização no
-banco e no serviço.
-
-## Fonte
-
-- [Row Security Policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/postgresql-rls/)

@@ -1,13 +1,7 @@
-# runc
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/runc/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/runc/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/runc/");</script>
 
-runc é um low-level runtime que implementa OCI Runtime Specification.
+# Conteúdo movido
 
-Ele recebe um bundle OCI, configura os mecanismos de isolamento solicitados e inicia o processo do container.
-
-## Fronteira
-
-runc não é um engine, registry ou scheduler. Ferramentas de camadas superiores normalmente o invocam.
-
-## Continue por aqui
-
-[Low-level runtime](low-level-runtime.md) explica a categoria e [crun](crun.md) é uma implementação alternativa.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/runc/)

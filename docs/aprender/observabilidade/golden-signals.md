@@ -1,17 +1,7 @@
-# Golden signals
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/observabilidade/golden-signals/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/observabilidade/golden-signals/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/observabilidade/golden-signals/");</script>
 
-Golden signals são quatro dimensões popularizadas pela prática de Site Reliability Engineering: latency, traffic, errors e saturation.
+# Conteúdo movido
 
-Elas ajudam a começar uma visão operacional cobrindo demanda, experiência, falha e capacidade.
-
-## Relação com RED e USE
-
-Há sobreposição: RED cobre rate/traffic, errors e duration/latency; USE enfatiza utilization, saturation e errors. Golden signals não tornam as outras heurísticas incorretas.
-
-## Má prática
-
-Criar exatamente quatro painéis por serviço sem perguntar quais operações representam tráfego ou erro transforma uma heurística em checklist.
-
-## Continue por aqui
-
-[RED](red.md) e [USE](use.md) são modelos relacionados.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/observabilidade/golden-signals/)

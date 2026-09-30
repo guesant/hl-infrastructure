@@ -1,7 +1,7 @@
-# TLS passthrough
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/passthrough/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/passthrough/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/passthrough/");</script>
 
-TLS passthrough encaminha a conexão cifrada sem terminar TLS no intermediário.
+# Conteúdo movido
 
-O backend mantém a responsabilidade pela sessão e pelas chaves. O proxy perde acesso ao conteúdo L7 cifrado, embora possa usar informações disponíveis antes da cifra completa, como SNI em modelos compatíveis.
-
-Veja [TLS termination](termination.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/passthrough/)

@@ -1,7 +1,7 @@
-# Backoff limit
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/backoff-limit/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/backoff-limit/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/backoff-limit/");</script>
 
-backoffLimit limita falhas/tentativas consideradas por um Job antes de marcá-lo como falho segundo a semântica do controller.
+# Conteúdo movido
 
-Ele evita retries indefinidos de tarefas que não conseguirão concluir sem intervenção.
-
-Veja [Job](job.md) e [active deadline](active-deadline.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/backoff-limit/)

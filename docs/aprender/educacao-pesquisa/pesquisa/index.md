@@ -1,10 +1,7 @@
-# Pesquisa
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/educacao-pesquisa/pesquisa/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/educacao-pesquisa/pesquisa/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/educacao-pesquisa/pesquisa/");</script>
 
-Pesquisa produz conhecimento por investigação, comparação de evidências,
-reprodução, desenvolvimento experimental ou aplicação tecnológica. Universidades,
-redes, centros, fundações e órgãos públicos podem exercer papéis diferentes no
-mesmo projeto.
+# Conteúdo movido
 
-O catálogo de instituições deve ser lido pela função de cada entidade, pela
-área de atuação, pela forma de financiamento e pelas condições de participação,
-não apenas pelo nome ou reputação.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/educacao-pesquisa/pesquisa/)

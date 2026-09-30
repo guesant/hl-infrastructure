@@ -1,9 +1,7 @@
-# Organizações
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/governanca/organizacoes/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/governanca/organizacoes/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/governanca/organizacoes/");</script>
 
-Organizações da Internet exercem funções diferentes: governança multissetorial,
-registro de nomes, alocação de recursos de numeração, interconexão, regulação e
-proteção de dados.
+# Conteúdo movido
 
-[Governança](../index.md) apresenta as fronteiras do domínio. CGI.br, NIC.br,
-Registro.br, IX.br, LACNIC, Anatel e ANPD devem ser consultados conforme a
-responsabilidade concreta que exercem.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/governanca/organizacoes/)

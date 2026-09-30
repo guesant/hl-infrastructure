@@ -1,15 +1,7 @@
-# Dockerfile
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/containers/build/dockerfile/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/containers/build/dockerfile/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/containers/build/dockerfile/");</script>
 
-Dockerfile é uma linguagem de instruções para construir imagens em camadas. Containerfile é um nome neutro usado por ferramentas compatíveis para o mesmo formato de instruções.
+# Conteúdo movido
 
-## Fronteira
-
-Dockerfile não faz parte da OCI Image Specification. OCI define o formato do artefato; Dockerfile descreve um processo de build interpretado por builders.
-
-## Build context
-
-O build context define quais arquivos podem ser referenciados por instruções como COPY. Arquivos sensíveis no contexto precisam ser excluídos e nunca devem ser persistidos em layers.
-
-## Continue por aqui
-
-[BuildKit](buildkit.md) e [Buildah](buildah.md) são builders que podem consumir esse formato.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/containers/build/dockerfile/)

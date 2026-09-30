@@ -1,7 +1,7 @@
-# Unicast Reverse Path Forwarding
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/urpf/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/urpf/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/urpf/");</script>
 
-uRPF verifica plausibilidade do endereço de origem de um pacote consultando informação de roteamento.
+# Conteúdo movido
 
-Modos estritos e permissivos fazem trade-offs diferentes em redes com caminhos assimétricos.
-
-uRPF é uma técnica de filtragem de origem; não é o mesmo problema de autorização de origem BGP resolvido por [RPKI](rpki.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/urpf/)

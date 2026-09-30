@@ -1,13 +1,7 @@
-# Filesystems
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/sistemas/armazenamento/filesystems/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/sistemas/armazenamento/filesystems/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/sistemas/armazenamento/filesystems/");</script>
 
-Um filesystem organiza blocos em arquivos, diretórios, metadados, permissões e estruturas de recuperação. Alguns também oferecem checksums, snapshots, subvolumes, compressão e replicação. Essas capacidades não eliminam a necessidade de compreender o volume ou o dispositivo abaixo delas.
+# Conteúdo movido
 
-## Páginas
-
-- [Btrfs](../btrfs.md) usa copy-on-write, subvolumes, checksums e send/receive.
-- [XFS](../xfs.md) prioriza escalabilidade e operações journaling.
-- [ZFS](../zfs.md) combina filesystem e administração de pools com checksums, datasets e snapshots.
-
-## Critérios
-
-Compare compatibilidade com a distribuição e o boot, consumo de memória, expansão, quotas, snapshots, ferramentas de reparo, observabilidade, desempenho e experiência da equipe. Snapshot não é backup até que exista uma cópia independente e um teste de restauração.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/sistemas/armazenamento/filesystems/)

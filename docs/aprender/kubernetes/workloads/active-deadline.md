@@ -1,7 +1,7 @@
-# Active deadline
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/active-deadline/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/active-deadline/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/active-deadline/");</script>
 
-activeDeadlineSeconds limita o tempo ativo permitido para um Job ou Pod conforme o contexto em que o campo é aplicado.
+# Conteúdo movido
 
-É uma proteção contra tarefas travadas ou que excedem uma janela operacional.
-
-Timeout não torna a operação idempotente nem garante rollback do efeito parcial.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/active-deadline/)

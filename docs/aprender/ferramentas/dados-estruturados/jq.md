@@ -1,15 +1,7 @@
-# jq
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/ferramentas/dados-estruturados/jq/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/ferramentas/dados-estruturados/jq/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/ferramentas/dados-estruturados/jq/");</script>
 
-jq é uma linguagem e ferramenta de linha de comando para consultar e transformar JSON.
+# Conteúdo movido
 
-## Casos de uso
-
-Selecionar campos, filtrar arrays, construir novos objetos e transformar saída de APIs.
-
-## Boa prática
-
-Use jq quando a decisão depende da estrutura JSON. Prefira saída raw apenas quando o consumidor realmente espera texto.
-
-## Má prática
-
-Substituir validação de schema por filtros ad hoc ou usar grep/sed para interpretar JSON quando jq está disponível.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/ferramentas/dados-estruturados/jq/)

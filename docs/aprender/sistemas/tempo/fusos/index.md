@@ -1,10 +1,7 @@
-# Fusos
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/sistemas/tempo/fusos/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/sistemas/tempo/fusos/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/sistemas/tempo/fusos/");</script>
 
-Fusos são regras políticas que relacionam horários civis a uma linha temporal.
-Um offset isolado não representa todas as transições históricas e futuras de uma
-região.
+# Conteúdo movido
 
-[Tempo](../index.md) diferencia instante, calendário e horário local.
-[Fusos horários, UTC e IANA](../fusos-horarios.md) explica identificadores,
-offsets e horário de verão; [timestamps](../timestamps.md) trata persistência e
-serialização.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/sistemas/tempo/fusos/)

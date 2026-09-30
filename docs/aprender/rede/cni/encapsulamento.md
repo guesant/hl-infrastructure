@@ -1,15 +1,7 @@
-# Encapsulamento em rede de cluster
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/cni/encapsulamento/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/cni/encapsulamento/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/cni/encapsulamento/");</script>
 
-Encapsulamento transporta pacotes de uma rede lógica dentro de outro protocolo de rede. VXLAN e Geneve são exemplos usados em redes overlay.
+# Conteúdo movido
 
-## Vantagem
-
-A rede física não precisa conhecer diretamente cada prefixo de Pod; os nós transportam tráfego encapsulado entre endpoints do overlay.
-
-## Custo
-
-Headers adicionais reduzem MTU efetiva e adicionam processamento. Problemas de MTU podem aparecer como conexões parcialmente funcionais e são especialmente difíceis de diagnosticar.
-
-## Continue por aqui
-
-[CNI](index.md) situa encapsulamento entre decisões de dataplane. [Cilium](cilium.md) suporta modos encapsulados e de roteamento nativo.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/cni/encapsulamento/)

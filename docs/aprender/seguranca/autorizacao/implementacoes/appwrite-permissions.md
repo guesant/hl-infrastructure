@@ -1,19 +1,7 @@
-# Appwrite Permissions
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/appwrite-permissions/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/appwrite-permissions/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/appwrite-permissions/");</script>
 
-Appwrite Permissions controla acesso a recursos Appwrite por usuários, equipes,
-roles e níveis de leitura, criação, atualização e remoção.
+# Conteúdo movido
 
-## Uso
-
-As permissões podem ser definidas no recurso criado ou na configuração do
-serviço. O backend deve evitar conceder permissões amplas por conveniência e
-deve distinguir usuário, team, role e acesso público.
-
-## Limites
-
-O modelo protege recursos Appwrite. Regras de negócio fora desses recursos
-continuam sendo responsabilidade da aplicação.
-
-## Fonte
-
-- [Appwrite Permissions](https://appwrite.io/docs/products/auth/permissions)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/appwrite-permissions/)

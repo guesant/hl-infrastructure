@@ -1,6 +1,7 @@
-# Mapa de segurança elétrica
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/sistemas/hardware/protecao-eletrica/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/sistemas/hardware/protecao-eletrica/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/sistemas/hardware/protecao-eletrica/");</script>
 
-Segurança contra choque, surtos e falhas de instalação é diferente de proteção contra descarga eletrostática em componentes. Esta página apresenta o mapa e separa os dois assuntos.
+# Conteúdo movido
 
-- [Segurança elétrica](../seguranca-eletrica.md) trata de disjuntores, DR, DPS, aterramento, corrente de fuga e equipamentos de proteção.
-- [Descarga eletrostática](../esd.md) trata de eletricidade estática e danos em componentes eletrônicos.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/sistemas/hardware/protecao-eletrica/)

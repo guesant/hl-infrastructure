@@ -1,11 +1,7 @@
-# Processadores Arm
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/arm/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/arm/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/arm/");</script>
 
-Arm não vende uma única CPU equivalente a uma geração Intel Core. O ecossistema combina versões da arquitetura, núcleos Cortex, designs licenciados e implementações próprias.
+# Conteúdo movido
 
-ARMv7-A foi uma base importante de 32 bits. Armv8-A introduziu AArch64 e o conjunto A64. Armv9-A acrescentou recursos e extensões voltadas a segurança, vetores e computação moderna.
-
-Cortex-A é voltado a aplicações e sistemas operacionais ricos. Cortex-R atende requisitos de tempo real e determinismo. Cortex-M é voltado a microcontroladores. Um SoC pode combinar núcleos, aceleradores e periféricos sem deixar de usar a mesma família arquitetural.
-
-## Fonte
-
-- [Arm Architecture](https://developer.arm.com/Architectures)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/arm/)

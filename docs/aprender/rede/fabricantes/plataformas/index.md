@@ -1,10 +1,7 @@
-# Plataformas de rede
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/fabricantes/plataformas/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/fabricantes/plataformas/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/fabricantes/plataformas/");</script>
 
-Plataformas de rede combinam hardware, sistema operacional, gerenciamento,
-licenciamento e suporte. O produto concreto importa, mas o critério de escolha
-deve começar pela função necessária, pelo domínio de controle e pelo modelo de
-operação.
+# Conteúdo movido
 
-[Fabricantes](../index.md) organiza os fornecedores. As páginas de Cisco,
-TP-Link, Netgate, MikroTik, Ubiquiti e o [comparativo](../comparativo.md)
-separam implementação, catálogo e critérios de seleção.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/fabricantes/plataformas/)

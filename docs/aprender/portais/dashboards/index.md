@@ -1,9 +1,7 @@
-# Dashboards
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/portais/dashboards/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/portais/dashboards/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/portais/dashboards/");</script>
 
-Dashboards organizam links, serviços e sinais operacionais numa superfície de
-consulta. Eles reduzem o tempo para encontrar um recurso, mas não substituem
-autenticação, observabilidade, documentação ou um processo de resposta.
+# Conteúdo movido
 
-[Portais](../index.md) apresenta o espaço de soluções. Dashy, Homarr e
-Homepage diferem em configuração, extensibilidade, autenticação e custo de
-operação.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/portais/dashboards/)

@@ -1,5 +1,7 @@
-# Roteamento
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/");</script>
 
-Roteamento decide como pacotes alcançam redes de destino. Em redes locais, tabelas e protocolos internos podem ser suficientes; entre domínios administrativos, BGP é o protocolo central.
+# Conteúdo movido
 
-Esta categoria separa [BGP](bgp.md), [Autonomous System](autonomous-system.md), [ASN](asn.md), [RPKI](rpki.md), [ROA](roa.md), [uRPF](urpf.md) e [BCP 38](bcp38.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/)

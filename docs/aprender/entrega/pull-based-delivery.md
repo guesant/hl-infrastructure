@@ -1,26 +1,7 @@
-# Entrega pull-based
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/entrega/pull-based-delivery/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/entrega/pull-based-delivery/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/entrega/pull-based-delivery/");</script>
 
-Na entrega pull-based, um agente no ambiente de destino busca a configuração e
-a aplica. O pipeline publica uma revisão em um repositório ou registry, e não
-precisa iniciar uma conexão administrativa para o cluster.
+# Conteúdo movido
 
-## Benefícios e custos
-
-O modelo reduz a superfície de credenciais de deploy e permite que o ambiente
-controle o momento de observar a mudança. Ele exige um agente saudável,
-acesso de saída, credenciais de leitura e observabilidade para saber quando a
-mudança foi aplicada.
-
-Uma falha no agente pode deixar o ambiente parado numa revisão válida sem que
-o pipeline externo perceba. Status de reconciliação precisa ser exposto e
-monitorado.
-
-## Relações
-
-- [GitOps](gitops.md) fornece o modelo declarativo.
-- [Reconciliação](reconciliation.md) aplica convergência.
-- [Entrega push-based](push-based-delivery.md) mantém o contraste operacional.
-
-## Fonte primária
-
-- [OpenGitOps principles](https://opengitops.dev/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/entrega/pull-based-delivery/)

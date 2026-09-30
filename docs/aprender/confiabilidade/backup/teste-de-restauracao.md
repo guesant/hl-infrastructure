@@ -1,7 +1,7 @@
-# Teste de restauração
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/teste-de-restauracao/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/teste-de-restauracao/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/teste-de-restauracao/");</script>
 
-Teste de restauração verifica que dados protegidos podem ser recuperados e usados.
+# Conteúdo movido
 
-Um job de backup concluído só prova que o processo declarou sucesso. Um teste completo valida integridade do artefato, execução do restore e funcionamento da aplicação com os dados restaurados.
-
-Registre duração e ponto recuperado para comparar resultados com [RTO](rto.md) e [RPO](rpo.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/teste-de-restauracao/)

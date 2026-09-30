@@ -1,7 +1,7 @@
-# Sidecar proxy em service mesh
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/sidecar/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/sidecar/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/sidecar/");</script>
 
-O padrão sidecar coloca um proxy junto ao workload para interceptar tráfego de entrada e saída.
+# Conteúdo movido
 
-Permite aplicar políticas sem modificar cada aplicação, mas adiciona processos, recursos, hops e ciclo de upgrade.
-
-Sidecar é um padrão arquitetural, não sinônimo de service mesh. Veja [sidecarless](sidecarless.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/sidecar/)

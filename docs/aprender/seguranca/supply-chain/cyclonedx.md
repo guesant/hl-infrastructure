@@ -1,7 +1,7 @@
-# CycloneDX
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/cyclonedx/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/cyclonedx/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/cyclonedx/");</script>
 
-CycloneDX é um padrão orientado a software supply chain e segurança capaz de representar SBOMs e outros tipos de BOM.
+# Conteúdo movido
 
-Ele possui modelos para componentes, dependências, serviços, vulnerabilidades e extensões do domínio.
-
-Veja [SBOM](sbom.md) e [SPDX](spdx.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/cyclonedx/)

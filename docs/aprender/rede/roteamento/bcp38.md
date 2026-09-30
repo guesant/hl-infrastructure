@@ -1,7 +1,7 @@
-# BCP 38
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/bcp38/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/bcp38/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/bcp38/");</script>
 
-BCP 38 descreve ingress filtering para reduzir tráfego com endereços de origem forjados saindo ou entrando por fronteiras onde essa origem é implausível.
+# Conteúdo movido
 
-O objetivo é combater IP source address spoofing e reduzir capacidade de reflexão/amplificação.
-
-[uRPF](urpf.md) é uma técnica que pode participar de filtros de origem em determinadas topologias.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/bcp38/)

@@ -1,8 +1,7 @@
-# Filesystems Windows
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/windows/filesystems/windows/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/windows/filesystems/windows/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/windows/filesystems/windows/");</script>
 
-Filesystems Windows definem armazenamento, metadados, permissões e integração
-com o sistema operacional. O formato da partição não determina sozinho como
-usuários, volumes e letras de unidade são apresentados.
+# Conteúdo movido
 
-[Filesystems](../index.md) apresenta o domínio. [Filesystems Windows]
-(../windows-filesystems.md) detalha NTFS, ReFS e outros formatos relevantes.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/windows/filesystems/windows/)

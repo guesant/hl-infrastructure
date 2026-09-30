@@ -1,22 +1,7 @@
-# Flux
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/entrega/flux/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/entrega/flux/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/entrega/flux/");</script>
 
-Flux é uma plataforma GitOps baseada em controllers Kubernetes que reconcilia
-fontes e recursos declarativos. Ele oferece APIs e controllers para fontes
-Git, artefatos, Kustomize e Helm.
+# Conteúdo movido
 
-## Comparação
-
-Flux e Argo CD usam reconciliação pull-based. As diferenças aparecem no modelo
-de recursos, na interface operacional, na composição dos controllers e no
-fluxo de promoção de artefatos. A escolha deve considerar ownership,
-observabilidade, integração e experiência da equipe.
-
-## Relações
-
-- [Argo CD](../argocd.md) é a alternativa adotada ou avaliada.
-- [Argo CD e Flux](../comparacoes/entrega/argocd-flux.md) compara dimensões.
-- [GitOps](gitops.md) explica o modelo comum.
-
-## Fonte primária
-
-- [Flux documentation](https://fluxcd.io/flux/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/entrega/flux/)

@@ -1,19 +1,7 @@
-# Baseline de análise estática
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/appsec/sast/baseline/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/appsec/sast/baseline/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/appsec/sast/baseline/");</script>
 
-Um baseline registra findings já conhecidos para permitir que uma política trate novas violações de forma diferente da dívida existente.
+# Conteúdo movido
 
-## Caso de uso
-
-Em código legado com muitos findings, exigir zero violações imediatamente pode impedir adoção do scanner. Um baseline permite bloquear regressões enquanto a dívida anterior é tratada separadamente.
-
-## Boa prática
-
-Torne a dívida visível, revise o baseline e remova entradas quando o problema desaparecer.
-
-## Má prática
-
-Usar baseline como lista permanente de exceções sem owner ou revisão apenas congela vulnerabilidades e reduz confiança no gate.
-
-## Continue por aqui
-
-[SAST](index.md) explica como baseline participa de uma estratégia de adoção.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/appsec/sast/baseline/)

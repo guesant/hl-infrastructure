@@ -1,5 +1,7 @@
-# Autonomous System
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/autonomous-system/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/autonomous-system/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/autonomous-system/");</script>
 
-Autonomous System, AS, é um conjunto de redes e roteadores sob uma política de roteamento coerente para fins de BGP.
+# Conteúdo movido
 
-Um AS é identificado por um [ASN](asn.md). O conceito é administrativo e de roteamento, não uma VLAN ou subnet.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/autonomous-system/)

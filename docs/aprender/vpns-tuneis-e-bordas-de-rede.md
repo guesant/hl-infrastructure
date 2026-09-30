@@ -1,9 +1,7 @@
-# Mapa de VPNs, túneis e bordas de rede
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/vpns-tuneis-e-bordas-de-rede/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/vpns-tuneis-e-bordas-de-rede/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/vpns-tuneis-e-bordas-de-rede/");</script>
 
-Esta página agora funciona como mapa de três conceitos que antes estavam compactados.
+# Conteúdo movido
 
-- [VPN](rede/conectividade/vpn.md) tem como objetivo criar conectividade privada protegida.
-- [Túnel](rede/conectividade/tunel.md) é o mecanismo geral de encapsular tráfego por outro transporte.
-- [Borda de rede](rede/conectividade/borda.md) é a região arquitetural em que redes e políticas se encontram.
-
-Uma VPN pode usar tunneling e terminar na borda, mas os termos não são intercambiáveis.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/vpns-tuneis-e-bordas-de-rede/)

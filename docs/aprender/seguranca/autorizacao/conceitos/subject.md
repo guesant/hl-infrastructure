@@ -1,15 +1,7 @@
-# Subject
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/subject/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/subject/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/subject/");</script>
 
-Subject é a identidade em nome da qual uma operação é solicitada. Pode ser um
-usuário, serviço, grupo, role, workload ou identidade delegada.
+# Conteúdo movido
 
-## Identidade
-
-O identificador usado na autorização deve ser estável e vir de uma fonte
-confiável. Email, nome exibido ou claims não validadas não devem ser usados
-como identidade primária.
-
-## Relações
-
-O subject é diferente da sessão e do token. A sessão autentica o chamador; o
-subject representa a entidade que receberá a decisão.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/subject/)

@@ -1,21 +1,7 @@
-# Terrascan
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/terrascan/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/terrascan/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/terrascan/");</script>
 
-Terrascan é uma ferramenta de análise de segurança e conformidade para
-infraestrutura como código. Ela verifica templates contra políticas antes que
-recursos sejam provisionados.
+# Conteúdo movido
 
-## Uso
-
-A ferramenta pode analisar formatos e provedores diferentes, produzindo
-violações para revisão local ou integração de CI. O resultado deve distinguir
-risco real, exceção documentada e limitação do scanner.
-
-## Limites
-
-Terrascan não substitui validação semântica do provedor, revisão de mudanças ou
-controle de drift. Uma policy de scanner também precisa de proprietário e ciclo
-de vida.
-
-## Fonte
-
-- [Terrascan](https://runterrascan.io/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/terrascan/)

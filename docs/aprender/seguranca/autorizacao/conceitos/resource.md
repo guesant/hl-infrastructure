@@ -1,14 +1,7 @@
-# Resource
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/resource/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/resource/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/resource/");</script>
 
-Resource é o objeto protegido por uma decisão. Pode ser uma rota, documento,
-arquivo, linha, campo, bucket, namespace ou recurso de infraestrutura.
+# Conteúdo movido
 
-## Identificação
-
-O identificador deve ser canônico, não ambíguo e vinculado ao tenant correto.
-Uma policy que recebe apenas um nome curto pode autorizar o recurso errado.
-
-## Escopo
-
-O resource pode possuir relações com outros recursos. Em ReBAC, essas relações
-permitem derivar acesso sem copiar permissões para todas as instâncias.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/resource/)

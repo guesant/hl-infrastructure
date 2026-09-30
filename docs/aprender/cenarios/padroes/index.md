@@ -1,14 +1,7 @@
-# Padrões
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/cenarios/padroes/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/cenarios/padroes/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/cenarios/padroes/");</script>
 
-Padrões de solução descrevem formas recorrentes de combinar componentes para
-resolver restrições conhecidas. Eles não são receitas universais: um padrão
-precisa ser avaliado pelo contexto, pelos custos e pelos failure domains que
-introduz.
+# Conteúdo movido
 
-## Relação com cenários
-
-Um cenário começa pelas restrições do ambiente, como single-node, edge ou
-ambiente desconectado. Um padrão descreve uma composição que pode ser útil
-dentro desse cenário. [Composições](../../composicoes/index.md) detalha
-relações entre tecnologias; [comparações](../../comparacoes/index.md) ajuda a
-escolher entre alternativas.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/cenarios/padroes/)

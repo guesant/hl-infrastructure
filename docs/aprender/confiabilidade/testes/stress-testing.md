@@ -1,7 +1,7 @@
-# Stress testing
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/stress-testing/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/stress-testing/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/stress-testing/");</script>
 
-Stress testing aumenta demanda além da condição normal para encontrar limites, comportamento de degradação e recuperação.
+# Conteúdo movido
 
-Difere de um teste de carga que valida uma carga-alvo conhecida. Stress deliberadamente procura a região de falha.
-
-O teste deve possuir limites de segurança para não transformar descoberta de capacidade em incidente não controlado.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/stress-testing/)

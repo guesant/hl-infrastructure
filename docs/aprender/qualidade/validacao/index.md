@@ -1,5 +1,7 @@
-# Validação declarativa
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/qualidade/validacao/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/qualidade/validacao/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/qualidade/validacao/");</script>
 
-Validação declarativa possui camadas. [Schema validation](schema-validation.md) pergunta se estrutura e tipos obedecem ao schema. [Policy as code](policy-as-code.md) pergunta se o dado obedece regras organizacionais.
+# Conteúdo movido
 
-[kubeconform](kubeconform.md) implementa schema validation para Kubernetes. [Conftest](conftest.md) avalia políticas sobre dados estruturados.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/qualidade/validacao/)

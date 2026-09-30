@@ -1,7 +1,7 @@
-# Capacidade
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/");</script>
 
-Sistemas podem falhar por saturação ou por falha de componentes. São perguntas diferentes.
+# Conteúdo movido
 
-[Teste de carga](load-testing.md) mede comportamento sob demanda. [Stress testing](stress-testing.md) procura limites além da condição esperada. [Soak testing](soak-testing.md) observa carga sustentada. [Spike testing](spike-testing.md) observa mudanças abruptas. [Chaos engineering](chaos-engineering.md) testa hipóteses de resiliência por injeção controlada de falhas.
-
-As técnicas podem ser combinadas, mas não são sinônimas.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/)

@@ -1,7 +1,7 @@
-# TLS
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/");</script>
 
-Transport Layer Security protege conexões fornecendo confidencialidade, integridade e autenticação segundo o handshake e a validação de certificados.
+# Conteúdo movido
 
-Esta categoria separa [TLS 1.3](tls13.md), [mTLS](mtls.md), [SNI](sni.md), [TLS termination](termination.md), [TLS passthrough](passthrough.md), [forward secrecy](forward-secrecy.md) e [fingerprinting de TLS e HTTP](fingerprinting.md).
-
-Certificados e cadeia de confiança pertencem à categoria [PKI](../pki/index.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/)

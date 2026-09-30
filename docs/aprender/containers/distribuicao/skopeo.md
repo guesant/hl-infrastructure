@@ -1,11 +1,7 @@
-# Skopeo
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/containers/distribuicao/skopeo/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/containers/distribuicao/skopeo/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/containers/distribuicao/skopeo/");</script>
 
-Skopeo inspeciona, copia e manipula imagens e manifestos entre diferentes transportes sem precisar executar containers.
+# Conteúdo movido
 
-## Casos de uso
-
-Inspecionar metadados remotos, copiar imagens entre registries e trabalhar com layouts OCI são usos típicos.
-
-## Fronteira
-
-Skopeo não é runtime nem engine. Sua responsabilidade é operar sobre artefatos e transportes.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/containers/distribuicao/skopeo/)

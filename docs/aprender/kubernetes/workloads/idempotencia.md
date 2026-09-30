@@ -1,7 +1,7 @@
-# Idempotência de tarefas
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/idempotencia/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/idempotencia/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/idempotencia/");</script>
 
-Uma operação idempotente pode ser repetida sem produzir efeitos adicionais incorretos além do estado desejado.
+# Conteúdo movido
 
-Jobs e sistemas distribuídos podem repetir trabalho por retry, timeout ou incerteza sobre conclusão. Idempotência reduz o risco dessas repetições.
-
-Ela pode ser obtida com chaves de idempotência, operações de upsert, registros de execução ou desenho de domínio apropriado.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/idempotencia/)

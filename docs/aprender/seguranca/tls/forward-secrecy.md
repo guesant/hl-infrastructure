@@ -1,7 +1,7 @@
-# Forward secrecy
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/forward-secrecy/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/forward-secrecy/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/forward-secrecy/");</script>
 
-Forward secrecy é a propriedade pela qual comprometer uma chave de longo prazo no futuro não permite recuperar chaves de sessão passadas a partir de tráfego previamente capturado.
+# Conteúdo movido
 
-Ela depende do mecanismo de estabelecimento de chaves, não apenas de "usar criptografia".
-
-[TLS 1.3](tls13.md) foi desenhado para usar key exchange com essa propriedade.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/forward-secrecy/)

@@ -1,15 +1,7 @@
-# Provider Proxmox
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/iac/providers/proxmox/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/iac/providers/proxmox/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/iac/providers/proxmox/");</script>
 
-O provider Proxmox gerencia recursos de virtualização e armazenamento expostos pelo Proxmox VE. Ele pode declarar máquinas virtuais, containers, discos, redes e configurações associadas conforme a versão do provider e da API.
+# Conteúdo movido
 
-## Cuidados
-
-Prefira tokens de API com escopo limitado e uma conta sem privilégios além dos recursos administrados. O provider não elimina decisões operacionais sobre backup, quorum, storage, migração e disponibilidade do cluster.
-
-## Relações
-
-[Proxmox SDN](../../rede/roteamento/proxmox-sdn.md) trata a rede declarada no próprio Proxmox, enquanto o provider trata a API de gerenciamento de recursos.
-
-## Fonte primária
-
-- [Proxmox provider](https://registry.opentofu.org/providers/bpg/proxmox/latest)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/iac/providers/proxmox/)

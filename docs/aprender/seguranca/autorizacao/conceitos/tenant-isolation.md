@@ -1,16 +1,7 @@
-# Tenant isolation
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/tenant-isolation/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/tenant-isolation/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/tenant-isolation/");</script>
 
-Tenant isolation impede que dados, operações e recursos de uma organização
-sejam acessados por outra. É uma propriedade do desenho completo, não apenas
-um campo tenant_id.
+# Conteúdo movido
 
-## Camadas
-
-O isolamento pode usar banco separado, schema, RLS, filtros de consulta,
-policies, namespaces, chaves de criptografia e limites de recursos. Quanto mais
-crítico o dado, menos a aplicação deve depender de uma única camada.
-
-## Teste
-
-Teste acesso cruzado com IDs válidos de outro tenant, jobs, exportações,
-cache, arquivos e endpoints administrativos.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/tenant-isolation/)

@@ -1,15 +1,7 @@
-# OpenFGA SDK
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/openfga-sdk/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/openfga-sdk/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/openfga-sdk/");</script>
 
-OpenFGA SDK é o conjunto de clientes para consultar e alterar relações em um
-servidor OpenFGA. O SDK transporta o contrato do modelo, mas não remove a
-necessidade de validar sujeitos, recursos e ações no backend.
+# Conteúdo movido
 
-## Uso
-
-Use o SDK para verificar permissões, listar objetos acessíveis e escrever
-tuples. Em cada chamada, associe logs e métricas ao tenant, ao recurso e à
-revisão da decisão sem registrar dados sensíveis desnecessários.
-
-## Fonte
-
-- [Documentação do OpenFGA](https://openfga.dev/docs/getting-started)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/openfga-sdk/)

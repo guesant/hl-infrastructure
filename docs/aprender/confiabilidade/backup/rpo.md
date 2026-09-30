@@ -1,7 +1,7 @@
-# Recovery Point Objective
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/rpo/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/rpo/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/rpo/");</script>
 
-Recovery Point Objective, RPO, é a quantidade máxima de dados que o negócio aceita perder, normalmente expressa como intervalo de tempo.
+# Conteúdo movido
 
-RPO de 15 minutos exige que exista um ponto recuperável suficientemente recente; não é sinônimo literal de "executar um job a cada 15 minutos".
-
-A estratégia precisa demonstrar o RPO em testes e considerar falhas do próprio pipeline de proteção.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/rpo/)

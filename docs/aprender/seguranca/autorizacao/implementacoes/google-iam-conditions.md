@@ -1,20 +1,7 @@
-# Google Cloud IAM Conditions
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/google-iam-conditions/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/google-iam-conditions/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/google-iam-conditions/");</script>
 
-Google Cloud IAM Conditions acrescenta expressões condicionais às concessões
-de IAM. A decisão pode considerar recurso, tempo, atributos e contexto da
-requisição.
+# Conteúdo movido
 
-## Uso
-
-Condições podem limitar uma permissão a um recurso, prefixo ou janela de
-tempo. O escopo deve ser pequeno e testado, porque uma expressão incorreta
-reduz acesso legítimo ou amplia acesso indevido.
-
-## Limites
-
-IAM Conditions não substitui autorização por objeto dentro de uma aplicação.
-Ela controla acesso aos recursos reconhecidos pela plataforma Google Cloud.
-
-## Fonte
-
-- [Visão geral de IAM Conditions](https://cloud.google.com/iam/docs/conditions-overview)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/google-iam-conditions/)

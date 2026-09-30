@@ -1,9 +1,7 @@
-# Rede física
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/arquitetura/fisica/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/arquitetura/fisica/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/arquitetura/fisica/");</script>
 
-Rede física descreve meios, equipamentos, energia, distância e topologia que
-transportam sinais. Cabos, rádio, interfaces e dispositivos impõem limites de
-largura de banda, alcance, interferência e disponibilidade.
+# Conteúdo movido
 
-[Topologias](../../topologias/index.md) organiza formas de conectar os nós.
-[Equipamentos](../../equipamentos/index.md) descreve as funções físicas e
-lógicas dos dispositivos de acesso, comutação, roteamento e borda.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/arquitetura/fisica/)

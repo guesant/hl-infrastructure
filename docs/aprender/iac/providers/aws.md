@@ -1,15 +1,7 @@
-# Provider AWS
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/iac/providers/aws/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/iac/providers/aws/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/iac/providers/aws/");</script>
 
-O provider AWS expõe uma grande parte das APIs da Amazon Web Services como resources e data sources. Ele é uma escolha comum para redes, identidades, computação, armazenamento e serviços gerenciados.
+# Conteúdo movido
 
-## Cuidados
-
-Use roles e credenciais temporárias, separe contas e estados por ambiente e restrinja a política IAM àquilo que o módulo precisa. O catálogo amplo aumenta o risco de mudanças destrutivas e de state contendo dados sensíveis.
-
-## Operação
-
-Fixe a versão do provider, use lockfile e backend remoto com lock. Faça `plan` em identidade de leitura controlada antes de promover para a identidade que pode aplicar mudanças.
-
-## Fonte primária
-
-- [AWS provider](https://registry.opentofu.org/providers/hashicorp/aws/latest)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/iac/providers/aws/)

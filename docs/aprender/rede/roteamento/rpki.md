@@ -1,7 +1,7 @@
-# RPKI
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/rpki/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/rpki/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/rpki/");</script>
 
-Resource Public Key Infrastructure, RPKI, é uma infraestrutura criptográfica ligada à hierarquia de recursos de Internet.
+# Conteúdo movido
 
-No contexto de BGP, permite verificar se o origin AS de um anúncio é autorizado pelo detentor do prefixo conforme objetos assinados.
-
-[ROA](roa.md) expressa uma autorização de origem. RPKI não autentica todo o caminho AS por si só.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/rpki/)

@@ -1,11 +1,7 @@
-# Decision Engine
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/decision-engine/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/decision-engine/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/decision-engine/");</script>
 
-Decision engine é o componente que interpreta um modelo e calcula uma decisão
-de autorização. PDP é o papel arquitetural; decision engine descreve o motor
-que executa a avaliação.
+# Conteúdo movido
 
-## Propriedades
-
-Uma decisão segura deve ser determinística para a mesma entrada e versão de
-policy. O engine deve limitar tempo de avaliação, recursão, consultas externas
-e tamanho da entrada.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/decision-engine/)

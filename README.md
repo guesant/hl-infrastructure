@@ -30,7 +30,7 @@ Bootstrap via Ansible e estado contínuo via GitOps para o cluster k3s do homela
 A documentação completa está em [guesant.github.io/hl-infrastructure](https://guesant.github.io/hl-infrastructure/).
 
 - [Visão geral](https://guesant.github.io/hl-infrastructure/): como o bootstrap e o GitOps se encaixam.
-- [Aprender](https://guesant.github.io/hl-infrastructure/aprender/): o que é cada ferramenta e conceito usado aqui, independente deste repositório.
+- [Conhecimento livre de computação](https://guesant.github.io/conhecimento-livre-computacao/): o que é cada ferramenta e conceito usado aqui, independente deste repositório.
 - [Arquitetura](https://guesant.github.io/hl-infrastructure/arquitetura/): as roles do Ansible, os charts Helm, o padrão de GitOps, a pipeline de CI, o modelo de ameaças e a lista de variáveis.
 - [Operacional](https://guesant.github.io/hl-infrastructure/operacional/): do zero a um cluster funcionando, renderizar charts, rodar os quality gates, adicionar um satélite novo e o que vive fora do git.
 - [Contribuindo](https://guesant.github.io/hl-infrastructure/contribuindo/): como esta documentação é organizada e escrita.

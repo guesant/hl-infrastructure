@@ -1,19 +1,7 @@
-# Túneis de rede
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/conectividade/tunel/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/conectividade/tunel/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/conectividade/tunel/");</script>
 
-Tunneling encapsula tráfego de um protocolo dentro de outro caminho de transporte. Um túnel pode participar de uma VPN, de acesso reverso, de overlay networking ou de uma solução de administração remota, mas "túnel" e "VPN" não são sinônimos.
+# Conteúdo movido
 
-## Casos de uso
-
-SSH port forwarding, GRE, encapsulamento de overlays e túneis reversos para publicar um serviço sem aceitar conexão diretamente na borda são exemplos de usos diferentes do mesmo princípio.
-
-## Boa prática
-
-Documente o que é encapsulado, onde o túnel termina e qual propriedade de segurança o transporte fornece. Monitore a dependência do endpoint remoto.
-
-## Má prática
-
-Tratar encapsulamento como criptografia é um erro. Alguns túneis apenas transportam pacotes; confidencialidade e autenticação dependem do protocolo concreto.
-
-## Continue por aqui
-
-[VPN](vpn.md) aplica conectividade privada como objetivo. [Borda](borda.md) contextualiza túneis reversos e gateways.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/conectividade/tunel/)

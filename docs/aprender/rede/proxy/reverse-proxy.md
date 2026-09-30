@@ -1,13 +1,7 @@
-# Reverse proxy
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/reverse-proxy/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/reverse-proxy/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/reverse-proxy/");</script>
 
-Reverse proxy recebe conexões destinadas a serviços e seleciona ou protege backends.
+# Conteúdo movido
 
-Pode realizar load balancing, TLS termination, autenticação, rate limiting e roteamento, dependendo do produto e configuração. Nenhuma dessas funções é obrigatória à definição.
-
-## Modos de roteamento
-
-[Host routing](host-routing.md) usa nome do host. [Path routing](path-routing.md) usa caminho da requisição. TLS pode envolver [termination](../../seguranca/tls/termination.md) ou [passthrough](../../seguranca/tls/passthrough.md).
-
-## Cenários
-
-Em single-node, um reverse proxy pode fornecer um único ponto de entrada para vários serviços. Em Kubernetes, Ingress/Gateway controllers podem ocupar responsabilidade equivalente integrada ao estado do cluster.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/reverse-proxy/)

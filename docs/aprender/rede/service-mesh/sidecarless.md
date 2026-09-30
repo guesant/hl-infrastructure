@@ -1,5 +1,7 @@
-# Sidecarless service mesh
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/sidecarless/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/sidecarless/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/sidecarless/");</script>
 
-Sidecarless mesh implementa funções de service mesh sem exigir um proxy dedicado por workload.
+# Conteúdo movido
 
-A responsabilidade pode migrar para proxies por nó, kernel/eBPF ou outros pontos do dataplane. "Sem sidecar" não significa "sem dataplane"; muda onde ele existe.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/sidecarless/)

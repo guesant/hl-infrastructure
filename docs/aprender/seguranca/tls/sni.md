@@ -1,7 +1,7 @@
-# Server Name Indication
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/sni/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/sni/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/sni/");</script>
 
-Server Name Indication, SNI, permite que o cliente informe o nome do servidor desejado durante a negociação TLS.
+# Conteúdo movido
 
-Isso permite hospedar múltiplos nomes no mesmo endpoint e selecionar configuração/certificado apropriado.
-
-SNI pode ser usado por proxies para decidir encaminhamento mesmo em desenhos de [TLS passthrough](passthrough.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/sni/)

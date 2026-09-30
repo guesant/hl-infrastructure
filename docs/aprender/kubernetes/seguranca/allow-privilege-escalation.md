@@ -1,5 +1,7 @@
-# allowPrivilegeEscalation
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/allow-privilege-escalation/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/allow-privilege-escalation/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/allow-privilege-escalation/");</script>
 
-allowPrivilegeEscalation controla se um processo pode obter mais privilégios que seu processo pai em condições suportadas pelo runtime/kernel.
+# Conteúdo movido
 
-Defini-lo como false é uma defesa importante, mas não substitui redução de capabilities e outras políticas de isolamento.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/allow-privilege-escalation/)

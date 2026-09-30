@@ -1,15 +1,7 @@
-# Zitadel
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/zitadel/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/zitadel/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/zitadel/");</script>
 
-Zitadel é uma plataforma de identidade e acesso que oferece organizações,
-projetos, papéis, tokens e integração com OAuth 2.0 e OpenID Connect.
+# Conteúdo movido
 
-## Autorização
-
-O modelo de organizações e roles pode representar autorização administrativa,
-mas decisões por objeto da aplicação ainda precisam de policies ou de um FGA.
-Não coloque dados de negócio voláteis em claims permanentes sem uma estratégia
-de atualização.
-
-## Fonte
-
-- [Documentação do Zitadel](https://zitadel.com/docs)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/zitadel/)

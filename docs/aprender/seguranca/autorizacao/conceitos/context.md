@@ -1,15 +1,7 @@
-# Context
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/context/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/context/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/context/");</script>
 
-Context são dados adicionais usados na decisão de autorização, como hora,
-origem de rede, dispositivo, método de autenticação, risco ou estado do
-recurso.
+# Conteúdo movido
 
-## Confiabilidade
-
-Contexto só é seguro quando sua origem, integridade e validade são conhecidas.
-Um cliente não pode declarar que está em uma rede confiável ou que recebeu MFA.
-
-## Limites
-
-Quanto mais contexto uma policy exige, mais difícil fica reproduzir, testar e
-auditar a decisão. Prefira atributos necessários e estáveis.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/context/)

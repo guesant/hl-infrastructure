@@ -1,7 +1,7 @@
-# ServiceAccount token
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/service-account-token/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/service-account-token/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/service-account-token/");</script>
 
-ServiceAccount tokens permitem que workloads se autentiquem perante a API Kubernetes conforme a identidade da ServiceAccount.
+# Conteúdo movido
 
-Workloads que não precisam da API não precisam carregar essa credencial. Desabilitar automount reduz exposição.
-
-Quando acesso é necessário, use ServiceAccount dedicada e [RBAC](../access/rbac.md) mínimo.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/service-account-token/)

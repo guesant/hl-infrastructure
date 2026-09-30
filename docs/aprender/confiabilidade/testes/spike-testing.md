@@ -1,7 +1,7 @@
-# Spike testing
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/spike-testing/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/spike-testing/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/spike-testing/");</script>
 
-Spike testing aplica mudança abrupta de demanda para observar reação a picos.
+# Conteúdo movido
 
-É útil para avaliar filas, autoscaling, limites de concorrência e comportamento enquanto capacidade adicional ainda não ficou disponível.
-
-Difere de stress testing porque o foco é a velocidade da mudança, não apenas ultrapassar capacidade.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/spike-testing/)

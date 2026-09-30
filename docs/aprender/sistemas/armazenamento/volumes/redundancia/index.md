@@ -1,11 +1,7 @@
-# Redundância
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/sistemas/armazenamento/volumes/redundancia/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/sistemas/armazenamento/volumes/redundancia/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/sistemas/armazenamento/volumes/redundancia/");</script>
 
-Redundância mantém cópias ou caminhos alternativos para reduzir o impacto de
-uma falha. Ela pode proteger disponibilidade, capacidade de recuperação ou
-integridade, mas sempre exige uma política para sincronização, detecção e
-reconstrução.
+# Conteúdo movido
 
-[Volumes](../index.md) explica a unidade de armazenamento apresentada ao
-sistema. [RAID](../../raid.md), [rpool](../../rpool.md), [zpool](../../zpool.md)
-e [replicação](../../../../dados/replicacao.md) usam modelos diferentes
-de redundância e não oferecem o mesmo tipo de backup.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/sistemas/armazenamento/volumes/redundancia/)

@@ -1,10 +1,7 @@
-# Reconciliação
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/entrega/gitops/reconciliacao/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/entrega/gitops/reconciliacao/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/entrega/gitops/reconciliacao/");</script>
 
-Reconciliação compara um estado observado com um estado desejado e executa
-ações para reduzir a diferença. O controlador precisa lidar com repetição,
-falhas parciais, ordem, ownership, prune e alterações feitas fora da fonte de
-verdade.
+# Conteúdo movido
 
-[GitOps](../index.md) aplica esse modelo quando o estado desejado é versionado
-em Git. [Drift](../../drift.md), [sync, prune e self-heal](../../sync-prune-self-heal.md)
-e as estratégias pull-based e push-based tratam decisões distintas do ciclo.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/entrega/gitops/reconciliacao/)

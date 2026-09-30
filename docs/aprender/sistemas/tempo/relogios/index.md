@@ -1,9 +1,7 @@
-# Relógios
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/sistemas/tempo/relogios/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/sistemas/tempo/relogios/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/sistemas/tempo/relogios/");</script>
 
-Relógios representam o tempo observado por um sistema. O relógio monotônico é
-adequado para medir duração; o relógio de parede pode ser ajustado; o RTC
-preserva uma referência entre desligamentos; NTP ajuda a aproximar hosts.
+# Conteúdo movido
 
-[Tempo](../index.md) apresenta o domínio. [Relógio do sistema e firmware]
-(../relogio-do-sistema-e-firmware.md) trata RTC, BIOS, UTC e NTP. Timestamps
-e tipos de data pertencem a uma categoria distinta de representação de dados.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/sistemas/tempo/relogios/)

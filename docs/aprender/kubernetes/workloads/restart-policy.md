@@ -1,7 +1,7 @@
-# Restart policy
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/restart-policy/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/restart-policy/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/restart-policy/");</script>
 
-restartPolicy define como containers de um Pod são reiniciados após término, dentro da semântica suportada pelo workload.
+# Conteúdo movido
 
-Jobs normalmente usam Never ou OnFailure. A política não substitui limites de tentativas do controller.
-
-Veja [Job](job.md) e [backoff limit](backoff-limit.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/restart-policy/)

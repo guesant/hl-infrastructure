@@ -1,13 +1,7 @@
-# yq
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/ferramentas/dados-estruturados/yq/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/ferramentas/dados-estruturados/yq/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/ferramentas/dados-estruturados/yq/");</script>
 
-yq é uma ferramenta de linha de comando para consultar e transformar YAML e formatos relacionados.
+# Conteúdo movido
 
-## Casos de uso
-
-Alterar valores de manifests, selecionar documentos e automatizar transformações estruturadas.
-
-## Limite
-
-Transformar YAML não prova que o resultado atende ao schema de Kubernetes nem a políticas organizacionais.
-
-Veja [dados estruturados](index.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/ferramentas/dados-estruturados/yq/)

@@ -1,10 +1,7 @@
-# Confiança
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/pki/confianca/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/pki/confianca/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/pki/confianca/");</script>
 
-Confiança em uma conexão depende de como uma chave pública é vinculada a uma
-identidade e de como os participantes obtêm, validam, distribuem e revogam essa
-informação.
+# Conteúdo movido
 
-[PKI](../index.md) apresenta a infraestrutura de chaves públicas.
-[Certificados](../certificate.md), [trust stores](../trust-store.md),
-[cert-manager](../cert-manager.md) e [trust-manager](../trust-manager.md)
-tratam emissão, distribuição e consumo de material de confiança.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/pki/confianca/)

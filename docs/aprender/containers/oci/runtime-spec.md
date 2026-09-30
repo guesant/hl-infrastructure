@@ -1,5 +1,7 @@
-# OCI Runtime Specification
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/containers/oci/runtime-spec/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/containers/oci/runtime-spec/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/containers/oci/runtime-spec/");</script>
 
-OCI Runtime Specification define bundle e configuração para executar um container. O bundle inclui filesystem e `config.json` com processo, mounts, namespaces e outros parâmetros.
+# Conteúdo movido
 
-[Low-level runtimes](../runtimes/low-level-runtime.md) implementam essa camada.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/containers/oci/runtime-spec/)

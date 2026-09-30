@@ -1,15 +1,7 @@
-# Spatie Laravel Permission
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/spatie-laravel-permission/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/spatie-laravel-permission/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/spatie-laravel-permission/");</script>
 
-Spatie Laravel Permission adiciona roles e permissions persistidas a aplicações
-Laravel. O pacote integra autorização por papel com guards e relações de
-usuário.
+# Conteúdo movido
 
-## Uso
-
-É útil para RBAC administrativo, especialmente quando papéis precisam ser
-gerenciados por dados. Permissões por objeto ou tenant exigem desenho adicional
-e não devem ser simuladas com uma explosão de papéis.
-
-## Fonte
-
-- [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/spatie-laravel-permission/)

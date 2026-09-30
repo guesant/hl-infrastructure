@@ -1,21 +1,7 @@
-# Kyverno
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/kyverno/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/kyverno/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/kyverno/");</script>
 
-Kyverno é um engine de políticas para Kubernetes que usa recursos nativos do
-cluster para validar, mutar, gerar e verificar objetos. Suas políticas são
-escritas em YAML e usam padrões próximos da estrutura dos manifests.
+# Conteúdo movido
 
-## Uso
-
-Ele pode exigir labels, restringir imagens, aplicar defaults e gerar recursos
-relacionados. A política deve declarar escopo, modo de aplicação e o efeito de
-uma violação.
-
-## Limites
-
-Kyverno não protege uma aplicação contra toda alteração feita depois do
-admission. Combine-o com RBAC, segurança de workload, auditoria e controles de
-runtime.
-
-## Fonte
-
-- [Documentação do Kyverno](https://kyverno.io/docs/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/kyverno/)

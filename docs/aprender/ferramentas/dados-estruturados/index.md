@@ -1,5 +1,7 @@
-# Dados estruturados na linha de comando
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/ferramentas/dados-estruturados/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/ferramentas/dados-estruturados/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/ferramentas/dados-estruturados/");</script>
 
-JSON e YAML devem ser consultados como estruturas, não como linhas de texto.
+# Conteúdo movido
 
-[jq](jq.md) trabalha com JSON. [yq](yq.md) trabalha com YAML e outros formatos conforme sua implementação. Essas ferramentas transformam dados; validação de schema e policy são responsabilidades diferentes.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/ferramentas/dados-estruturados/)

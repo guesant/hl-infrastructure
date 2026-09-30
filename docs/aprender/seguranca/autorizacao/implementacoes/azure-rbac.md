@@ -1,21 +1,7 @@
-# Azure RBAC
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/azure-rbac/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/azure-rbac/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/azure-rbac/");</script>
 
-Azure RBAC concede acesso a recursos Azure por meio de definições de papel,
-atribuições, escopo e principal. O escopo pode ser gerenciamento, subscription,
-resource group ou recurso individual.
+# Conteúdo movido
 
-## Operação
-
-O papel deve ser escolhido pelo conjunto mínimo de ações necessárias. Herança
-de escopo facilita administração, mas pode produzir acesso amplo sem revisão
-das atribuições superiores.
-
-## Relações
-
-Azure RBAC controla o plano de gerenciamento e outros recursos integrados. Ele
-não substitui as permissões internas de um banco, aplicação ou sistema
-operacional.
-
-## Fonte
-
-- [Azure RBAC](https://learn.microsoft.com/azure/role-based-access-control/overview)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/azure-rbac/)

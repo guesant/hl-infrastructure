@@ -1,15 +1,7 @@
-# Deny-overrides
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/deny-overrides/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/deny-overrides/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/deny-overrides/");</script>
 
-Deny-overrides é um algoritmo de combinação em que uma negação explícita
-prevalece sobre qualquer permissão encontrada.
+# Conteúdo movido
 
-## Uso
-
-É apropriado quando uma exceção de bloqueio deve sempre vencer uma regra geral
-de allow. A ordem dos documentos deixa de ser suficiente para explicar a
-decisão, pois a precedência faz parte do algoritmo.
-
-## Cuidado
-
-Negação ampla pode bloquear operações legítimas sem mensagem clara. A policy
-deve informar a razão e permitir auditoria da regra que venceu.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/deny-overrides/)

@@ -1,7 +1,7 @@
-# Snapshot
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/snapshot/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/snapshot/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/snapshot/");</script>
 
-Snapshot captura o estado de um volume ou sistema em um ponto no tempo, normalmente com restauração rápida e forte dependência do backend que o criou.
+# Conteúdo movido
 
-Snapshot não é automaticamente backup. Se permanece no mesmo failure domain e sob as mesmas credenciais administrativas, pode ser perdido junto com o original.
-
-Veja [backup](backup.md) e [replicação](replicacao.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/snapshot/)

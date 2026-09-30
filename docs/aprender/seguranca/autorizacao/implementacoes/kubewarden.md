@@ -1,20 +1,7 @@
-# Kubewarden
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/kubewarden/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/kubewarden/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/kubewarden/");</script>
 
-Kubewarden é um sistema de políticas para Kubernetes que executa policies
-compiladas para WebAssembly. A abordagem permite escrever políticas em mais de
-uma linguagem e distribuí-las como módulos.
+# Conteúdo movido
 
-## Modelo
-
-As policies são avaliadas durante admission. O operador registra módulos,
-configura escopos e define se uma violação deve bloquear ou apenas auditar.
-
-## Trade-offs
-
-WebAssembly facilita portabilidade, mas introduz ciclo de build, assinatura,
-distribuição e compatibilidade do runtime. O módulo deve ser tratado como
-artefato de supply chain.
-
-## Fonte
-
-- [Documentação do Kubewarden](https://docs.kubewarden.io/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/kubewarden/)

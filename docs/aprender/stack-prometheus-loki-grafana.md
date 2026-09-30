@@ -1,10 +1,7 @@
-# Mapa da composição de Prometheus, Loki e Grafana
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/stack-prometheus-loki-grafana/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/stack-prometheus-loki-grafana/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/stack-prometheus-loki-grafana/");</script>
 
-Esta página foi transformada em mapa da composição. Cada produto possui modelo, casos de uso e limites próprios.
+# Conteúdo movido
 
-- [Prometheus](observabilidade/prometheus.md) coleta e consulta métricas.
-- [Loki](observabilidade/loki.md) armazena e consulta logs.
-- [Grafana](observabilidade/grafana.md) consulta e visualiza data sources.
-- [Métricas](observabilidade/metricas.md), [logs](observabilidade/logs.md) e [tracing](observabilidade/tracing.md) explicam os sinais independentemente dos produtos.
-
-A vantagem da separação é impedir que a stack concreta seja confundida com a definição de observabilidade.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/stack-prometheus-loki-grafana/)

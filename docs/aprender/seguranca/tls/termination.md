@@ -1,7 +1,7 @@
-# TLS termination
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/termination/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/termination/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/termination/");</script>
 
-TLS termination ocorre quando um intermediário encerra a sessão TLS, possui acesso ao plaintext e normalmente inicia outra conexão até o backend.
+# Conteúdo movido
 
-Isso permite roteamento e políticas de camada de aplicação, mas torna o terminador parte da fronteira de confiança e exige acesso às chaves/identidades apropriadas.
-
-Veja [TLS passthrough](passthrough.md) para o modelo em que o intermediário não termina a sessão.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/termination/)

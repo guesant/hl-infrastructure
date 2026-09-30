@@ -1,7 +1,7 @@
-# Path-based routing
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/path-routing/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/path-routing/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/path-routing/");</script>
 
-Path-based routing seleciona backend pelo caminho da requisição HTTP.
+# Conteúdo movido
 
-É útil para agrupar serviços sob um mesmo host, mas aplicações precisam compreender prefixos, geração de URLs e eventual reescrita de path.
-
-Usá-lo com software que assume execução na raiz pode causar redirects e assets quebrados.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/path-routing/)

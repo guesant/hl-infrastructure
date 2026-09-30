@@ -1,15 +1,7 @@
-# Service mesh
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/");</script>
 
-Service mesh introduz uma camada de infraestrutura para controlar e observar comunicação entre serviços, normalmente oferecendo identidade de workload, mTLS, políticas e telemetria.
+# Conteúdo movido
 
-## Casos de uso
-
-É útil quando requisitos de comunicação entre muitos serviços justificam uma camada comum de identidade, segurança e traffic management.
-
-## Má prática
-
-Adicionar mesh a poucos serviços simples sem requisito concreto pode custar mais em complexidade do que entrega em valor.
-
-## Implementações
-
-[Istio](istio.md) e [Linkerd](linkerd.md) ocupam esse espaço com arquiteturas e superfícies operacionais diferentes.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/)

@@ -1,20 +1,7 @@
-# Firestore Security Rules
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/firestore-security-rules/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/firestore-security-rules/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/firestore-security-rules/");</script>
 
-Firestore Security Rules controlam leitura e escrita de documentos e
-subcoleções no Firestore. A decisão pode usar request.auth, dados existentes e
-o conteúdo que será gravado.
+# Conteúdo movido
 
-## Cuidados
-
-O desenho precisa acompanhar a forma das queries. Uma query que não consegue
-provar a condição da policy deve falhar, e uma regra baseada apenas na UI não
-protege o documento.
-
-## Relações
-
-Firestore Rules são autorização de dados, não RBAC genérico. Para relações
-complexas, modele claims, documentos de membership ou um serviço de FGA.
-
-## Fonte
-
-- [Cloud Firestore Security Rules](https://firebase.google.com/docs/firestore/security/get-started)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/firestore-security-rules/)

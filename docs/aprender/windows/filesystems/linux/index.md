@@ -1,9 +1,7 @@
-# Filesystems Linux
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/windows/filesystems/linux/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/windows/filesystems/linux/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/windows/filesystems/linux/");</script>
 
-Filesystems Linux definem como nomes, metadados, permissões, blocos, journaling
-e montagem são organizados. O filesystem da partição e a hierarquia apresentada
-em `/` são conceitos relacionados, mas não idênticos.
+# Conteúdo movido
 
-[Filesystems](../index.md) apresenta a comparação entre sistemas. [Filesystems
-Linux](../linux-filesystems.md) detalha formatos e [organização de diretórios]
-(../diretorios.md) detalha a árvore de caminhos.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/windows/filesystems/linux/)

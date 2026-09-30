@@ -1,25 +1,7 @@
-# Fulcio
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/fulcio/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/fulcio/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/fulcio/");</script>
 
-Fulcio é uma autoridade certificadora do ecossistema Sigstore que emite
-certificados de curta duração ligados à identidade de um workflow ou usuário.
+# Conteúdo movido
 
-## Uso
-
-O signer autentica numa identidade suportada, recebe um certificado temporário
-e usa a chave correspondente para assinar. O consumidor verifica o certificado
-e aplica uma policy sobre identidade e issuer, não apenas sobre a validade
-criptográfica.
-
-Certificados curtos reduzem o valor de uma chave vazada depois da expiração,
-mas não eliminam a necessidade de revogar ou investigar um workflow
-comprometido.
-
-## Relações
-
-- [Sigstore](sigstore.md) compõe o ecossistema.
-- [Cosign](cosign.md) usa a assinatura.
-- [Rekor](rekor.md) registra a evidência.
-
-## Fonte primária
-
-- [Fulcio](https://docs.sigstore.dev/certificate_authority/overview/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/fulcio/)

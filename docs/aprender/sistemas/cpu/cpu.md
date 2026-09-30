@@ -1,7 +1,7 @@
-# CPU
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/cpu/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/cpu/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/cpu/");</script>
 
-A CPU executa instruções gerais e coordena o fluxo dos programas. Ela possui núcleos de propósito geral, registradores, unidades funcionais, caches e lógica de controle.
+# Conteúdo movido
 
-A CPU é adequada para fluxos com decisões, dependências, interrupções, chamadas de sistema e tarefas variadas. Mais núcleos permitem mais trabalho simultâneo quando o software consegue paralelizar, mas não tornam automaticamente uma tarefa serial mais rápida.
-
-Frequência, número de núcleos e tamanho de cache são apenas partes da capacidade. Desempenho depende de instruções por ciclo, latência de memória, largura de vetores, predição, limites térmicos, escalonamento e características do programa.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/cpu/)

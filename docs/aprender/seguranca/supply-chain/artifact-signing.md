@@ -1,7 +1,7 @@
-# Assinatura de artefatos
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/artifact-signing/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/artifact-signing/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/artifact-signing/");</script>
 
-Assinatura de artefatos associa criptograficamente uma identidade ou chave a um conteúdo ou afirmação.
+# Conteúdo movido
 
-Ela fornece autenticidade sob um modelo de confiança, mas não prova que o conteúdo é livre de vulnerabilidades.
-
-Modelos com chaves de longo prazo e modelos keyless possuem mecanismos de identidade e operação diferentes. A política do consumidor precisa definir quem pode assinar o quê.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/artifact-signing/)

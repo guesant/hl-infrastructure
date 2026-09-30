@@ -1,7 +1,7 @@
-# Startup probe
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/startup-probe/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/startup-probe/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/startup-probe/");</script>
 
-Startup probe protege aplicações cuja inicialização pode demorar. Enquanto ela ainda não teve sucesso, liveness e readiness não assumem seu comportamento normal.
+# Conteúdo movido
 
-Ela permite tolerância ampla durante startup sem tornar a liveness excessivamente permissiva depois que a aplicação já iniciou.
-
-Veja [liveness](liveness-probe.md) e [readiness](readiness-probe.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/startup-probe/)

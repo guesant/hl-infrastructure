@@ -1,15 +1,7 @@
-# Ory Hydra
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ory-hydra/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ory-hydra/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ory-hydra/");</script>
 
-Ory Hydra é um servidor OAuth 2.0 e OpenID Connect. Ele emite tokens e delega
-autenticação do usuário a um login provider, mas não é um motor geral de
-autorização por recurso.
+# Conteúdo movido
 
-## Fronteira
-
-Hydra responde se um cliente pode obter um token conforme o fluxo configurado.
-O serviço protegido ainda deve validar o token e decidir se o subject pode
-executar a ação solicitada.
-
-## Fonte
-
-- [Documentação do Ory Hydra](https://www.ory.sh/hydra/docs/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ory-hydra/)

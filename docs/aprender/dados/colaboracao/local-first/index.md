@@ -1,10 +1,7 @@
-# Local-first
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/dados/colaboracao/local-first/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/dados/colaboracao/local-first/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/dados/colaboracao/local-first/");</script>
 
-Local-first coloca a capacidade de leitura e edição local no centro do desenho.
-O cliente precisa continuar útil sem conexão e sincronizar depois, o que torna
-conflitos, identidade, ordenação, retenção e resolução de divergências parte do
-modelo de dados.
+# Conteúdo movido
 
-[Colaboração](../index.md) apresenta o domínio mais amplo. [CRDT](../crdt.md),
-[PouchDB e CouchDB](../pouchdb-couchdb.md) e as outras implementações devem ser
-avaliadas pelo tipo de conflito que conseguem representar.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/dados/colaboracao/local-first/)

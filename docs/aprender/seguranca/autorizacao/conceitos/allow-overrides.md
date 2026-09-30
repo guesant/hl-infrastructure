@@ -1,16 +1,7 @@
-# Allow-overrides
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/allow-overrides/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/allow-overrides/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/allow-overrides/");</script>
 
-Allow-overrides é um algoritmo de combinação em que uma permissão explícita
-pode prevalecer sobre decisões contrárias menos específicas.
+# Conteúdo movido
 
-## Risco
-
-Essa estratégia pode transformar uma exceção em bypass de uma negação necessária.
-Use-a apenas quando a hierarquia de políticas for explícita e o allow puder ser
-provado como mais específico e confiável.
-
-## Relações
-
-O algoritmo precisa ser documentado junto com default deny, precedência e
-escopo. Misturar políticas de engines diferentes pode produzir semânticas
-incompatíveis.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/allow-overrides/)

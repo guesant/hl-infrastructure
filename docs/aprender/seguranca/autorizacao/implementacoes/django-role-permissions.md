@@ -1,15 +1,7 @@
-# django-role-permissions
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/django-role-permissions/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/django-role-permissions/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/django-role-permissions/");</script>
 
-django-role-permissions fornece um modelo de papéis e permissões para Django.
-Ele representa capacidades concedidas a papéis e associa usuários a esses
-papéis.
+# Conteúdo movido
 
-## Uso
-
-É adequado para RBAC relativamente estático. Quando o acesso depende de
-relações por objeto, estado do recurso ou contexto, o modelo precisa ser
-complementado por policies ou permissões específicas.
-
-## Fonte
-
-- [django-role-permissions](https://github.com/vintasoftware/django-role-permissions)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/django-role-permissions/)

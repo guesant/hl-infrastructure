@@ -1,20 +1,7 @@
-# Laravel Gates
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/laravel-gates/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/laravel-gates/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/laravel-gates/");</script>
 
-Laravel Gates são closures ou métodos nomeados para decisões de autorização
-relativamente pequenas. Eles recebem o usuário autenticado e os dados
-necessários para decidir uma ação.
+# Conteúdo movido
 
-## Uso
-
-Gates são úteis para capacidades que não pertencem naturalmente a um único
-modelo. Devem ser usados no endpoint e não somente na renderização da UI.
-
-## Limites
-
-Regras que crescem ou que dependem de um recurso específico normalmente ficam
-mais claras em uma policy. Em qualquer caso, autorização não substitui
-validação de entrada.
-
-## Fonte
-
-- [Laravel Gates](https://laravel.com/docs/authorization#gates)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/laravel-gates/)

@@ -1,7 +1,7 @@
-# Readiness probe
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/readiness-probe/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/readiness-probe/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/readiness-probe/");</script>
 
-Readiness probe indica se o workload está pronto para receber tráfego por mecanismos que respeitam sua condição de readiness.
+# Conteúdo movido
 
-Falhar readiness normalmente remove o endpoint da seleção sem exigir restart do processo.
-
-Use-a para condições transitórias que tornam atendimento inadequado. Não a confunda com [liveness](liveness-probe.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/readiness-probe/)

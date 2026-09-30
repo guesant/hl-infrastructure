@@ -1,7 +1,7 @@
-# TLS 1.3
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/tls13/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/tls13/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/tls13/");</script>
 
-TLS 1.3 é a versão do protocolo definida pela RFC 8446. Ela simplificou o conjunto de algoritmos e reduziu round trips do handshake em relação a versões anteriores.
+# Conteúdo movido
 
-TLS 1.3 exige mecanismos de key exchange que oferecem forward secrecy para os cipher suites definidos pelo protocolo.
-
-Veja [forward secrecy](forward-secrecy.md) e [PKI](../pki/index.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/tls/tls13/)

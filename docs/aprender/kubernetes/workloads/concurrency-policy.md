@@ -1,7 +1,7 @@
-# CronJob concurrency policy
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/concurrency-policy/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/concurrency-policy/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/concurrency-policy/");</script>
 
-concurrencyPolicy define o que um CronJob faz quando chega um novo horário enquanto execução anterior ainda está ativa.
+# Conteúdo movido
 
-Allow permite concorrência. Forbid evita iniciar a nova execução. Replace substitui a anterior.
-
-A escolha depende de o trabalho aceitar sobreposição e interrupção, não de preferência estética.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/concurrency-policy/)

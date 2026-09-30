@@ -1,21 +1,7 @@
-# Balana
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/balana/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/balana/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/balana/");</script>
 
-Balana é uma implementação de XACML para avaliação de políticas de autorização.
-Ela fornece um PDP que interpreta políticas e requisições segundo o modelo
-XACML.
+# Conteúdo movido
 
-## Modelo
-
-A decisão é derivada de atributos, regras e algoritmos de combinação. O sistema
-precisa receber uma requisição completa e confiável; não deve aceitar atributos
-de autorização diretamente de um cliente não confiável.
-
-## Relações
-
-Balana é uma implementação de engine XACML. A linguagem e o modelo XACML são
-mais amplos que uma biblioteca de RBAC local e exigem uma governança própria de
-políticas.
-
-## Fonte
-
-- [Projeto Balana](https://github.com/wso2/balana)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/balana/)

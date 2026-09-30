@@ -1,13 +1,7 @@
-# Open Container Initiative
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/containers/oci/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/containers/oci/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/containers/oci/");</script>
 
-[Open Container Initiative](https://opencontainers.org/), OCI, mantém especificações abertas do ecossistema de containers. "OCI-compatible" é incompleto sem dizer qual especificação.
+# Conteúdo movido
 
-[Image Specification](image-spec.md) define imagens. [Distribution Specification](distribution-spec.md) define distribuição. [Runtime Specification](runtime-spec.md) define execução. As três são independentes.
-
-## Relação com ferramentas
-
-Builders, engines, registries e runtimes implementam ou consomem partes dessas especificações. A conformidade com uma especificação não transforma uma ferramenta em registry, runtime ou engine completo. Ao comparar produtos, identifique primeiro qual contrato OCI está em questão.
-
-## Fonte primária
-
-- [Open Container Initiative](https://opencontainers.org/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/containers/oci/)

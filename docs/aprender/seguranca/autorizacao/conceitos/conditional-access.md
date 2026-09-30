@@ -1,17 +1,7 @@
-# Conditional access
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/conditional-access/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/conditional-access/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/conditional-access/");</script>
 
-Conditional access concede ou nega acesso conforme condições de identidade,
-recurso, risco, dispositivo, localização ou tempo. É uma técnica, não um
-produto específico.
+# Conteúdo movido
 
-## Uso
-
-Pode exigir MFA para ações sensíveis, restringir acesso fora de uma rede
-confiável ou limitar uma sessão temporária. O sistema deve declarar quais
-condições são obrigatórias e o que ocorre quando uma condição não pode ser
-verificada.
-
-## Limites
-
-Condições não substituem menor privilégio. Uma condição ampla pode manter uma
-permissão excessiva em todos os cenários que ela não cobre.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/conditional-access/)

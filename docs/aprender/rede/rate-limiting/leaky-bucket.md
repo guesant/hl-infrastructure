@@ -1,18 +1,7 @@
-# Leaky bucket
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/rate-limiting/leaky-bucket/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/rate-limiting/leaky-bucket/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/rate-limiting/leaky-bucket/");</script>
 
-Leaky bucket processa ou libera eventos em uma taxa controlada, como um balde
-que drena por uma abertura de tamanho fixo. Ele suaviza picos e pode modelar
-uma fila de saída.
+# Conteúdo movido
 
-## Trade-off
-
-A fila precisa de capacidade e política para overflow. Quando o producer é mais
-rápido que a drenagem por tempo suficiente, o sistema precisa rejeitar,
-bloquear ou descartar. A suavidade pode aumentar latência mesmo quando o
-upstream está saudável.
-
-## Relações
-
-- [Token bucket](token-bucket.md) permite burst explícito.
-- [Filas](../../dados/mensageria/filas.md) tratam buffering e consumidores.
-- [Rate limiting](index.md) define a garantia desejada.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/rate-limiting/leaky-bucket/)

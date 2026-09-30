@@ -1,10 +1,7 @@
-# Boot remoto
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/sistemas/hardware/boot-remoto/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/sistemas/hardware/boot-remoto/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/sistemas/hardware/boot-remoto/");</script>
 
-Boot remoto inicia ou recupera um host usando uma rede, uma controladora de
-gerenciamento ou um meio externo. O desenho precisa separar energia, firmware,
-transporte da imagem, autenticação e observabilidade.
+# Conteúdo movido
 
-[Hardware](../index.md) organiza componentes físicos. [IPMI](../ipmi.md),
-[iDRAC](../idrac.md), [network install](../../boot/network-install.md) e
-[netboot.xyz](../../boot/netboot-xyz.md) cobrem mecanismos diferentes de administração
-fora de banda ou inicialização pela rede.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/sistemas/hardware/boot-remoto/)

@@ -1,21 +1,7 @@
-# AWS Verified Permissions
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/aws-verified-permissions/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/aws-verified-permissions/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/aws-verified-permissions/");</script>
 
-AWS Verified Permissions é um serviço de autorização gerenciado que usa Cedar
-para avaliar políticas. A aplicação envia principal, ação, recurso e contexto,
-recebendo uma decisão allow ou deny.
+# Conteúdo movido
 
-## Modelo
-
-O schema define tipos, ações e relações. Policies podem ser estáticas ou
-associadas a entidades e grupos. A aplicação continua sendo o PEP e deve
-proteger a integridade dos dados usados na decisão.
-
-## Trade-offs
-
-O serviço reduz a operação do PDP, mas adiciona latência, dependência de rede
-e acoplamento à nuvem. Cache e fail-closed precisam ser definidos para cada
-operação sensível.
-
-## Fonte
-
-- [AWS Verified Permissions](https://docs.aws.amazon.com/verifiedpermissions/latest/userguide/what-is-avp.html)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/aws-verified-permissions/)

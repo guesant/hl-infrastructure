@@ -1,7 +1,7 @@
-# PodDisruptionBudget
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/pdb/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/pdb/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/pdb/");</script>
 
-PodDisruptionBudget limita indisponibilidade causada por disrupções voluntárias que usam a API de eviction.
+# Conteúdo movido
 
-Ele não impede queda física de nó, perda de rede ou outras disrupções involuntárias e não cria réplicas.
-
-Um PDB restritivo sem capacidade suficiente pode impedir manutenção planejada. Disponibilidade depende também de réplicas, placement e failure domains.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/pdb/)

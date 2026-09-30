@@ -1,9 +1,7 @@
-# Secure Boot
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/sistemas/boot/firmware/secure-boot/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/sistemas/boot/firmware/secure-boot/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/sistemas/boot/firmware/secure-boot/");</script>
 
-Secure Boot valida componentes de inicialização antes de transferir o controle
-para eles. A cadeia depende de chaves, bancos de certificados, políticas de
-revogação, firmware e artefatos assinados.
+# Conteúdo movido
 
-[Firmware](../index.md) apresenta a função do software de inicialização.
-[Chaves e bancos](../../secure-boot-keys.md) detalha PK, KEK, db e dbx, enquanto
-[UEFI](../../uefi.md) descreve a interface que hospeda esse modelo.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/sistemas/boot/firmware/secure-boot/)

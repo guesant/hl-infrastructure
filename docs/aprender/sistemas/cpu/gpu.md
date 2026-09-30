@@ -1,7 +1,7 @@
-# GPU
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/gpu/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/gpu/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/gpu/");</script>
 
-Uma GPU contém muitos elementos de execução voltados a throughput. Ela é eficiente quando o mesmo programa pode ser aplicado a muitos dados independentes, como pixels, matrizes, vetores e tensores. O modelo exige transferir ou compartilhar dados, submeter trabalho e sincronizar resultados.
+# Conteúdo movido
 
-Uma GPU dedicada costuma ter VRAM própria ligada por PCIe ou por outra interconexão. Uma GPU integrada usa a memória do sistema, embora possa ter caches e unidades locais.
-
-A GPU não é simplesmente uma CPU com mais núcleos. Seus modelos de execução, hierarquia de memória, divergência e APIs são diferentes.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/gpu/)

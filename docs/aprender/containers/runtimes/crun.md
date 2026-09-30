@@ -1,9 +1,7 @@
-# crun
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/crun/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/crun/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/crun/");</script>
 
-crun é um low-level runtime escrito em C e compatível com OCI Runtime Specification.
+# Conteúdo movido
 
-Ele ocupa a mesma responsabilidade arquitetural de [runc](runc.md), embora implementação, integração e características de desempenho possam diferir.
-
-## Continue por aqui
-
-[Low-level runtime](low-level-runtime.md) explica a categoria.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/crun/)

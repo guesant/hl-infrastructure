@@ -1,7 +1,7 @@
-# Cilium Service Mesh
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/cilium-service-mesh/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/cilium-service-mesh/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/cilium-service-mesh/");</script>
 
-Cilium oferece capacidades de service mesh integradas à sua plataforma de rede e componentes de proxy conforme o recurso.
+# Conteúdo movido
 
-Aproveitar o CNI pode reduzir duplicação de dataplane, mas concentra mais responsabilidades numa peça crítica.
-
-Adotar [Cilium como CNI](../cni/cilium.md) não obriga adotar funções de service mesh.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/cilium-service-mesh/)

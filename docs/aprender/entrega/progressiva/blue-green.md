@@ -1,19 +1,7 @@
-# Blue-green deployment
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/entrega/progressiva/blue-green/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/entrega/progressiva/blue-green/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/entrega/progressiva/blue-green/");</script>
 
-Blue-green mantém duas revisões ou ambientes equivalentes: um atende tráfego enquanto o outro recebe a nova versão. A promoção troca qual revisão é ativa.
+# Conteúdo movido
 
-## Casos de uso
-
-É útil quando a troca precisa ser rápida e há capacidade para manter duas revisões simultaneamente.
-
-## Boa prática
-
-Garanta compatibilidade de dados entre as versões durante a janela de troca e teste o ambiente inativo antes da promoção.
-
-## Má prática
-
-Considerar rollback instantâneo quando uma migração destrutiva já tornou a versão anterior incompatível é uma falsa garantia. O custo de duplicar capacidade também precisa ser considerado.
-
-## Continue por aqui
-
-[Canary](canary.md) aumenta exposição gradualmente. [Argo Rollouts](argo-rollouts.md) oferece ambos os modelos.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/entrega/progressiva/blue-green/)

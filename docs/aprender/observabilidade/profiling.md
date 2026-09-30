@@ -1,19 +1,7 @@
-# Profiling
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/observabilidade/profiling/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/observabilidade/profiling/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/observabilidade/profiling/");</script>
 
-Profiling mede onde um programa consome recursos ao longo da execução, como CPU, memória ou alocações.
+# Conteúdo movido
 
-## Relação com outros sinais
-
-Métricas mostram que CPU aumentou; tracing pode mostrar qual caminho ficou lento; profiling pode revelar quais funções consumiram o tempo de CPU. Os sinais são complementares.
-
-## Continuous profiling
-
-Continuous profiling coleta profiles periodicamente em produção ou ambientes representativos, permitindo comparar comportamento ao longo do tempo.
-
-## Custo e segurança
-
-Frequência, retenção e tipo de profile afetam overhead e armazenamento. Profiles podem conter nomes de funções e outras informações internas, portanto também são dados operacionais a proteger.
-
-## Continue por aqui
-
-[Observabilidade](index.md) situa profiling ao lado de métricas, logs e tracing.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/observabilidade/profiling/)

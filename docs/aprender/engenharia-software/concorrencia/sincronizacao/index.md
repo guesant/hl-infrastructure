@@ -1,10 +1,7 @@
-# Sincronização
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/engenharia-software/concorrencia/sincronizacao/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/engenharia-software/concorrencia/sincronizacao/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/engenharia-software/concorrencia/sincronizacao/");</script>
 
-Sincronização coordena observações e atualizações entre atividades concorrentes.
-Ela pode usar exclusão mútua, semáforos, canais, ordem de eventos, transações ou
-protocolos distribuídos.
+# Conteúdo movido
 
-[Concorrência](../index.md) apresenta as condições que tornam a execução
-simultânea difícil. [Mutex](../mutex.md), [semáforos](../semaforos.md),
-[deadlock](../deadlock.md) e [condição de corrida](../race-condition.md)
-aprofundam mecanismos e falhas distintas.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/engenharia-software/concorrencia/sincronizacao/)

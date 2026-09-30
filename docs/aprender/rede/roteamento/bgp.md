@@ -1,7 +1,7 @@
-# BGP
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/bgp/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/bgp/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/bgp/");</script>
 
-Border Gateway Protocol, BGP, troca informações de alcançabilidade entre sistemas autônomos e também pode ser usado em redes privadas.
+# Conteúdo movido
 
-BGP seleciona caminhos a partir de atributos e políticas; ele não autentica por si só que um AS está autorizado a originar qualquer prefixo anunciado.
-
-[RPKI](rpki.md) adiciona infraestrutura para validar autorização de origem. [Autonomous System](autonomous-system.md) explica a unidade administrativa.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/bgp/)

@@ -1,8 +1,7 @@
-# Mapa de identidade e acesso
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/identidade/fundamentos/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/identidade/fundamentos/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/identidade/fundamentos/");</script>
 
-Autenticação e autorização respondem a perguntas diferentes. Esta página apresenta o mapa e separa os conceitos.
+# Conteúdo movido
 
-- [Autenticação](../autenticacao.md) verifica quem é a entidade que apresenta uma credencial.
-- [Autorização](../autorizacao.md) decide o que uma identidade pode fazer sobre um recurso em determinado contexto.
-
-Uma sessão, cookie ou token pode transportar o resultado da autenticação, mas não substitui a decisão de autorização. Diretórios, federação e SSO conectam os dois processos sem torná-los equivalentes.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/identidade/fundamentos/)

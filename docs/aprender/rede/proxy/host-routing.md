@@ -1,7 +1,7 @@
-# Host-based routing
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/host-routing/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/host-routing/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/host-routing/");</script>
 
-Host-based routing seleciona backend usando o nome solicitado pelo cliente, normalmente Host em HTTP e informação coerente com a sessão TLS.
+# Conteúdo movido
 
-Permite que vários serviços compartilhem endereço/porta sem exigir subpaths.
-
-Cada nome precisa de resolução DNS e, quando TLS termina no proxy, cobertura adequada de certificado.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/host-routing/)

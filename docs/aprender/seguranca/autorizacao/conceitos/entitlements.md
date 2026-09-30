@@ -1,15 +1,7 @@
-# Entitlements
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/entitlements/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/entitlements/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/entitlements/");</script>
 
-Entitlements são direitos efetivamente concedidos a um subject. Eles podem ser
-derivados de subscriptions, planos, roles, features, contratos ou relações.
+# Conteúdo movido
 
-## Diferença
-
-Uma role é uma forma de agrupar direitos. Um entitlement descreve o direito
-que o sujeito possui em um contexto concreto, como acesso a um limite ou
-recurso.
-
-## Operação
-
-Entitlements precisam de expiração, revogação e auditoria quando representam
-licença, cobrança ou acesso temporário.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/entitlements/)

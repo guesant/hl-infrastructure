@@ -1,7 +1,7 @@
-# SPDX
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/spdx/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/spdx/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/spdx/");</script>
 
-SPDX é um padrão para comunicar informações sobre componentes de software, licenças e supply chain. Pode representar SBOMs em formatos padronizados.
+# Conteúdo movido
 
-Sua origem e modelo dão forte atenção a licenciamento e identificação de componentes.
-
-Veja [SBOM](sbom.md) e [CycloneDX](cyclonedx.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/spdx/)

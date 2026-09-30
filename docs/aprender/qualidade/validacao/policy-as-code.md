@@ -1,7 +1,7 @@
-# Policy as code
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/qualidade/validacao/policy-as-code/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/qualidade/validacao/policy-as-code/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/qualidade/validacao/policy-as-code/");</script>
 
-Policy as code representa regras de governança como código ou dados versionáveis e executáveis.
+# Conteúdo movido
 
-Pode proibir privilégios ou exigir propriedades mesmo quando o documento é válido pelo schema.
-
-CI fornece feedback antecipado; admission control impõe regras no cluster. São pontos de enforcement diferentes.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/qualidade/validacao/policy-as-code/)

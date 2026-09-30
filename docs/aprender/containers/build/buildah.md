@@ -1,11 +1,7 @@
-# Buildah
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/containers/build/buildah/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/containers/build/buildah/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/containers/build/buildah/");</script>
 
-Buildah constrói imagens OCI e oferece tanto interpretação de Containerfile/Dockerfile quanto uma interface imperativa para criar e modificar containers de build.
+# Conteúdo movido
 
-## Caso de uso
-
-É comum no ecossistema Podman e em pipelines Linux que desejam construir imagens sem depender de Docker daemon.
-
-## Continue por aqui
-
-[Dockerfile](dockerfile.md) é uma entrada possível; [OCI Image Specification](../oci/image-spec.md) define o formato do resultado.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/containers/build/buildah/)

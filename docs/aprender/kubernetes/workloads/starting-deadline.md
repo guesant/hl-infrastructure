@@ -1,5 +1,7 @@
-# CronJob starting deadline
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/starting-deadline/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/starting-deadline/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/starting-deadline/");</script>
 
-startingDeadlineSeconds define por quanto tempo um CronJob ainda considera aceitável iniciar uma execução perdida ou atrasada.
+# Conteúdo movido
 
-A configuração precisa refletir se executar tarde ainda produz um resultado válido para o domínio.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/starting-deadline/)

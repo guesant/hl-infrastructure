@@ -1,15 +1,7 @@
-# Provider Keycloak
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/iac/providers/keycloak/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/iac/providers/keycloak/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/iac/providers/keycloak/");</script>
 
-O provider Keycloak declara realms, clients, roles, grupos, identity providers e outras configurações administrativas pela API do Keycloak. Ele permite tratar identidade como código, mas torna o state parte da superfície de segurança.
+# Conteúdo movido
 
-## Cuidados
-
-Separe o realm de bootstrap dos realms administrados, use credenciais de serviço com escopo mínimo e examine o plano quanto a secrets e mudanças de acesso. Rotacionar um client secret exige coordenar consumidores, state e rollout.
-
-## Relações
-
-O provider administra o serviço de identidade por API; a documentação de [identidade e diretórios](../../seguranca/identidade/index.md) situa o conceito no restante da plataforma.
-
-## Fonte primária
-
-- [Keycloak provider](https://registry.opentofu.org/providers/keycloak/keycloak/latest)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/iac/providers/keycloak/)

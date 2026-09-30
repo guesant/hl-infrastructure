@@ -1,15 +1,7 @@
-# Casbin Java
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/casbin-java/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/casbin-java/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/casbin-java/");</script>
 
-Casbin Java integra o enforcer Casbin a aplicações Java. O modelo de
-autorização pode ser compartilhado entre serviços, desde que os modelos e
-adapters tenham contrato de versão.
+# Conteúdo movido
 
-## Uso
-
-É útil para políticas embutidas em serviços Java que precisam de RBAC, ABAC ou
-relações simples. Decisões por objeto muito distribuídas podem exigir um
-serviço de relações dedicado.
-
-## Fonte
-
-- [Casbin](https://casbin.org/docs/overview)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/casbin-java/)

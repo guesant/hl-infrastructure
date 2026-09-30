@@ -1,14 +1,7 @@
-# Casbin Node
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/casbin-node/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/casbin-node/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/casbin-node/");</script>
 
-Casbin Node é a implementação do Casbin para aplicações JavaScript e
-TypeScript. O pacote também é conhecido no ecossistema como node-casbin.
+# Conteúdo movido
 
-## Modelo
-
-O enforcer carrega um model e uma policy, recebe subject, object e action e
-retorna uma decisão. O adapter pode persistir regras em banco, mas a aplicação
-continua responsável por autenticar e aplicar a resposta.
-
-## Fonte
-
-- [Casbin Node](https://casbin.org/docs/overview)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/casbin-node/)

@@ -1,10 +1,7 @@
-# Distribuição
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/dados/consistencia/distribuicao/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/dados/consistencia/distribuicao/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/dados/consistencia/distribuicao/");</script>
 
-Distribuição separa dados, processamento ou autoridade entre múltiplos nós.
-Ela pode melhorar capacidade, disponibilidade ou proximidade, mas introduz
-latência de rede, falhas parciais, replicação e decisões sobre consistência.
+# Conteúdo movido
 
-[Consistência](../index.md) explica os contratos que o leitor observa.
-[Clustering, redundância e distribuição](../../clustering-redundancia-e-distribuicao.md)
-compara formas de manter serviço e dados em mais de um nó. [Sharding](../../sharding.md)
-trata a divisão da propriedade dos dados.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/dados/consistencia/distribuicao/)

@@ -1,15 +1,7 @@
-# Provider GKE
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/iac/providers/gke/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/iac/providers/gke/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/iac/providers/gke/");</script>
 
-O provider Google Cloud administra recursos do Google Cloud, incluindo clusters Google Kubernetes Engine. O cluster GKE é apenas um recurso dentro de uma superfície maior que também inclui rede, IAM, projeto, registros e armazenamento.
+# Conteúdo movido
 
-## Cuidados
-
-Separe o state do cluster do state de workloads que o GitOps administra. Não faça o OpenTofu e o Argo CD disputarem os mesmos objetos Kubernetes. Use contas de serviço e permissões por projeto com escopo mínimo.
-
-## Relações
-
-O provider Google administra o cluster e os serviços de suporte; os objetos executados nele pertencem ao ciclo de vida de [Kubernetes](../../comparacoes/plataforma/distribuicoes-kubernetes.md) e do GitOps, conforme a arquitetura escolhida.
-
-## Fonte primária
-
-- [Google provider](https://registry.opentofu.org/providers/hashicorp/google/latest)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/iac/providers/gke/)

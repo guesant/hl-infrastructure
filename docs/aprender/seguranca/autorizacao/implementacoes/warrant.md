@@ -1,15 +1,7 @@
-# Warrant
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/warrant/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/warrant/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/warrant/");</script>
 
-Warrant é uma plataforma de autorização fina que oferece RBAC, hierarquias e
-relações entre sujeitos e recursos. Ela pode atuar como serviço de decisões
-para aplicações que não querem persistir toda a lógica de autorização local.
+# Conteúdo movido
 
-## Uso
-
-Defina recursos, ações e relações antes de criar grants. O cliente deve enviar
-identificadores canônicos e não aceitar que o usuário escolha o tenant ou
-recurso fora do contexto autenticado.
-
-## Fonte
-
-- [Warrant](https://warrant.dev/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/warrant/)

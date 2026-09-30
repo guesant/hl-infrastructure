@@ -1,23 +1,7 @@
-# KubeLinter
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/iac/kubelinter/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/iac/kubelinter/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/iac/kubelinter/");</script>
 
-KubeLinter analisa manifestos Kubernetes e Helm charts procurando configurações problemáticas e ausência de práticas recomendadas.
+# Conteúdo movido
 
-## Casos de uso
-
-É adequado para checks específicos de workloads Kubernetes, como securityContext, probes, resources e outras propriedades do domínio.
-
-## Boa prática
-
-Execute sobre o material que representa o deployment efetivo e customize checks quando a política do ambiente divergir conscientemente do padrão.
-
-## Má prática
-
-Desabilitar uma categoria inteira porque um workload excepcional não atende à regra perde cobertura dos demais. Prefira exceções estreitas e justificadas.
-
-## Fontes
-
-- KubeLinter: <https://docs.kubelinter.io/>
-
-## Continue por aqui
-
-[Checkov](checkov.md) cobre um conjunto mais amplo de formatos de IaC.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/iac/kubelinter/)

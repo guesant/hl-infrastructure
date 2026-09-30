@@ -1,23 +1,7 @@
-# trust-manager
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/pki/trust-manager/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/pki/trust-manager/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/pki/trust-manager/");</script>
 
-trust-manager é um controller Kubernetes para distribuir bundles de certificados confiáveis a namespaces e workloads. Seu problema é trust distribution, não emissão de certificados.
+# Conteúdo movido
 
-## Casos de uso
-
-Quando múltiplas aplicações precisam confiar na mesma CA privada, um Bundle pode manter material de confiança sincronizado sem cópias manuais independentes.
-
-## Boa prática
-
-Mantenha a fonte de confiança explícita, limite destinos ao necessário e planeje sobreposição durante rotação de CA para evitar quebrar consumidores.
-
-## Má prática
-
-Copiar manualmente a mesma CA para dezenas de namespaces cria drift. No outro extremo, distribuir toda CA interna para todo workload sem necessidade amplia confiança além do necessário.
-
-## Fontes
-
-- trust-manager documentation: <https://cert-manager.io/docs/trust/trust-manager/>
-
-## Continue por aqui
-
-[step-ca](step-ca.md) pode emitir certificados; trust-manager distribui âncoras de confiança.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/pki/trust-manager/)

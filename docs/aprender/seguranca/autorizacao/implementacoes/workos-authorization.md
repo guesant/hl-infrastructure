@@ -1,16 +1,7 @@
-# WorkOS Authorization
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/workos-authorization/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/workos-authorization/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/workos-authorization/");</script>
 
-WorkOS Authorization reúne recursos de organizações, papéis e fine-grained
-authorization para produtos SaaS. O objetivo é fornecer uma camada de
-autorização administrável sem misturar o diretório de usuários ao domínio da
-aplicação.
+# Conteúdo movido
 
-## Cuidados
-
-Papéis administrativos, membership e permissões por objeto têm semânticas
-distintas. Modele cada uma explicitamente e defina como revogações chegam aos
-serviços consumidores.
-
-## Fonte
-
-- [WorkOS Authorization](https://workos.com/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/workos-authorization/)

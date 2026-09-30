@@ -1,24 +1,7 @@
-# Ferramentas de acesso remoto
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/ferramentas/acesso-remoto/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/ferramentas/acesso-remoto/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/ferramentas/acesso-remoto/");</script>
 
-Ferramentas de acesso remoto podem oferecer um terminal SSH, transferência de arquivos, administração gráfica ou uma combinação desses recursos. Elas não substituem o modelo de autenticação, autorização e auditoria do sistema remoto; apenas fornecem uma interface diferente para os mesmos protocolos e APIs.
+# Conteúdo movido
 
-## Escolha por responsabilidade
-
-[Cockpit](cockpit.md) é uma interface web para administrar um servidor Linux usando as credenciais e os serviços do próprio sistema. [Termius](termius.md) é um cliente multiplataforma voltado principalmente a SSH, SFTP e organização de conexões. [RustConn](rustconn.md) é um gerenciador de conexões para Linux que reúne SSH, RDP, VNC, serial, Telnet, Mosh e outros transportes.
-
-Os protocolos e ferramentas gráficas estão separados por responsabilidade: [SPICE](spice.md) é voltado principalmente a consoles de VMs, [VNC](vnc.md) transporta um framebuffer, [RDP](rdp.md) é o protocolo de desktop remoto da Microsoft e [xterm](xterm.md) é um terminal X11, não um protocolo remoto. [SOCKS5](socks5.md) cria um proxy para aplicações compatíveis, não uma sessão gráfica.
-
-[RustDesk](rustdesk.md), [AnyDesk](anydesk.md) e [TeamViewer](teamviewer.md) são produtos de suporte remoto. [Acesso remoto do Windows](windows-remote-desktop.md) descreve o recurso integrado do Windows. Para editar código fora da máquina local, consulte [desenvolvimento remoto](../desenvolvimento-remoto/index.md).
-
-Uma interface gráfica não elimina a necessidade de entender o caminho de rede, a identidade usada, o host key verification, o encaminhamento de agente e o escopo das permissões. Em ambientes sensíveis, a preferência deve ser por conexões auditáveis, chaves protegidas e exposição mínima dos serviços de administração.
-
-## Relação com SSH
-
-Cockpit pode usar SSH para acessar outros hosts. Termius e RustConn podem abrir sessões SSH e, conforme a plataforma e a edição, oferecer recursos como SFTP, jump host, proxy e port forwarding. O modelo nativo do protocolo está descrito em [SSH](../../ssh.md), e os quatro modos de encaminhamento estão em [tunelamento de portas SSH](../../ssh-port-forwarding.md).
-
-## Fontes primárias
-
-- [Cockpit](https://cockpit-project.org/)
-- [Documentação do Cockpit](https://cockpit-project.org/documentation.html)
-- [Termius](https://termius.com/)
-- [RustConn](https://github.com/totoshko88/RustConn)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/ferramentas/acesso-remoto/)

@@ -1,15 +1,7 @@
-# oso-cloud
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/oso-cloud/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/oso-cloud/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/oso-cloud/");</script>
 
-oso-cloud é a oferta gerenciada do ecossistema Oso para decisões de
-autorização. Ela separa a policy e os dados de autorização do processo da
-aplicação, mantendo uma API para consultas.
+# Conteúdo movido
 
-## Escolha
-
-Um serviço central pode simplificar governança e compartilhamento entre
-aplicações, mas acrescenta latência e dependência de rede. Defina cache, timeout
-e comportamento durante indisponibilidade antes de proteger operações críticas.
-
-## Fonte
-
-- [Documentação do Oso](https://www.osohq.com/docs)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/oso-cloud/)

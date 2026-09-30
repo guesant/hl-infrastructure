@@ -1,19 +1,7 @@
-# Job
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/job/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/job/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/job/");</script>
 
-Job representa trabalho finito no Kubernetes. Seu objetivo é alcançar conclusão bem-sucedida, ao contrário de controllers voltados a manter serviços continuamente disponíveis.
+# Conteúdo movido
 
-## Controles
-
-[Restart policy](restart-policy.md), [backoff limit](backoff-limit.md) e [active deadline](active-deadline.md) controlam tentativas e duração. Esses mecanismos são independentes e possuem páginas próprias.
-
-## Casos de uso
-
-Migrações, processamento batch e tarefas administrativas finitas são encaixes naturais. Um servidor HTTP permanente normalmente pertence a outro controller.
-
-## Boa prática
-
-Defina o que significa sucesso, limite retries e torne operações repetíveis quando reexecução for possível.
-
-## Má prática
-
-Usar Job para daemon permanente ou permitir retry infinito de uma falha determinística.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/job/)

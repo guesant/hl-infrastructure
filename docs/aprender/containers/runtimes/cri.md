@@ -1,5 +1,7 @@
-# Container Runtime Interface
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/cri/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/cri/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/cri/");</script>
 
-Container Runtime Interface, CRI, é a API usada pelo kubelet para solicitar operações de runtime sem se acoplar a uma implementação.
+# Conteúdo movido
 
-[containerd](containerd.md) e [CRI-O](cri-o.md) podem atender essa interface.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/cri/)

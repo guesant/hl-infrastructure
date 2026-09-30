@@ -1,7 +1,7 @@
-# Apache JMeter
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/jmeter/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/jmeter/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/jmeter/");</script>
 
-Apache JMeter é uma ferramenta de teste de carga e performance com amplo suporte a protocolos e ecossistema de plugins.
+# Conteúdo movido
 
-Pode modelar planos de teste complexos. Em cargas grandes, a interface gráfica é melhor usada para autoria/inspeção que como modo de execução de carga.
-
-Veja [teste de carga](load-testing.md) e [k6](k6.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/jmeter/)

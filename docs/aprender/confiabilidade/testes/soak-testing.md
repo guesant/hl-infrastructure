@@ -1,7 +1,7 @@
-# Soak testing
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/soak-testing/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/soak-testing/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/soak-testing/");</script>
 
-Soak testing mantém carga por período prolongado para revelar problemas dependentes de tempo.
+# Conteúdo movido
 
-Vazamentos de memória, crescimento de filas, exaustão gradual de pools e degradação de storage podem não aparecer em testes curtos.
-
-A carga não precisa ser extrema; duração é a dimensão principal.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/soak-testing/)

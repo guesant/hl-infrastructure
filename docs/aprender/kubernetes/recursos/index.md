@@ -1,5 +1,7 @@
-# Recursos de workload no Kubernetes
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/");</script>
 
-Workloads combinam objetos e propriedades independentes. Esta categoria separa recursos de scheduling, execução, saúde e disponibilidade para que cada um tenha semântica própria.
+# Conteúdo movido
 
-[Resource requests](requests.md) influenciam scheduling. [Resource limits](limits.md) impõem limites em runtime. [QoS](qos.md) classifica Pods conforme configuração de recursos. [Liveness](liveness-probe.md), [readiness](readiness-probe.md) e [startup probes](startup-probe.md) respondem perguntas diferentes. [PodDisruptionBudget](pdb.md) limita disrupções voluntárias. [Graceful shutdown](graceful-shutdown.md) trata encerramento coordenado.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/)

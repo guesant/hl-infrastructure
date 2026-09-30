@@ -1,19 +1,7 @@
-# Ory
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ory/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ory/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ory/");</script>
 
-Ory é um ecossistema de identidade, autenticação e autorização composto por
-serviços especializados. A separação permite combinar componentes sem tratar
-login, consentimento e permissões como a mesma responsabilidade.
+# Conteúdo movido
 
-## Componentes
-
-Ory Kratos cuida de identidade. Ory Hydra implementa OAuth 2.0 e OpenID
-Connect. Ory Keto trata permissões e autorização por relações.
-
-## Decisão
-
-A composição exige contratos claros para identidade, subject, claims e
-permissões. Um componente não deve ser usado como substituto informal de outro.
-
-## Fonte
-
-- [Documentação do Ory](https://www.ory.sh/docs/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ory/)

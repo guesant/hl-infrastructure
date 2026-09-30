@@ -1,7 +1,7 @@
-# Route Origin Authorization
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/roa/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/roa/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/roa/");</script>
 
-Route Origin Authorization, ROA, é um objeto assinado no ecossistema RPKI que autoriza determinado ASN a originar um prefixo, dentro das restrições declaradas.
+# Conteúdo movido
 
-Validadores usam ROAs para classificar anúncios de origem conforme o estado de validação.
-
-Veja [RPKI](rpki.md), [ASN](asn.md) e [BGP](bgp.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/roteamento/roa/)

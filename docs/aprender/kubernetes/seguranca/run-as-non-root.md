@@ -1,7 +1,7 @@
-# Run as non-root
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/run-as-non-root/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/run-as-non-root/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/run-as-non-root/");</script>
 
-Executar como usuário não-root reduz privilégios disponíveis ao processo no container.
+# Conteúdo movido
 
-Isso não transforma o workload em seguro por si só. Capabilities, mounts, kernel e outras permissões continuam relevantes.
-
-Imagens precisam ser construídas para funcionar com UID/GID apropriados e permissões de filesystem compatíveis.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/run-as-non-root/)

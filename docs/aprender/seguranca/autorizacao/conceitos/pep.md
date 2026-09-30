@@ -1,15 +1,7 @@
-# Policy Enforcement Point
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/pep/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/pep/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/pep/");</script>
 
-Policy Enforcement Point, PEP, é o componente que aplica a decisão do PDP.
-Pode ser um middleware, controller, gateway, banco, proxy ou serviço de
-domínio.
+# Conteúdo movido
 
-## Regra
-
-O PEP deve negar ou interromper a operação quando a decisão não for permitida.
-Renderizar ou esconder um botão não é enforcement.
-
-## Cuidados
-
-O PEP precisa proteger todos os caminhos equivalentes, inclusive endpoints
-internos, jobs, exportações, downloads e operações administrativas.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/pep/)

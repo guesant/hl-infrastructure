@@ -1,19 +1,7 @@
-# RED
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/observabilidade/red/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/observabilidade/red/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/observabilidade/red/");</script>
 
-RED organiza observação de serviços em três dimensões: Rate, Errors e Duration.
+# Conteúdo movido
 
-Rate mede volume de operações por unidade de tempo. Errors mede operações que falham segundo a semântica definida. Duration mede quanto tempo as operações levam.
-
-RED é uma heurística de instrumentação e dashboards, não uma ferramenta nem um conjunto obrigatório de métricas.
-
-## Caso de uso
-
-APIs e serviços orientados a requisições são um encaixe natural porque possuem operações contáveis, resultado e duração.
-
-## Limite
-
-Recursos como disco e CPU não se encaixam tão naturalmente. [USE](use.md) oferece outra lente para recursos.
-
-## Continue por aqui
-
-[Golden signals](golden-signals.md) possui sobreposição conceitual, mas origem e formulação diferentes.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/observabilidade/red/)

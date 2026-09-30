@@ -1,15 +1,7 @@
-# Casbin Go
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/casbin-go/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/casbin-go/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/casbin-go/");</script>
 
-Casbin Go é a implementação principal do Casbin para Go. Ela fornece um
-enforcer local que combina um modelo de autorização, uma policy e os valores
-da requisição.
+# Conteúdo movido
 
-## Uso
-
-O modelo pode representar RBAC, ABAC, ACL e outras relações. Adapters podem
-persistir policies, mas não devem ser confundidos com a fonte de identidade ou
-com o enforcement do endpoint.
-
-## Fonte
-
-- [Casbin para Go](https://casbin.org/docs/overview)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/casbin-go/)

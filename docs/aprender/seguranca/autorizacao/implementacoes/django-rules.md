@@ -1,15 +1,7 @@
-# django-rules
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/django-rules/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/django-rules/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/django-rules/");</script>
 
-django-rules é uma biblioteca de autorização baseada em predicados para Django.
-Regras são funções reutilizáveis que podem ser combinadas para responder se um
-usuário pode executar uma ação.
+# Conteúdo movido
 
-## Cuidados
-
-Predicados devem permanecer pequenos, determinísticos e testáveis. Dados usados
-na decisão precisam vir do servidor e não de campos enviados sem validação pelo
-cliente.
-
-## Fonte
-
-- [django-rules](https://github.com/dfunckt/django-rules)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/django-rules/)

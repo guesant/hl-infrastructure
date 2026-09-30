@@ -1,5 +1,7 @@
-# Low-level container runtime
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/low-level-runtime/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/low-level-runtime/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/low-level-runtime/");</script>
 
-Um low-level runtime materializa o processo confinado usando mecanismos do sistema operacional e uma descrição de execução.
+# Conteúdo movido
 
-[runc](runc.md) e [crun](crun.md) implementam OCI Runtime Specification.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/low-level-runtime/)

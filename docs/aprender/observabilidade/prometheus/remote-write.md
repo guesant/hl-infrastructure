@@ -1,28 +1,7 @@
-# Prometheus remote write
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/observabilidade/prometheus/remote-write/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/observabilidade/prometheus/remote-write/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/observabilidade/prometheus/remote-write/");</script>
 
-Remote write envia amostras do Prometheus para um backend remoto. Ele separa
-coleta local da retenção, consulta ou agregação de longo prazo.
+# Conteúdo movido
 
-## Uso
-
-Remote write é útil quando métricas precisam sobreviver à perda do host, ser
-consultadas por múltiplos Prometheus ou chegar a um armazenamento escalável.
-A fila local precisa de limites e comportamento definido durante indisponibilidade
-do destino.
-
-## Trade-offs
-
-O envio acrescenta rede, CPU, armazenamento temporário e uma nova falha. Um
-backend remoto indisponível pode criar backlog e consumir disco. Filtrar
-métricas antes do envio reduz custo, mas pode remover evidência necessária.
-
-## Relações
-
-- [Prometheus](../prometheus.md) coleta e avalia métricas.
-- [Métricas](../metricas.md) define cardinalidade.
-- [Pipeline de observabilidade](../../composicoes/observabilidade/pipeline.md)
-  posiciona armazenamento e consulta.
-
-## Fonte primária
-
-- [Prometheus remote write](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/observabilidade/prometheus/remote-write/)

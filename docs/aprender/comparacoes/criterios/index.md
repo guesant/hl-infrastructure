@@ -1,9 +1,7 @@
-# Critérios de seleção
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/comparacoes/criterios/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/comparacoes/criterios/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/comparacoes/criterios/");</script>
 
-Critérios de seleção transformam uma comparação em uma decisão verificável.
-Eles devem explicitar requisitos, restrições, custo operacional, segurança,
-interoperabilidade, disponibilidade, migração e reversibilidade.
+# Conteúdo movido
 
-Uma matriz de comparação não deve repetir as páginas das ferramentas. Ela deve
-apontar quais dimensões diferenciam as alternativas e em quais condições cada
-uma deixa de ser adequada.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/comparacoes/criterios/)

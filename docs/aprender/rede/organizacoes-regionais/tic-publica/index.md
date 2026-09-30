@@ -1,11 +1,7 @@
-# Tecnologia da informação pública
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/organizacoes-regionais/tic-publica/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/organizacoes-regionais/tic-publica/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/organizacoes-regionais/tic-publica/");</script>
 
-Órgãos públicos de TIC coordenam políticas, infraestrutura e serviços digitais de uma administração. Eles não devem ser classificados como operadoras apenas porque mantêm uma rede ou participam de uma interconexão.
+# Conteúdo movido
 
-## Página
-
-[SETIC/RO](../setic-ro.md) apresenta o órgão central de tecnologia da informação e comunicação do Governo de Rondônia, suas responsabilidades de transformação digital, infraestrutura, segurança e sua presença como PIX do IX.br em Porto Velho.
-
-## Fronteira
-
-A TIC pública combina governança, prestação de serviços internos, infraestrutura e obrigações administrativas. Avaliar sua operação exige considerar continuidade, transparência, segurança, compras, responsabilidade institucional e atendimento ao cidadão, além de disponibilidade técnica.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/organizacoes-regionais/tic-publica/)

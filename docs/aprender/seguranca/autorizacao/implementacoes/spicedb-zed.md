@@ -1,15 +1,7 @@
-# SpiceDB Zed
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/spicedb-zed/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/spicedb-zed/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/spicedb-zed/");</script>
 
-Zed é a CLI e o ecossistema de operação do SpiceDB. Ela permite validar
-schemas, escrever relações, consultar permissões e investigar dados durante o
-desenvolvimento ou a operação controlada.
+# Conteúdo movido
 
-## Segurança
-
-Comandos de escrita devem ser limitados a ambientes e identidades apropriados.
-Uma consulta de depuração pode expor relações sensíveis e precisa ser tratada
-como acesso administrativo.
-
-## Fonte
-
-- [Comandos do SpiceDB](https://authzed.com/docs/spicedb/concepts/commands)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/spicedb-zed/)

@@ -1,9 +1,7 @@
-# Chaos engineering
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/chaos-engineering/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/chaos-engineering/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/chaos-engineering/");</script>
 
-Chaos engineering testa hipóteses sobre resiliência introduzindo falhas controladas.
+# Conteúdo movido
 
-Um experimento começa por steady state e hipótese, define a falha, limita blast radius, observa o resultado e possui mecanismo de interrupção.
-
-Matar componentes aleatoriamente sem hipótese ou critério de sucesso não caracteriza uma prática madura de chaos engineering.
-
-Comece em ambiente de menor impacto e aumente realismo conforme observabilidade e capacidade de abortar o experimento sejam demonstradas.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/chaos-engineering/)

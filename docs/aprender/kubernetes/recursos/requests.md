@@ -1,9 +1,7 @@
-# Resource requests
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/requests/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/requests/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/requests/");</script>
 
-Resource request declara a quantidade de um recurso que o scheduler considera ao posicionar um Pod.
+# Conteúdo movido
 
-Request não é consumo atual nem teto. Ele representa a demanda usada para decidir se há capacidade alocável suficiente no nó.
-
-Requests subestimados favorecem overcommit e podem aumentar contenção. Requests superestimados desperdiçam capacidade de scheduling.
-
-Veja [limits](limits.md) e [QoS](qos.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/requests/)

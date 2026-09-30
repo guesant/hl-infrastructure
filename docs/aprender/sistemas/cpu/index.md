@@ -1,27 +1,7 @@
-# CPU
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/");</script>
 
-Uma CPU executa instruções definidas por uma arquitetura de conjunto de instruções, ou ISA. A ISA especifica operações, registradores, formatos de instrução e comportamento observável pelo software; uma microarquitetura concreta decide como implementar isso internamente. Esta área separa o contrato da ISA, o ciclo lógico da instrução, o desenho interno e a relação da CPU com memória, GPU, SoC e entrada e saída.
+# Conteúdo movido
 
-## Mapa da área
-
-- [Arquitetura de conjunto de instruções](isa.md) separa o contrato da ISA da implementação em silício. [Microarquitetura](microarquitetura.md) explica a implementação interna.
-- [Ciclo de instrução](ciclo-de-instrucao.md) explica fetch, decode, execute, pipeline, ULA e unidade de controle.
-- [CPU](cpu.md), [RAM](ram.md), [GPU](gpu.md) e [System on a chip](soc.md) diferenciam os componentes e apresentam memória unificada.
-- [Famílias e gerações de processadores](familias-de-processadores.md) organiza Intel, AMD, Arm e Apple Silicon sem confundir produto com arquitetura.
-- [Barramento do sistema](barramento-do-sistema.md) descreve CPU, memória, entrada e saída, DMA, IOMMU e o modelo de von Neumann.
-
-## Exemplo
-
-Uma instrução de soma pode ser parte da ISA enquanto pipeline, execução fora de ordem, caches e unidades funcionais pertencem à microarquitetura. Duas CPUs podem implementar a mesma ISA com desempenho e organização interna diferentes.
-
-## Boa prática
-
-Separe sempre arquitetura visível ao software de detalhes de implementação. Essa distinção evita explicar compatibilidade binária usando propriedades acidentais de um processador específico.
-
-## Má prática
-
-Tratar "CPU", "x86" e "microarquitetura" como sinônimos mistura níveis diferentes. Também é inadequado deduzir desempenho apenas pela ISA.
-
-## Continue por aqui
-
-[Níveis de privilégio](niveis-de-privilegio.md) explica como a CPU participa da proteção do kernel. [System calls](../kernel/system-calls.md) mostra a transição controlada entre aplicação e kernel.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/sistemas/cpu/)

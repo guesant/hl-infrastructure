@@ -1,5 +1,7 @@
-# High-level container runtime
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/high-level-runtime/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/high-level-runtime/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/high-level-runtime/");</script>
 
-Um high-level runtime administra imagens, snapshots e ciclo de vida e delega a criação final do processo a um [low-level runtime](low-level-runtime.md).
+# Conteúdo movido
 
-[containerd](containerd.md) e [CRI-O](cri-o.md) são implementações com escopos diferentes.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/containers/runtimes/high-level-runtime/)

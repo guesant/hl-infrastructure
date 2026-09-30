@@ -1,9 +1,7 @@
-# Inicialização
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/sistemas/boot/instalacao/inicializacao/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/sistemas/boot/instalacao/inicializacao/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/sistemas/boot/instalacao/inicializacao/");</script>
 
-Inicialização é a cadeia que leva energia aplicada a um sistema executando um
-kernel ou outro ambiente. Firmware, carregador, dispositivo de boot, rede,
-particionamento e política de confiança participam em etapas diferentes.
+# Conteúdo movido
 
-[Instalação](../index.md) trata a preparação do sistema. [Métodos de boot](../../boot-methods.md),
-[instalação pela rede](../../network-install.md) e [netboot.xyz](../../netboot-xyz.md)
-representam caminhos distintos até o instalador.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/sistemas/boot/instalacao/inicializacao/)

@@ -1,17 +1,7 @@
-# USE
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/observabilidade/use/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/observabilidade/use/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/observabilidade/use/");</script>
 
-USE organiza observação de recursos em Utilization, Saturation e Errors.
+# Conteúdo movido
 
-Utilization mede quanto da capacidade está ocupada. Saturation representa trabalho esperando capacidade. Errors registra falhas do recurso ou operações associadas.
-
-## Caso de uso
-
-CPU, disco, interfaces e pools limitados são bons candidatos.
-
-## Limite
-
-USE não descreve diretamente experiência de uma requisição de usuário. [RED](red.md) é frequentemente mais natural para serviços.
-
-## Continue por aqui
-
-[Observabilidade](index.md) situa USE entre outras heurísticas.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/observabilidade/use/)

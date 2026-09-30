@@ -1,15 +1,7 @@
-# CronJob
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/cronjob/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/cronjob/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/cronjob/");</script>
 
-CronJob cria Jobs segundo um agendamento.
+# Conteúdo movido
 
-## Controles
-
-[Concurrency policy](concurrency-policy.md) define sobreposição. [Starting deadline](starting-deadline.md) limita atraso aceitável.
-
-## Casos de uso
-
-Rotinas periódicas como reconciliações, limpeza e relatórios. A tarefa deve tolerar características de sistemas distribuídos e, quando necessário, ser [idempotente](idempotencia.md).
-
-## Má prática
-
-Assumir sem desenho adicional que um schedule implica exatamente uma execução efetiva do efeito de negócio.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/workloads/cronjob/)

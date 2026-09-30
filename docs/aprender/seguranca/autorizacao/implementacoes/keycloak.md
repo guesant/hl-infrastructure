@@ -1,21 +1,7 @@
-# Keycloak
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/keycloak/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/keycloak/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/keycloak/");</script>
 
-Keycloak é uma plataforma de identidade que oferece login federado, OAuth 2.0,
-OpenID Connect, SAML, usuários, grupos, roles e integração com diretórios.
+# Conteúdo movido
 
-## Autorização
-
-Roles e claims podem participar de decisões nos consumidores. O recurso
-Authorization Services acrescenta uma modelagem própria de recursos e policies,
-mas autenticação no Keycloak não concede automaticamente acesso a uma operação
-de negócio.
-
-## Operação
-
-Proteja o admin, use clientes separados, limite scopes e defina expiração de
-tokens. A aplicação deve validar issuer, audience, assinatura e claims antes de
-usar qualquer role.
-
-## Fonte
-
-- [Documentação do Keycloak](https://www.keycloak.org/documentation)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/keycloak/)

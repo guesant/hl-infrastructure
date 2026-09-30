@@ -1,11 +1,7 @@
-# Policy Administration Point
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/pap/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/pap/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/pap/");</script>
 
-Policy Administration Point, PAP, é o componente responsável por criar,
-editar, versionar e publicar policies. Pode ser uma interface, um repositório
-Git ou um serviço administrativo.
+# Conteúdo movido
 
-## Governança
-
-Mudanças de policy precisam de revisão, testes, aprovação e rastreabilidade.
-Editar uma policy em produção sem histórico torna a investigação de decisões
-quase impossível.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/pap/)

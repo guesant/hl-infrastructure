@@ -1,13 +1,7 @@
-# BuildKit
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/containers/build/buildkit/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/containers/build/buildkit/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/containers/build/buildkit/");</script>
 
-BuildKit é um backend de build usado pelo ecossistema Docker e disponível de forma independente.
+# Conteúdo movido
 
-Ele oferece execução paralela de etapas independentes, cache, mounts especializados e secrets de build que evitam persistir credenciais em layers.
-
-## Caso de uso
-
-É apropriado para pipelines de build OCI que precisam de cache eficiente, multi-stage builds e integração com Dockerfile.
-
-## Má prática
-
-Passar secrets por ARG ou ENV pode deixá-los em metadados ou histórico. Use mecanismos de secret mount quando disponíveis.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/containers/build/buildkit/)

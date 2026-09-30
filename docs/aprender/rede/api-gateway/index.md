@@ -1,28 +1,7 @@
-# API gateway
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/api-gateway/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/api-gateway/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/api-gateway/");</script>
 
-API gateway é um ponto de entrada que combina roteamento, autenticação,
-políticas, transformação e observabilidade para APIs. Ele conhece contratos de
-aplicação além de encaminhar conexões, mas não deve absorver toda lógica de
-negócio.
+# Conteúdo movido
 
-## Fronteira
-
-Reverse proxy pode encaminhar tráfego sem entender a API. Gateway normalmente
-adiciona identidade, rate limiting, transformação, catálogo e política por
-rota. A fronteira não é absoluta: produtos podem oferecer ambos os conjuntos
-de recursos.
-
-Um gateway torna o caminho de entrada centralizado, mas também concentra
-latência, disponibilidade, configuração e blast radius de uma regra incorreta.
-
-## Relações
-
-- [Kong Gateway](kong.md) explica os modelos de catálogo e configuração do
-  gateway.
-- [Service](service.md) representa o upstream lógico.
-- [Route](route.md) seleciona o tráfego.
-- [Rate limiting](../rate-limiting/index.md) controla consumo.
-
-## Fonte primária
-
-- [Kong Gateway concepts](https://docs.konghq.com/gateway/latest/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/api-gateway/)

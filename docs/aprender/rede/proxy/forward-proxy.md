@@ -1,7 +1,7 @@
-# Forward proxy
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/forward-proxy/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/forward-proxy/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/forward-proxy/");</script>
 
-Forward proxy recebe tráfego de clientes e o encaminha a destinos em nome deles.
+# Conteúdo movido
 
-Casos incluem controle de egress, cache e intermediação de acesso. O destino observa a conexão do proxy, embora protocolos e headers possam carregar contexto adicional.
-
-Não confunda com [reverse proxy](reverse-proxy.md), que representa serviços perante clientes.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/proxy/forward-proxy/)

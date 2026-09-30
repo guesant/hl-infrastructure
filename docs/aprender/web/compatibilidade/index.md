@@ -1,13 +1,7 @@
-# Compatibilidade web
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/web/compatibilidade/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/web/compatibilidade/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/web/compatibilidade/");</script>
 
-Compatibilidade é a avaliação de um recurso em navegadores, versões, sistemas operacionais e configurações reais. Ela não é sinônimo de existência da API: um recurso pode estar especificado, parcialmente implementado, atrás de uma flag ou sujeito a diferenças de comportamento.
+# Conteúdo movido
 
-[Can I Use](../../web/caniuse.md) fornece tabelas de suporte por navegador e versão. Esses dados ajudam a identificar riscos e alternativas, mas não substituem testes no conjunto de browsers do produto.
-
-## Método
-
-Defina o recurso, os navegadores suportados, a versão mínima, o impacto de uma falha e uma alternativa. Teste também acessibilidade, desempenho, políticas corporativas, modo privado e dispositivos com capacidades reduzidas.
-
-## Relação
-
-[Plataforma web](../plataforma/index.md) explica o contrato técnico de HTML, CSS, JavaScript e Web APIs. Compatibilidade responde onde esse contrato está disponível e com quais limitações.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/web/compatibilidade/)

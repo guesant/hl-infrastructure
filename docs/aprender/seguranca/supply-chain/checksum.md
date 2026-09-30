@@ -1,7 +1,7 @@
-# Checksum
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/checksum/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/checksum/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/checksum/");</script>
 
-Checksum criptográfico, como SHA-256, permite verificar que um conteúdo corresponde a um digest esperado.
+# Conteúdo movido
 
-Ele fornece integridade relativa ao digest conhecido. Se atacante consegue substituir artefato e checksum no mesmo canal, a comparação não autentica o publicador.
-
-Veja [assinatura de artefatos](artifact-signing.md) para autenticidade sob um modelo de identidade.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/checksum/)

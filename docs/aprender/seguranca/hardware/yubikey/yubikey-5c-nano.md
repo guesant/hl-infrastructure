@@ -1,21 +1,7 @@
-# YubiKey 5C Nano
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/hardware/yubikey/yubikey-5c-nano/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/hardware/yubikey/yubikey-5c-nano/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/hardware/yubikey/yubikey-5c-nano/");</script>
 
-YubiKey 5C Nano é o modelo multi-protocolo de formato Nano com USB-C. A
-Yubico o identifica como parte da linha em operação desde 2018.
+# Conteúdo movido
 
-## O que há de especial
-
-Ele permanece conectado a uma porta USB-C e mantém os protocolos da família
-YubiKey 5. É uma opção para notebooks, estações e servidores com USB-C nos
-quais a chave deve estar sempre disponível.
-
-## Limites
-
-O modelo não tem NFC. O formato reduz a conveniência para transporte e pode
-ser incompatível com políticas que exigem que o usuário retire a chave e a
-guarde separadamente.
-
-## Fontes
-
-- [YubiKey 5 Series](https://www.yubico.com/store/yubikey-5-series/)
-- [Identificação de modelos](https://www.yubico.com/products/identifying-your-yubikey/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/hardware/yubikey/yubikey-5c-nano/)

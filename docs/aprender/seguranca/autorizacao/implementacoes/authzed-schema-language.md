@@ -1,15 +1,7 @@
-# Authzed Schema Language
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/authzed-schema-language/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/authzed-schema-language/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/authzed-schema-language/");</script>
 
-Authzed Schema Language é a linguagem usada para declarar tipos, relações e
-permissões no ecossistema SpiceDB. O schema é o contrato que transforma tuples
-em decisões derivadas.
+# Conteúdo movido
 
-## Evolução
-
-Mudanças de schema devem considerar dados existentes, compatibilidade entre
-versões e migração das relações. Uma permissão nova pode ser segura apenas
-quando não amplia acesso por acidente.
-
-## Fonte
-
-- [Schema do SpiceDB](https://authzed.com/docs/spicedb/concepts/schema)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/authzed-schema-language/)

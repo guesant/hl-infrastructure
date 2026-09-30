@@ -1,22 +1,7 @@
-# Open Policy Containers
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/open-policy-containers/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/open-policy-containers/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/open-policy-containers/");</script>
 
-Open Policy Containers, OPCR, é uma proposta para empacotar e distribuir
-políticas como artefatos compatíveis com registries de container. A política
-passa a ter digest, metadados e um fluxo de promoção semelhante ao de outros
-artefatos de supply chain.
+# Conteúdo movido
 
-## Benefícios
-
-O empacotamento facilita versionamento, assinatura, replicação e promoção entre
-ambientes. O consumidor ainda precisa validar o tipo de política, a linguagem,
-as dependências e a compatibilidade do runtime.
-
-## Segurança
-
-Trate o artefato de política como código executável do ponto de vista da
-decisão. Use digest, assinatura, provenance e revisão antes de carregá-lo em
-um PDP ou admission controller.
-
-## Fonte
-
-- [Open Policy Containers](https://openpolicycontainers.com/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/open-policy-containers/)

@@ -1,23 +1,7 @@
-# Google Zanzibar
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/google-zanzibar/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/google-zanzibar/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/google-zanzibar/");</script>
 
-Google Zanzibar é o sistema distribuído de autorização por relações descrito
-em uma publicação do Google. O modelo usa relações entre sujeitos e recursos,
-consultas de permissão e garantias de consistência adequadas a uma grande
-organização.
+# Conteúdo movido
 
-## Ideias centrais
-
-O sistema trata autorização como um serviço global, separa o armazenamento de
-relações do enforcement e usa revisões para relacionar decisões a um estado
-observado. A consistência escolhida influencia segurança, latência e
-disponibilidade.
-
-## Relações
-
-OpenFGA, SpiceDB, Auth0 FGA e Ory Keto são implementações ou serviços que usam
-ideias da família Zanzibar. Nenhum deles deve ser assumido como uma cópia
-intercambiável do sistema original.
-
-## Fonte
-
-- [Zanzibar, Google Research](https://research.google/pubs/zanzibar-googles-consistent-global-authorization-system/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/google-zanzibar/)

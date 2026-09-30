@@ -1,10 +1,7 @@
-# Diretórios
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/identidade/diretorios/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/identidade/diretorios/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/identidade/diretorios/");</script>
 
-Diretórios mantêm identidades, grupos, atributos e relações consultáveis por
-clientes e serviços. LDAP descreve um protocolo e um modelo de acesso, enquanto
-produtos de diretório acrescentam armazenamento, replicação, administração e
-integração com autenticação.
+# Conteúdo movido
 
-[Identidade](../index.md) organiza o domínio. [FreeIPA](../freeipa.md),
-[OpenLDAP](../openldap.md), 389 Directory Server e [SSSD](../sssd.md) ocupam
-papéis diferentes entre servidor, protocolo e cliente.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/identidade/diretorios/)

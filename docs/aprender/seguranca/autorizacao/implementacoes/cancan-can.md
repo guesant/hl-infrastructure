@@ -1,20 +1,7 @@
-# CanCanCan
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/cancan-can/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/cancan-can/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/cancan-can/");</script>
 
-CanCanCan é uma biblioteca de autorização para Ruby e Rails. Ela centraliza
-habilidades em uma classe de abilities e oferece helpers para verificar ações
-contra recursos.
+# Conteúdo movido
 
-## Modelo
-
-As regras normalmente combinam usuário, papel, recurso e ação. A aplicação
-deve verificar a ability no controller e também proteger consultas para não
-expor objetos que o usuário não pode ler.
-
-## Limites
-
-Esconder botões não é enforcement. A policy precisa ser aplicada no endpoint,
-na consulta e, quando necessário, na camada de domínio.
-
-## Fonte
-
-- [CanCanCan](https://github.com/CanCanCommunity/cancancan)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/cancan-can/)

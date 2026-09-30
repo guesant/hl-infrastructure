@@ -1,22 +1,7 @@
-# Comparação: Vault e OpenBao
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/secrets/vault-openbao/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/secrets/vault-openbao/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/secrets/vault-openbao/");</script>
 
-Vault e OpenBao compartilham o modelo de secret store centralizado, com
-políticas, auditoria, autenticação de workloads, armazenamento cifrado e
-unseal. As implementações possuem páginas próprias.
+# Conteúdo movido
 
-- [Vault](vault.md) detalha a implementação HashiCorp.
-- [OpenBao](openbao.md) detalha a implementação comunitária compatível.
-- [Auto-unseal e KMS](auto-unseal.md) explica a dependência externa comum às
-  duas alternativas.
-
-## Critérios de escolha
-
-A escolha deve considerar licença, governança, compatibilidade de APIs,
-integrações, suporte, operação e migração. A semelhança de conceitos não
-significa que todos os plugins, recursos ou contratos operacionais sejam
-intercambiáveis.
-
-Em ambientes pequenos, [SOPS com age](sops.md) podem cumprir o requisito
-com menos componentes. [External Secrets Operator](external-secrets.md) é a
-camada de integração declarativa quando os consumidores são workloads
-Kubernetes.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/secrets/vault-openbao/)

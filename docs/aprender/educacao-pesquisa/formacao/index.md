@@ -1,9 +1,7 @@
-# Formação
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/educacao-pesquisa/formacao/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/educacao-pesquisa/formacao/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/educacao-pesquisa/formacao/");</script>
 
-Formação reúne caminhos para aprender conceitos, praticar habilidades e
-construir repertório técnico. Cursos, livros, comunidades e competições têm
-funções diferentes e não devem ser avaliados pela mesma métrica.
+# Conteúdo movido
 
-[Aprender e pesquisar](../aprender-e-pesquisar.md) discute como formular
-perguntas, buscar fontes e construir entendimento. [Plataformas de conhecimento](../plataformas-de-conhecimento.md)
-cataloga opções de estudo.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/educacao-pesquisa/formacao/)

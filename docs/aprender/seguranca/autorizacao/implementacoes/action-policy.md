@@ -1,15 +1,7 @@
-# Action Policy
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/action-policy/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/action-policy/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/action-policy/");</script>
 
-Action Policy é uma biblioteca de autorização para Ruby e Rails. Ela oferece
-policies, regras, escopos e integrações para aplicar autorização de forma
-explícita em controllers e consultas.
+# Conteúdo movido
 
-## Modelo
-
-A policy representa uma decisão sobre um recurso. Scopes filtram coleções e
-evitam a falha comum de proteger o detalhe, mas deixar a listagem inteira
-visível.
-
-## Fonte
-
-- [Action Policy](https://actionpolicy.evilmartians.io/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/action-policy/)

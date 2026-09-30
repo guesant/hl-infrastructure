@@ -1,9 +1,7 @@
-# Teste de carga
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/load-testing/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/load-testing/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/load-testing/");</script>
 
-Teste de carga aplica demanda controlada para observar throughput, latência, erros e saturação sob um modelo de tráfego.
+# Conteúdo movido
 
-O objetivo deve ser uma hipótese mensurável, como sustentar determinada taxa dentro de um SLO, não apenas "gerar muitas requisições".
-
-Observabilidade durante o teste é necessária para localizar o recurso que satura.
-
-[k6](k6.md) e [JMeter](jmeter.md) são implementações possíveis.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/testes/load-testing/)

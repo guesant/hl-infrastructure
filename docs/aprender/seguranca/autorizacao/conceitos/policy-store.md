@@ -1,15 +1,7 @@
-# Policy Store
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/policy-store/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/policy-store/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/policy-store/");</script>
 
-Policy Store é o armazenamento de policies, modelos, roles, relações ou
-atributos usados por um sistema de autorização.
+# Conteúdo movido
 
-## Requisitos
-
-O store deve oferecer versionamento, controle de acesso, backup, auditoria e
-propagação previsível. A disponibilidade do store pode afetar a capacidade de
-tomar decisões novas.
-
-## Separação
-
-O store de policies não precisa ser o mesmo banco do domínio. Separar os dois
-reduz acoplamento, mas exige sincronização e uma estratégia de consistência.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/policy-store/)

@@ -1,10 +1,7 @@
-# Protocolos
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/comunicacao/apis/protocolos/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/comunicacao/apis/protocolos/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/comunicacao/apis/protocolos/");</script>
 
-Protocolos definem como mensagens, chamadas e documentos são transportados,
-interpretados e validados. Uma API pode usar mais de um protocolo e um formato
-de dados não determina sozinho o mecanismo de transporte.
+# Conteúdo movido
 
-[APIs](../index.md) apresenta o contrato para consumidores. [RPC](../../rpc.md),
-[gRPC](../../grpc.md), [JSON](../../json.md) e [GraphQL](../../graphql.md)
-ocupam camadas diferentes e devem ser comparados pela responsabilidade que
-exercem.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/comunicacao/apis/protocolos/)

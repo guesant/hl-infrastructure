@@ -1,15 +1,7 @@
-# Ory Kratos
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ory-kratos/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ory-kratos/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ory-kratos/");</script>
 
-Ory Kratos é um sistema de identidade para registro, login, recuperação,
-verificação e gerenciamento de contas. Ele mantém identidade e autenticação,
-não uma política geral de acesso a objetos da aplicação.
+# Conteúdo movido
 
-## Relação com autorização
-
-O subject emitido por Kratos pode ser usado em um PDP ou em policies locais.
-Papéis e permissões de negócio devem permanecer no sistema que possui o domínio
-ou em um serviço de autorização apropriado.
-
-## Fonte
-
-- [Documentação do Ory Kratos](https://www.ory.sh/kratos/docs/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/ory-kratos/)

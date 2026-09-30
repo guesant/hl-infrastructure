@@ -1,20 +1,7 @@
-# Symfony Security Voters
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/symfony-security-voters/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/symfony-security-voters/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/symfony-security-voters/");</script>
 
-Symfony Security Voters é o mecanismo de autorização do Symfony baseado em
-voters. Um voter decide se um sujeito pode executar um atributo sobre um
-objeto.
+# Conteúdo movido
 
-## Modelo
-
-O sistema consulta voters aplicáveis e combina suas respostas conforme a
-estratégia configurada. A regra de negócio fica no voter, enquanto o
-controller usa uma verificação explícita.
-
-## Limites
-
-Voters não substituem filtragem de consultas. Uma aplicação precisa proteger a
-listagem, o detalhe e a mutação, e não apenas esconder controles da interface.
-
-## Fonte
-
-- [Symfony Voters](https://symfony.com/doc/current/security/voters.html)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/symfony-security-voters/)

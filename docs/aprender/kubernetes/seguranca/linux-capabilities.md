@@ -1,7 +1,7 @@
-# Linux capabilities em containers
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/linux-capabilities/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/linux-capabilities/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/linux-capabilities/");</script>
 
-Linux capabilities dividem partes do privilégio tradicional de root em unidades menores.
+# Conteúdo movido
 
-Em containers, remover capabilities desnecessárias reduz a superfície disponível após comprometimento. Uma política comum começa removendo todas e adicionando apenas as exigidas.
-
-Capabilities são mecanismo do Linux, não invenção do Kubernetes; SecurityContext apenas expõe configuração relacionada.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/linux-capabilities/)

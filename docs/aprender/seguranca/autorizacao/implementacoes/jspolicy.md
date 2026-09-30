@@ -1,21 +1,7 @@
-# jsPolicy
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/jspolicy/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/jspolicy/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/jspolicy/");</script>
 
-jsPolicy é um sistema de políticas para Kubernetes que permite escrever regras
-em JavaScript. As políticas são executadas no admission e podem validar ou
-alterar recursos conforme o contrato definido.
+# Conteúdo movido
 
-## Uso
-
-JavaScript pode reduzir a barreira para equipes que já usam a linguagem, mas o
-código continua sendo política de segurança e precisa de revisão, testes,
-limites de tempo e distribuição controlada.
-
-## Limites
-
-jsPolicy não substitui RBAC nem políticas de rede. Uma regra de admission não
-impede todo comportamento possível de um workload depois que ele entra no
-cluster.
-
-## Fonte
-
-- [jsPolicy](https://www.jspolicy.com/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/jspolicy/)

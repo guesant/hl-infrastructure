@@ -1,7 +1,7 @@
-# SSHFS
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/ferramentas/transferencia/sshfs/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/ferramentas/transferencia/sshfs/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/ferramentas/transferencia/sshfs/");</script>
 
-SSHFS monta um filesystem remoto sobre SSH/SFTP usando FUSE.
+# Conteúdo movido
 
-É útil para navegação e edição pontual como se o caminho remoto fosse local. Latência e perda de conexão afetam diretamente operações de filesystem.
-
-Não é a escolha natural para transferir grandes lotes repetidamente; [rsync](rsync.md) resolve outro problema.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/ferramentas/transferencia/sshfs/)

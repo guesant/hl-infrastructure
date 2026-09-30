@@ -1,7 +1,7 @@
-# Liveness probe
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/liveness-probe/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/liveness-probe/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/liveness-probe/");</script>
 
-Liveness probe responde se o container deve ser considerado vivo. Falhas repetidas podem provocar restart conforme a política do Pod.
+# Conteúdo movido
 
-Ela não deve ser usada para indicar se o workload está pronto para receber tráfego. Essa responsabilidade pertence à [readiness probe](readiness-probe.md).
-
-Uma liveness dependente de serviço externo pode reiniciar processos saudáveis durante uma falha da dependência e amplificar o incidente.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/liveness-probe/)

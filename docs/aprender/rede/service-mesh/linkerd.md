@@ -1,19 +1,7 @@
-# Linkerd
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/linkerd/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/linkerd/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/linkerd/");</script>
 
-Linkerd é uma implementação de service mesh focada em comunicação entre serviços, identidade, mTLS e observabilidade com uma superfície deliberadamente menor que plataformas mais abrangentes.
+# Conteúdo movido
 
-## Casos de uso
-
-É apropriado quando os recursos oferecidos cobrem as necessidades do cluster e simplicidade operacional é uma prioridade relevante.
-
-## Boa prática
-
-Compare capacidades necessárias, modelo de proxy, identidade, upgrades e troubleshooting em vez de escolher apenas pelo número de features.
-
-## Má prática
-
-Assumir que uma superfície menor elimina a necessidade de compreender proxies, certificados e failure modes continua sendo um erro operacional.
-
-## Fontes
-
-- Linkerd documentation: <https://linkerd.io/2/overview/>
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/rede/service-mesh/linkerd/)

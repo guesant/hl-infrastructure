@@ -1,11 +1,7 @@
-# Sink em taint analysis
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/appsec/sast/sink/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/appsec/sast/sink/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/appsec/sast/sink/");</script>
 
-Um sink é uma operação na qual a chegada de determinado dado pode produzir o efeito que a análise procura detectar.
+# Conteúdo movido
 
-Execução de SQL, comandos do sistema, construção de HTML ou acesso a filesystem podem ser sinks para classes diferentes de vulnerabilidade.
-
-Um sink não é universalmente inseguro. O risco depende do dado que chega, da API usada e da propriedade analisada.
-
-## Continue por aqui
-
-[Taint analysis](taint-analysis.md), [source](source.md) e [sanitizer](sanitizer.md) completam o modelo.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/appsec/sast/sink/)

@@ -1,30 +1,7 @@
-# Provider
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/iac/provider/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/iac/provider/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/iac/provider/");</script>
 
-Um provider traduz recursos declarativos em chamadas para uma API externa. Ele
-define schemas, autenticação, leitura, criação, atualização e remoção de
-recursos.
+# Conteúdo movido
 
-## Contrato
-
-O schema do provider determina quais atributos são configuráveis, calculados,
-sensíveis ou substituíveis. A versão do provider é parte da reprodutibilidade;
-uma mudança pode alterar defaults, validação ou comportamento de leitura.
-
-Credenciais pertencem ao ambiente de execução e não à configuração versionada.
-A autenticação precisa ter menor privilégio e escopo compatível com o recurso.
-
-## Failure modes
-
-Um provider pode falhar por credencial, rate limit, recurso ausente, mudança de
-API, diferença regional ou leitura incompleta. Antes de alterar a configuração,
-separe erro de acesso de erro de plano.
-
-## Relações
-
-- [Resource](resource.md) declara um objeto administrado.
-- [Data source](data-source.md) lê sem administrar.
-- [State](state.md) conserva o vínculo com a API.
-
-## Fonte primária
-
-- [OpenTofu providers](https://opentofu.org/docs/language/providers/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/iac/provider/)

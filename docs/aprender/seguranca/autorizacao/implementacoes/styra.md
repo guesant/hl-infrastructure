@@ -1,20 +1,7 @@
-# Styra
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/styra/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/styra/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/styra/");</script>
 
-Styra oferece uma plataforma comercial baseada em OPA para governar políticas,
-distribuição, observabilidade e controle de conformidade.
+# Conteúdo movido
 
-## Papel
-
-O valor da plataforma está na operação do ciclo de vida das políticas, não em
-substituir a linguagem Rego ou o conceito de PDP. A organização precisa
-definir quem aprova mudanças, quais ambientes recebem uma política e como uma
-decisão pode ser investigada.
-
-## Escolha
-
-Styra faz sentido quando a equipe precisa de governança central sobre muitos
-agentes OPA. Para um único serviço, OPA sem a plataforma pode ser suficiente.
-
-## Fonte
-
-- [Styra](https://www.styra.com/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/styra/)

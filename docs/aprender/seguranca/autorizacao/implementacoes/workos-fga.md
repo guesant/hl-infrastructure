@@ -1,15 +1,7 @@
-# WorkOS FGA
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/workos-fga/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/workos-fga/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/workos-fga/");</script>
 
-WorkOS FGA é uma solução de fine-grained authorization baseada em relações.
-Ela permite consultar acesso a objetos e relações sem replicar toda a política
-em cada aplicação.
+# Conteúdo movido
 
-## Modelo
-
-O serviço representa sujeitos, recursos, relações e permissões derivadas. A
-aplicação continua responsável por autenticação, enforcement e tratamento de
-falhas de rede.
-
-## Fonte
-
-- [WorkOS](https://workos.com/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/workos-fga/)

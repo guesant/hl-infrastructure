@@ -1,7 +1,7 @@
-# Atestação
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/attestation/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/attestation/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/attestation/");</script>
 
-Uma atestação é uma declaração estruturada sobre um artefato ou processo que pode ser autenticada.
+# Conteúdo movido
 
-Proveniência pode ser transportada como atestação; resultados de políticas e outros fatos também podem ser atestados.
-
-A validade criptográfica da atestação não torna automaticamente verdadeira qualquer afirmação: é preciso confiar na identidade emissora e na política que define quais emissores são aceitáveis.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/supply-chain/attestation/)

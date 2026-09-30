@@ -1,20 +1,7 @@
-# Laravel Policies
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/laravel-policies/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/laravel-policies/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/laravel-policies/");</script>
 
-Laravel Policies agrupam regras de autorização para um modelo ou recurso. Elas
-podem proteger operações como visualizar, criar, atualizar, remover e restaurar.
+# Conteúdo movido
 
-## Operação
-
-Controllers, requests e policies devem ter responsabilidades distintas. A
-policy decide; a consulta precisa filtrar o conjunto; o serviço de aplicação
-coordena a operação.
-
-## Limites
-
-Uma policy não deve ser tratada como filtro automático de toda consulta. A
-aplicação precisa impedir que um usuário leia ou altere um objeto fora de seu
-tenant.
-
-## Fonte
-
-- [Laravel Authorization](https://laravel.com/docs/authorization#creating-policies)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/laravel-policies/)

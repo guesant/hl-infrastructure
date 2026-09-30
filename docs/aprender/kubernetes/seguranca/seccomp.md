@@ -1,7 +1,7 @@
-# seccomp em containers
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/seccomp/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/seccomp/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/seccomp/");</script>
 
-seccomp restringe syscalls que um processo pode invocar segundo um perfil.
+# Conteúdo movido
 
-No Kubernetes, SecurityContext pode selecionar perfis compatíveis. Restringir syscalls reduz superfície do kernel disponível ao workload.
-
-Um perfil excessivamente restrito quebra aplicações; um perfil permissivo demais oferece pouco ganho. Compatibilidade deve ser testada.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/seccomp/)

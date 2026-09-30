@@ -1,14 +1,7 @@
-# Action
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/action/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/action/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/action/");</script>
 
-Action é a operação que o subject tenta executar sobre um resource. Exemplos
-são read, update, delete, publish, approve e download.
+# Conteúdo movido
 
-## Granularidade
-
-Actions devem refletir risco e semântica de negócio. Usar apenas write pode
-misturar editar, publicar e excluir, dificultando menor privilégio.
-
-## Contrato
-
-O nome da action precisa ser estável entre PEP, PDP, policy e auditoria. Uma
-mudança de nome exige migração ou compatibilidade explícita.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/action/)

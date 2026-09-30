@@ -1,16 +1,7 @@
-# Least privilege
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/least-privilege/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/least-privilege/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/least-privilege/");</script>
 
-Least privilege concede apenas o acesso necessário para a tarefa, pelo menor
-tempo e no menor escopo possíveis.
+# Conteúdo movido
 
-## Dimensões
-
-O privilégio pode ser reduzido por action, resource, tenant, campo, tempo,
-ambiente e identidade. Roles genéricas e credenciais compartilhadas dificultam
-essa redução.
-
-## Operação
-
-Revise permissões, remova grants não usados, prefira credenciais temporárias e
-audite elevações. Menor privilégio também reduz o impacto de uma credencial
-comprometida.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/least-privilege/)

@@ -1,9 +1,7 @@
-# QoS de Pods
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/qos/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/qos/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/qos/");</script>
 
-Kubernetes deriva classes de QoS a partir da configuração de requests e limits dos containers.
+# Conteúdo movido
 
-Guaranteed, Burstable e BestEffort representam relações diferentes entre reserva e limites e influenciam comportamento sob pressão de recursos.
-
-QoS não é prioridade de negócio. PriorityClass e preemption são mecanismos diferentes.
-
-Veja [requests](requests.md) e [limits](limits.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/qos/)

@@ -1,20 +1,7 @@
-# AWS IAM
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/aws-iam/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/aws-iam/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/aws-iam/");</script>
 
-AWS IAM controla identidades, credenciais e permissões para recursos AWS. O
-modelo combina políticas, principais, ações, recursos e condições.
+# Conteúdo movido
 
-## Modelo
-
-Uma policy pode permitir ou negar ações e pode ser aplicada a identidade,
-recurso, sessão ou organização. A decisão efetiva resulta da combinação de
-políticas aplicáveis, negações explícitas e limites de permissão.
-
-## Boas práticas
-
-Use roles temporárias, menor privilégio, MFA para operações humanas, separação
-de contas e revisão de políticas. Evite chaves permanentes quando uma identidade
-de workload puder assumir uma role.
-
-## Fonte
-
-- [Introdução ao AWS IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/aws-iam/)

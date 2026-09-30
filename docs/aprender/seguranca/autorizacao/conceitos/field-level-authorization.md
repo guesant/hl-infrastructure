@@ -1,16 +1,7 @@
-# Field-Level Authorization
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/field-level-authorization/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/field-level-authorization/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/field-level-authorization/");</script>
 
-Field-Level Authorization decide quais campos de um recurso um subject pode
-ler ou alterar. Ela é necessária quando dois usuários podem acessar o mesmo
-objeto, mas não os mesmos atributos.
+# Conteúdo movido
 
-## Implementação
-
-O filtro pode ocorrer na API, serializer, query ou banco. Não dependa somente
-de remover o campo na interface, pois exportações e endpoints alternativos
-podem expô-lo.
-
-## Custo
-
-Granularidade por campo aumenta complexidade de schema e testes. Use-a para
-dados realmente sensíveis, não para substituir um modelo de domínio confuso.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/field-level-authorization/)

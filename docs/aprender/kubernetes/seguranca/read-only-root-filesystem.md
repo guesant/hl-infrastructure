@@ -1,7 +1,7 @@
-# Read-only root filesystem
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/read-only-root-filesystem/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/read-only-root-filesystem/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/read-only-root-filesystem/");</script>
 
-readOnlyRootFilesystem impede escrita no filesystem raiz do container.
+# Conteúdo movido
 
-Aplicações que precisam escrever devem receber locais explícitos, como volumes para dados temporários ou persistentes.
-
-Isso reduz persistência e modificação do ambiente após comprometimento, mas não impede escrita nos volumes que continuam montados como graváveis.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/seguranca/read-only-root-filesystem/)

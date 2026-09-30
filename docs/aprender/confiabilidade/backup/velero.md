@@ -1,9 +1,7 @@
-# Velero
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/velero/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/velero/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/velero/");</script>
 
-Velero protege e restaura recursos Kubernetes e pode integrar proteção de volumes.
+# Conteúdo movido
 
-BackupStorageLocation guarda dados de backup em object storage. Mecanismos de volume podem usar snapshots do provedor ou filesystem backup conforme configuração.
-
-Velero é útil quando restauração seletiva, migração ou proteção integrada de recursos Kubernetes é necessária. Ele não elimina a necessidade de compreender consistência específica de bancos e aplicações.
-
-Veja [backup](backup.md) e [teste de restauração](teste-de-restauracao.md).
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/velero/)

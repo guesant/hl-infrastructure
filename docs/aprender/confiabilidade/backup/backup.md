@@ -1,12 +1,7 @@
-# Backup
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/backup/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/backup/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/backup/");</script>
 
-Backup é uma cópia recuperável mantida com independência suficiente do dado corrente para sobreviver aos eventos contra os quais pretende proteger.
+# Conteúdo movido
 
-"Independência" depende do risco: outro disco protege contra falha do disco original, mas não necessariamente contra perda do host; outra conta pode proteger contra comprometimento de credenciais da conta principal.
-
-Backup precisa ser avaliado junto de [RPO](rpo.md), [RTO](rto.md), [retenção](retencao.md) e [teste de restauração](teste-de-restauracao.md).
-
-O tipo de cópia também importa. [Tipos de backup](tipos-de-backup.md) diferencia full,
-differential, incremental, WAL, snapshots e backups lógicos e físicos. Os termos não são
-universais: confirme na ferramenta qual é a referência da cadeia e quais peças serão
-necessárias para restaurar.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/confiabilidade/backup/backup/)

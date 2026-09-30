@@ -1,15 +1,7 @@
-# Policy Information Point
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/pip/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/pip/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/pip/");</script>
 
-Policy Information Point, PIP, é a fonte de atributos usada pelo PDP. Ele pode
-consultar identidade, diretório, cadastro, postura do dispositivo ou estado do
-recurso.
+# Conteúdo movido
 
-## Custo
-
-Consultas externas tornam a decisão dependente de rede e de disponibilidade.
-Defina timeout, cache, consistência e tratamento de dados ausentes.
-
-## Segurança
-
-O PIP precisa impedir que atributos de autorização sejam substituídos por
-valores fornecidos diretamente pelo cliente.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/conceitos/pip/)

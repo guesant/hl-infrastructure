@@ -1,7 +1,7 @@
-# rclone
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/ferramentas/transferencia/rclone/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/ferramentas/transferencia/rclone/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/ferramentas/transferencia/rclone/");</script>
 
-rclone copia e sincroniza dados entre muitos backends, incluindo object storage e serviços cloud.
+# Conteúdo movido
 
-É apropriado quando o destino não é simplesmente outro filesystem acessível por SSH.
-
-O comando sync é destrutivo no destino quando necessário para espelhar origem; valide direção. bisync resolve um problema diferente, com estado e conflitos de sincronização bidirecional.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/ferramentas/transferencia/rclone/)

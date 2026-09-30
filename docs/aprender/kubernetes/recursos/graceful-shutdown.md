@@ -1,7 +1,7 @@
-# Graceful shutdown de Pods
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/graceful-shutdown/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/graceful-shutdown/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/graceful-shutdown/");</script>
 
-Graceful shutdown é o processo de retirar um workload de serviço e permitir que ele encerre trabalho antes de terminar.
+# Conteúdo movido
 
-Kubernetes envia sinal de término e respeita um grace period antes de forçar encerramento. Hooks e comportamento da aplicação podem participar.
-
-O desenho precisa coordenar remoção de tráfego, duração de requisições e tempo real de encerramento. Aumentar o grace period sem tornar a aplicação capaz de encerrar corretamente apenas posterga o kill.
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/kubernetes/recursos/graceful-shutdown/)

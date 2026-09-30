@@ -1,15 +1,7 @@
-# django-guardian
+<meta http-equiv="refresh" content="0; url=https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/django-guardian/">
+<link rel="canonical" href="https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/django-guardian/">
+<script>window.location.replace("https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/django-guardian/");</script>
 
-django-guardian adiciona permissões por objeto ao sistema de autorização do
-Django. Ele complementa permissões globais com grants associados a usuários,
-grupos e instâncias de modelo.
+# Conteúdo movido
 
-## Uso
-
-É adequado quando Django auth já fornece identidade e papéis, mas o domínio
-precisa decidir acesso a objetos individuais. Consultas devem usar filtros de
-permissão para não carregar dados indevidos.
-
-## Fonte
-
-- [django-guardian](https://django-guardian.readthedocs.io/)
+Esta página foi movida para a base livre de conhecimento sobre computação. [Abrir a nova página](https://guesant.github.io/conhecimento-livre-computacao/seguranca/autorizacao/implementacoes/django-guardian/)
