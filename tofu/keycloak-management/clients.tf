@@ -31,6 +31,7 @@ locals {
     }
     silo = {
       name                = "Silo console"
+      pkce                = ""
       base_url            = "https://silo.${var.internal_domain}"
       redirect_uris       = ["https://silo.${var.internal_domain}/oauth_callback"]
       logout_redirect_uri = "https://silo.${var.internal_domain}/"
