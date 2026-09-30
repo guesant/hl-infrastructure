@@ -231,10 +231,10 @@ laravel:
     resources:
       requests:
         cpu: 50m
-        memory: 128Mi
+        memory: 256Mi
       limits:
-        cpu: 400m
-        memory: 128Mi
+        cpu: 1000m
+        memory: 768Mi
   scheduler:
     enabled: false
     replicas: 1
