@@ -34,7 +34,7 @@ spec:
             - sh
             - -c
           args:
-            - php artisan migrate --force
+            - php artisan migrate --force && php artisan setup:complete --no-interaction
           envFrom:
             - configMapRef:
                 name: linkace-config
