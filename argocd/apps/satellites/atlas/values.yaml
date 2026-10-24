@@ -10,6 +10,8 @@ service:
 
 replicas: 1
 
+configRevision: "20261024-2"
+
 resources:
   requests:
     cpu: 200m
