@@ -54,7 +54,7 @@ spec:
             - php
             - artisan
             - queue:work
-            - --queue=import,default
+            - --queue=import,linkace,default
             - --sleep=3
             - --tries=3
             - --max-time=3600
