@@ -1,0 +1,63 @@
+# yamllint disable-file
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: linkace-scheduler
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: linkace
+    app.kubernetes.io/component: scheduler
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  schedule: {{ .Values.cron.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: {{ .Values.cron.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.cron.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: linkace
+            app.kubernetes.io/component: scheduler
+            app.kubernetes.io/instance: {{ .Release.Name }}
+        spec:
+          automountServiceAccountToken: false
+          restartPolicy: OnFailure
+          securityContext:
+{{ toYaml .Values.security.pod | nindent 12 }}
+          containers:
+            - name: scheduler
+              image: {{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.digest }}
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command:
+                - php
+                - artisan
+                - schedule:run
+              envFrom:
+                - configMapRef:
+                    name: linkace-config
+                - secretRef:
+                    name: linkace-env
+                - secretRef:
+                    name: atlas-runtime-credentials
+              resources:
+{{ toYaml .Values.resources | nindent 16 }}
+              securityContext:
+{{ toYaml .Values.security.container | nindent 16 }}
+              volumeMounts:
+                - name: storage
+                  mountPath: /app/storage
+                - name: bootstrap-cache
+                  mountPath: /app/bootstrap/cache
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: storage
+              emptyDir:
+                sizeLimit: {{ .Values.storage.logsSize }}
+            - name: bootstrap-cache
+              emptyDir: {}
+            - name: tmp
+              emptyDir: {}

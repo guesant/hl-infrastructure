@@ -34,6 +34,16 @@ spec:
           env:
             - name: MC_CONFIG_DIR
               value: /mc
+            - name: ATLAS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.atlas }}
+                  key: AWS_ACCESS_KEY_ID
+            - name: ATLAS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.atlas }}
+                  key: AWS_SECRET_ACCESS_KEY
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -51,6 +61,11 @@ spec:
               mc mb --ignore-existing silo/portfolio
               mc cors set silo/portfolio /policies/portfolio-cors.xml
               mc version enable silo/portfolio
+              mc admin policy create silo atlas-policy /policies/atlas.json || true
+              mc admin user add silo "$ATLAS_ACCESS_KEY_ID" "$ATLAS_SECRET_ACCESS_KEY" || true
+              mc admin policy attach silo atlas-policy --user "$ATLAS_ACCESS_KEY_ID"
+              mc mb --ignore-existing silo/atlas
+              mc version enable silo/atlas
           resources:
 {{ toYaml .Values.policyJob.resources | nindent 12 }}
           volumeMounts:

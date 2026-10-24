@@ -37,6 +37,14 @@ locals {
       logout_redirect_uri = "https://silo.${var.internal_domain}/"
       secret              = var.silo_client_secret
     }
+    linkace = {
+      name                = "LinkAce"
+      pkce                = ""
+      base_url            = "https://atlas.guesant.net"
+      redirect_uris       = ["https://atlas.guesant.net/auth/sso/keycloak/callback"]
+      logout_redirect_uri = "https://atlas.guesant.net/*"
+      secret              = var.linkace_client_secret
+    }
     oauth2-proxy = {
       name                = "oauth2-proxy"
       base_url            = "https://auth.${var.internal_domain}"

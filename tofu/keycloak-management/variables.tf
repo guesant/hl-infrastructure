@@ -55,6 +55,11 @@ variable "silo_client_secret" {
   sensitive = true
 }
 
+variable "linkace_client_secret" {
+  type      = string
+  sensitive = true
+}
+
 variable "oauth2_proxy_client_secret" {
   type      = string
   sensitive = true

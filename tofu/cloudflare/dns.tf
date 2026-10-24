@@ -59,3 +59,16 @@ resource "cloudflare_dns_record" "auth" {
   proxied = true
   ttl     = 1
 }
+
+resource "cloudflare_dns_record" "atlas" {
+  zone_id = var.cloudflare_zone_id
+  name    = var.atlas_hostname
+  type    = "CNAME"
+  content = "${cloudflare_zero_trust_tunnel_cloudflared.blog.id}.cfargotunnel.com"
+  proxied = true
+  ttl     = 1
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}

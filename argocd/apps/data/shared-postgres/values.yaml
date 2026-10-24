@@ -22,28 +22,28 @@ cluster:
     limits:
       cpu: 750m
       memory: 768Mi
-
 rotation:
   portfolio:
     retiredSlot: ""
   keycloak:
     retiredSlot: ""
-
+  atlas:
+    retiredSlot: ""
 databases:
   - name: portfolio
     owner: portfolio
   - name: keycloak
     owner: keycloak
+  - name: atlas
+    owner: atlas
 databaseDefaults:
   annotations:
     argocd.argoproj.io/sync-wave: "3"
     argocd.argoproj.io/sync-options: Prune=false,Delete=false
   reclaimPolicy: retain
-
 databaseRoleDefaults:
   syncOptions: Prune=false,Delete=false
   reclaimPolicy: retain
-
 databaseRoles:
   - resourceName: portfolio
     roleName: portfolio
@@ -83,7 +83,25 @@ databaseRoles:
     slot: b
     parentRole: keycloak
     passwordSecret: keycloak-postgres-app-b
-
+  - resourceName: atlas
+    roleName: atlas
+    syncWave: "1"
+    login: false
+    disablePassword: true
+  - resourceName: atlas-a
+    roleName: atlas_a
+    syncWave: "2"
+    rotationKey: atlas
+    slot: a
+    parentRole: atlas
+    passwordSecret: atlas-postgres-app-a
+  - resourceName: atlas-b
+    roleName: atlas_b
+    syncWave: "2"
+    rotationKey: atlas
+    slot: b
+    parentRole: atlas
+    passwordSecret: atlas-postgres-app-b
 networkPolicy:
   databaseClientsName: allow-database-clients
   operatorName: allow-cnpg-operator-to-database
@@ -94,6 +112,9 @@ networkPolicy:
     - namespace: keycloak
       selector:
         app.kubernetes.io/name: keycloak
+    - namespace: atlas
+      selector:
+        app.kubernetes.io/name: linkace
   operatorNamespace: cnpg-system
   databasePort: 5432
   databaseProtocol: TCP

@@ -1,0 +1,4 @@
+apiVersion: v2
+name: atlas
+description: LinkAce deployment for the atlas satellite
+version: 0.1.0

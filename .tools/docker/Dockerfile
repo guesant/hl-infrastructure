@@ -33,7 +33,7 @@ ARG AGE_PLUGIN_SE_VERSION
 ARG AGE_PLUGIN_SE_SHA256_AARCH64
 ARG AGE_PLUGIN_SE_SHA256_X86_64
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
-RUN apk add --no-cache bash age jq yq-go curl && \
+RUN apk add --no-cache bash age jq yq-go curl openssl && \
     arch="$(apk --print-arch)" && \
     case "$arch" in \
     x86_64) kube_arch=amd64; apk_sha="$AGE_PLUGIN_SE_SHA256_X86_64" ;; \

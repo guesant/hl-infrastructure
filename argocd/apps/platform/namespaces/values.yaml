@@ -1,5 +1,6 @@
 namespaces:
   - name: blog
+  - name: atlas
   - name: data
   - name: keycloak
   - name: kube-bench

@@ -21,6 +21,10 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "blog" {
         service  = "http://keycloak-service.keycloak.svc.cluster.local:8080"
       },
       {
+        hostname = var.atlas_hostname
+        service  = "http://linkace.atlas.svc.cluster.local:80"
+      },
+      {
         hostname = var.api_hostname
         path     = "^/api/v1(/|$)"
         service  = "http://app.blog.svc.cluster.local:8080"

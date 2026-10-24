@@ -73,6 +73,20 @@ variable "auth_hostname" {
   }
 }
 
+variable "atlas_hostname" {
+  type = string
+
+  validation {
+    condition     = can(regex("^([a-z0-9]([a-z0-9-]*[a-z0-9])?\\.)+[a-z]{2,}$", var.atlas_hostname)) && !endswith(var.atlas_hostname, ".invalid")
+    error_message = "atlas_hostname must be the real public hostname of LinkAce, not a placeholder under .invalid."
+  }
+
+  validation {
+    condition     = !contains([var.blog_hostname, var.api_hostname, var.admin_hostname, var.ops_hostname, var.auth_hostname], var.atlas_hostname)
+    error_message = "atlas_hostname must differ from every existing public hostname."
+  }
+}
+
 variable "state_passphrase" {
   type      = string
   sensitive = true

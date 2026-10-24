@@ -25,6 +25,12 @@ argocd:
         maxDuration: 3m
 
 satellites:
+  - name: atlas-secrets
+    repoURL: https://github.com/guesant/hl-infrastructure.git
+    path: argocd/apps/secrets/satellites/atlas
+    destinationNamespace: atlas
+    syncWave: "2"
+    targetRevision: main
   - name: blog-secrets
     repoURL: https://github.com/guesant/hl-infrastructure.git
     path: argocd/apps/secrets/satellites/blog
@@ -40,3 +46,10 @@ satellites:
     targetRevision: main
     annotations:
       kargo.akuity.io/authorized-stage: blog-delivery:prod
+  - name: atlas
+    repoURL: https://github.com/guesant/hl-infrastructure.git
+    path: argocd/apps/satellites/atlas
+    destinationNamespace: atlas
+    helmReleaseName: atlas
+    syncWave: "4"
+    targetRevision: main

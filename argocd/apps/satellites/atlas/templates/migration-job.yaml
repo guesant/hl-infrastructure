@@ -1,0 +1,63 @@
+# yamllint disable-file
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: linkace-migrate
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+    argocd.argoproj.io/sync-wave: "5"
+  labels:
+    app.kubernetes.io/name: linkace
+    app.kubernetes.io/component: migration
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  backoffLimit: 6
+  activeDeadlineSeconds: 900
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: linkace
+        app.kubernetes.io/component: migration
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      restartPolicy: OnFailure
+      automountServiceAccountToken: false
+      securityContext:
+{{ toYaml .Values.security.pod | nindent 8 }}
+      containers:
+        - name: migrate
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.digest }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+          args:
+            - php artisan migrate --force
+          envFrom:
+            - configMapRef:
+                name: linkace-config
+            - secretRef:
+                name: linkace-env
+            - secretRef:
+                name: atlas-runtime-credentials
+          resources:
+{{ toYaml .Values.resources | nindent 12 }}
+          securityContext:
+{{ toYaml .Values.security.container | nindent 12 }}
+          volumeMounts:
+            - name: storage
+              mountPath: /app/storage
+            - name: bootstrap-cache
+              mountPath: /app/bootstrap/cache
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: storage
+          emptyDir:
+            sizeLimit: {{ .Values.storage.logsSize }}
+        - name: bootstrap-cache
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}

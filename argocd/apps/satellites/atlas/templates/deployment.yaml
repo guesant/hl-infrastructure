@@ -1,0 +1,83 @@
+# yamllint disable-file
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkace
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: linkace
+    app.kubernetes.io/component: app
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicas }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: linkace
+      app.kubernetes.io/component: app
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: linkace
+        app.kubernetes.io/component: app
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+{{ toYaml .Values.security.pod | nindent 8 }}
+      containers:
+        - name: linkace
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.digest }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: linkace-config
+            - secretRef:
+                name: linkace-env
+            - secretRef:
+                name: atlas-runtime-credentials
+          livenessProbe:
+            httpGet:
+              path: /_health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /_health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          resources:
+{{ toYaml .Values.resources | nindent 12 }}
+          securityContext:
+{{ toYaml .Values.security.container | nindent 12 }}
+          volumeMounts:
+            - name: storage
+              mountPath: /app/storage
+            - name: bootstrap-cache
+              mountPath: /app/bootstrap/cache
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: storage
+          emptyDir:
+            sizeLimit: {{ .Values.storage.logsSize }}
+        - name: bootstrap-cache
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}

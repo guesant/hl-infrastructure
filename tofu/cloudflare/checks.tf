@@ -6,8 +6,9 @@ check "hostname_uniqueness" {
       var.admin_hostname,
       var.ops_hostname,
       var.auth_hostname,
-    ])) == 5
+      var.atlas_hostname,
+    ])) == 6
 
-    error_message = "blog, api, admin, ops and auth hostnames must all be distinct."
+    error_message = "blog, api, admin, ops, auth and atlas hostnames must all be distinct."
   }
 }

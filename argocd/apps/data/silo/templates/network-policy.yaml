@@ -25,6 +25,14 @@ spec:
         - ports:
             - port: {{ .Values.service.s3Port | quote }}
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: atlas
+            app.kubernetes.io/name: linkace
+      toPorts:
+        - ports:
+            - port: {{ .Values.service.s3Port | quote }}
+              protocol: TCP
     - fromEntities:
         - host
         - remote-node

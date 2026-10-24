@@ -16,8 +16,13 @@ keycloak)
   database="keycloak"
   user_prefix="keycloak"
   ;;
+atlas)
+  source_prefix="atlas-postgres-app"
+  database="atlas"
+  user_prefix="atlas"
+  ;;
 *)
-  echo "usage: $0 <portfolio|keycloak> <a|b>" >&2
+  echo "usage: $0 <portfolio|keycloak|atlas> <a|b>" >&2
   exit 2
   ;;
 esac
@@ -26,7 +31,7 @@ case "$slot" in
 a|b)
   ;;
 *)
-  echo "usage: $0 <portfolio|keycloak> <a|b>" >&2
+  echo "usage: $0 <portfolio|keycloak|atlas> <a|b>" >&2
   exit 2
   ;;
 esac
@@ -34,7 +39,7 @@ esac
 user="${user_prefix}_${slot}"
 output="argocd/apps/secrets/data/postgres/${source_prefix}-${slot}.sops-secret.yaml"
 secret_name="${source_prefix}-${slot}"
-password="$(head -c 48 /dev/urandom | base64 | tr -d '\n')"
+password="$(openssl rand -hex 64)"
 temporary="$(mktemp "${output}.XXXXXX")"
 trap 'rm -f "$temporary"; unset password' EXIT
 

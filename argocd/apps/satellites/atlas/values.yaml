@@ -1,0 +1,53 @@
+image:
+  repository: docker.io/linkace/linkace
+  tag: v2.6.3
+  digest: sha256:c61211cfb66b76efaf362c160c5b9782147fc7bef2c5554b8d7e42a8b8a0c5fe
+  pullPolicy: IfNotPresent
+
+service:
+  name: linkace
+  port: 80
+
+replicas: 1
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 384Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+security:
+  pod:
+    runAsNonRoot: true
+    runAsUser: 82
+    runAsGroup: 82
+    fsGroup: 82
+    seccompProfile:
+      type: RuntimeDefault
+  container:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    runAsUser: 82
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+
+network:
+  cloudflaredNamespace: blog
+  cloudflaredName: cloudflared
+  databaseNamespace: data
+  databaseName: postgres
+  redisName: redis
+  siloName: silo
+
+storage:
+  logsSize: 512Mi
+
+cron:
+  schedule: "* * * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
