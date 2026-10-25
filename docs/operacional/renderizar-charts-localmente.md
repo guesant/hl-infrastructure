@@ -20,7 +20,7 @@ Os downloads dos charts têm retries limitados para absorver falhas transitória
 
 Um digest que não bate aborta a renderização com a instrução de revisar o chart antes de atualizar o valor em `versions.yml`, em vez de seguir e produzir manifestos a partir de um tarball diferente do que o node instalaria.
 
-Praticamente todo o resto vem direto da fonte local, sem depender de repositório Helm nem de versão vinda de versions.yml: os charts de operadores em `argocd/apps/secrets/operators/`, além dos charts de workload e satélite restantes. Os manifests de secrets em `argocd/apps/secrets/platform/`, `argocd/apps/secrets/data/` e `argocd/apps/secrets/satellites/` são diretórios YAML puros.
+Praticamente todo o resto vem direto da fonte local, sem depender de repositório Helm nem de versão vinda de versions.yml: os charts de operadores em `argocd/apps/secrets/operators/`, além dos charts de workload e satélite restantes. Os manifests de secrets em `argocd/apps/secrets/platform/`, `argocd/apps/secrets/data/` e `argocd/apps/secrets/satellites/` são diretórios YAML puros. O render não inclui mais secrets da aplicação antiga do blog; somente o túnel compartilhado permanece nesse namespace.
 
 Os recursos de credenciais e configuração não secreta ficam centralizados sob `argocd/apps/secrets/`, organizados pela camada e pelo destino. Os manifests cifrados e os `ConfigMap` são lidos diretamente pelo Argo CD, sem um chart intermediário e sem `SopsSecret` dentro de `templates`. A exceção é `argocd/apps/secrets/data/postgres-consumers`, um chart pequeno para os `ExternalSecret`, o `ClusterSecretStore` e o RBAC repetitivo de replicação. O chart do workload mantém somente a execução da aplicação.
 

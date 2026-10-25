@@ -119,8 +119,6 @@ helm template portainer "$repo_root/argocd/apps/platform/portainer" \
 
 render_directory argocd/apps/secrets/platform/portainer "$out_dir/portainer-secrets.yaml"
 
-render_directory argocd/apps/secrets/satellites/blog "$out_dir/blog-secrets.yaml"
-
 render_directory argocd/apps/secrets/satellites/cloudflared "$out_dir/cloudflared-secrets.yaml"
 
 helm template satellites-launcher "$repo_root/argocd/apps/satellites/launcher" \

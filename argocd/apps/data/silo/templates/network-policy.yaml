@@ -11,14 +11,6 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: blog
-            app.kubernetes.io/name: app
-      toPorts:
-        - ports:
-            - port: {{ .Values.service.s3Port | quote }}
-              protocol: TCP
-    - fromEndpoints:
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: data
             app.kubernetes.io/name: silo-policy-job
       toPorts:

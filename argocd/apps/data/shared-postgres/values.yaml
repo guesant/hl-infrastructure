@@ -12,9 +12,6 @@ cluster:
   storage:
     storageClass: local-path
     size: 10Gi
-  bootstrap:
-    database: portfolio
-    owner: portfolio
   resources:
     requests:
       cpu: 150m
@@ -23,15 +20,11 @@ cluster:
       cpu: 750m
       memory: 768Mi
 rotation:
-  portfolio:
-    retiredSlot: ""
   keycloak:
     retiredSlot: ""
   atlas:
     retiredSlot: ""
 databases:
-  - name: portfolio
-    owner: portfolio
   - name: keycloak
     owner: keycloak
   - name: atlas
@@ -45,25 +38,6 @@ databaseRoleDefaults:
   syncOptions: Prune=false,Delete=false
   reclaimPolicy: retain
 databaseRoles:
-  - resourceName: portfolio
-    roleName: portfolio
-    syncWave: "1"
-    login: false
-    disablePassword: true
-  - resourceName: portfolio-a
-    roleName: portfolio_a
-    syncWave: "2"
-    rotationKey: portfolio
-    slot: a
-    parentRole: portfolio
-    passwordSecret: portfolio-postgres-app-a
-  - resourceName: portfolio-b
-    roleName: portfolio_b
-    syncWave: "2"
-    rotationKey: portfolio
-    slot: b
-    parentRole: portfolio
-    passwordSecret: portfolio-postgres-app-b
   - resourceName: keycloak
     roleName: keycloak
     syncWave: "1"
@@ -106,9 +80,6 @@ networkPolicy:
   databaseClientsName: allow-database-clients
   operatorName: allow-cnpg-operator-to-database
   databaseClients:
-    - namespace: blog
-      selector:
-        app.kubernetes.io/name: app
     - namespace: keycloak
       selector:
         app.kubernetes.io/name: keycloak
