@@ -69,39 +69,15 @@ O site do blog agora é estático e publicado pelo GitHub Pages. No cluster, a p
 
 O site `blog.guesant.net` é gerado com Hugo e publicado no GitHub Pages. O cluster mantém o Cloudflared no namespace `blog` porque o mesmo túnel atende `ops.guesant.net`, `auth.guesant.net` e `atlas.guesant.net`; ele não serve o site.
 
-O PostgreSQL compartilhado mantém os bancos de Keycloak e Atlas. O banco, as roles e as credenciais `portfolio` são resíduos da antiga aplicação e estão sendo removidos explicitamente, sem alterar os bancos de Keycloak ou Atlas. O Silo continua atendendo Atlas e mantém sua identidade OIDC administrativa; o bucket, policy e usuário `portfolio` são exclusivos do app aposentado e também serão removidos.
+O PostgreSQL compartilhado mantém somente os bancos e roles de Keycloak e Atlas. O banco, as roles e as credenciais `portfolio` foram removidos. O Silo continua atendendo Atlas; o bucket, a policy, o usuário e as credenciais `portfolio` também foram removidos.
 
-O Argo CD continua sendo a fonte de estado desejado. Os objetos retidos com `Prune=false` e `Delete=false` exigem remoção explícita e verificação no cluster depois que a configuração GitOps deixar de declará-los.
+O Argo CD continua sendo a fonte de estado desejado. Os dados retirados tinham políticas de retenção e proteções contra prune, então foram apagados explicitamente depois da remoção de suas declarações GitOps.
 
-O app e o cloudflared rodam cada um com uma `ServiceAccount` própria, criada pelo chart, sem token da API montado, porque nenhum dos processos fala com o Kubernetes, e com o sistema de arquivos raiz somente leitura.
-
-O app escreve só nos volumes declarados: um `emptyDir` para `/tmp` e para os assets públicos.
-
-O outro volume é um PVC em `/data/resume-cache`, onde o tectonic guarda o bundle LaTeX pesado que baixa uma vez para gerar o PDF do currículo.
-
-Num `emptyDir` esse cache morria a cada réplica nova e, com `TECTONIC_ONLY_CACHED` ligado pela imagem, a geração falhava sempre por não achar o formato.
-
-O `ConfigMap` do chart desliga essa trava e o volume persiste o download.
+O namespace `blog` não tem aplicação web. Seu único workload é o Cloudflared, que mantém o túnel compartilhado e não monta token da API do Kubernetes.
 
 O sops-secrets-operator segue o mesmo padrão de endurecimento, com o `securityContext` do chart ligado: seccomp `RuntimeDefault`, sem root, sem escalada e sem capabilities.
 
 Ele é a única peça desta lista que precisa de um token de `ServiceAccount`, porque o trabalho dele é justamente escrever segredos no cluster a partir do que está cifrado no git. Endurecer o resto do pod importa mais nesse caso, e não menos, já que um processo com esse acesso é o alvo mais atraente do namespace.
-
-O schema do banco do blog nunca é tocado pelo processo web.
-
-O chart declara um Job `Sync` (`laravel.migration` nos values).
-
-Ele roda na mesma imagem e com o mesmo `Secret` do CNPG.
-
-Esse Job executa somente `php artisan migrate --force` na mesma imagem Laravel que será promovida, e o Argo só troca o `Deployment` depois que ele termina, como descrito em [Rollout de imagens](rollout-de-imagens.md). A geração do PDF do currículo fica fora deste hook, porque depende de conteúdo editorial completo e não deve bloquear o rollout.
-
-As sondas de vida e prontidão do app Laravel, no endpoint `/up`, também levam um atraso inicial maior do que a imagem anterior usava, porque o boot no Raspberry Pi demora mais do que os poucos segundos que bastavam antes; o mesmo padrão já vale para a sonda de startup do Grafana, descrita adiante.
-
-Um detalhe do chart `application` que já custou um sync: no template de `Job` ele escreve o comando como texto simples, não como lista YAML.
-
-Isso faz um comando com argumentos virar um único executável inexistente.
-
-Por isso o Job declara `command: [/bin/sh]` e o script em `args`, que o chart serializa corretamente. Como um hook não conta como deriva, uma mudança só no Job não dispara o sync automático; ela entra no próximo sync real, ou num sync pedido à mão.
 
 Todo namespace criado por uma aplicação recebe os labels de Pod Security `restricted` nos três modos (`enforce/warn/audit`).
 
@@ -115,16 +91,15 @@ O `kube-system` fica de fora, porque o Cilium e os componentes do k3s precisam d
 
 O job `pod-security` da CI falha se um namespace novo nascer sem o label de `enforce`.
 
-Cada peça que precisa de segredo referencia um `SopsSecret` no diretório centralizado de secrets correspondente ao destino. Esses manifests são sincronizados diretamente pelo Argo CD, sem um chart intermediário.
+Cada peça que precisa de segredo referencia um `SopsSecret` no diretório centralizado correspondente ao destino. Esses manifests são sincronizados diretamente pelo Argo CD, sem um chart intermediário.
 
 Nenhuma delas usa mais `SealedSecret`, o mecanismo antigo, removido junto com o controller que o cifrava.
 
 | Arquivo do `SopsSecret` | O que guarda | Como chega ao processo |
 | --- | --- | --- |
-| `blog/templates/admin-oidc.sops-secret.yaml` | Client secret do login do admin pelo realm `homelab` do Keycloak | Arquivo montado em `/secrets/app`, lido com `AddKeyPerFile` |
-| `cloudflared/templates/tunnel-token.sops-secret.yaml` | Token do túnel Cloudflare | Variável de ambiente do processo cloudflared |
+| `cloudflared/templates/tunnel-token.sops-secret.yaml` | Token do túnel Cloudflare | Variável de ambiente do processo Cloudflared |
 
-O `admin-oidc.sops-secret.yaml` entrega o segredo como arquivo, e não como variável de ambiente, que vazaria para qualquer processo filho e para dumps do processo; o `fsGroup` do pod deixa os arquivos legíveis só para o usuário do app. As regras de ingress do túnel não moram mais no chart, e sim na própria Cloudflare, declaradas em [OpenTofu: a camada da Cloudflare](opentofu.md).
+As regras de ingress do túnel ficam na Cloudflare, declaradas em [OpenTofu: a camada da Cloudflare](opentofu.md).
 
 ### Políticas de rede
 
@@ -169,8 +144,8 @@ O Argo aplica as ondas em ordem crescente e só avança para a próxima quando t
 | `operators/` | `0` | Controllers que gerenciam CRD ou recurso de outro componente: cert-manager (certificados), CNPG (`Cluster` do Postgres) e o sops-secrets-operator (`SopsSecret`); todos no projeto `infra` |
 | `platform/` | `0` | Ferramentas de plataforma de uso direto, que não existem para gerenciar CRD de outra coisa: o Kargo, que promove imagens dos satélites editando a própria `Application` do Argo (veja [Rollout de imagens](rollout-de-imagens.md)), os namespaces, as políticas de rede, o kube-bench, as políticas de admissão, o [ingress](ingress.md) (Traefik com Gateway API, as `HTTPRoute` dos nomes internos e a CA interna), o Portainer, o Dashy, o Reloader, os segredos de OIDC (`sso`) e o `oauth2-proxy`; também no projeto `infra` |
 | `data/` | `1` | Dados com estado, dedicados ou compartilhados, mantidos fora das aplicações que os consomem; hoje `shared-postgres`, `silo` e `redis`, no projeto `infra` |
-| `satellites/<nome>/` | `0` a `4` | As `Application` de um satélite consolidado neste repositório, no projeto `satellites`; hoje só `satellites/blog/`, com onda própria por peça (rede na onda `0`, segredos do túnel na `3`, app na `3` e túnel na `4`) |
-| `satellites/launcher/` e `satellites/delivery/` | `0` e `1` | Exceção à regra de uma pasta por satélite: charts com array de instâncias em `values.yaml`, descritos na seção seguinte |
+| `satellites/<nome>/` | `0` a `4` | As `Application` de um satélite consolidado neste repositório, no projeto `satellites`; `satellites/blog/` contém apenas políticas de rede, o segredo do túnel e o Cloudflared |
+| `satellites/launcher/` | `0` | Chart que cria as `Application` dos satélites externos atualmente declarados |
 
 Todas essas pastas vêm de um mini chart wrapper em [argocd/apps](https://github.com/guesant/hl-infrastructure/tree/main/argocd/apps), organizado nas mesmas categorias, não de um chart upstream apontado direto, para manter `sourceRepos` do projeto `infra` restrito a este único repositório.
 
@@ -180,33 +155,7 @@ O cert-manager usa o campo `image.digest` do próprio chart, e CNPG, sops-secret
 
 Apontar direto para um chart upstream funcionaria, mas obrigaria a incluir o repositório dele em `sourceRepos`, e a partir daí qualquer aplicação do projeto `infra` poderia sincronizar de lá. Manter a lista com um endereço só transforma "de onde este cluster aceita manifesto" numa resposta de uma linha, verificável sem ler cada aplicação.
 
-O app do blog separa o frontend do Laravel. O frontend mantém uma réplica com request de `200m` e limite de `1000m` de CPU, enquanto o Laravel mantém duas réplicas com request de `50m` e limite de `1000m` por pod. O worker tem limite de `400m` e o scheduler tem limite de `200m`. A quota do namespace reserva `5200m` de limite e `750m` de requests de CPU para permitir que o rollout mantenha a réplica antiga até a nova ficar saudável, sem alterar a memória.
-
-O Laravel também executa dois workers do servidor PHP em cada pod, e o worker de filas permanece habilitado para a fila `default`. O scheduler continua desligado nesta configuração. A imagem Laravel é fixada por digest no values do chart, e a promoção do Kargo é a autoridade para trocar esse digest.
-
-Não ficou sem limite porque o namespace `blog` carrega um `LimitRange` que injeta um limite default em todo container sem um declarado.
-
-Esse `LimitRange` se chama `blog-namespace-limits`, no chart de políticas de rede.
-
-Um `request` maior que esse default torna o pod inválido na criação, como aconteceu na primeira tentativa desta mudança.
-
-A sequência explica por que o limite existe mesmo sem concorrência por CPU: ele não está lá para proteger vizinhos, e sim porque o namespace exige que todo contêiner tenha um. Declarar o valor certo é melhor do que herdar o default, que foi escolhido para um workload qualquer e não para um que renderiza página sob demanda.
-
-Os `Deployment` do frontend e do Laravel usam `strategy.type: RollingUpdate`, com `maxUnavailable: 0` e `maxSurge: 1`. Assim, cada atualização cria um pod novo antes de remover o antigo, mantendo uma réplica disponível durante a troca. A prontidão precisa ser verificada antes de o Service encaminhar tráfego para o novo pod.
-
-O Laravel mantém duas réplicas e usa o PVC compartilhado de `/data/resume-cache`, que exige `ReadWriteOnce`. Como o cluster de produção roda no Raspberry Pi, os pods precisam continuar sendo agendados no mesmo node para compartilhar esse volume. O rollout não deve ser interpretado como suporte a múltiplos nodes sem mudar o armazenamento para uma classe compatível com acesso compartilhado.
-
-O valor de `maxUnavailable: 0` protege a disponibilidade, enquanto `maxSurge: 1` limita a capacidade adicional durante a atualização. Esses limites também mantêm previsível o consumo de CPU e memória no node pequeno. Se o novo pod não ficar pronto, o Deployment conserva o pod antigo e a promoção pode ser investigada ou revertida sem retirar a última réplica saudável.
-
-O `readinessProbe` do app aponta para `/health/ready`, não para o endpoint que continua servindo só a sonda de vida.
-
-A diferença importa num rolling update: `/health` responde assim que o processo sobe, mesmo antes do pool de conexão com o Postgres existir, e o Service já mandaria tráfego real para um pod cuja primeira leitura de conteúdo falha.
-
-`/health/ready` roda um `select 1` contra o banco, com um teto de tempo próprio.
-
-Ele só devolve `200` depois que essa conexão responde de verdade.
-
-O `timeoutSeconds: 3` da sonda existe para não competir com esse teto interno: sem essa folga, o próprio Kubernetes derrubaria a sonda por timeout antes do `select 1` ter chance de responder.
+O namespace `blog` mantém um `LimitRange` e uma quota para limitar recursos dos workloads. Como o túnel Cloudflare é o único workload restante, esses limites agora se aplicam a ele.
 
 A divisão entre `operators/platform` existe porque cada um falha de forma diferente: um operator que sai do ar deixa objetos que ele já criou (um `Certificate/Cluster`) sem reconciliação, enquanto uma ferramenta de plataforma que sai do ar só perde a própria função.
 
@@ -216,71 +165,11 @@ Misturá-los nivela o mais restritivo pelo menos restritivo por engano.
 
 As três pastas respondem, no fim, a uma pergunta só: o que sobra se esta peça sumir do git amanhã. Some um operator e ficam objetos sem quem os reconcilie; some uma ferramenta de plataforma e some só ela; some um banco e some o dado, que é o único caso irreversível.
 
-## Satélites e entrega do Kargo: um chart com array, não um arquivo por instância
+## Satélites e entrega de imagens
 
-O padrão de satélite que `satellite-add` escreve, uma `Application` inteira para um repositório de terceiro, é a estrutura que de fato se repete a cada satélite novo, ao contrário do blog, que é a exceção descrita acima.
+O chart `satellites-launcher` cria as aplicações dos satélites declarados em sua lista. O Kargo permanece instalado, mas a aplicação de entrega foi removida porque nenhum satélite usa atualmente Warehouse, Stage ou promoção de imagens. O site Hugo é publicado pelo GitHub Pages, fora do cluster.
 
-O de entrega do Kargo que `satellite-delivery-add` escreve segue o mesmo padrão: um projeto de entrega inteiro para cada satélite que promove imagem.
-
-Adicionar um satélite continha o mesmo bloco de `syncPolicy` copiado por inteiro a cada arquivo novo, e adicionar uma entrega continha uma pasta de vários arquivos com nome, namespace e imagem grafados em todos eles; a estrutura em si nunca mudava de um satélite para o outro, só os valores.
-
-Duplicação assim não incomoda enquanto há um satélite; ela cobra na primeira vez que a estrutura precisa mudar, porque a mudança tem de ser repetida em cada cópia, e uma esquecida só aparece quando aquele satélite falha. O que segue é a troca desse molde copiado por um chart que gera as instâncias a partir de uma lista.
-
-Um par de charts resolve isso.
-
-O chart em `argocd/apps/satellites/launcher` é sincronizado por uma `Application` wrapper.
-
-Essa aplicação se chama `satellites-launcher`.
-
-Esse chart tem um `values.yaml` com uma lista `satellites`.
-
-O `templates/application.yaml` usa `{{- range .Values.satellites }}` para emitir uma aplicação por item.
-
-Ele é automático desde o início porque só cria aplicações novas, sem nada vivo para adotar.
-
-`argocd/apps/satellites/delivery`, sincronizado por `satellites-delivery`, segue o mesmo desenho para os objetos do Kargo por satélite. Adicionar um satélite passa de "escrever um arquivo novo" para "acrescentar um item à lista"; ver [gerar várias instâncias de um recurso com Helm](../aprender/helm-templating-de-lista.md) para o mecanismo geral por trás disso.
-
-O chart de entrega ganhou uma peça que o modelo antigo não tinha: um `Namespace` explícito por satélite (`templates/namespace.yaml`).
-
-Esse namespace já nasce com as labels de Pod Security e `kargo.akuity.io/project: "true"`.
-
-Antes, quem criava e rotulava o namespace `<nome>-delivery` era o `managedNamespaceMetadata` do syncPolicy da própria aplicação.
-
-Esse mecanismo só cobre um namespace por `Application`.
-
-Com um chart só emitindo entregas para vários satélites em vários namespaces diferentes, isso deixou de fazer sentido.
-
-O `Namespace` já era liberado no `clusterResourceWhitelist` do projeto de satélites desde sempre, e passou a ser um recurso templável como qualquer outro.
-
-A troca tem um efeito colateral bom: os labels de Pod Security do namespace de entrega passaram a estar escritos num template revisável, em vez de num campo do `syncPolicy` que ninguém lê ao adicionar um satélite. O `managedNamespaceMetadata` continua sendo o mecanismo certo onde ele cabe, que é uma aplicação com um namespace só, como os operadores.
-
-A alternativa nativa do ArgoCD para "um template, várias instâncias" é o `ApplicationSet`, mas ela nunca foi usada neste repositório, e foi descartada de propósito aqui.
-
-Ela adicionaria uma segunda camada de expansão de template com sintaxe `{{ }}` própria, por cima da proteção que a expressão do Kargo já precisa contra o Helm, descrita em [gerar várias instâncias de um recurso com Helm](../aprender/helm-templating-de-lista.md).
-
-Duas camadas de `{{ }}` sobre uma terceira sintaxe parecida é risco de colisão real.
-
-Um array em `values.yaml` de um chart Helm local, a mesma convenção que todo componente deste repositório já segue, resolve o mesmo problema com uma única camada de template, já comprovada pelo resto do repositório.
-
-Há uma perda real na escolha: o `ApplicationSet` sabe gerar instâncias a partir do que ele descobre sozinho, varrendo diretórios de um repositório ou repositórios de uma organização, e um array em `values.yaml` exige que alguém escreva o item. Com um satélite consolidado e um punhado em perspectiva, escrever o item é barato, e a decisão merece ser revisitada se algum dia a lista crescer a ponto de a descoberta automática compensar a camada extra.
-
-O `satellites-delivery` e o `satellites-launcher` agora são as únicas aplicações genéricas de satélites. O blog aparece uma vez em cada lista: o launcher emite a `Application` `blog`, e o delivery emite o projeto, o `Warehouse`, o `Stage` e o `ProjectConfig` de `blog-delivery`.
-
-A aplicação `satellites-delivery` tem `automated` com `selfHeal`, `prune` e `allowEmpty: false`. Assim, mudanças no chart genérico e nos itens de `values.yaml` são reconciliadas pelo Argo CD sem depender de uma sincronização manual.
-
-O projeto do Kargo é cluster-scoped por definição do CRD. Por isso o template de `project.yaml` não possui `metadata.namespace`; o namespace `blog-delivery` é criado separadamente e concentra os recursos namespaced do projeto, como `Warehouse`, `Stage` e `ProjectConfig`. Adicionar um namespace ao `Project` seria inválido, não uma correção.
-
-O item do blog possui duas assinaturas no mesmo `Warehouse`, uma para a imagem do frontend e outra para a imagem Laravel. O mesmo `Stage` promove os dois digests para os caminhos Helm correspondentes da `Application` `blog`.
-
-O `Warehouse` do Kargo para o blog acompanha a tag `main`, e não a tag de commit mais nova.
-
-Ele faz isso com a estratégia `Digest`, não com a tag `sha-<commit>`.
-
-A diferença importa porque uma tag é só um nome que o registry aceita mover: com a estratégia de digest, o parâmetro gravado na `Application` é `main@sha256:...`.
-
-Assim, o que roda é exatamente a imagem que a CI do blog publicou e escaneou naquele momento. Um push posterior da mesma tag vira `Freight/Promotion` novos, visíveis no Kargo e no histórico da aplicação, em vez de uma troca silenciosa no próximo pull.
-
-O mecanismo inteiro está em [Rollout de imagens](rollout-de-imagens.md).
+Para cadastrar outro satélite ou reativar entregas pelo Kargo, consulte [adicionar um satélite novo](../operacional/adicionar-um-satelite.md) e [Rollout de imagens](rollout-de-imagens.md).
 
 ## Os componentes de plataforma
 
@@ -300,16 +189,16 @@ Ele roda `kc.sh start` sem `--optimized`, então refaz a configuração a cada i
 
 O cache interno fica em modo `local`, porque não há segundo pod com quem formar cluster.
 
-A conexão vem do `Secret/keycloak-postgres-app`, replicado pelo `ClusterSecretStore/data-secrets` a partir do slot `a` selecionado no namespace `data`. O Laravel usa o mesmo mecanismo com `portfolio-postgres-app`. Os Secrets de origem legados foram removidos após a validação, e cada aplicação mantém dois slots de login para rotação e rollback. A role proprietária de cada banco não aceita login.
+A conexão vem dos Secrets de aplicação replicados pelo `ClusterSecretStore/data-secrets`. Atlas e Keycloak têm slots de login A/B independentes; a role proprietária de cada banco não aceita login.
 
 O cluster compartilhado fica em `argocd/apps/data/shared-postgres` e declara `instances: 1`. O failover do operador não se aplica aqui: não há réplica para promover quando a primária cai. A proteção que sobra é o reinício automático do pod pelo Kubernetes sobre o mesmo volume, que sobrevive pela retenção do provisionador, não por existir uma segunda cópia do dado. Um segundo nó mudaria esse cálculo: com um nó só, mais instâncias protegeriam o processo, não o host onde o volume mora.
 
 | Banco | Roles de aplicação | Secrets de origem | Namespace consumidor |
 | --- | --- | --- | --- |
-| `portfolio` | `portfolio_a`, `portfolio_b` | `portfolio-postgres-app-a`, `portfolio-postgres-app-b` | `blog` |
+| `atlas` | `atlas_a`, `atlas_b` | `atlas-postgres-app-a`, `atlas-postgres-app-b` | `atlas` |
 | `keycloak` | `keycloak_a`, `keycloak_b` | `keycloak-postgres-app-a`, `keycloak-postgres-app-b` | `keycloak` |
 
-O bootstrap do cluster cria o banco inicial do portfólio. Os objetos `Database` e `DatabaseRole` declarados no chart criam e mantêm os dois bancos, as roles proprietárias e os quatro slots de aplicação sem reutilizar a credencial de superusuário.
+Os recursos `Database` e `DatabaseRole` do chart declaram esses bancos, suas roles proprietárias e os slots de aplicação sem reutilizar a credencial de superusuário. As políticas de retenção protegem os bancos e as roles contra remoção acidental pelo GitOps.
 
 As variáveis `KC_HOSTNAME/KC_HOSTNAME_ADMIN` separam o nome público do console de administração.
 
