@@ -72,3 +72,23 @@ resource "cloudflare_dns_record" "atlas" {
     prevent_destroy = true
   }
 }
+
+resource "cloudflare_dns_record" "curriculum" {
+  zone_id = var.cloudflare_zone_id
+  name    = "curriculum"
+  type    = "CNAME"
+  content = "guesant.github.io"
+  proxied = false
+  ttl     = 300
+}
+
+resource "cloudflare_dns_record" "curriculum_alias" {
+  for_each = toset(["curriculo", "resume", "cv", "portfolio"])
+
+  zone_id = var.cloudflare_zone_id
+  name    = each.value
+  type    = "CNAME"
+  content = "guesant.github.io"
+  proxied = true
+  ttl     = 1
+}
