@@ -46,11 +46,11 @@ O destino é `http://argocd-server.argocd.svc.cluster.local:80`, porque o Argo C
 
 O túnel não reescreve caminho: ele escolhe esquema, host e porta do destino, mas encaminha o caminho do jeito que chegou.
 
-O hostname da API encaminha tanto `/api/v1` quanto `/docs` para o serviço Laravel. A rota `/og` usa o mesmo destino, porque as imagens Open Graph são geradas pelo Laravel e persistidas no storage S3 compatível do Silo. Assim, a API pública, as imagens e a documentação OpenAPI permanecem no mesmo origin sem expor a interface administrativa.
+Não há hostname público para API ou administração do antigo blog. Essas rotas foram removidas; só permanecem os destinos atualmente declarados no túnel.
 
 Qualquer outro caminho nesse hostname cai no 404, então a interface e a API do Argo CD nunca ficam expostas; apontar o hostname inteiro para o `argocd-server` publicaria interface e API na internet.
 
-`blog.guesant.net/www.blog.guesant.net` vão inteiros para o `Service` do blog. O apex `guesant.net` é servido pelo GitHub Pages da página estática de links, e os caminhos legados do blog são redirecionados para `blog.guesant.net`. Qualquer outro hostname recebe 404.
+`guesant.net` e `blog.guesant.net` apontam para o GitHub Pages. O conteúdo é estático e não passa pelo Raspberry Pi. Hostnames antigos de API e administração não são publicados pelo túnel.
 
 `links_hostname` declara o apex da página de links. O registro aponta para `guesant.github.io`, e o ruleset mantém `www.guesant.net` como alias redirecionado para o apex, preservando caminho e query string.
 
@@ -64,19 +64,7 @@ Qualquer outro caminho nesse hostname, incluindo o console de administração em
 
 As validações da variável recusam um hostname igual ao do blog ou ao de `ops_hostname`, para que o provedor de identidade nunca divida hostname com outro tráfego.
 
-`cache.tf` declara um ruleset de cache, na fase `http_request_cache_settings`.
-
-Ele torna tudo sob `/_framework/` elegível a cache na borda respeitando o TTL da origem.
-
-Sem ele a Cloudflare tratava o runtime WebAssembly do blog, um arquivo `.wasm` de alguns megabytes com nome por fingerprint e `Cache-Control: immutable`, como conteúdo dinâmico, e cada visitante novo o baixava do Raspberry Pi pelo túnel.
-
-A extensão `.wasm` não está na lista padrão do que a Cloudflare cacheia, ao contrário de `.js/.css`.
-
-Esses formatos já voltavam como `HIT`.
-
-O ganho é maior do que economia de banda: cada megabyte servido da borda é um megabyte que o Raspberry Pi não empacota nem empurra pelo túnel, e é justamente esse arquivo que todo visitante novo precisa antes de a página funcionar.
-
-A regra é por prefixo de caminho, e não por extensão, para que um runtime com outro formato continue coberto sem mexer aqui.
+As regras de cache e redirecionamento ficam nos rulesets declarados pelo módulo. O blog estático é servido pelo GitHub Pages; o túnel atende operações, autenticação e Atlas.
 
 `waf.tf` declara hoje um ruleset só, de rate limit, dentro dos limites do plano gratuito da zona.
 
@@ -104,7 +92,7 @@ Ele não cobre os endpoints de token e de descoberta, porque o Argo CD, o Grafan
 
 Esse é o limite real de um rate limit por IP num cluster de um nó só: todo tráfego servidor a servidor sai com o mesmo endereço, e o que seria proteção passa a bloquear o próprio cluster. Restringir a regra aos caminhos que só um navegador de pessoa percorre é o que mantém a proteção onde ela faz diferença, na tentativa repetida de senha.
 
-Esse desenho cria um acoplamento que nenhum gate pega: os destinos do ingress são nomes de `Service` do cluster (`app.blog.svc.cluster.local, argocd-server.argocd.svc.cluster.local`), declarados em outro sistema. A regra de `/og` também depende do serviço `app.blog.svc.cluster.local`, mas não depende do Silo diretamente, porque o acesso ao storage ocorre dentro do Laravel.
+Os destinos restantes do túnel são Services internos de Argo CD, Keycloak e Atlas. Mudanças nesses Services devem ser revisadas junto às regras de ingress.
 
 Renomear um desses `Service` num chart do Argo sem mudar `tunnel.tf` quebra o túnel sem nenhum erro de CI; a mudança precisa ir para ambos os lados no mesmo commit.
 
@@ -250,7 +238,7 @@ O `tofu-run.sh` recusa rodar se qualquer segredo decifrado ainda começar com `R
 
 A última camada é a única que enxerga o conteúdo cifrado. `just placeholders` decifra em memória todo arquivo SOPS do repositório, incluindo o `secrets.sops.yaml` do Ansible.
 
-Ele lista os nomes das chaves que ainda têm valor de exemplo (nunca os valores), procura valores de exemplo em texto claro e confere que o hostname de `terraform.tfvars` é o mesmo do `PUBLIC_SITE_BASE_URL` do blog.
+Ele lista os nomes das chaves que ainda têm valor de exemplo (nunca os valores) e procura valores de exemplo em texto claro.
 
 Ela fica fora da CI pelo mesmo motivo de sempre: precisa de uma identidade que decifre.
 
@@ -296,7 +284,7 @@ O Keycloak tem realms com papéis distintos, e o repositório tem um módulo par
 
 `master` é só do próprio Keycloak: nele vivem o administrador permanente do operador e as contas de serviço; nenhum usuário de aplicação, nenhum client de ferramenta.
 
-`homelab` é o realm do blog: quem administra `guesant.net`, e o client blog.
+`homelab` mantém a configuração de identidade pessoal; não há painel administrativo do blog associado a esse realm.
 
 `management` é o realm das ferramentas internas: quem opera o node entra ali, e os clients `argocd, grafana, portainer, oauth2-proxy, silo` autenticam contra ele.
 
@@ -366,7 +354,7 @@ O client `silo` é confidencial e usa o Authorization Code no realm `management`
 
 Esse client não exige PKCE porque o console do Silo não envia `code_challenge` nem `code_challenge_method` no fluxo de autorização. A exigência permanece habilitada nos clients cujos consumidores suportam PKCE; a exceção do Silo é uma decisão de compatibilidade limitada ao console, não uma mudança no método de autenticação ou na autorização por grupos.
 
-O client do blog é o client administrativo do `admin.guesant.net`. No módulo do Keycloak, `blog_hostname` continua representando o domínio raiz `guesant.net`, então seu `base_url` é `https://admin.guesant.net`, o callback de login é `/auth/keycloak/callback` e o logout retorna para a raiz desse mesmo hostname. O site público não participa desse callback: a autenticação do painel e a sessão editorial ficam isoladas no domínio administrativo.
+Os clientes OIDC ativos são os declarados nos módulos atuais do Keycloak. O antigo cliente administrativo do blog e o hostname `admin.guesant.net` foram retirados.
 
 Todos os clients exigem PKCE exceto o `portainer`, porque a edição livre do Portainer não o envia.
 

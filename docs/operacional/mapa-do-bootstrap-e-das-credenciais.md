@@ -61,13 +61,12 @@ O conjunto de destinatários é declarado uma vez no topo desse arquivo e reapro
 | `argocd/apps/secrets/platform/oauth2-proxy/oauth2-proxy.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator; `tofu/keycloak-management` | Sync; `plan` e `apply` do `management` | client secret do `oauth2-proxy` e segredo do cookie |
 | `argocd/apps/secrets/platform/portainer/portainer-oidc.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator; `tofu/keycloak-management`; o Job de OAuth do Portainer | Sync; `plan` e `apply` do `management` | client secret do `portainer` e senha do admin local do Portainer |
 | `argocd/apps/secrets/satellites/cloudflared/tunnel-token.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator | Sync | token do túnel Cloudflare |
-| `argocd/apps/secrets/satellites/blog/admin-oidc.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator; `tofu/keycloak-homelab` (pelo `secrets.map`) | Sync; `plan` e `apply` do `homelab` | client secret do `blog` no realm `homelab`, montado no blog como `/secrets/app/PORTFOLIO_ADMIN_OIDC_CLIENT_SECRET` |
-| `argocd/apps/secrets/data/silo/credentials.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator; StatefulSet e Job de policies do Silo | Sync | credencial root de break-glass, credencial técnica `portfolio-silo` do Laravel e credenciais do Redis |
+| `argocd/apps/secrets/data/silo/credentials.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator; StatefulSet e Job de policies do Silo | Sync | credencial root de break-glass e credenciais compartilhadas ainda referenciadas pelos serviços ativos |
 | `argocd/apps/secrets/data/silo/oidc.sops-secret.yaml` | `SopsSecret` | sops-secrets-operator; `tofu/keycloak-management` (pelo `secrets.map`) | Sync; `plan` e `apply` do `management` | client secret do `silo` no realm `management`, replicado para `data/silo-oidc-credentials` |
 
 A regra que organiza a tabela: um segredo vive ao lado de quem o consome no cluster, e quem mais precisar dele o lê dali. O OpenTofu nunca guarda cópia de um segredo de client; `secrets.map`, em cada módulo do Keycloak, diz de qual arquivo e chave o valor vem, e `tofu-run.sh` o extrai em memória na hora do planejamento.
 
-No Silo, `MINIO_ROOT_USER` e `MINIO_ROOT_PASSWORD` não representam o login humano normal. Permanecem disponíveis somente para o StatefulSet e para o Job administrativo, como credencial de break-glass e bootstrap. O login humano usa exclusivamente OIDC no realm `management`, com o grupo `admins` associado à policy `admins`. A credencial `portfolio-silo` é técnica e serve apenas para o Laravel acessar o bucket `portfolio`; não existe uma credencial local de operador provisionada.
+No Silo, `MINIO_ROOT_USER` e `MINIO_ROOT_PASSWORD` são credenciais de break-glass e bootstrap, não de login humano. O console usa OIDC no realm `management`, com o grupo `admins` associado à policy `admins`. O bucket e o usuário técnicos da antiga aplicação `portfolio` estão em processo de remoção; a configuração do Atlas permanece independente.
 
 Só o arquivo de segredos do master guarda segredos que não pertencem a consumidor nenhum, porque o administrador e as contas de serviço são do próprio Keycloak.
 
@@ -80,7 +79,7 @@ Os módulos homelab e management, sem arquivo de segredos próprio, caem direto 
 - `cloudflare`: `state.sops.env` e `cloudflare.sops.env`. Escreve na Cloudflare; o token do túnel que ele cria nunca passa pelo state, é buscado depois por `just cloudflare-tunnel-token` e gravado no `SopsSecret` do cloudflared.
 - `tailscale`: `state.sops.env` e `tailscale.sops.env`, mais o endereço do node lido da API da tailnet.
 - `keycloak-master`: `state.sops.env` e `keycloak-master.sops.env`. Escreve no Keycloak: realms, administrador permanente, contas de serviço.
-- `keycloak-homelab`: `state.sops.env`; pelo `secrets.map`, o segredo de `tofu-homelab` do `keycloak-master.sops.env` e o segredo do client `blog` do `SopsSecret` `app-secret` do próprio blog. Não tem `.sops.env` próprio.
+- `keycloak-homelab`: `state.sops.env` e o segredo de `tofu-homelab` do `keycloak-master.sops.env`. Não tem `.sops.env` próprio.
 - `keycloak-management`: `state.sops.env`; pelo `secrets.map`, o segredo de `tofu-management` do `keycloak-master.sops.env` e os client secrets dos `SopsSecret` de `sso`, `oauth2-proxy`, `portainer` e `silo`. Também sem `.sops.env` próprio.
 
 Os states de cada módulo em `tofu/` são commitados cifrados com a passphrase do state; perder essa passphrase não derruba nada, só obriga a reimportar os recursos. Commitar o state é o que permite rodar o planejamento de qualquer módulo a partir de um clone limpo, sem backend remoto e sem serviço de locking, o que num operador só é o arranjo mais simples que funciona.
@@ -107,7 +106,6 @@ Declarar um segredo no git só vale alguma coisa se a mudança chegar ao serviç
 | `TF_VAR_keycloak_admin_user` e `_password` | `keycloak-master.sops.env` | credencial de login do módulo | precisa refletir a senha real no Keycloak; mudar aqui não muda a senha lá, só como o módulo entra. `just keycloak-bootstrap-admin` a troca do `temp-admin` para o `admin` permanente |
 | `TF_VAR_operator_admin_password` | `keycloak-master.sops.env` | vivo por recipe | o provider só grava a senha ao criar o `admin`; `just keycloak-rotate-admin` gera uma nova, aplica pela API e recifra as chaves do arquivo, sem recriar o usuário |
 | `TF_VAR_homelab_service_secret`, `TF_VAR_management_service_secret` | `keycloak-master.sops.env` | vivo por `apply` | `just tofu-apply keycloak-master` regrava o segredo do client no Keycloak; os módulos de realm o leem dali pelo `secrets.map` na execução seguinte |
-| `PORTFOLIO_ADMIN_OIDC_CLIENT_SECRET` | `SopsSecret` `app-secret` (blog) | reinicia sozinho no blog; vivo por `apply` no Keycloak | o blog lê o arquivo em `/secrets/app` no start e o `Deployment` tem a anotação do Reloader; `just tofu-apply keycloak-homelab` grava o mesmo valor no client `blog` |
 | `clientSecret` | `SopsSecret` `argocd-oidc` | vivo em ambos os lados | o Argo relê os `Secret` com o label `part-of: argocd` sem restart; `just tofu-apply keycloak-management` grava o mesmo valor no client |
 | `client_secret` | `SopsSecret` `grafana-oidc` | reinicia sozinho | vai por variável de ambiente; o `Deployment` do Grafana tem a anotação do Reloader; o Keycloak recebe pelo `apply` do `management` |
 | `client-secret` e `cookie-secret` | `SopsSecret` `oauth2-proxy` | reinicia sozinho | variáveis de ambiente com Reloader; trocar o `cookie-secret` invalida todas as sessões abertas, o que é o efeito desejado numa rotação |

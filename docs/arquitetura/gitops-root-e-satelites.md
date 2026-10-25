@@ -63,41 +63,15 @@ Com o `default` fechado, um filho que esqueça de declarar `project: satellites`
 
 Originalmente, cada satélite era ele mesmo outra `Application` de sincronização recursiva de diretório, apontando para uma pasta de GitOps dentro do repositório da própria aplicação; um satélite novo, de terceiros, ainda segue esse formato, descrito no guia [adicionar um satélite novo](../operacional/adicionar-um-satelite.md).
 
-O único satélite que existe hoje, o blog, não segue mais esse formato. A mudança não aposentou o padrão: ela reconheceu que, com um operador só cuidando dos dois repositórios, o custo da separação não estava comprando nada. A seção seguinte explica esse caso e deixa claro o que continuaria valendo se um segundo repositório, com outro dono, entrasse na jogada.
+O site do blog agora é estático e publicado pelo GitHub Pages. No cluster, a pasta `satellites/blog` mantém somente recursos compartilhados do namespace e o túnel Cloudflare; não há aplicação web do blog.
 
-## Por que o blog não é um satélite de verdade
+## Serviços compartilhados e site estático
 
-O blog, servido em `guesant.net`, só parece um satélite comum à primeira vista.
+O site `blog.guesant.net` é gerado com Hugo e publicado no GitHub Pages. O cluster mantém o Cloudflared no namespace `blog` porque o mesmo túnel atende `ops.guesant.net`, `auth.guesant.net` e `atlas.guesant.net`; ele não serve o site.
 
-As peças que ele precisa no cluster, o app em si, o túnel Cloudflare, as políticas de rede do namespace e o projeto de entrega do Kargo, vivem direto em `argocd/applications/satellites/blog/` e `argocd/apps/satellites/blog/`.
+O PostgreSQL compartilhado mantém os bancos de Keycloak e Atlas. O banco, as roles e as credenciais `portfolio` são resíduos da antiga aplicação e estão sendo removidos explicitamente, sem alterar os bancos de Keycloak ou Atlas. O Silo continua atendendo Atlas e mantém sua identidade OIDC administrativa; o bucket, policy e usuário `portfolio` são exclusivos do app aposentado e também serão removidos.
 
-Elas vivem dentro deste repositório, sob o projeto `satellites`, com o mesmo teto de permissão de qualquer satélite. O repositório `guesant/blog` não declara nenhum objeto do Argo.
-
-A razão não é técnica, é organizacional: como o mesmo operador administra ambos os repositórios, separar "o que é infraestrutura" de "o que é aplicação" em repositórios diferentes não reduz risco algum, só multiplica onde uma mudança de deploy precisa ser feita.
-
-O padrão de satélite continua existindo e documentado para o cenário em que ele resolve um problema real, um futuro colaborador ou uma automação com acesso de escrita só ao repositório da aplicação, não a este.
-
-Os dados compartilhados são mantidos pelas aplicações `shared-postgres`, `silo` e `redis`, em `argocd/applications/data/` e nos charts correspondentes. `shared-postgres` cria um único `Cluster` do CloudNativePG no namespace `data`, com bancos e roles separados para o portfólio e o Keycloak. `silo` fornece o storage S3 compatível para assets e PDFs, e `redis` fornece o cache compartilhado do Laravel.
-
-A inicialização do Silo respeita uma dependência explícita entre aplicações: os segredos cifrados entram na onda `0`, o servidor S3 e seu job de políticas entram na onda `1`, e o `ExternalSecret` que entrega as credenciais ao blog entra na onda `2`. O blog só entra na onda `3`, depois que pode receber essas credenciais. O Cloudflared fica na onda `4`, depois que o serviço do blog existe. Essa ordem reduz a janela em que um pod pode ser criado sem seus segredos ou em que o job de políticas pode tentar autenticar antes de o servidor estar disponível.
-
-O Silo recebe seu client OIDC pelo `SopsSecret` centralizado e autentica diretamente contra o realm `management`. O ingress não acrescenta um middleware de Keycloak nessa rota: o console do Silo lê o claim `groups`, e o job cria a policy `admins` que corresponde ao grupo administrativo. A policy `portfolio-policy` continua separada e é exclusiva do usuário técnico usado pelo Laravel. Não há mais um usuário local de operador: pessoas entram pelo OIDC e o grupo `admins` determina a autorização. A credencial root continua cifrada apenas como break-glass e para o bootstrap administrativo do job, enquanto `portfolio-silo` permanece uma identidade técnica sem uso humano.
-
-O mesmo chart também declara o caminho de acesso aos objetos pelo navegador. O serviço S3 continua privado para os workloads no endereço `silo.data.svc.cluster.local:9000`, e a rota `silo-s3.guesant.internal` expõe somente o endpoint necessário ao upload temporário e à leitura controlada de mídia. O job de políticas aplica uma configuração de CORS ao bucket `portfolio`, com a origem do painel, os métodos de upload e leitura e os cabeçalhos necessários para URLs assinadas. Essa separação mantém a autenticação S3 no cliente e evita colocar o login humano do Keycloak no caminho de uma requisição S3.
-
-Essa separação mantém o dado fora das aplicações que o consomem sem criar um cluster por aplicação. Os objetos `Database` e `DatabaseRole` têm política de retenção, enquanto cada consumidor recebe seu próprio Secret por `ExternalSecret` no namespace correspondente. O Silo e o Redis também recebem credenciais por `SopsSecret`, e o `ExternalSecret` de consumidores replica somente as chaves necessárias para o namespace `blog`.
-
-As imagens do blog ficam registradas no chart por digest, incluindo o public-app e o Laravel. O Kargo resolve a imagem publicada pela branch `main` e o Argo aplica a revisão promovida, sem depender de uma tag mutável durante a execução.
-
-Quando uma promoção precisa ser reestabelecida a partir do Git, os dois pins do blog devem ser atualizados juntos: o digest do public-app e o digest do Laravel. Esse valor é o ponto de partida de um cluster novo; durante a operação normal, o parâmetro promovido pelo Kargo continua sendo a autoridade do rollout. Manter os dois pins alinhados evita iniciar o frontend e a API em revisões incompatíveis.
-
-O worker do Laravel recebe mais memória que o processo web porque também executa a compilação do currículo com Tectonic. A quota do namespace inclui margem para o rolling update, para que o novo worker possa iniciar enquanto o antigo ainda encerra e para que o job de migration possa ser criado sem bloquear a reconciliação. Essa margem faz parte da estratégia de disponibilidade e não representa memória reservada exclusivamente para o uso contínuo do worker.
-
-O servidor Silo e o cliente usado pelo job de políticas são publicados pelo mesmo projeto `pgsty`, com a mesma versão de release e com digest explícito. O job usa o `mc` separado para criar as policies `admins` e `portfolio-policy`, além do bucket, porque a imagem do servidor não deve ser tratada como uma ferramenta administrativa genérica. Fixar os dois artefatos por digest evita que uma alteração de tag mude o storage ou o job de inicialização sem revisão no git.
-
-O critério que separa a pasta do satélite da camada de dado é a política de remoção, não a titularidade: um banco exclusivo de uma aplicação continua sendo dado, e dado sai do cluster por um caminho mais conservador do que o resto.
-
-Manter as duas coisas na mesma pasta convidaria a aplicar a elas a mesma política de prune, que é exatamente o erro que a separação evita.
+O Argo CD continua sendo a fonte de estado desejado. Os objetos retidos com `Prune=false` e `Delete=false` exigem remoção explícita e verificação no cluster depois que a configuração GitOps deixar de declará-los.
 
 O app e o cloudflared rodam cada um com uma `ServiceAccount` própria, criada pelo chart, sem token da API montado, porque nenhum dos processos fala com o Kubernetes, e com o sistema de arquivos raiz somente leitura.
 
