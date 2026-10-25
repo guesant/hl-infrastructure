@@ -136,7 +136,7 @@ Por isso cada namespace tem uma `CiliumNetworkPolicy` que lista o que ele de fat
 
 Ela libera DNS para o CoreDNS, API server, entrada vinda do host e do API server para sondas, métricas e webhooks, saída 443 do Argo CD para o GitHub e os registros, e o CNPG falando com o banco compartilhado.
 
-O chart de políticas do blog ganha as de saída do próprio namespace: DNS, o app para o Postgres e para a internet em 443, o cloudflared para o app, para o `argocd-server`, para o Keycloak e para a borda da Cloudflare, o Postgres para o API server.
+O namespace `blog` mantém somente o cloudflared, que usa as liberações necessárias para DNS, o `argocd-server`, o Keycloak e a borda da Cloudflare.
 
 O cloudflared alcança o Keycloak porque `auth.guesant.net` entra pelo mesmo túnel do blog e é roteado direto para o servidor, sem passar pelo app.
 
@@ -146,11 +146,7 @@ Desde que `policyAuditMode` virou `false` (ver [checklist de segurança](checkli
 
 O namespace `blog` é o único do cluster com mais de um mecanismo de política de rede ao mesmo tempo, e não por uma migração pela metade.
 
-O ingress vem de `NetworkPolicy` nativa do Kubernetes, com a regra `default-deny-ingress` mais três regras específicas.
-
-Essas regras são `allow-app-to-postgres/allow-cloudflared-to-app/allow-cnpg-operator-to-postgres`, enquanto o egress e a linha de base ficam com `CiliumNetworkPolicy/CiliumClusterwideNetworkPolicy`.
-
-Ambos convivem de propósito, e depurar conectividade nesse namespace exige olhar ambos os tipos de recurso, `kubectl get networkpolicy` e `kubectl get ciliumnetworkpolicy`, porque cada um só enxerga a metade do tráfego que declara.
+O ingress do namespace `blog` é limitado pela regra `default-deny-ingress`; o túnel Cloudflare é o único workload nesse namespace.
 
 O endpoint de health do próprio Cilium também cai na regra do `always`: o ping que o agente faz nele a partir do host seria descartado e o `cilium-health` passaria a reportar o node como inalcançável, sem que nenhum pod perdesse tráfego.
 
@@ -651,6 +647,6 @@ Separar os projetos torna essa garantia parte da configuração do próprio Argo
 
 ## Continue por aqui
 
-[Adicionar um satélite novo](../operacional/adicionar-um-satelite.md) aplica essa separação na prática, com o `just` que escreve a `Application`.
+[Adicionar um satélite novo](../operacional/adicionar-um-satelite.md) descreve o cadastro de um satélite e a criação da `Application` correspondente.
 
 <!-- reviewed: argocd -->
