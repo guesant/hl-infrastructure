@@ -138,7 +138,8 @@ Esses IDs não são credencial, mas ficam cifrados para este repositório públi
 
 | Variável em `tofu/cloudflare/terraform.tfvars` | Papel |
 | --- | --- |
-| `blog_hostname` | hostname público do blog; precisa bater com `PUBLIC_SITE_BASE_URL` no `values.yaml` do blog |
+| `blog_hostname` | hostname público do blog, hoje `blog.guesant.net`; precisa bater com `PUBLIC_SITE_BASE_URL` no `values.yaml` do blog |
+| `links_hostname` | hostname público da página estática de links, hoje `guesant.net` |
 | `ops_hostname` | recebe o webhook do GitHub |
 | `auth_hostname` | onde o Keycloak responde de fora |
 

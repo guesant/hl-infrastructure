@@ -27,6 +27,15 @@ variable "blog_hostname" {
   }
 }
 
+variable "links_hostname" {
+  type = string
+
+  validation {
+    condition     = can(regex("^([a-z0-9]([a-z0-9-]*[a-z0-9])?\\.)+[a-z]{2,}$", var.links_hostname)) && !endswith(var.links_hostname, ".invalid")
+    error_message = "links_hostname must be the real public hostname of the static links site, not a placeholder under .invalid."
+  }
+}
+
 variable "api_hostname" {
   type = string
 
@@ -54,8 +63,8 @@ variable "ops_hostname" {
   }
 
   validation {
-    condition     = var.ops_hostname != var.blog_hostname
-    error_message = "ops_hostname must differ from blog_hostname, so operational endpoints never share a hostname with the public site."
+    condition     = !contains([var.blog_hostname, var.links_hostname], var.ops_hostname)
+    error_message = "ops_hostname must differ from blog_hostname and links_hostname, so operational endpoints never share a public site hostname."
   }
 }
 
@@ -68,8 +77,8 @@ variable "auth_hostname" {
   }
 
   validation {
-    condition     = !contains([var.blog_hostname, var.ops_hostname], var.auth_hostname)
-    error_message = "auth_hostname must differ from blog_hostname and ops_hostname, so the identity provider never shares a hostname with other traffic."
+    condition     = !contains([var.blog_hostname, var.links_hostname, var.ops_hostname], var.auth_hostname)
+    error_message = "auth_hostname must differ from blog_hostname, links_hostname and ops_hostname, so the identity provider never shares a hostname with other traffic."
   }
 }
 
@@ -82,7 +91,7 @@ variable "atlas_hostname" {
   }
 
   validation {
-    condition     = !contains([var.blog_hostname, var.api_hostname, var.admin_hostname, var.ops_hostname, var.auth_hostname], var.atlas_hostname)
+    condition     = !contains([var.blog_hostname, var.links_hostname, var.api_hostname, var.admin_hostname, var.ops_hostname, var.auth_hostname], var.atlas_hostname)
     error_message = "atlas_hostname must differ from every existing public hostname."
   }
 }

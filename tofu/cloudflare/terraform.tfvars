@@ -1,4 +1,5 @@
-blog_hostname  = "guesant.net"
+blog_hostname  = "blog.guesant.net"
+links_hostname = "guesant.net"
 api_hostname   = "api.guesant.net"
 admin_hostname = "admin.guesant.net"
 ops_hostname   = "ops.guesant.net"

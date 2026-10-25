@@ -24,6 +24,32 @@ resource "cloudflare_dns_record" "blog_www" {
   }
 }
 
+resource "cloudflare_dns_record" "links" {
+  zone_id = var.cloudflare_zone_id
+  name    = var.links_hostname
+  type    = "CNAME"
+  content = "guesant.github.io"
+  proxied = true
+  ttl     = 1
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "cloudflare_dns_record" "links_www" {
+  zone_id = var.cloudflare_zone_id
+  name    = "www.${var.links_hostname}"
+  type    = "CNAME"
+  content = "guesant.github.io"
+  proxied = true
+  ttl     = 1
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
 resource "cloudflare_dns_record" "api" {
   zone_id = var.cloudflare_zone_id
   name    = var.api_hostname

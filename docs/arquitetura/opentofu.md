@@ -20,13 +20,13 @@ O provider da Cloudflare está fixado na versão `5.25.0`, com os hashes corresp
 
 O módulo também declara os registros CNAME apontando para `<id do túnel>.cfargotunnel.com`.
 
-Esses registros são os do blog, no domínio raiz `guesant.net/www.guesant.net`, que servem o mesmo conteúdo sem redirect.
+Esses registros são os do blog, em `blog.guesant.net/www.blog.guesant.net`, e servem o mesmo conteúdo sem redirect.
 
 Também é registro o de operação, `ops.guesant.net`.
 
 O CNAME no apex funciona porque a Cloudflare o achata num endereço na hora de responder o DNS, sem precisar de registro A.
 
-Os registros do apex e do www têm `lifecycle { prevent_destroy = true }`: um `plan` que os destruiria, seja por um recurso removido do código, seja por uma mudança que obrigue recriar, falha antes do apply, porque apagar esses registros tira o blog do ar.
+Os registros do blog e do links têm `lifecycle { prevent_destroy = true }`: um `plan` que os destruiria, seja por um recurso removido do código, seja por uma mudança que obrigue recriar, falha antes do apply, porque apagar esses registros tira um dos sites do ar.
 
 Os CNAME de `guesant.net` e www já existiam antes do OpenTofu, apontando para o site antigo na Vercel.
 
@@ -50,7 +50,9 @@ O hostname da API encaminha tanto `/api/v1` quanto `/docs` para o serviço Larav
 
 Qualquer outro caminho nesse hostname cai no 404, então a interface e a API do Argo CD nunca ficam expostas; apontar o hostname inteiro para o `argocd-server` publicaria interface e API na internet.
 
-`guesant.net/www.guesant.net` vão inteiros para o `Service` do blog, e qualquer outro hostname recebe 404.
+`blog.guesant.net/www.blog.guesant.net` vão inteiros para o `Service` do blog. O apex `guesant.net` é servido pelo GitHub Pages da página estática de links, e os caminhos legados do blog são redirecionados para `blog.guesant.net`. Qualquer outro hostname recebe 404.
+
+`links_hostname` declara o apex da página de links. O registro aponta para `guesant.github.io`, e o ruleset mantém `www.guesant.net` como alias redirecionado para o apex, preservando caminho e query string.
 
 Separar os hostnames tira o tráfego de operação do site público: nenhuma rota do blog colide com o webhook, e regras da Cloudflare, como WAF ou Access, podem valer só para o de operação. Uma validação do módulo recusa usar o mesmo hostname para blog e operação.
 
@@ -364,7 +366,7 @@ O client `silo` é confidencial e usa o Authorization Code no realm `management`
 
 Esse client não exige PKCE porque o console do Silo não envia `code_challenge` nem `code_challenge_method` no fluxo de autorização. A exigência permanece habilitada nos clients cujos consumidores suportam PKCE; a exceção do Silo é uma decisão de compatibilidade limitada ao console, não uma mudança no método de autenticação ou na autorização por grupos.
 
-O client do blog é o client administrativo do `admin.guesant.net`. Seu `base_url` é `https://admin.<blog_hostname>`, o callback de login é `/auth/keycloak/callback` e o logout retorna para a raiz desse mesmo hostname. O site público não participa desse callback: a autenticação do painel e a sessão editorial ficam isoladas no domínio administrativo.
+O client do blog é o client administrativo do `admin.guesant.net`. No módulo do Keycloak, `blog_hostname` continua representando o domínio raiz `guesant.net`, então seu `base_url` é `https://admin.guesant.net`, o callback de login é `/auth/keycloak/callback` e o logout retorna para a raiz desse mesmo hostname. O site público não participa desse callback: a autenticação do painel e a sessão editorial ficam isoladas no domínio administrativo.
 
 Todos os clients exigem PKCE exceto o `portainer`, porque a edição livre do Portainer não o envia.
 
