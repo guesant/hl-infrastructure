@@ -8,10 +8,10 @@ consumer_values_file="argocd/apps/secrets/data/postgres-consumers/values.yaml"
 shared_values_file="argocd/apps/data/shared-postgres/values.yaml"
 
 case "$app" in
-portfolio|keycloak)
+keycloak|atlas)
   ;;
 *)
-  echo "usage: $0 <status|activate|retire> <portfolio|keycloak> [slot]" >&2
+  echo "usage: $0 <status|activate|retire> <keycloak|atlas> [slot]" >&2
   exit 2
   ;;
 esac
@@ -61,7 +61,7 @@ retire)
   printf '%s slot %s retired\n' "$app" "$slot"
   ;;
 *)
-  echo "usage: $0 <status|activate|retire> <portfolio|keycloak> [slot]" >&2
+    echo "usage: $0 <status|activate|retire> <keycloak|atlas> [slot]" >&2
   exit 2
   ;;
 esac

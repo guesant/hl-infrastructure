@@ -12,7 +12,7 @@ just satellite-add nome https://github.com/org/repo.git caminho/gitops/applicati
 
 A recipe acrescenta um item à lista de satélites do arquivo de values do launcher e recusa um nome já existente. Ela também recusa um nome que não case com o padrão `^[a-z][a-z0-9-]*$`, porque esse mesmo texto vira o nome da aplicação no namespace `argocd`, e um nome inválido só apareceria como erro do lado do Argo.
 
-O template do launcher itera essa lista e emite, para cada item, a mesma aplicação que antes era escrita à mão por arquivo; [gerar várias instâncias de um recurso com Helm](../aprender/helm-templating-de-lista.md) explica o mecanismo geral, e [GitOps: root e satélites](../arquitetura/gitops-root-e-satelites.md#satelites-e-entrega-do-kargo-um-chart-com-array-nao-um-arquivo-por-instancia) explica por que esse desenho venceu a alternativa nativa do ArgoCD, o ApplicationSet.
+O template do launcher itera essa lista e emite, para cada item, a mesma aplicação que antes era escrita à mão por arquivo; [gerar várias instâncias de um recurso com Helm](../aprender/helm-templating-de-lista.md) explica o mecanismo geral, e a seção [Satélites e entrega de imagens](../arquitetura/gitops-root-e-satelites.md#satelites-e-entrega-de-imagens) descreve o estado atual do launcher e do Kargo.
 
 O item da lista tem os campos da tabela abaixo. O campo de onda de sincronização tem um padrão que coloca todo satélite depois de tudo o que o root instala, cujas ondas vão da que cria as classes de armazenamento e os namespaces até a mais tardia; mexer nele só faz sentido para ordenar um satélite em relação a outro.
 

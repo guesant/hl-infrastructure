@@ -6,11 +6,6 @@ slot="${2:-}"
 shared_values_file="argocd/apps/data/shared-postgres/values.yaml"
 
 case "$app" in
-portfolio)
-  source_prefix="portfolio-postgres-app"
-  database="portfolio"
-  user_prefix="portfolio"
-  ;;
 keycloak)
   source_prefix="keycloak-postgres-app"
   database="keycloak"
@@ -22,7 +17,7 @@ atlas)
   user_prefix="atlas"
   ;;
 *)
-  echo "usage: $0 <portfolio|keycloak|atlas> <a|b>" >&2
+  echo "usage: $0 <keycloak|atlas> <a|b>" >&2
   exit 2
   ;;
 esac
@@ -31,7 +26,7 @@ case "$slot" in
 a|b)
   ;;
 *)
-  echo "usage: $0 <portfolio|keycloak|atlas> <a|b>" >&2
+  echo "usage: $0 <keycloak|atlas> <a|b>" >&2
   exit 2
   ;;
 esac
