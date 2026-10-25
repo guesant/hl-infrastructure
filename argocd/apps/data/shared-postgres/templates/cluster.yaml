@@ -11,9 +11,11 @@ spec:
   imageName: {{ .Values.cluster.image.repository }}:{{ .Values.cluster.image.tag }}@{{ .Values.cluster.image.digest }}
   storage:
 {{ toYaml .Values.cluster.storage | nindent 4 }}
+{{- with .Values.cluster.bootstrap }}
   bootstrap:
     initdb:
-{{ toYaml .Values.cluster.bootstrap | nindent 6 }}
+{{ toYaml . | nindent 6 }}
+{{- end }}
   resources:
 {{ toYaml .Values.cluster.resources | nindent 4 }}
 # yamllint disable-file
