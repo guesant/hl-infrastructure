@@ -1,4 +1,4 @@
-resource "cloudflare_dns_record" "blog" {
+resource "cloudflare_dns_record" "blog_site" {
   zone_id = var.cloudflare_zone_id
   name    = var.blog_hostname
   type    = "CNAME"
@@ -11,7 +11,7 @@ resource "cloudflare_dns_record" "blog" {
   }
 }
 
-resource "cloudflare_dns_record" "blog_www" {
+resource "cloudflare_dns_record" "blog_www_site" {
   zone_id = var.cloudflare_zone_id
   name    = "www.${var.blog_hostname}"
   type    = "CNAME"

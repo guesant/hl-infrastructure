@@ -1,3 +1,29 @@
+locals {
+  legacy_blog_path_prefixes = [
+    "/about",
+    "/now",
+    "/resume",
+    "/portfolio",
+    "/cases",
+    "/projects",
+    "/writing",
+    "/findings",
+    "/topics",
+    "/collections",
+    "/snippets",
+    "/follow",
+    "/feed",
+    "/feed.xml",
+    "/sitemap.xml",
+    "/robots.txt",
+  ]
+
+  legacy_blog_path_expression = join(" or ", [
+    for path in local.legacy_blog_path_prefixes :
+    "(http.request.uri.path eq \"${path}\" or starts_with(http.request.uri.path, \"${path}/\"))"
+  ])
+}
+
 resource "cloudflare_ruleset" "curriculum_alias_redirects" {
   zone_id     = var.cloudflare_zone_id
   name        = "curriculum aliases"
@@ -25,7 +51,7 @@ resource "cloudflare_ruleset" "curriculum_alias_redirects" {
     {
       ref         = "legacy_blog_paths"
       description = "Move legacy blog routes from the root domain to the blog hostname"
-      expression  = "(http.host in {\"guesant.net\" \"www.guesant.net\"} and http.request.uri.path matches \"^/(about|now|resume|portfolio|cases|projects|writing|findings|topics|collections|snippets|follow|feed|feed\\.xml|sitemap\\.xml|robots\\.txt)(/|$)\")"
+      expression  = "(http.host in {\"guesant.net\" \"www.guesant.net\"} and (${local.legacy_blog_path_expression}))"
       action      = "redirect"
       enabled     = true
       action_parameters = {
