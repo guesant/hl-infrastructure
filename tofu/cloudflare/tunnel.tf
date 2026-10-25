@@ -25,43 +25,6 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "blog" {
         service  = "http://linkace.atlas.svc.cluster.local:80"
       },
       {
-        hostname = var.api_hostname
-        path     = "^/api/v1(/|$)"
-        service  = "http://app.blog.svc.cluster.local:8080"
-      },
-      {
-        hostname = var.api_hostname
-        path     = "^/docs(/|$)"
-        service  = "http://app.blog.svc.cluster.local:8080"
-      },
-      {
-        hostname = var.api_hostname
-        path     = "^/og(/|$)"
-        service  = "http://app.blog.svc.cluster.local:8080"
-      },
-      {
-        hostname = var.admin_hostname
-        service  = "http://app.blog.svc.cluster.local:8080"
-      },
-      {
-        hostname = var.blog_hostname
-        path     = "^/(api/v1|admin)(/|$)"
-        service  = "http://app.blog.svc.cluster.local:8080"
-      },
-      {
-        hostname = "www.${var.blog_hostname}"
-        path     = "^/(api/v1|admin)(/|$)"
-        service  = "http://app.blog.svc.cluster.local:8080"
-      },
-      {
-        hostname = var.blog_hostname
-        service  = "http://frontend.blog.svc.cluster.local"
-      },
-      {
-        hostname = "www.${var.blog_hostname}"
-        service  = "http://frontend.blog.svc.cluster.local"
-      },
-      {
         service = "http_status:404"
       },
     ]

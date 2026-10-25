@@ -31,21 +31,6 @@ satellites:
     destinationNamespace: atlas
     syncWave: "2"
     targetRevision: main
-  - name: blog-secrets
-    repoURL: https://github.com/guesant/hl-infrastructure.git
-    path: argocd/apps/secrets/satellites/blog
-    destinationNamespace: blog
-    syncWave: "1"
-    targetRevision: main
-  - name: blog
-    repoURL: https://github.com/guesant/hl-infrastructure.git
-    path: argocd/apps/satellites/blog/blog
-    destinationNamespace: blog
-    helmReleaseName: blog
-    syncWave: "3"
-    targetRevision: main
-    annotations:
-      kargo.akuity.io/authorized-stage: blog-delivery:prod
   - name: atlas
     repoURL: https://github.com/guesant/hl-infrastructure.git
     path: argocd/apps/satellites/atlas
