@@ -15,7 +15,6 @@ storage:
 
 secrets:
   root: silo-root-credentials
-  portfolio: silo-portfolio-credentials
   atlas: silo-atlas-credentials
   oidc: silo-oidc-credentials
 

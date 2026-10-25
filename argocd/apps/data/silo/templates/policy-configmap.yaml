@@ -16,45 +16,6 @@ data:
         {"Effect": "Allow", "Action": ["s3tables:*"], "Resource": ["arn:aws:s3tables:::*"]}
       ]
     }
-  portfolio.json: |-
-    {
-      "Version": "2012-10-17",
-      "Statement": [
-        {
-          "Effect": "Allow",
-          "Action": [
-            "s3:ListBucket"
-          ],
-          "Resource": [
-            "arn:aws:s3:::portfolio"
-          ]
-        },
-        {
-          "Effect": "Allow",
-          "Action": [
-            "s3:GetObject",
-            "s3:PutObject",
-            "s3:DeleteObject"
-          ],
-          "Resource": [
-            "arn:aws:s3:::portfolio/*"
-          ]
-        }
-      ]
-    }
-  portfolio-cors.xml: |-
-    <CORSConfiguration>
-      <CORSRule>
-        <AllowedOrigin>https://admin.guesant.net</AllowedOrigin>
-        <AllowedMethod>GET</AllowedMethod>
-        <AllowedMethod>HEAD</AllowedMethod>
-        <AllowedMethod>PUT</AllowedMethod>
-        <AllowedMethod>POST</AllowedMethod>
-        <AllowedHeader>*</AllowedHeader>
-        <ExposeHeader>ETag</ExposeHeader>
-        <MaxAgeSeconds>3600</MaxAgeSeconds>
-      </CORSRule>
-    </CORSConfiguration>
   atlas.json: |-
     {
       "Version": "2012-10-17",

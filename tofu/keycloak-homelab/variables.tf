@@ -34,8 +34,3 @@ variable "state_passphrase" {
     error_message = "state_passphrase must have at least 32 characters and not be the placeholder; run just tofu-state-passphrase."
   }
 }
-
-variable "blog_client_secret" {
-  type      = string
-  sensitive = true
-}

@@ -41,12 +41,3 @@ delivery:
         maxDuration: 3m
 
 satellites:
-  - name: blog
-    childApp: blog
-    images:
-      - imageRepo: ghcr.io/guesant/blog
-        valuesPath: application.deployment.image.tag
-        imageTagValue: main@${{ imageFrom("ghcr.io/guesant/blog").Digest }}
-      - imageRepo: ghcr.io/guesant/blog-laravel
-        valuesPath: laravel.image.tag
-        imageTagValue: main@${{ imageFrom("ghcr.io/guesant/blog-laravel").Digest }}
