@@ -3,12 +3,21 @@ package main
 import rego.v1
 
 protected_records := {"blog", "blog_www"}
+dns_only_github_pages_records := {"blog_site", "curriculum"}
 
 deny contains msg if {
 	some name
 	some record in input.resource.cloudflare_dns_record[name]
 	not record.proxied == true
+	not is_dns_only_github_pages_record(name, record)
 	msg := sprintf("cloudflare_dns_record.%s must be proxied through Cloudflare", [name])
+}
+
+is_dns_only_github_pages_record(name, record) if {
+	name in dns_only_github_pages_records
+	record.type == "CNAME"
+	record.content == "guesant.github.io"
+	record.proxied == false
 }
 
 deny contains msg if {
