@@ -839,6 +839,7 @@ jobs:
           retention-days: 30
 
   commitlint:
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
